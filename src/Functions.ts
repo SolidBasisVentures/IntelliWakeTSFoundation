@@ -370,10 +370,6 @@ export const IsValidInputDecimal = (value: string): boolean => {
 	return !value || regEx.test(value)
 }
 
-export const ClassNames = (classes: {[key: string]: boolean}): string => {
-	return (Object.keys(classes).filter((classitem) => classes[classitem]) ?? []).join(' ')
-}
-
 export const FormatPhoneNumber = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
