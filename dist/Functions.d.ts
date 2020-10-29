@@ -39,9 +39,6 @@ export declare const CaptureGPS: () => Promise<Position | null>;
 export declare const GoogleMapsGPSLink: (dataArray: any, prefix?: string) => string;
 export declare const GoogleMapsAddressLink: (dataArray: any, prefix?: string) => string;
 export declare const IsValidInputDecimal: (value: string) => boolean;
-export declare const ClassNames: (classes: {
-    [key: string]: boolean;
-}) => string;
 export declare const FormatPhoneNumber: (phone: string, forceNumeric?: boolean) => string;
 export declare const FormatPhoneNumberDots: (phone: string, forceNumeric?: boolean) => string;
 export declare const FormatZip: (zip: string) => string;

@@ -383,10 +383,6 @@ var IsValidInputDecimal = function (value) {
     var regEx = new RegExp('/^\\d{1,}(\\.\\d{0,4})?$/');
     return !value || regEx.test(value);
 };
-var ClassNames = function (classes) {
-    var _a;
-    return ((_a = Object.keys(classes).filter(function (classitem) { return classes[classitem]; })) !== null && _a !== void 0 ? _a : []).join(' ');
-};
 var FormatPhoneNumber = function (phone, forceNumeric) {
     if (forceNumeric === void 0) { forceNumeric = false; }
     //Filter only numbers from the input
@@ -1225,7 +1221,6 @@ exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.CaptureGPS = CaptureGPS;
-exports.ClassNames = ClassNames;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
 exports.DataToCSVExport = DataToCSVExport;
