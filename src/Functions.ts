@@ -267,85 +267,6 @@ export const ToStringArray = (value: string | string[]): string[] => {
 	}
 }
 
-export const HasPathComponent = (search: string): boolean => {
-	let searchCalc = search.toLowerCase()
-
-	if (!searchCalc.startsWith('/')) {
-		searchCalc = '/' + searchCalc
-	}
-
-	if (!searchCalc.endsWith('/')) {
-		searchCalc += '/'
-	}
-
-	let pathName = window.location.pathname.toLowerCase()
-	if (!pathName.endsWith('/')) {
-		pathName += '/'
-	}
-
-	return pathName.indexOf(searchCalc) >= 0
-}
-
-export const GetPathComponentAfter = (search: string): any | undefined => {
-	let searchCalc = search.toLowerCase()
-
-	if (!searchCalc.endsWith('/')) {
-		searchCalc += '/'
-	}
-
-	const startPos = window.location.pathname.toLowerCase().indexOf(searchCalc)
-
-	if (startPos >= 0) {
-		const after = window.location.pathname.substr(startPos + searchCalc.length)
-		const slashPos = after.toLowerCase().indexOf('/')
-		if (slashPos >= 0) {
-			return after.substring(0, slashPos)
-		} else {
-			return after
-		}
-	}
-	return undefined
-}
-
-export const GetPathThrough = (search: string): any | undefined => {
-	let searchCalc = search.toLowerCase()
-
-	const startPosSlash = window.location.pathname.toLowerCase().lastIndexOf(searchCalc + '/')
-
-	if (startPosSlash >= 0) {
-		return window.location.pathname.substr(0, startPosSlash + searchCalc.length)
-	}
-
-	const startPosNoSlash = window.location.pathname.toLowerCase().lastIndexOf(searchCalc)
-
-	if (startPosNoSlash >= 0) {
-		const possibleComplete = window.location.pathname.substr(0, startPosNoSlash + searchCalc.length)
-
-		if (possibleComplete.length === window.location.pathname.length) {
-			return possibleComplete
-		}
-	}
-
-	return undefined
-}
-
-export const CaptureGPS = (): Promise<Position | null> => {
-	return new Promise(async (resolve) => {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				function (position) {
-					resolve(position)
-				},
-				function () {
-					resolve(null)
-				}
-			)
-		} else {
-			resolve(null)
-		}
-	})
-}
-
 export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string => {
 	const latitude = dataArray[prefix + 'latitude'] ?? ''
 	let longitude = dataArray[prefix + 'longitude'] ?? ''
@@ -659,31 +580,6 @@ export const GenerateUUID = () => {
 		}
 		return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16)
 	})
-}
-
-export const DownloadBase64Data = (fileName: string, base64: string, type: string) => {
-	if (!!window.navigator.msSaveBlob) {
-		// IE
-		const byteCharacters = atob(base64.replace(/^[^,]+,/, '').replace(/\r\n/g, ''))
-
-		let byteNumbers = new Array(byteCharacters.length)
-
-		for (let i = 0; i < byteCharacters.length; i++) {
-			byteNumbers[i] = byteCharacters.charCodeAt(i)
-		}
-
-		const byteArray = new Uint8Array(byteNumbers)
-
-		const blob = new Blob([byteArray], {type: type})
-
-		window.navigator.msSaveOrOpenBlob(blob, fileName)
-	} else {
-		const link = document.createElement('a')
-		link.href = base64
-		link.setAttribute('download', fileName)
-		document.body.appendChild(link)
-		link.click()
-	}
 }
 
 export const DisplayNameFromFL = (first?: string, last?: string, middle?: string, suffix?: string): string => {

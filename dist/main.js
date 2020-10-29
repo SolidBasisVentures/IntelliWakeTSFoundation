@@ -32,44 +32,6 @@ var __assign = function() {
     return __assign.apply(this, arguments);
 };
 
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
 function __spreadArrays() {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -294,70 +256,6 @@ var ToStringArray = function (value) {
     else {
         return value;
     }
-};
-var HasPathComponent = function (search) {
-    var searchCalc = search.toLowerCase();
-    if (!searchCalc.startsWith('/')) {
-        searchCalc = '/' + searchCalc;
-    }
-    if (!searchCalc.endsWith('/')) {
-        searchCalc += '/';
-    }
-    var pathName = window.location.pathname.toLowerCase();
-    if (!pathName.endsWith('/')) {
-        pathName += '/';
-    }
-    return pathName.indexOf(searchCalc) >= 0;
-};
-var GetPathComponentAfter = function (search) {
-    var searchCalc = search.toLowerCase();
-    if (!searchCalc.endsWith('/')) {
-        searchCalc += '/';
-    }
-    var startPos = window.location.pathname.toLowerCase().indexOf(searchCalc);
-    if (startPos >= 0) {
-        var after = window.location.pathname.substr(startPos + searchCalc.length);
-        var slashPos = after.toLowerCase().indexOf('/');
-        if (slashPos >= 0) {
-            return after.substring(0, slashPos);
-        }
-        else {
-            return after;
-        }
-    }
-    return undefined;
-};
-var GetPathThrough = function (search) {
-    var searchCalc = search.toLowerCase();
-    var startPosSlash = window.location.pathname.toLowerCase().lastIndexOf(searchCalc + '/');
-    if (startPosSlash >= 0) {
-        return window.location.pathname.substr(0, startPosSlash + searchCalc.length);
-    }
-    var startPosNoSlash = window.location.pathname.toLowerCase().lastIndexOf(searchCalc);
-    if (startPosNoSlash >= 0) {
-        var possibleComplete = window.location.pathname.substr(0, startPosNoSlash + searchCalc.length);
-        if (possibleComplete.length === window.location.pathname.length) {
-            return possibleComplete;
-        }
-    }
-    return undefined;
-};
-var CaptureGPS = function () {
-    return new Promise(function (resolve) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    resolve(position);
-                }, function () {
-                    resolve(null);
-                });
-            }
-            else {
-                resolve(null);
-            }
-            return [2 /*return*/];
-        });
-    }); });
 };
 var GoogleMapsGPSLink = function (dataArray, prefix) {
     var _a, _b;
@@ -606,26 +504,6 @@ var GenerateUUID = function () {
         }
         return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
     });
-};
-var DownloadBase64Data = function (fileName, base64, type) {
-    if (!!window.navigator.msSaveBlob) {
-        // IE
-        var byteCharacters = atob(base64.replace(/^[^,]+,/, '').replace(/\r\n/g, ''));
-        var byteNumbers = new Array(byteCharacters.length);
-        for (var i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        var byteArray = new Uint8Array(byteNumbers);
-        var blob = new Blob([byteArray], { type: type });
-        window.navigator.msSaveOrOpenBlob(blob, fileName);
-    }
-    else {
-        var link = document.createElement('a');
-        link.href = base64;
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-    }
 };
 var DisplayNameFromFL = function (first, last, middle, suffix) {
     var returnName = '';
@@ -1220,14 +1098,12 @@ var IsStageDevTestFocused = function () {
 exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
-exports.CaptureGPS = CaptureGPS;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
-exports.DownloadBase64Data = DownloadBase64Data;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormatExternalURL = FormatExternalURL;
@@ -1235,13 +1111,10 @@ exports.FormatPhoneNumber = FormatPhoneNumber;
 exports.FormatPhoneNumberDots = FormatPhoneNumberDots;
 exports.FormatZip = FormatZip;
 exports.GenerateUUID = GenerateUUID;
-exports.GetPathComponentAfter = GetPathComponentAfter;
-exports.GetPathThrough = GetPathThrough;
 exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
-exports.HasPathComponent = HasPathComponent;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
 exports.IsStageDevFocused = IsStageDevFocused;
