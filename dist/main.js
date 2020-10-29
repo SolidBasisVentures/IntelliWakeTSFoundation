@@ -820,6 +820,7 @@ var MomentDisplayTime = function (date, convertFromUTC) {
     }
 };
 var IsOn = function (value) {
+    console.log('IsOn');
     if (!value) {
         return false;
     }
