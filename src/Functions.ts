@@ -836,8 +836,6 @@ export const MomentDisplayTime = (
 }
 
 export const IsOn = (value: any): boolean => {
-	console.log('IsOn')
-	
 	if (!value) {
 		return false
 	}
