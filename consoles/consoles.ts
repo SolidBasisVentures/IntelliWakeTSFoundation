@@ -1,6 +1,6 @@
 import moment from 'moment'
-import {MomentDisplayDayDateTime} from '../src/Functions'
 import {runMoment} from './consolesMoment'
+import {MomentDisplayDayDateTime} from '../src/Moment'
 
 require('source-map-support').install()
 

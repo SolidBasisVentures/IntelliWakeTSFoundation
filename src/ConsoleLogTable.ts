@@ -2,11 +2,13 @@ export type TConsoleLogTableColumnDef = {characters: number, justify: 'L' | 'R',
 
 export type TConsoleLogTableDef = {
 	firstRowIsHeader: boolean,
+	surroundingLines: boolean,
 	columns?: TConsoleLogTableColumnDef[]
 }
 
 export const initialConsoleLogTableDef: TConsoleLogTableDef = {
 	firstRowIsHeader: true,
+	surroundingLines: true,
 	columns: []
 }
 
@@ -36,6 +38,22 @@ export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLog
 	
 	let firstRow = true
 	
+	if (useTableDef.surroundingLines) {
+		console.log(' ')
+		console.log(arrayData[0].map((_columnValue, idx) => {
+			let text = ''
+			const columnDef = (useTableDef.columns ?? [])[idx]
+			if (!!columnDef) {
+				if (columnDef.justify === 'L') {
+					text = text.padEnd(columnDef.characters, columnDef.padWith ?? '-')
+				} else {
+					text = text.padStart(columnDef.characters, columnDef.padWith ?? '-')
+				}
+			}
+			return text
+		}).join('---'))
+	}
+	
 	for (const dataItem of arrayData) {
 		console.log(dataItem.map((columnValue, idx) => {
 			let text = (columnValue ?? '(null)').toString()
@@ -48,7 +66,7 @@ export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLog
 				}
 			}
 			return text
-		}).join(' '))
+		}).join('   '))
 		if (useTableDef.firstRowIsHeader && firstRow) {
 			console.log(dataItem.map((_columnValue, idx) => {
 				let text = ''
@@ -61,9 +79,24 @@ export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLog
 					}
 				}
 				return text
-			}).join(' '))
-			
+			}).join('---'))
 		}
 		firstRow = false
+	}
+	
+	if (useTableDef.surroundingLines) {
+		console.log(arrayData[0].map((_columnValue, idx) => {
+			let text = ''
+			const columnDef = (useTableDef.columns ?? [])[idx]
+			if (!!columnDef) {
+				if (columnDef.justify === 'L') {
+					text = text.padEnd(columnDef.characters, columnDef.padWith ?? '-')
+				} else {
+					text = text.padStart(columnDef.characters, columnDef.padWith ?? '-')
+				}
+			}
+			return text
+		}).join('---'))
+		console.log(' ')
 	}
 }

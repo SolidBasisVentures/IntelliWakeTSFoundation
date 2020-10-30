@@ -4,38 +4,44 @@ import {consoleLogTable} from '../src/ConsoleLogTable'
 import {
 	MOMENT_FORMAT_DATE,
 	MOMENT_FORMAT_DATE_TIME,
+	MomentDateString,
+	MomentDateTimeString,
 	MomentDisplayDayDate,
-	MomentDisplayDayDateTime
-} from '../src/Functions'
+	MomentDisplayDayDateTime, MomentDisplayTime, MomentTimeString
+} from '../src/Moment'
 
 export const runMoment = () => {
 	const timeZones = ['UTC', 'America/New_York']
 	
 	const tests = [
 		'2020-10-01',
-		'2020-10-01 01:00:00'
+		'2020-10-01T01:00:00Z'
 	]
 	
 	const fxs: {name: string, function: ((value: string) => any)}[] = [
-		{name: 'Moment', function: (value) => moment(value)},
-		{name: 'MFD', function: (value) => moment(value).format(MOMENT_FORMAT_DATE)},
-		{name: 'MFDT', function: (value) => moment(value).format(MOMENT_FORMAT_DATE_TIME)},
-		{name: 'DD', function: (value) => MomentDisplayDayDate(value)},
-		{name: 'DDNUTC', function: (value) => MomentDisplayDayDate(value, false)},
-		{name: 'DDT', function: (value) => MomentDisplayDayDateTime(value)},
-		{name: 'DDTNUTC', function: (value) => MomentDisplayDayDateTime(value, false)},
-		{name: 'MDD', function: (value) => MomentDisplayDayDate(moment(value))},
-		{name: 'MDDNUTC', function: (value) => MomentDisplayDayDate(moment(value), false)},
-		{name: 'MDDT', function: (value) => MomentDisplayDayDateTime(moment(value))},
-		{name: 'MDDTNUTC', function: (value) => MomentDisplayDayDateTime(moment(value), false)}
+		{name: 'moment', function: (value) => moment(value)},
+		{name: 'MomentDateString', function: (value) => MomentDateString(value)},
+		{name: 'MomentDateString moment', function: (value) => MomentDateString(moment(value))},
+		// {name: 'MomentTimeString', function: (value) => MomentTimeString(value)},
+		// {name: 'MomentDateTimeString', function: (value) => MomentDateTimeString(value)},
+		// {name: 'MomentDisplayDayDate', function: (value) => MomentDisplayDayDate(value)},
+		// {name: 'MomentDisplayTime', function: (value) => MomentDisplayTime(value)},
+		// {name: 'MomentDisplayDayDateTime', function: (value) => MomentDisplayDayDateTime(value)},
+		// {name: 'MomentDateTimeString moment', function: (value) => MomentDateTimeString(moment(value))},
+		// {name: 'MomentDisplayDayDate moment', function: (value) => MomentDisplayDayDate(moment(value))},
+		// {name: 'MomentDisplayTime moment', function: (value) => MomentDisplayTime(moment(value))},
+		// {name: 'MomentDisplayDayDateTime moment', function: (value) => MomentDisplayDayDateTime(moment(value))}
 	]
 	
 	let results: any[][] = [
-		['Test', ...timeZones]
+		['Test Function', ...timeZones]
 	]
 	
+	let firstLine = true
+	
 	for (const test of tests) {
-		results.push([test])
+		if (!firstLine) results.push([' '])
+		results.push([`  ${test}`])
 		for (const fx of fxs) {
 			
 			let result: any[] = [fx.name]
@@ -47,6 +53,8 @@ export const runMoment = () => {
 			
 			results.push(result)
 		}
+		
+		firstLine = false
 	}
 	
 	consoleLogTable(results)
