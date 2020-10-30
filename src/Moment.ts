@@ -1,4 +1,4 @@
-import moment, {Moment, MomentBuiltinFormat} from 'moment'
+import moment, {Moment, MomentBuiltinFormat} from 'moment-timezone'
 
 export const MOMENT_FORMAT_DATE = 'YYYY-MM-DD'
 export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'
@@ -21,6 +21,8 @@ export const MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_
 // 	return MomentDateTimeString(workingMoment, MOMENT_FORMAT_DATE_TIME, true)
 // }
 
+export const MomentCurrentTimeZone = (): string => (moment().tz() ?? 'UTC').toString()
+
 export const MomentWithFormatUTC = (
 	value: string | Moment | Date | null | undefined,
 	format: string | MomentBuiltinFormat | undefined,
@@ -39,9 +41,9 @@ export const MomentDateString = (
 	}
 	
 	if (typeof value !== 'string') {
-		const momentObject = moment(value)
+		const momentObject = moment.utc(value)
 		if (momentObject.isValid()) {
-			return momentObject.local().format(format)
+			return momentObject.tz(MomentCurrentTimeZone()).format(format)
 		}
 		return null
 	}
@@ -50,11 +52,9 @@ export const MomentDateString = (
 	
 	const valueTry = value.replace('T', ' ').substr(0, 10)
 	
-	for (const formatTry of FORMAT_TRIES) {
-		const momentObject = moment(valueTry, formatTry, true)
-		if (momentObject.isValid() && momentObject.year() >= 1900) {
-			return momentObject.format(format)
-		}
+	const momentObject = moment(valueTry, FORMAT_TRIES, true).utc()
+	if (momentObject.isValid() && momentObject.year() >= 1900) {
+		return momentObject.tz(MomentCurrentTimeZone()).format(format)
 	}
 	
 	return null
