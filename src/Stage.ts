@@ -1,4 +1,4 @@
-import {UCWords} from './Functions'
+import {UCWords} from './StringManipulation'
 
 export enum Stages {
 	Local = 'local',

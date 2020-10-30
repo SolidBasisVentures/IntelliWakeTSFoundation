@@ -15,7 +15,8 @@
  * EvaluateCondition("2 = SomeValue", {SomeValue, 2}) = true
  *
  */
-import {ReplaceAll, IsOn} from './Functions'
+import {IsOn} from './Functions'
+import {ReplaceAll} from './StringManipulation'
 
 const EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^']
 const EvaluatorFunctions = ['abs', 'pow', 'int', 'round']
