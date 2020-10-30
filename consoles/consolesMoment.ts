@@ -2,7 +2,7 @@ import moment from 'moment-timezone'
 import {consoleLogTable} from '../src/ConsoleLogTable'
 import {
 	MOMENT_FORMAT_DATE,
-	MOMENT_FORMAT_DATE_TIME, MomentCurrentTimeZone,
+	MOMENT_FORMAT_DATE_TIME,
 	MomentDateString,
 	MomentDateTimeString,
 	MomentDisplayDayDate,
@@ -14,22 +14,23 @@ export const runMoment = () => {
 	
 	const tests = [
 		'2020-10-01',
-		// '2020-10-01T01:00:00Z',
+		'2020-10-01T01:00:00Z',
 		'2020-10-01 01:00:00',
-		moment()
+		// moment()
 	]
 	
 	const fxs: {name: string, function: ((value: any) => any)}[] = [
 		{name: 'moment', function: (value) => moment(value)},
 		// {name: 'moment.format', function: (value) => moment.tz.guess(true)},
-		{name: 'moment.MFDT', function: (value) => moment.utc(value).tz(MomentCurrentTimeZone()).format(`${MOMENT_FORMAT_DATE_TIME}`)},
-		{name: 'MomentDateString', function: (value) => MomentDateString(value)},
+		// {name: 'MomentDateString', function: (value) => MomentDateString(value)},
 		// {name: 'MomentDateString moment', function: (value) => MomentDateString(moment(value))},
 		// {name: 'MomentTimeString', function: (value) => MomentTimeString(value)},
-		// {name: 'MomentDateTimeString', function: (value) => MomentDateTimeString(value)},
+		{name: 'MomentDateTimeString true', function: (value) => MomentDateTimeString(value, undefined, true)},
+		{name: 'MomentDateTimeString false', function: (value) => MomentDateTimeString(value, undefined, false)},
 		// {name: 'MomentDisplayDayDate', function: (value) => MomentDisplayDayDate(value)},
 		// {name: 'MomentDisplayTime', function: (value) => MomentDisplayTime(value)},
-		// {name: 'MomentDisplayDayDateTime', function: (value) => MomentDisplayDayDateTime(value)},
+		{name: 'MomentDisplayDayDateTime false', function: (value) => MomentDisplayDayDateTime(value, false)},
+		{name: 'MomentDisplayDayDateTime true', function: (value) => MomentDisplayDayDateTime(value, true)},
 		// {name: 'MomentDateTimeString moment', function: (value) => MomentDateTimeString(moment(value))},
 		// {name: 'MomentDisplayDayDate moment', function: (value) => MomentDisplayDayDate(moment(value))},
 		// {name: 'MomentDisplayTime moment', function: (value) => MomentDisplayTime(moment(value))},
