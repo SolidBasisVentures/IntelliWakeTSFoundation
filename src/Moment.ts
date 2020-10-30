@@ -44,23 +44,19 @@ export const MomentFromString = (
 	return null
 }
 
+export const MomentFormatString = (value: string | Moment | Date | null | undefined, format: string): string | null => MomentFromString(value)?.format(format) ?? null
+
 export const MomentTimeString = (
 	value: string | Moment | Date | null | undefined
-): string | null => {
-	return MomentFromString(value)?.format(MOMENT_FORMAT_TIME_SECONDS) ?? null
-}
+): string | null => MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS)
 
 export const MomentDateString = (
 	value: string | Moment | Date | null | undefined
-): string | null => {
-	return MomentFromString(value)?.format(MOMENT_FORMAT_DATE) ?? null
-}
+): string | null => MomentFormatString(value, MOMENT_FORMAT_DATE)
 
 export const MomentDateTimeString = (
 	value: string | Moment | Date | null | undefined
-): string | null => {
-	return MomentFromString(value)?.format(MOMENT_FORMAT_DATE_TIME) ?? null
-}
+): string | null => MomentFormatString(value, MOMENT_FORMAT_DATE_TIME)
 
 export const MomentDisplayDayDateTime = (
 	value: string | Moment | Date | null | undefined
@@ -88,6 +84,5 @@ export const MomentDisplayDayDate = (
 
 export const MomentDisplayTime = (
 	value: string | Moment | Date | null | undefined
-): string | null => {
-	return MomentFromString(value)?.format('h:mm a') ?? null
-}
+): string | null => MomentFormatString(value, 'h:mm a')
+

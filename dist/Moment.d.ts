@@ -1,0 +1,14 @@
+import { Moment } from 'moment-timezone';
+export declare const MOMENT_FORMAT_DATE = "YYYY-MM-DD";
+export declare const MOMENT_FORMAT_TIME_SECONDS = "HH:mm:ss";
+export declare const MOMENT_FORMAT_TIME_NO_SECONDS = "HH:mm";
+export declare const MOMENT_FORMAT_DATE_TIME: string;
+export declare const MomentCurrentTimeZone: () => string;
+export declare const MomentFromString: (value: string | Moment | Date | null | undefined) => Moment | null;
+export declare const MomentFormatString: (value: string | Moment | Date | null | undefined, format: string) => string | null;
+export declare const MomentTimeString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDateString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDateTimeString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayTime: (value: string | Moment | Date | null | undefined) => string | null;

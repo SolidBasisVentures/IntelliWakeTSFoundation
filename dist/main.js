@@ -2,9 +2,11 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+var moment = require('moment-timezone');
 
-var moment = _interopDefault(require('moment'));
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -40,83 +42,111 @@ function __spreadArrays() {
     return r;
 }
 
-var initialChanges = {};
-var initialIDChanges = {};
+var initialConsoleLogTableDef = {
+    firstRowIsHeader: true,
+    surroundingLines: true,
+    columns: []
+};
+var consoleLogTable = function (arrayData, tableDef) {
+    if (tableDef === void 0) { tableDef = initialConsoleLogTableDef; }
+    var nullIndicator = '(null)';
+    if (arrayData.length === 0)
+        return;
+    var useTableDef = __assign({}, tableDef);
+    if (!useTableDef.columns || useTableDef.columns.length === 0) {
+        useTableDef.columns = [];
+        var dataAnalyze = arrayData[0];
+        var _loop_1 = function (col) {
+            useTableDef.columns.push({
+                characters: arrayData.reduce(function (prev, cur) {
+                    var _a;
+                    var len = ((_a = cur[col]) !== null && _a !== void 0 ? _a : nullIndicator).toString().length;
+                    return len > prev ? len : prev;
+                }, 1),
+                justify: !!arrayData.find(function (dataItem, idx) { var _a; return idx === 0 ? false : isNaN(parseFloat(((_a = dataItem[col]) !== null && _a !== void 0 ? _a : "0").toString())); }) ? 'L' : 'R'
+            });
+        };
+        for (var col = 0; col < dataAnalyze.length; col++) {
+            _loop_1(col);
+        }
+    }
+    var firstRow = true;
+    if (useTableDef.surroundingLines) {
+        console.log(' ');
+        console.log(arrayData[0].map(function (_columnValue, idx) {
+            var _a, _b, _c;
+            var text = '';
+            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
+            if (!!columnDef) {
+                if (columnDef.justify === 'L') {
+                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
+                }
+                else {
+                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
+                }
+            }
+            return text;
+        }).join('---'));
+    }
+    for (var _i = 0, arrayData_1 = arrayData; _i < arrayData_1.length; _i++) {
+        var dataItem = arrayData_1[_i];
+        console.log(dataItem.map(function (columnValue, idx) {
+            var _a, _b, _c;
+            var text = (columnValue !== null && columnValue !== void 0 ? columnValue : '(null)').toString();
+            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
+            if (!!columnDef) {
+                if (columnDef.justify === 'L') {
+                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : ' ');
+                }
+                else {
+                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : ' ');
+                }
+            }
+            return text;
+        }).join('   '));
+        if (useTableDef.firstRowIsHeader && firstRow) {
+            console.log(dataItem.map(function (_columnValue, idx) {
+                var _a, _b, _c;
+                var text = '';
+                var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
+                if (!!columnDef) {
+                    if (columnDef.justify === 'L') {
+                        text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
+                    }
+                    else {
+                        text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
+                    }
+                }
+                return text;
+            }).join('---'));
+        }
+        firstRow = false;
+    }
+    if (useTableDef.surroundingLines) {
+        console.log(arrayData[0].map(function (_columnValue, idx) {
+            var _a, _b, _c;
+            var text = '';
+            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
+            if (!!columnDef) {
+                if (columnDef.justify === 'L') {
+                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
+                }
+                else {
+                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
+                }
+            }
+            return text;
+        }).join('---'));
+        console.log(' ');
+    }
+};
+
 var ToSnakeCase = function (str) {
     if (str === 'ID')
         return 'id';
     var calcStr = str.replace('ID', '_id');
     return (calcStr[0].toLowerCase() +
         calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
-};
-function PagesForRange(current, length, spread) {
-    if (spread === void 0) { spread = 2; }
-    if (!(length > 0)) {
-        return [];
-    }
-    var current_adjusted = current < 1 ? 1 : current > length ? length : current;
-    var spread_adjusted = current < spread || current > length - spread ? spread : Math.ceil(spread / 2);
-    var left = current_adjusted - spread_adjusted, right = current_adjusted + spread_adjusted, range = [], rangeWithNull = [], l;
-    for (var i = 1; i <= length; i++) {
-        if (i === 1 || i === length || (i >= left && i <= right)) {
-            range.push(i);
-        }
-    }
-    for (var _i = 0, range_1 = range; _i < range_1.length; _i++) {
-        var i = range_1[_i];
-        if (l) {
-            if (i - l === 2) {
-                rangeWithNull.push(l + 1);
-            }
-            else if (i - l !== 1) {
-                rangeWithNull.push(null);
-            }
-        }
-        rangeWithNull.push(i);
-        l = i;
-    }
-    return rangeWithNull;
-}
-var DataToCSVExport = function (filename, csvData) {
-    var csvString = csvData
-        .map(function (row) {
-        return row
-            .map(function (item) {
-            return typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
-        })
-            .join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-var DataToCSVExportNoQuotes = function (filename, csvData) {
-    var csvString = csvData
-        .map(function (row) {
-        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-var JSONParse = function (json) {
-    if (!json) {
-        return null;
-    }
-    var returnObj = null;
-    try {
-        returnObj = JSON.parse(json);
-    }
-    catch (err) {
-        console.log('JSONParse', err);
-    }
-    return returnObj;
 };
 var ReplaceAll = function (find, replace, subject) {
     // eslint-disable-next-line no-useless-escape
@@ -125,7 +155,7 @@ var ReplaceAll = function (find, replace, subject) {
 var ReplaceLinks = function (subject) {
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
-    var target = "<a href='$1' target='_blank'>$1</a>";
+    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
     // noinspection RegExpRedundantEscape
     return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
 };
@@ -147,9 +177,6 @@ var RightPad = function (subject, length, padString) {
     while (str.length < length)
         str = str + padString;
     return str;
-};
-var Trunc = function (subject, length) {
-    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
 };
 var CleanNumber = function (value) {
     if (!value)
@@ -257,30 +284,6 @@ var ToStringArray = function (value) {
         return value;
     }
 };
-var GoogleMapsGPSLink = function (dataArray, prefix) {
-    var _a, _b;
-    if (prefix === void 0) { prefix = ''; }
-    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
-    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
-    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
-};
-var GoogleMapsAddressLink = function (dataArray, prefix) {
-    var _a, _b, _c, _d;
-    if (prefix === void 0) { prefix = ''; }
-    var address = ((_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : '') + ' ';
-    if (dataArray[prefix + 'address2']) {
-        address += dataArray[prefix + 'address2'] + ' ';
-    }
-    address += ((_b = dataArray[prefix + 'city']) !== null && _b !== void 0 ? _b : '') + ', ';
-    address += ((_c = dataArray[prefix + 'state']) !== null && _c !== void 0 ? _c : '') + ' ';
-    address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
-    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
-};
-var IsValidInputDecimal = function (value) {
-    // noinspection RegExpUnexpectedAnchor
-    var regEx = new RegExp('/^\\d{1,}(\\.\\d{0,4})?$/');
-    return !value || regEx.test(value);
-};
 var FormatPhoneNumber = function (phone, forceNumeric) {
     if (forceNumeric === void 0) { forceNumeric = false; }
     //Filter only numbers from the input
@@ -328,111 +331,110 @@ var FormatExternalURL = function (url) {
     }
     return '';
 };
-var initialSortColumn = {
-    primarySort: '',
-    primaryAscending: true,
-    primaryEmptyToBottom: null,
-    secondarySort: null,
-    secondaryAscending: true,
-    secondaryEmptyToBottom: null
-};
-var SortColumnUpdate = function (columnToSort, sortColumn, firstClickAscending, emptyToBottom) {
-    if (firstClickAscending === void 0) { firstClickAscending = true; }
-    if (emptyToBottom === void 0) { emptyToBottom = null; }
-    if (sortColumn.primarySort === columnToSort) {
-        return __assign(__assign({}, sortColumn), { primaryAscending: !sortColumn.primaryAscending, primaryEmptyToBottom: emptyToBottom });
+var DisplayNameFromFL = function (first, last, middle, suffix) {
+    var returnName = '';
+    if (!!last) {
+        returnName += last;
+        if (!!first) {
+            returnName += ', ' + first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else if (!!middle) {
+            returnName += ', ' + middle;
+        }
     }
     else {
-        return {
-            primarySort: columnToSort,
-            primaryAscending: firstClickAscending,
-            primaryEmptyToBottom: emptyToBottom,
-            secondarySort: sortColumn.primarySort,
-            secondaryAscending: sortColumn.primaryAscending,
-            secondaryEmptyToBottom: sortColumn.primaryEmptyToBottom
-        };
+        if (!!first) {
+            returnName += first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else {
+            if (!!middle) {
+                returnName += middle;
+            }
+        }
     }
-};
-var SortColumns = function (arrayTable, sortColumn) {
-    return arrayTable.sort(function (a, b) {
-        var _a, _b, _c, _d, _e;
-        return !sortColumn.primarySort
-            ? 0
-            : (_c = SortColumnResult((_a = a[sortColumn.primarySort]) !== null && _a !== void 0 ? _a : null, (_b = b[sortColumn.primarySort]) !== null && _b !== void 0 ? _b : null, sortColumn.primaryAscending, sortColumn.primaryEmptyToBottom)) !== null && _c !== void 0 ? _c : (!sortColumn.secondarySort
-                ? 0
-                : SortColumnResult((_d = a[sortColumn.secondarySort]) !== null && _d !== void 0 ? _d : null, (_e = b[sortColumn.secondarySort]) !== null && _e !== void 0 ? _e : null, sortColumn.secondaryAscending, sortColumn.secondaryEmptyToBottom));
-    });
-};
-var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) {
-    if (!!emptyToBottom) {
-        if (!valueA && !!valueB)
-            return 1;
-        if (!!valueA && !valueB)
-            return -1;
+    if (!!suffix) {
+        if (!!returnName) {
+            returnName += ', ';
+        }
+        returnName += suffix;
     }
-    var numbA = CleanNumber(valueA);
-    var numbB = CleanNumber(valueB);
-    if (isNaN(numbA !== null && numbA !== void 0 ? numbA : 0) || isNaN(numbB !== null && numbB !== void 0 ? numbB : 0)) {
-        return (valueA !== null && valueA !== void 0 ? valueA : '').localeCompare(valueB !== null && valueB !== void 0 ? valueB : '', undefined, { sensitivity: 'base' }) * (isAscending ? 1 : -1);
-    }
-    return (numbA - numbB) * (isAscending ? 1 : -1);
+    return returnName;
 };
-var SearchTerms = function (search, toLowerCase) {
-    if (toLowerCase === void 0) { toLowerCase = true; }
-    return (search !== null && search !== void 0 ? search : '')
-        .trim()
-        .split(/(\s+)/)
-        .map(function (term) { return (toLowerCase ? term.trim().toLowerCase() : term.trim()); })
-        .filter(function (term) { return !!term; });
-};
-var StringContainsSearchTerms = function (value, searchTerms) {
-    if (searchTerms.length === 0)
-        return true;
-    if (!value)
-        return false;
-    return searchTerms.every(function (term) { return value.includes(term); });
-};
-var StringContainsSearch = function (value, search) {
-    if (!search)
-        return true;
-    if (!value)
-        return false;
-    var searchTerms = SearchTerms(search);
-    return StringContainsSearchTerms(value, searchTerms);
-};
-var ObjectContainsSearchTerms = function (object, searchTerms) {
-    if (searchTerms.length === 0)
-        return true;
+var DisplayNameFromObject = function (object, prefix) {
     if (!object)
-        return false;
-    return searchTerms.every(function (term) {
-        return Object.keys(object).some(function (column) { var _a; return ((_a = object[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term); });
-    });
+        return '';
+    var actualPrefix = !!prefix ? "_" + prefix : '';
+    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
 };
-var ObjectContainsSearch = function (object, search) {
-    if (!search)
-        return true;
-    if (!object)
-        return false;
-    var searchTerms = SearchTerms(search);
-    return ObjectContainsSearchTerms(object, searchTerms);
-};
-var SearchRows = function (arrayTable, search) {
-    var searchTerms = SearchTerms(search);
-    if (searchTerms.length === 0) {
-        return arrayTable;
+var UCWords = function (str) {
+    if (!str) {
+        return str;
     }
-    return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms); });
-};
-var SearchRow = function (searchItem, search) {
-    var searchTerms = SearchTerms(search);
-    if (searchTerms.length === 0) {
-        return true;
+    var strVal = '';
+    var strItems = str.toLowerCase().split(' ');
+    for (var chr = 0; chr < strItems.length; chr++) {
+        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
     }
-    return ObjectContainsSearchTerms(searchItem, searchTerms);
+    return strVal.trim();
 };
-var SearchSort = function (arrayTable, search, sortColumn) {
-    return SortColumns(SearchRows(arrayTable, search), sortColumn);
+var RandomString = function (length, validChars) {
+    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
+    var validCharLength = validChars.length - 1;
+    var result = '';
+    for (var i = 0; i < length; i++) {
+        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
+    }
+    return result;
+};
+
+var initialChanges = {};
+var initialIDChanges = {};
+var DataToCSVExport = function (filename, csvData) {
+    var csvString = csvData
+        .map(function (row) {
+        return row
+            .map(function (item) {
+            return typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
+        })
+            .join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+var DataToCSVExportNoQuotes = function (filename, csvData) {
+    var csvString = csvData
+        .map(function (row) {
+        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+var JSONParse = function (json) {
+    if (!json) {
+        return null;
+    }
+    var returnObj = null;
+    try {
+        returnObj = JSON.parse(json);
+    }
+    catch (err) {
+        console.log('JSONParse', err);
+    }
+    return returnObj;
 };
 var RemoveDupProperties = function (original, propsToRemove) {
     var result = __assign({}, original);
@@ -487,6 +489,58 @@ var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
     }
     return result;
 };
+var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key)) {
+            if (compare[key] !== comparedTo[key]) {
+                results[key] = compare[key];
+            }
+        }
+    }
+    return results;
+};
+var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
+            results[key] = main[key];
+        }
+    }
+    return results;
+};
+
+var Trunc = function (subject, length) {
+    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
+};
+var GoogleMapsGPSLink = function (dataArray, prefix) {
+    var _a, _b;
+    if (prefix === void 0) { prefix = ''; }
+    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
+    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
+    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
+};
+var GoogleMapsAddressLink = function (dataArray, prefix) {
+    var _a, _b, _c, _d;
+    if (prefix === void 0) { prefix = ''; }
+    var address = ((_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : '') + ' ';
+    if (dataArray[prefix + 'address2']) {
+        address += dataArray[prefix + 'address2'] + ' ';
+    }
+    address += ((_b = dataArray[prefix + 'city']) !== null && _b !== void 0 ? _b : '') + ', ';
+    address += ((_c = dataArray[prefix + 'state']) !== null && _c !== void 0 ? _c : '') + ' ';
+    address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
+};
+var IsValidInputDecimal = function (value) {
+    // noinspection RegExpUnexpectedAnchor
+    var regEx = new RegExp('/^\\d{1,}(\\.\\d{0,4})?$/');
+    return !value || regEx.test(value);
+};
 var GenerateUUID = function () {
     var d = new Date().getTime(); //Timestamp
     var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
@@ -505,194 +559,6 @@ var GenerateUUID = function () {
         return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
     });
 };
-var DisplayNameFromFL = function (first, last, middle, suffix) {
-    var returnName = '';
-    if (!!last) {
-        returnName += last;
-        if (!!first) {
-            returnName += ', ' + first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else if (!!middle) {
-            returnName += ', ' + middle;
-        }
-    }
-    else {
-        if (!!first) {
-            returnName += first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else {
-            if (!!middle) {
-                returnName += middle;
-            }
-        }
-    }
-    if (!!suffix) {
-        if (!!returnName) {
-            returnName += ', ';
-        }
-        returnName += suffix;
-    }
-    return returnName;
-};
-var DisplayNameFromObject = function (object, prefix) {
-    if (!object)
-        return '';
-    var actualPrefix = !!prefix ? "_" + prefix : '';
-    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
-};
-var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
-var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
-var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
-var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var MomentFromUTCString = function (date) {
-    if (!date) {
-        return null;
-    }
-    var momentString = MomentDateTimeString(date, undefined, true);
-    if (!momentString) {
-        return null;
-    }
-    var workingMoment = moment.utc(momentString).toISOString();
-    return MomentDateTimeString(workingMoment, MOMENT_FORMAT_DATE_TIME, true);
-};
-var MomentWithFormatUTC = function (value, format, strict, convertFromUTC) {
-    return convertFromUTC ? moment(value, format, strict) : moment.utc(value, format, strict);
-};
-var MomentTimeString = function (value, format, convertFromUTC) {
-    if (format === void 0) { format = MOMENT_FORMAT_TIME_SECONDS; }
-    if (convertFromUTC === void 0) { convertFromUTC = false; }
-    if (!value) {
-        return null;
-    }
-    if (typeof value !== 'string') {
-        var momentObject = MomentWithFormatUTC(value, undefined, false, convertFromUTC);
-        if (momentObject.isValid()) {
-            return momentObject.format(format);
-        }
-        return null;
-    }
-    var FORMAT_TRIES = [
-        'HH:mm:ss',
-        'HH:mm',
-        'YYYY-MM-DD HH:mm:ss',
-        'YYYY-MM-DD HH:mm',
-        'D-M-YYYY HH:mm:ss',
-        'D-M-YYYY HH:mm',
-        'DD-MM-YYYY HH:mm:ss',
-        'DD-MM-YYYY HH:mm',
-        moment.ISO_8601
-    ];
-    var valueTry = value.replace('T', ' ').substr(0, 19);
-    for (var _i = 0, FORMAT_TRIES_1 = FORMAT_TRIES; _i < FORMAT_TRIES_1.length; _i++) {
-        var formatTry = FORMAT_TRIES_1[_i];
-        var momentObject = MomentWithFormatUTC(valueTry, formatTry, true, convertFromUTC);
-        if (momentObject.isValid()) {
-            return momentObject.format(format);
-        }
-    }
-    return null;
-};
-var MomentDateString = function (value, format, convertFromUTC) {
-    if (format === void 0) { format = MOMENT_FORMAT_DATE; }
-    if (convertFromUTC === void 0) { convertFromUTC = false; }
-    if (!value) {
-        return null;
-    }
-    if (typeof value !== 'string') {
-        var momentObject = MomentWithFormatUTC(value, undefined, false, convertFromUTC);
-        if (momentObject.isValid()) {
-            return momentObject.format(format);
-        }
-        return null;
-    }
-    var FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment.ISO_8601];
-    var valueTry = value.replace('T', ' ').substr(0, 10);
-    for (var _i = 0, FORMAT_TRIES_2 = FORMAT_TRIES; _i < FORMAT_TRIES_2.length; _i++) {
-        var formatTry = FORMAT_TRIES_2[_i];
-        var momentObject = MomentWithFormatUTC(valueTry, formatTry, true, convertFromUTC);
-        if (momentObject.isValid() && momentObject.year() >= 1900) {
-            return momentObject.format(format);
-        }
-    }
-    return null;
-};
-var MomentDateTimeString = function (value, format, convertFromUTC) {
-    if (format === void 0) { format = MOMENT_FORMAT_DATE_TIME; }
-    if (convertFromUTC === void 0) { convertFromUTC = false; }
-    var momentDate = MomentDateString(value, undefined, convertFromUTC);
-    if (!!momentDate) {
-        var momentTime = MomentTimeString(value, undefined, convertFromUTC);
-        if (!!momentTime) {
-            return moment(momentDate + ' ' + momentTime).format(format);
-        }
-    }
-    return null;
-};
-var MomentDisplayDayDateTime = function (date, convertFromUTC) {
-    if (convertFromUTC === void 0) { convertFromUTC = true; }
-    if (!date) {
-        return null;
-    }
-    var momentString = MomentDateTimeString(date, MOMENT_FORMAT_DATE_TIME, false);
-    if (!momentString) {
-        return null;
-    }
-    // const workingMoment = convertFromUTC ? moment.utc(date) : moment(date)
-    var workingMoment = moment.utc(date);
-    var format = workingMoment.year() === moment().year() ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a';
-    if (convertFromUTC) {
-        return workingMoment.local().format(format);
-    }
-    else {
-        return workingMoment.format(format);
-    }
-};
-var MomentDisplayDayDate = function (date, convertFromUTC) {
-    if (convertFromUTC === void 0) { convertFromUTC = true; }
-    if (!date) {
-        return null;
-    }
-    var momentString = MomentDateString(date, MOMENT_FORMAT_DATE_TIME, false);
-    if (!momentString) {
-        return null;
-    }
-    // const workingMoment = convertFromUTC ? moment.utc(date) : moment(date)
-    var workingMoment = moment.utc(date);
-    var format = workingMoment.year() === moment().year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY';
-    if (convertFromUTC) {
-        return workingMoment.local().format(format);
-    }
-    else {
-        return workingMoment.format(format);
-    }
-};
-var MomentDisplayTime = function (date, convertFromUTC) {
-    if (convertFromUTC === void 0) { convertFromUTC = true; }
-    if (!date) {
-        return null;
-    }
-    var momentString = MomentTimeString(date, MOMENT_FORMAT_TIME_SECONDS, false);
-    if (!momentString) {
-        return null;
-    }
-    // const workingMoment = convertFromUTC
-    // 	? moment(moment().format(MOMENT_FORMAT_DATE) + ' ' + momentString)
-    // 	: moment.utc(moment().format(MOMENT_FORMAT_DATE) + ' ' + momentString)
-    var workingMoment = moment.utc(moment().format(MOMENT_FORMAT_DATE) + ' ' + momentString);
-    var format = 'h:mm a';
-    if (convertFromUTC) {
-        return workingMoment.local().format(format);
-    }
-    else {
-        return workingMoment.format(format);
-    }
-};
 var IsOn = function (value) {
     if (!value) {
         return false;
@@ -705,26 +571,6 @@ var IsOn = function (value) {
         return floatValue > 0;
     }
     return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
-};
-var UCWords = function (str) {
-    if (!str) {
-        return str;
-    }
-    var strVal = '';
-    var strItems = str.toLowerCase().split(' ');
-    for (var chr = 0; chr < strItems.length; chr++) {
-        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
-    }
-    return strVal.trim();
-};
-var RandomString = function (length, validChars) {
-    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
-    var validCharLength = validChars.length - 1;
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
-    }
-    return result;
 };
 var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
     if (includeName === void 0) { includeName = true; }
@@ -766,30 +612,6 @@ var AddressSingleRow = function (object, prefix) {
     if (!!((_d = object[usePrefix + 'zip']) !== null && _d !== void 0 ? _d : ''))
         singleRow += ', ' + object[usePrefix + 'zip'];
     return singleRow;
-};
-var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key)) {
-            if (compare[key] !== comparedTo[key]) {
-                results[key] = compare[key];
-            }
-        }
-    }
-    return results;
-};
-var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
-            results[key] = main[key];
-        }
-    }
-    return results;
 };
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
@@ -1044,6 +866,62 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
+var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
+var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
+var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
+var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
+var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment__default['default'].ISO_8601];
+var TIME_FORMAT_TRIES = [
+    moment__default['default'].ISO_8601,
+    'YYYY-MM-DD HH:mm:ss',
+    'YYYY-MM-DD HH:mm',
+    'HH:mm:ss',
+    'HH:mm',
+    'D-M-YYYY HH:mm:ss',
+    'D-M-YYYY HH:mm',
+    'DD-MM-YYYY HH:mm:ss',
+    'DD-MM-YYYY HH:mm'
+];
+var StringHasTimeZoneData = function (value) { return value.includes('T'); };
+var MomentCurrentTimeZone = function () { var _a; return ((_a = moment__default['default']().tz()) !== null && _a !== void 0 ? _a : 'UTC').toString(); };
+var MomentFromString = function (value) {
+    if (!value) {
+        return null;
+    }
+    if (typeof value !== 'string') {
+        var momentObject = moment__default['default'](value);
+        if (momentObject.isValid()) {
+            return momentObject.utc().tz(MomentCurrentTimeZone());
+        }
+    }
+    else {
+        var momentObject = StringHasTimeZoneData(value) ? moment__default['default'](value, __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES), true) : moment__default['default'].utc(value, __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES), true);
+        if (momentObject.isValid()) {
+            return momentObject;
+        }
+    }
+    return null;
+};
+var MomentFormatString = function (value, format) { var _a, _b; return (_b = (_a = MomentFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null; };
+var MomentTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS); };
+var MomentDateString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE); };
+var MomentDateTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME); };
+var MomentDisplayDayDateTime = function (value) {
+    var momentObject = MomentFromString(value);
+    if (!momentObject) {
+        return null;
+    }
+    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a');
+};
+var MomentDisplayDayDate = function (value) {
+    var momentObject = MomentFromString(value);
+    if (!momentObject) {
+        return null;
+    }
+    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY');
+};
+var MomentDisplayTime = function (value) { return MomentFormatString(value, 'h:mm a'); };
+
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -1094,6 +972,141 @@ var IsStageDevTestFocused = function () {
     return IsStageDevFocused() || IsStageTestFocused();
 };
 
+function PagesForRange(current, length, spread) {
+    if (spread === void 0) { spread = 2; }
+    if (!(length > 0)) {
+        return [];
+    }
+    var current_adjusted = current < 1 ? 1 : current > length ? length : current;
+    var spread_adjusted = current < spread || current > length - spread ? spread : Math.ceil(spread / 2);
+    var left = current_adjusted - spread_adjusted, right = current_adjusted + spread_adjusted, range = [], rangeWithNull = [], l;
+    for (var i = 1; i <= length; i++) {
+        if (i === 1 || i === length || (i >= left && i <= right)) {
+            range.push(i);
+        }
+    }
+    for (var _i = 0, range_1 = range; _i < range_1.length; _i++) {
+        var i = range_1[_i];
+        if (l) {
+            if (i - l === 2) {
+                rangeWithNull.push(l + 1);
+            }
+            else if (i - l !== 1) {
+                rangeWithNull.push(null);
+            }
+        }
+        rangeWithNull.push(i);
+        l = i;
+    }
+    return rangeWithNull;
+}
+var initialSortColumn = {
+    primarySort: '',
+    primaryAscending: true,
+    primaryEmptyToBottom: null,
+    secondarySort: null,
+    secondaryAscending: true,
+    secondaryEmptyToBottom: null
+};
+var SortColumnUpdate = function (columnToSort, sortColumn, firstClickAscending, emptyToBottom) {
+    if (firstClickAscending === void 0) { firstClickAscending = true; }
+    if (emptyToBottom === void 0) { emptyToBottom = null; }
+    if (sortColumn.primarySort === columnToSort) {
+        return __assign(__assign({}, sortColumn), { primaryAscending: !sortColumn.primaryAscending, primaryEmptyToBottom: emptyToBottom });
+    }
+    else {
+        return {
+            primarySort: columnToSort,
+            primaryAscending: firstClickAscending,
+            primaryEmptyToBottom: emptyToBottom,
+            secondarySort: sortColumn.primarySort,
+            secondaryAscending: sortColumn.primaryAscending,
+            secondaryEmptyToBottom: sortColumn.primaryEmptyToBottom
+        };
+    }
+};
+var SortColumns = function (arrayTable, sortColumn) {
+    return arrayTable.sort(function (a, b) {
+        var _a, _b, _c, _d, _e;
+        return !sortColumn.primarySort
+            ? 0
+            : (_c = SortColumnResult((_a = a[sortColumn.primarySort]) !== null && _a !== void 0 ? _a : null, (_b = b[sortColumn.primarySort]) !== null && _b !== void 0 ? _b : null, sortColumn.primaryAscending, sortColumn.primaryEmptyToBottom)) !== null && _c !== void 0 ? _c : (!sortColumn.secondarySort
+                ? 0
+                : SortColumnResult((_d = a[sortColumn.secondarySort]) !== null && _d !== void 0 ? _d : null, (_e = b[sortColumn.secondarySort]) !== null && _e !== void 0 ? _e : null, sortColumn.secondaryAscending, sortColumn.secondaryEmptyToBottom));
+    });
+};
+var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) {
+    if (!!emptyToBottom) {
+        if (!valueA && !!valueB)
+            return 1;
+        if (!!valueA && !valueB)
+            return -1;
+    }
+    var numbA = CleanNumber(valueA);
+    var numbB = CleanNumber(valueB);
+    if (isNaN(numbA !== null && numbA !== void 0 ? numbA : 0) || isNaN(numbB !== null && numbB !== void 0 ? numbB : 0)) {
+        return (valueA !== null && valueA !== void 0 ? valueA : '').localeCompare(valueB !== null && valueB !== void 0 ? valueB : '', undefined, { sensitivity: 'base' }) * (isAscending ? 1 : -1);
+    }
+    return (numbA - numbB) * (isAscending ? 1 : -1);
+};
+var SearchTerms = function (search, toLowerCase) {
+    if (toLowerCase === void 0) { toLowerCase = true; }
+    return (search !== null && search !== void 0 ? search : '')
+        .trim()
+        .split(/(\s+)/)
+        .map(function (term) { return (toLowerCase ? term.trim().toLowerCase() : term.trim()); })
+        .filter(function (term) { return !!term; });
+};
+var StringContainsSearchTerms = function (value, searchTerms) {
+    if (searchTerms.length === 0)
+        return true;
+    if (!value)
+        return false;
+    return searchTerms.every(function (term) { return value.includes(term); });
+};
+var StringContainsSearch = function (value, search) {
+    if (!search)
+        return true;
+    if (!value)
+        return false;
+    var searchTerms = SearchTerms(search);
+    return StringContainsSearchTerms(value, searchTerms);
+};
+var ObjectContainsSearchTerms = function (object, searchTerms) {
+    if (searchTerms.length === 0)
+        return true;
+    if (!object)
+        return false;
+    return searchTerms.every(function (term) {
+        return Object.keys(object).some(function (column) { var _a; return ((_a = object[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term); });
+    });
+};
+var ObjectContainsSearch = function (object, search) {
+    if (!search)
+        return true;
+    if (!object)
+        return false;
+    var searchTerms = SearchTerms(search);
+    return ObjectContainsSearchTerms(object, searchTerms);
+};
+var SearchRows = function (arrayTable, search) {
+    var searchTerms = SearchTerms(search);
+    if (searchTerms.length === 0) {
+        return arrayTable;
+    }
+    return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms); });
+};
+var SearchRow = function (searchItem, search) {
+    var searchTerms = SearchTerms(search);
+    if (searchTerms.length === 0) {
+        return true;
+    }
+    return ObjectContainsSearchTerms(searchItem, searchTerms);
+};
+var SearchSort = function (arrayTable, search, sortColumn) {
+    return SortColumns(SearchRows(arrayTable, search), sortColumn);
+};
+
 exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
@@ -1126,14 +1139,15 @@ exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
 exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
+exports.MomentCurrentTimeZone = MomentCurrentTimeZone;
 exports.MomentDateString = MomentDateString;
 exports.MomentDateTimeString = MomentDateTimeString;
 exports.MomentDisplayDayDate = MomentDisplayDayDate;
 exports.MomentDisplayDayDateTime = MomentDisplayDayDateTime;
 exports.MomentDisplayTime = MomentDisplayTime;
-exports.MomentFromUTCString = MomentFromUTCString;
+exports.MomentFormatString = MomentFormatString;
+exports.MomentFromString = MomentFromString;
 exports.MomentTimeString = MomentTimeString;
-exports.MomentWithFormatUTC = MomentWithFormatUTC;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
@@ -1168,6 +1182,8 @@ exports.ToSnakeCase = ToSnakeCase;
 exports.ToStringArray = ToStringArray;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
+exports.consoleLogTable = consoleLogTable;
 exports.initialChanges = initialChanges;
+exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
