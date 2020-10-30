@@ -1,4 +1,3 @@
-import 'moment-timezone/index'
 import {consoleLogTable} from '../src/ConsoleLogTable'
 
 export const runMoment = () => {
