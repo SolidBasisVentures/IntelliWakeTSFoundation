@@ -63,6 +63,14 @@ export const IsOn = (value: any): boolean => {
 
 export type TFindIsActive = boolean | null
 
+export interface IAddress {
+	address_1: string
+	address_2: string
+	city: string
+	state: string
+	zip: string
+}
+
 export const AddressCopy = (
 	fromObject: any,
 	fromPrefix: string,
