@@ -1,20 +1,4 @@
-import moment from 'moment'
-import {runMoment} from './consolesMoment'
-import {MomentDisplayDayDateTime} from '../src/Moment'
+import {IsOn} from '../src/Functions'
 
 require('source-map-support').install()
-
-const startMoment = moment()
-
-console.log('Started', MomentDisplayDayDateTime(startMoment))
-
-runMoment()
-
-console.log(
-	MomentDisplayDayDateTime(startMoment),
-	'to',
-	MomentDisplayDayDateTime(moment()),
-	' = ',
-	moment.duration(startMoment.diff(moment())).humanize()
-)
-
+console.log('hello', IsOn(1), IsOn('active'))

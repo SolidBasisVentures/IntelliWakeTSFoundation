@@ -7,3 +7,7 @@ test('IsOn 1', () => {
 test('IsOn null', () => {
 	expect(IsOn(null)).toBe(false);
 })
+
+test('IsOn active', () => {
+	expect(IsOn('active')).toBe(true);
+})
