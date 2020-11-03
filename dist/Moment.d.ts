@@ -9,6 +9,6 @@ export declare const MomentFormatString: (value: string | Moment | Date | null |
 export declare const MomentTimeString: (value: string | Moment | Date | null | undefined) => string | null;
 export declare const MomentDateString: (value: string | Moment | Date | null | undefined) => string | null;
 export declare const MomentDateTimeString: (value: string | Moment | Date | null | undefined) => string | null;
-export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined) => string | null;
-export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined, showYear?: boolean) => string | null;
+export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined, showYear?: boolean) => string | null;
 export declare const MomentDisplayTime: (value: string | Moment | Date | null | undefined) => string | null;

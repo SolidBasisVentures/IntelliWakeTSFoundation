@@ -906,19 +906,21 @@ var MomentFormatString = function (value, format) { var _a, _b; return (_b = (_a
 var MomentTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS); };
 var MomentDateString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE); };
 var MomentDateTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME); };
-var MomentDisplayDayDateTime = function (value) {
+var MomentDisplayDayDateTime = function (value, showYear) {
+    if (showYear === void 0) { showYear = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a');
+    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a');
 };
-var MomentDisplayDayDate = function (value) {
+var MomentDisplayDayDate = function (value, showYear) {
+    if (showYear === void 0) { showYear = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY');
+    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear ? 'ddd, MMM D' : 'ddd, MMM D, YYYY');
 };
 var MomentDisplayTime = function (value) { return MomentFormatString(value, 'h:mm a'); };
 
