@@ -91,7 +91,8 @@ export const MomentDateTimeString = (
  * is not the same with the given year.
  */
 export const MomentDisplayDayDateTime = (
-	value: string | Moment | Date | null | undefined
+	value: string | Moment | Date | null | undefined,
+	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
 	
@@ -99,7 +100,7 @@ export const MomentDisplayDayDateTime = (
 		return null
 	}
 	
-	return momentObject.format(momentObject.year() === moment().year() ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a')
+	return momentObject.format(momentObject.year() === moment().year() && !showYear ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a')
 }
 
 /**
@@ -107,7 +108,8 @@ export const MomentDisplayDayDateTime = (
  * is not the same with the given year.
  */
 export const MomentDisplayDayDate = (
-	value: string | Moment | Date | null | undefined
+	value: string | Moment | Date | null | undefined,
+	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
 	
@@ -115,7 +117,7 @@ export const MomentDisplayDayDate = (
 		return null
 	}
 	
-	return momentObject.format(momentObject.year() === moment().year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY')
+	return momentObject.format(momentObject.year() === moment().year() && !showYear ? 'ddd, MMM D' : 'ddd, MMM D, YYYY')
 }
 
 /**
