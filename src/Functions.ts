@@ -44,6 +44,11 @@ export const GenerateUUID = () => {
 	})
 }
 
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export const IsOn = (value: any): boolean => {
 	if (!value) {
 		return false

@@ -1,7 +1,7 @@
 /**
  * Created by dennispeters on 6/7/17.
  *
- * This evaluator takes a proprietary screen and performs calculations on it.
+ * This evaluator takes a proprietary string and performs calculations on it.
  *
  * EvaluateString(expression, variables) accepts a string, and processes variables against it.  Everything within square brackets [] will run through a calculation.
  *
@@ -9,10 +9,10 @@
  *
  * Simple examples:
  *
- * EvaluateString("Hello, [Name]!", {Name, "Bob"}) = "Hello, Bob!"
- * EvaluateString("1 + SomeValue = [1 + SomeValue]", {SomeValue, 2}) = "1 + SomeValue = 3"
- * EvaluateCondition("1 = SomeValue", {SomeValue, 2}) = false
- * EvaluateCondition("2 = SomeValue", {SomeValue, 2}) = true
+ * EvaluateString("Hello, [Name]!", {Name: "Bob"}) = "Hello, Bob!"
+ * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2}) = "1 + SomeValue = 3"
+ * EvaluateCondition("1 = SomeValue", {SomeValue: 2}) = false
+ * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
  *
  */
 import {IsOn} from './Functions'
