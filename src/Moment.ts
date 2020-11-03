@@ -1,13 +1,14 @@
-import moment, {Moment} from 'moment-timezone'
+import moment, {ISO_8601, Moment} from 'moment-timezone'
+import {utc} from 'moment'
 
 export const MOMENT_FORMAT_DATE = 'YYYY-MM-DD'
 export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'
 export const MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm'
 export const MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS
 
-const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment.ISO_8601]
+const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', ISO_8601]
 const TIME_FORMAT_TRIES: moment.MomentFormatSpecification = [
-	moment.ISO_8601,
+	ISO_8601,
 	'YYYY-MM-DD HH:mm:ss',
 	'YYYY-MM-DD HH:mm',
 	'HH:mm:ss',
@@ -47,7 +48,7 @@ export const MomentFromString = (
 			return momentObject.utc().tz(MomentCurrentTimeZone())
 		}
 	} else {
-		const momentObject = StringHasTimeZoneData(value) ? moment(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true) : moment.utc(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true)
+		const momentObject = StringHasTimeZoneData(value) ? moment(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true) :  utc(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true)
 		if (momentObject.isValid()) {
 			return momentObject
 		}
