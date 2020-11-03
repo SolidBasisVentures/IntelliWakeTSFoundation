@@ -1,4 +1,5 @@
-import {IsOn} from '../src/Functions'
+import {EDateAndOrTime, MomentFromString} from '../src/Moment'
 
 require('source-map-support').install()
-console.log('hello', IsOn(1), IsOn('active'))
+
+console.log(MomentFromString('2020-10-10', EDateAndOrTime.TIME))
