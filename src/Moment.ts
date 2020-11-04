@@ -1,13 +1,20 @@
-import moment, {Moment} from 'moment-timezone'
+import moment, {ISO_8601, Moment} from 'moment-timezone'
+import {utc} from 'moment'
 
 export const MOMENT_FORMAT_DATE = 'YYYY-MM-DD'
 export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'
 export const MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm'
 export const MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS
 
-const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment.ISO_8601]
+export const MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = 'ddd, MMM D'
+export const MOMENT_FORMAT_DATE_DISPLAY = `${MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR}, YYYY`
+export const MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a'
+export const MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = `${MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+export const MOMENT_FORMAT_DATE_TIME_DISPLAY = `${MOMENT_FORMAT_DATE_DISPLAY}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+
+const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', ISO_8601]
 const TIME_FORMAT_TRIES: moment.MomentFormatSpecification = [
-	moment.ISO_8601,
+	ISO_8601,
 	'YYYY-MM-DD HH:mm:ss',
 	'YYYY-MM-DD HH:mm',
 	'HH:mm:ss',
@@ -18,7 +25,22 @@ const TIME_FORMAT_TRIES: moment.MomentFormatSpecification = [
 	'DD-MM-YYYY HH:mm'
 ]
 
+export enum EDateAndOrTime {
+	DATE,
+	TIME,
+	DATETIME
+}
+
+const StringHasTimeData = (value: string): boolean => value.includes(':')
+const StringHasDateData = (value: string): boolean => value.includes('-')
 const StringHasTimeZoneData = (value: string): boolean => value.includes('T')
+
+const FormatIsTime = (format: string) =>
+	[MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format)
+const FormatIsDate = (format: string) =>
+	[MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_DISPLAY].includes(format)
+const FormatIsDateTime = (format: string) =>
+	[MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format)
 
 /**
  * Returns the current time zone.
@@ -34,25 +56,25 @@ export const MomentCurrentTimeZone = (): string => (moment().tz() ?? 'UTC').toSt
  * // returns Moment<2020-10-02T00:00:00Z>
  * MomentFromString('2020-10-02')
  */
-export const MomentFromString = (
-	value: string | Moment | Date | null | undefined
-): Moment | null => {
+export const MomentFromString = (value: string | Moment | Date | null | undefined): Moment | null => {
 	if (!value) {
 		return null
 	}
-	
+
+	const formatTries: moment.MomentFormatSpecification = [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES]
+
 	if (typeof value !== 'string') {
 		const momentObject = moment(value)
 		if (momentObject.isValid()) {
 			return momentObject.utc().tz(MomentCurrentTimeZone())
 		}
 	} else {
-		const momentObject = StringHasTimeZoneData(value) ? moment(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true) : moment.utc(value, [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES], true)
+		const momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : utc(value, formatTries, true)
 		if (momentObject.isValid()) {
 			return momentObject
 		}
 	}
-	
+
 	return null
 }
 
@@ -63,28 +85,59 @@ export const MomentFromString = (
  * // returns "Oct 2, 2020"
  * MomentFromString('2020-10-02', 'll')
  */
-export const MomentFormatString = (value: string | Moment | Date | null | undefined, format: string): string | null => MomentFromString(value)?.format(format) ?? null
+export const MomentFormatString = (value: string | Moment | Date | null | undefined, format: string): string | null => {
+	if (!value) return null
+
+	if (typeof value == 'string') {
+		if (FormatIsTime(format) && !StringHasTimeData(value)) {
+			return null
+		}
+
+		if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value)) return null
+
+		let moment = MomentFromString(value)?.format(format) ?? null
+
+		if (!moment) return null
+
+		if (format === MOMENT_FORMAT_TIME_SECONDS || format === MOMENT_FORMAT_TIME_NO_SECONDS) {
+			if (!StringHasTimeData(moment)) return null
+
+			return moment.substr(format.length * -1, format.length)
+		}
+
+		if (format === MOMENT_FORMAT_DATE) {
+			if (!StringHasDateData(moment)) return null
+
+			return moment.substr(0, format.length)
+		}
+
+		if (format === MOMENT_FORMAT_DATE_TIME) {
+			if (!StringHasDateData(moment) || !StringHasTimeData(moment)) return null
+		}
+
+		return moment
+	}
+
+	return MomentFromString(value)?.format(format) ?? null
+}
 
 /**
  * Returns the moment time string in the format of "HH:mm:ss".
  */
-export const MomentTimeString = (
-	value: string | Moment | Date | null | undefined
-): string | null => MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS)
+export const MomentTimeString = (value: string | Moment | Date | null | undefined): string | null =>
+	MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS)
 
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD".
  */
-export const MomentDateString = (
-	value: string | Moment | Date | null | undefined
-): string | null => MomentFormatString(value, MOMENT_FORMAT_DATE)
+export const MomentDateString = (value: string | Moment | Date | null | undefined): string | null =>
+	MomentFormatString(value, MOMENT_FORMAT_DATE)
 
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
-export const MomentDateTimeString = (
-	value: string | Moment | Date | null | undefined
-): string | null => MomentFormatString(value, MOMENT_FORMAT_DATE_TIME)
+export const MomentDateTimeString = (value: string | Moment | Date | null | undefined): string | null =>
+	MomentFormatString(value, MOMENT_FORMAT_DATE_TIME)
 
 /**
  * Returns display day date time format. Includes the year if the current year
@@ -95,12 +148,16 @@ export const MomentDisplayDayDateTime = (
 	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
-	
+
 	if (!momentObject) {
 		return null
 	}
-	
-	return momentObject.format(momentObject.year() === moment().year() && !showYear ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a')
+
+	return momentObject.format(
+		momentObject.year() === moment().year() && !showYear
+			? `${MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+			: `${MOMENT_FORMAT_DATE_DISPLAY}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+	)
 }
 
 /**
@@ -112,18 +169,20 @@ export const MomentDisplayDayDate = (
 	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
-	
+
 	if (!momentObject) {
 		return null
 	}
-	
-	return momentObject.format(momentObject.year() === moment().year() && !showYear ? 'ddd, MMM D' : 'ddd, MMM D, YYYY')
+
+	return momentObject.format(
+		momentObject.year() === moment().year() && !showYear
+			? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR
+			: MOMENT_FORMAT_DATE_DISPLAY
+	)
 }
 
 /**
  * Returns the time with 12-hour clock format.
  */
-export const MomentDisplayTime = (
-	value: string | Moment | Date | null | undefined
-): string | null => MomentFormatString(value, 'h:mm a')
-
+export const MomentDisplayTime = (value: string | Moment | Date | null | undefined): string | null =>
+	MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY)

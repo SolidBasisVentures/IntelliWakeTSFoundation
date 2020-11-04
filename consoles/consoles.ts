@@ -1,13 +1,5 @@
-import {
-	CleanNumber, DisplayNameFromFL, DisplayNameFromObject, FormatExternalURL,
-	FormatPhoneNumber, FormatPhoneNumberDots, FormatZip, RandomString,
-	ToCurrency,
-	ToCurrencyBlank,
-	ToDigits,
-	ToPercent, UCWords
-} from '../src/StringManipulation'
+import {EDateAndOrTime, MomentFromString} from '../src/Moment'
 
 require('source-map-support').install()
 
-console.log(RandomString(5, '12345'))
-// runMoment()
+console.log(MomentFromString('2020-10-10', EDateAndOrTime.TIME))

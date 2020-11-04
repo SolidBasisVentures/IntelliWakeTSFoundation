@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var moment = require('moment-timezone');
+var moment$1 = require('moment');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -559,6 +560,11 @@ var GenerateUUID = function () {
         return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
     });
 };
+/**
+ *
+ * @param value
+ * @constructor
+ */
 var IsOn = function (value) {
     if (!value) {
         return false;
@@ -870,9 +876,14 @@ var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
 var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment__default['default'].ISO_8601];
+var MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = 'ddd, MMM D';
+var MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", YYYY";
+var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
+var MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY;
+var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
+var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment.ISO_8601];
 var TIME_FORMAT_TRIES = [
-    moment__default['default'].ISO_8601,
+    moment.ISO_8601,
     'YYYY-MM-DD HH:mm:ss',
     'YYYY-MM-DD HH:mm',
     'HH:mm:ss',
@@ -882,12 +893,41 @@ var TIME_FORMAT_TRIES = [
     'DD-MM-YYYY HH:mm:ss',
     'DD-MM-YYYY HH:mm'
 ];
+(function (EDateAndOrTime) {
+    EDateAndOrTime[EDateAndOrTime["DATE"] = 0] = "DATE";
+    EDateAndOrTime[EDateAndOrTime["TIME"] = 1] = "TIME";
+    EDateAndOrTime[EDateAndOrTime["DATETIME"] = 2] = "DATETIME";
+})(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
+var StringHasTimeData = function (value) { return value.includes(':'); };
+var StringHasDateData = function (value) { return value.includes('-'); };
 var StringHasTimeZoneData = function (value) { return value.includes('T'); };
+var FormatIsTime = function (format) {
+    return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);
+};
+var FormatIsDate = function (format) {
+    return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_DISPLAY].includes(format);
+};
+var FormatIsDateTime = function (format) {
+    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format);
+};
+/**
+ * Returns the current time zone.
+ */
 var MomentCurrentTimeZone = function () { var _a; return ((_a = moment__default['default']().tz()) !== null && _a !== void 0 ? _a : 'UTC').toString(); };
+/**
+ * Returns the Moment object from a given value. If the given value is invalid,
+ * it returns null.
+ *
+ *
+ * @example
+ * // returns Moment<2020-10-02T00:00:00Z>
+ * MomentFromString('2020-10-02')
+ */
 var MomentFromString = function (value) {
     if (!value) {
         return null;
     }
+    var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
     if (typeof value !== 'string') {
         var momentObject = moment__default['default'](value);
         if (momentObject.isValid()) {
@@ -895,32 +935,103 @@ var MomentFromString = function (value) {
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment__default['default'](value, __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES), true) : moment__default['default'].utc(value, __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES), true);
+        var momentObject = StringHasTimeZoneData(value) ? moment__default['default'](value, formatTries, true) : moment$1.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }
     }
     return null;
 };
-var MomentFormatString = function (value, format) { var _a, _b; return (_b = (_a = MomentFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null; };
-var MomentTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS); };
-var MomentDateString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE); };
-var MomentDateTimeString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME); };
-var MomentDisplayDayDateTime = function (value) {
+/**
+ * Does the same thing as MomentFromString() but instead returns a string based on the format specified.
+ *
+ * @example
+ * // returns "Oct 2, 2020"
+ * MomentFromString('2020-10-02', 'll')
+ */
+var MomentFormatString = function (value, format) {
+    var _a, _b, _c, _d;
+    if (!value)
+        return null;
+    if (typeof value == 'string') {
+        if (FormatIsTime(format) && !StringHasTimeData(value)) {
+            return null;
+        }
+        if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value))
+            return null;
+        var moment_1 = (_b = (_a = MomentFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null;
+        if (!moment_1)
+            return null;
+        if (format === MOMENT_FORMAT_TIME_SECONDS || format === MOMENT_FORMAT_TIME_NO_SECONDS) {
+            if (!StringHasTimeData(moment_1))
+                return null;
+            return moment_1.substr(format.length * -1, format.length);
+        }
+        if (format === MOMENT_FORMAT_DATE) {
+            if (!StringHasDateData(moment_1))
+                return null;
+            return moment_1.substr(0, format.length);
+        }
+        if (format === MOMENT_FORMAT_DATE_TIME) {
+            if (!StringHasDateData(moment_1) || !StringHasTimeData(moment_1))
+                return null;
+        }
+        return moment_1;
+    }
+    return (_d = (_c = MomentFromString(value)) === null || _c === void 0 ? void 0 : _c.format(format)) !== null && _d !== void 0 ? _d : null;
+};
+/**
+ * Returns the moment time string in the format of "HH:mm:ss".
+ */
+var MomentTimeString = function (value) {
+    return MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS);
+};
+/**
+ * Returns the moment date string in the format of "YYYY-MM-DD".
+ */
+var MomentDateString = function (value) {
+    return MomentFormatString(value, MOMENT_FORMAT_DATE);
+};
+/**
+ * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
+ */
+var MomentDateTimeString = function (value) {
+    return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME);
+};
+/**
+ * Returns display day date time format. Includes the year if the current year
+ * is not the same with the given year.
+ */
+var MomentDisplayDayDateTime = function (value, showYear) {
+    if (showYear === void 0) { showYear = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D, h:mm a' : 'ddd, MMM D, YYYY @ h:mm a');
+    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear
+        ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY
+        : MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY);
 };
-var MomentDisplayDayDate = function (value) {
+/**
+ * Returns display day date format. Includes the year if the current year
+ * is not the same with the given year.
+ */
+var MomentDisplayDayDate = function (value, showYear) {
+    if (showYear === void 0) { showYear = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() ? 'ddd, MMM D' : 'ddd, MMM D, YYYY');
+    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear
+        ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR
+        : MOMENT_FORMAT_DATE_DISPLAY);
 };
-var MomentDisplayTime = function (value) { return MomentFormatString(value, 'h:mm a'); };
+/**
+ * Returns the time with 12-hour clock format.
+ */
+var MomentDisplayTime = function (value) {
+    return MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY);
+};
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -1136,7 +1247,12 @@ exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.LeftPad = LeftPad;
 exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
+exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
+exports.MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR;
 exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
+exports.MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_TIME_DISPLAY;
+exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR;
+exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
 exports.MomentCurrentTimeZone = MomentCurrentTimeZone;

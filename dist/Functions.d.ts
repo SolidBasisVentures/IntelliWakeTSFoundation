@@ -3,6 +3,11 @@ export declare const GoogleMapsGPSLink: (dataArray: any, prefix?: string) => str
 export declare const GoogleMapsAddressLink: (dataArray: any, prefix?: string) => string;
 export declare const IsValidInputDecimal: (value: string) => boolean;
 export declare const GenerateUUID: () => string;
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export declare const IsOn: (value: any) => boolean;
 export declare type TFindIsActive = boolean | null;
 export interface IAddress {
