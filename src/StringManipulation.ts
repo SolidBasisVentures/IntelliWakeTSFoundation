@@ -1,3 +1,10 @@
+/**
+ * Converts a string to snake case.
+ *
+ * @example
+ * // returns "user_token"
+ * ToSnakeCase('UserToken')
+ */
 export const ToSnakeCase = (str: string): string => {
 	if (str === 'ID') return 'id'
 	
@@ -8,10 +15,26 @@ export const ToSnakeCase = (str: string): string => {
 		calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, (letter) => `_${letter.toLowerCase()}`)
 	)
 }
+
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
 export const ReplaceAll = function(find: string, replace: string, subject: string): string {
 	// eslint-disable-next-line no-useless-escape
 	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
 }
+
+/**
+ * Replaces links to an anchor tag.
+ *
+ * @example
+ * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
+ * ReplaceLinks('https://www.google.com')
+ */
 export const ReplaceLinks = function(subject: string): string {
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
@@ -19,9 +42,25 @@ export const ReplaceLinks = function(subject: string): string {
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
+
+/**
+ * Removes script tags.
+ *
+ * @example
+ * // returns "blank"
+ * CleanScripts('<script>console.log(1)</script>blank')
+ */
 export const CleanScripts = function(subject: string): string {
 	return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
+
+/**
+ * Removes any given HTML tag and retains what's inside of the tag.
+ *
+ * @example
+ * // returns "john doe"
+ * TextToHTML('<p>john doe</p>')
+ */
 export const TextToHTML = function(subject: string): string {
 	let str = subject.replace(/(<([^>]+)>)/gi, '')
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
@@ -40,6 +79,20 @@ export const RightPad = (subject: string, length: number, padString: string): st
 	
 	return str
 }
+
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return $100
+ * CleanNumber('100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50%
+ * CleanNumber('50')
+ */
 export const CleanNumber = (value: any): number => {
 	if (!value) return 0
 	
@@ -50,6 +103,14 @@ export const CleanNumber = (value: any): number => {
 	if (isNaN(str)) return NaN
 	return parseFloat(str)
 }
+
+/**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
 export const ToCurrency = (value: any, decimals: number = 2): string => {
 	return (
 		'$' +
@@ -59,6 +120,14 @@ export const ToCurrency = (value: any, decimals: number = 2): string => {
 		})
 	)
 }
+
+/**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
 export const ToPercent = (value: any, decimals: number = 0): string => {
 	return (
 		(CleanNumber(value) * 100).toLocaleString(undefined, {
@@ -67,6 +136,17 @@ export const ToPercent = (value: any, decimals: number = 0): string => {
 		}) + '%'
 	)
 }
+
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('')
+ */
 export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
@@ -80,6 +160,17 @@ export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
 		})
 	)
 }
+
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('-')
+ */
 export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
@@ -93,6 +184,18 @@ export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
 		})
 	)
 }
+
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns ''
+ * ToPercent('')
+ */
 export const ToPercentBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
@@ -105,6 +208,18 @@ export const ToPercentBlank = (value: any, decimals: number = 2): string => {
 		}) + '%'
 	)
 }
+
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns '-'
+ * ToPercent('')
+ */
 export const ToPercentDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
@@ -117,12 +232,32 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
 		}) + '%'
 	)
 }
+
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
 export const ToDigits = function(value: any, decimals: number = 2): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
 	})
 }
+
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
 export const ToDigitsBlank = function(value: any, decimals: number = 2) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
@@ -133,6 +268,18 @@ export const ToDigitsBlank = function(value: any, decimals: number = 2) {
 		minimumFractionDigits: decimals
 	})
 }
+
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
 export const ToDigitsDash = function(value: any, decimals: number = 2) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
@@ -143,6 +290,14 @@ export const ToDigitsDash = function(value: any, decimals: number = 2) {
 		minimumFractionDigits: decimals
 	})
 }
+
+/**
+ * Converts a string to an array.
+ *
+ * @example
+ * // returns ['john doe']
+ * ToStringArray('john doe')
+ */
 export const ToStringArray = (value: string | string[]): string[] => {
 	if (!value) {
 		return []
@@ -154,6 +309,14 @@ export const ToStringArray = (value: string | string[]): string[] => {
 		return value
 	}
 }
+
+/**
+ * Returns a formatted phone number with parenthesis.
+ *
+ * @example
+ * // returns (555) 555-1234
+ * FormatPhoneNumber('5555551234')
+ */
 export const FormatPhoneNumber = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
@@ -170,6 +333,14 @@ export const FormatPhoneNumber = (phone: string, forceNumeric: boolean = false) 
 	
 	return phone
 }
+
+/**
+ * Returns a formatted phone number with dots.
+ *
+ * @example
+ * // returns 555.555.1234
+ * FormatPhoneNumberDots('5555551234')
+ */
 export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
@@ -186,6 +357,7 @@ export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = fal
 	
 	return phone
 }
+
 export const FormatZip = (zip: string) => {
 	//Filter only numbers from the input
 	let cleaned = ('' + zip).replace(/\D/g, '')
@@ -199,6 +371,14 @@ export const FormatZip = (zip: string) => {
 	
 	return zip
 }
+
+/**
+ * Adds "http" on urls that don't have it.
+ *
+ * @example
+ * // returns "http://www.google.com"
+ * FormatExternalURL('www.google.com')
+ */
 export const FormatExternalURL = (url: string): string => {
 	if (!!url) {
 		if (!url.startsWith('http')) {
@@ -210,6 +390,14 @@ export const FormatExternalURL = (url: string): string => {
 	
 	return ''
 }
+
+/**
+ * Returns formatted full name.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
+ */
 export const DisplayNameFromFL = (first?: string, last?: string, middle?: string, suffix?: string): string => {
 	let returnName = ''
 	
@@ -249,6 +437,19 @@ export const DisplayNameFromFL = (first?: string, last?: string, middle?: string
 	
 	return returnName
 }
+
+/**
+ * Returns formatted name from an object.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromObject({
+ *   first_name: 'John',
+ *   last_name: 'Doe',
+ *   middle_name: 'Smith',
+ *   suffix_name: 'Jr.',
+ * })
+ */
 export const DisplayNameFromObject = (object?: any, prefix?: string): string => {
 	if (!object) return ''
 	
@@ -261,6 +462,14 @@ export const DisplayNameFromObject = (object?: any, prefix?: string): string => 
 		object[actualPrefix + 'suffix_name']
 	)
 }
+
+/**
+ * Converts the first character of each word of a string to uppercase.
+ *
+ * @example
+ * // return This Is Awesome
+ * UCWords('This is awesome')
+ */
 export const UCWords = (str: string | null): string | null => {
 	if (!str) {
 		return str
@@ -272,6 +481,14 @@ export const UCWords = (str: string | null): string | null => {
 	}
 	return strVal.trim()
 }
+
+/**
+ * Generates a random string with a given length and valid characters.
+ *
+ * @example
+ * // returns '32112'
+ * RandomString(5, '12345')
+ */
 export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789') => {
 	const validCharLength = validChars.length - 1
 	
