@@ -1,6 +1,6 @@
 import {ISO_8601, Moment} from 'moment-timezone'
 import {utc} from 'moment'
-const moment = require('moment-timezone');
+const moment = require('moment-timezone')
 
 export const MOMENT_FORMAT_DATE = 'YYYY-MM-DD'
 export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'
