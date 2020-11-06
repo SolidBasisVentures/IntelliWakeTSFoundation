@@ -1,13 +1,40 @@
+/**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
 export const Trunc = (subject: string, length: number): string => {
 	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
 }
 
+/**
+ * Returns a google maps link with the given coordinates.
+ *
+ * @example
+ * // returns "http://maps.google.com/maps?q=12345,12345"
+ * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
+ */
 export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string => {
 	const latitude = dataArray[prefix + 'latitude'] ?? ''
 	let longitude = dataArray[prefix + 'longitude'] ?? ''
 	return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude
 }
 
+/**
+ * Returns a google maps link with the given address
+ *
+ * @example
+ * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
+ *	GoogleMapsAddressLink({
+ *		address1: 'Blk 1, Lot 2, Some Street',
+ *		address2: 'Blk 2, Lot 3, Some Street',
+ *		city: 'Burr Ridge',
+ *		state: 'IL',
+ *		zip: '61257',
+ *	})
+ */
 export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): string => {
 	let address = (dataArray[prefix + 'address1'] ?? '') + ' '
 	if (dataArray[prefix + 'address2']) {
@@ -19,13 +46,26 @@ export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): stri
 	return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address)
 }
 
+/**
+ * Determines whether a value is a valid input decimal.
+ *
+ * @example
+ * // returns true
+ * IsValidInputDecimal('1')
+ *
+ * // returns false
+ * IsValidInputDecimal('1%')
+ */
 export const IsValidInputDecimal = (value: string): boolean => {
 	// noinspection RegExpUnexpectedAnchor
-	const regEx = new RegExp('/^\\d{1,}(\\.\\d{0,4})?$/')
+	const regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$')
 
 	return !value || regEx.test(value)
 }
 
+/**
+ * Generates a unique UID
+ */
 export const GenerateUUID = () => {
 	let d = new Date().getTime() //Timestamp
 	let d2 = (performance && performance.now && performance.now() * 1000) || 0 //Time in microseconds since page-load or 0 if unsupported
@@ -45,9 +85,16 @@ export const GenerateUUID = () => {
 }
 
 /**
+ * Determines a value is active or on. Returns true when the value
+ * is one of the following:
+ * 'true', 'active', 'on', 'yes', 'y'
  *
- * @param value
- * @constructor
+ * @example
+ * // return true
+ * IsOn('active')
+ *
+ * // return false
+ * IsOn('inactive')
  */
 export const IsOn = (value: any): boolean => {
 	if (!value) {
@@ -76,6 +123,23 @@ export interface IAddress {
 	zip: string
 }
 
+/**
+ * Copies an address object to another object.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Blk 2, Lot 3, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * let address2 = {}
+ * AddressCopy(address1, '', address2, '')
+ * // address2 is now a copy of address1
+ * console.log(address2)
+ */
 export const AddressCopy = (
 	fromObject: any,
 	fromPrefix: string,
@@ -108,10 +172,37 @@ export const AddressCopy = (
 	}
 }
 
+/**
+ * Determines whether an object has a property of "address_1".
+ *
+ * @example
+ * // returns false
+ * AddressValid({ address: 'Blk1, Lot1, Some street' })
+ *
+ * // returns false
+ * AddressValid({ address_1: '' })
+ *
+ * // returns true
+ * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
+ */
 export const AddressValid = (address: any, prefix?: string): boolean => {
 	return !!address[(prefix ?? '') + 'address_1']
 }
 
+/**
+ * Combines an address object into a single row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL, 61257"
+ * AddressSingleRow(address1)
+ */
 export const AddressSingleRow = (object: any, prefix?: string): string => {
 	const usePrefix = prefix ?? ''
 
@@ -123,4 +214,3 @@ export const AddressSingleRow = (object: any, prefix?: string): string => {
 
 	return singleRow
 }
-
