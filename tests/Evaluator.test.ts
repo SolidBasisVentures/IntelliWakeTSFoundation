@@ -13,7 +13,8 @@ const variables: TVariables = {
 	AmIHappy: 'Yes',
 	AmISad: 'No',
 	IAmTrue: 'True',
-	IAmFalse: 'False'
+	IAmFalse: 'False',
+	ArrayValue: 'Bob, Johnathan'
 }
 
 const evalStrings: [string, any][] = [
@@ -45,7 +46,11 @@ const evalConditions: [string, any][] = [
 	['[Five] > [Four]', true],
 	['[Five] < [Four]', false],
 	['[Five] = [Five]', true],
-	['[Five] = [Four]', false]
+	['[Five] = [Four]', false],
+	['includes(John, [ArrayValue])', true],
+	['includes(Sam, [ArrayValue])', false],
+	['includesInArray(John, [ArrayValue])', false],
+	['includesInArray(Johnathan, [ArrayValue])', true]
 ]
 
 for (const evalCondition of evalConditions) {
