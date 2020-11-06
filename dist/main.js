@@ -2,12 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var moment = require('moment-timezone');
+var momentTimezone = require('moment-timezone');
 var moment$1 = require('moment');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -48,6 +44,25 @@ var initialConsoleLogTableDef = {
     surroundingLines: true,
     columns: []
 };
+/**
+ * Formats an array of data into a table format and prints it in the console.
+ *
+ * @example
+ * let data = [
+ *   ['ID', 'User', 'Age'],
+ *   ['1', 'john doe', '24'],
+ *   ['2', 'sally jones', '32']
+ * ]
+ * // returns
+ * ----------------------
+ * ID   User          Age
+ * ----------------------
+ * 1   john doe       24
+ * 2   sally jones    32
+ * ----------------------
+ *
+ * consoleLogTable(data)
+ */
 var consoleLogTable = function (arrayData, tableDef) {
     if (tableDef === void 0) { tableDef = initialConsoleLogTableDef; }
     var nullIndicator = '(null)';
@@ -64,7 +79,9 @@ var consoleLogTable = function (arrayData, tableDef) {
                     var len = ((_a = cur[col]) !== null && _a !== void 0 ? _a : nullIndicator).toString().length;
                     return len > prev ? len : prev;
                 }, 1),
-                justify: !!arrayData.find(function (dataItem, idx) { var _a; return idx === 0 ? false : isNaN(parseFloat(((_a = dataItem[col]) !== null && _a !== void 0 ? _a : "0").toString())); }) ? 'L' : 'R'
+                justify: !!arrayData.find(function (dataItem, idx) { var _a; return idx === 0 ? false : isNaN(parseFloat(((_a = dataItem[col]) !== null && _a !== void 0 ? _a : '0').toString())); })
+                    ? 'L'
+                    : 'R'
             });
         };
         for (var col = 0; col < dataAnalyze.length; col++) {
@@ -74,7 +91,8 @@ var consoleLogTable = function (arrayData, tableDef) {
     var firstRow = true;
     if (useTableDef.surroundingLines) {
         console.log(' ');
-        console.log(arrayData[0].map(function (_columnValue, idx) {
+        console.log(arrayData[0]
+            .map(function (_columnValue, idx) {
             var _a, _b, _c;
             var text = '';
             var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
@@ -87,11 +105,13 @@ var consoleLogTable = function (arrayData, tableDef) {
                 }
             }
             return text;
-        }).join('---'));
+        })
+            .join('---'));
     }
     for (var _i = 0, arrayData_1 = arrayData; _i < arrayData_1.length; _i++) {
         var dataItem = arrayData_1[_i];
-        console.log(dataItem.map(function (columnValue, idx) {
+        console.log(dataItem
+            .map(function (columnValue, idx) {
             var _a, _b, _c;
             var text = (columnValue !== null && columnValue !== void 0 ? columnValue : '(null)').toString();
             var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
@@ -104,9 +124,11 @@ var consoleLogTable = function (arrayData, tableDef) {
                 }
             }
             return text;
-        }).join('   '));
+        })
+            .join('   '));
         if (useTableDef.firstRowIsHeader && firstRow) {
-            console.log(dataItem.map(function (_columnValue, idx) {
+            console.log(dataItem
+                .map(function (_columnValue, idx) {
                 var _a, _b, _c;
                 var text = '';
                 var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
@@ -119,12 +141,14 @@ var consoleLogTable = function (arrayData, tableDef) {
                     }
                 }
                 return text;
-            }).join('---'));
+            })
+                .join('---'));
         }
         firstRow = false;
     }
     if (useTableDef.surroundingLines) {
-        console.log(arrayData[0].map(function (_columnValue, idx) {
+        console.log(arrayData[0]
+            .map(function (_columnValue, idx) {
             var _a, _b, _c;
             var text = '';
             var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
@@ -137,11 +161,19 @@ var consoleLogTable = function (arrayData, tableDef) {
                 }
             }
             return text;
-        }).join('---'));
+        })
+            .join('---'));
         console.log(' ');
     }
 };
 
+/**
+ * Converts a string to snake case.
+ *
+ * @example
+ * // returns "user_token"
+ * ToSnakeCase('UserToken')
+ */
 var ToSnakeCase = function (str) {
     if (str === 'ID')
         return 'id';
@@ -149,20 +181,48 @@ var ToSnakeCase = function (str) {
     return (calcStr[0].toLowerCase() +
         calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
 };
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
 var ReplaceAll = function (find, replace, subject) {
     // eslint-disable-next-line no-useless-escape
     return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
 };
+/**
+ * Replaces links to an anchor tag.
+ *
+ * @example
+ * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
+ * ReplaceLinks('https://www.google.com')
+ */
 var ReplaceLinks = function (subject) {
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
-    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
+    var target = "<a href='$1' target='_blank'>$1</a>";
     // noinspection RegExpRedundantEscape
     return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
 };
+/**
+ * Removes script tags.
+ *
+ * @example
+ * // returns "blank"
+ * CleanScripts('<script>console.log(1)</script>blank')
+ */
 var CleanScripts = function (subject) {
     return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
 };
+/**
+ * Removes any given HTML tag and retains what's inside of the tag.
+ *
+ * @example
+ * // returns "john doe"
+ * TextToHTML('<p>john doe</p>')
+ */
 var TextToHTML = function (subject) {
     var str = subject.replace(/(<([^>]+)>)/gi, '');
     return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
@@ -179,6 +239,19 @@ var RightPad = function (subject, length, padString) {
         str = str + padString;
     return str;
 };
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return $100
+ * CleanNumber('100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50%
+ * CleanNumber('50')
+ */
 var CleanNumber = function (value) {
     if (!value)
         return 0;
@@ -190,6 +263,13 @@ var CleanNumber = function (value) {
         return NaN;
     return parseFloat(str);
 };
+/**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
 var ToCurrency = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     return ('$' +
@@ -198,6 +278,13 @@ var ToCurrency = function (value, decimals) {
             minimumFractionDigits: decimals
         }));
 };
+/**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
 var ToPercent = function (value, decimals) {
     if (decimals === void 0) { decimals = 0; }
     return ((CleanNumber(value) * 100).toLocaleString(undefined, {
@@ -205,6 +292,16 @@ var ToPercent = function (value, decimals) {
         minimumFractionDigits: decimals
     }) + '%');
 };
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('')
+ */
 var ToCurrencyBlank = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -216,6 +313,16 @@ var ToCurrencyBlank = function (value, decimals) {
             minimumFractionDigits: decimals
         }));
 };
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('-')
+ */
 var ToCurrencyDash = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -227,6 +334,17 @@ var ToCurrencyDash = function (value, decimals) {
             minimumFractionDigits: decimals
         }));
 };
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns ''
+ * ToPercent('')
+ */
 var ToPercentBlank = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -237,6 +355,17 @@ var ToPercentBlank = function (value, decimals) {
         minimumFractionDigits: decimals
     }) + '%');
 };
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns '-'
+ * ToPercent('')
+ */
 var ToPercentDash = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -247,6 +376,13 @@ var ToPercentDash = function (value, decimals) {
         minimumFractionDigits: decimals
     }) + '%');
 };
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
 var ToDigits = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     return CleanNumber(value).toLocaleString(undefined, {
@@ -254,6 +390,17 @@ var ToDigits = function (value, decimals) {
         minimumFractionDigits: decimals
     });
 };
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
 var ToDigitsBlank = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -264,6 +411,17 @@ var ToDigitsBlank = function (value, decimals) {
         minimumFractionDigits: decimals
     });
 };
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
 var ToDigitsDash = function (value, decimals) {
     if (decimals === void 0) { decimals = 2; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -274,6 +432,13 @@ var ToDigitsDash = function (value, decimals) {
         minimumFractionDigits: decimals
     });
 };
+/**
+ * Converts a string to an array.
+ *
+ * @example
+ * // returns ['john doe']
+ * ToStringArray('john doe')
+ */
 var ToStringArray = function (value) {
     if (!value) {
         return [];
@@ -285,6 +450,13 @@ var ToStringArray = function (value) {
         return value;
     }
 };
+/**
+ * Returns a formatted phone number with parenthesis.
+ *
+ * @example
+ * // returns (555) 555-1234
+ * FormatPhoneNumber('5555551234')
+ */
 var FormatPhoneNumber = function (phone, forceNumeric) {
     if (forceNumeric === void 0) { forceNumeric = false; }
     //Filter only numbers from the input
@@ -299,6 +471,13 @@ var FormatPhoneNumber = function (phone, forceNumeric) {
     }
     return phone;
 };
+/**
+ * Returns a formatted phone number with dots.
+ *
+ * @example
+ * // returns 555.555.1234
+ * FormatPhoneNumberDots('5555551234')
+ */
 var FormatPhoneNumberDots = function (phone, forceNumeric) {
     if (forceNumeric === void 0) { forceNumeric = false; }
     //Filter only numbers from the input
@@ -313,16 +492,29 @@ var FormatPhoneNumberDots = function (phone, forceNumeric) {
     }
     return phone;
 };
+/**
+ * Formats a zip code by adding a hyphen in a 9 digit code.
+ *
+ * @example
+ * // returns "12345-6789"
+ * FormatZip('123456789')
+ */
 var FormatZip = function (zip) {
     //Filter only numbers from the input
     var cleaned = ('' + zip).replace(/\D/g, '');
-    //Check if the input is of correct
-    var match = cleaned.match(/^\d{5}$|^\d{5}-\d{4}$/);
-    if (match) {
-        return match.join('-');
+    // check if the input is a 9 digit code
+    if (cleaned.length === 9) {
+        cleaned = cleaned.replace(/(\d{5})/, '$1-');
     }
-    return zip;
+    return cleaned;
 };
+/**
+ * Adds "http" on urls that don't have it.
+ *
+ * @example
+ * // returns "http://www.google.com"
+ * FormatExternalURL('www.google.com')
+ */
 var FormatExternalURL = function (url) {
     if (!!url) {
         if (!url.startsWith('http')) {
@@ -332,6 +524,13 @@ var FormatExternalURL = function (url) {
     }
     return '';
 };
+/**
+ * Returns formatted full name.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
+ */
 var DisplayNameFromFL = function (first, last, middle, suffix) {
     var returnName = '';
     if (!!last) {
@@ -367,12 +566,31 @@ var DisplayNameFromFL = function (first, last, middle, suffix) {
     }
     return returnName;
 };
+/**
+ * Returns formatted name from an object.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromObject({
+ *   first_name: 'John',
+ *   last_name: 'Doe',
+ *   middle_name: 'Smith',
+ *   suffix_name: 'Jr.',
+ * })
+ */
 var DisplayNameFromObject = function (object, prefix) {
     if (!object)
         return '';
     var actualPrefix = !!prefix ? "_" + prefix : '';
     return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
 };
+/**
+ * Converts the first character of each word of a string to uppercase.
+ *
+ * @example
+ * // return This Is Awesome
+ * UCWords('This is awesome')
+ */
 var UCWords = function (str) {
     if (!str) {
         return str;
@@ -384,6 +602,13 @@ var UCWords = function (str) {
     }
     return strVal.trim();
 };
+/**
+ * Generates a random string with a given length and valid characters.
+ *
+ * @example
+ * // returns '32112'
+ * RandomString(5, '12345')
+ */
 var RandomString = function (length, validChars) {
     if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
     var validCharLength = validChars.length - 1;
@@ -396,6 +621,10 @@ var RandomString = function (length, validChars) {
 
 var initialChanges = {};
 var initialIDChanges = {};
+/**
+ * Converts Data to CSV. Creates a download link and triggers
+ * click event on it to download the file.
+ */
 var DataToCSVExport = function (filename, csvData) {
     var csvString = csvData
         .map(function (row) {
@@ -412,6 +641,10 @@ var DataToCSVExport = function (filename, csvData) {
     pom.setAttribute('download', filename);
     pom.click();
 };
+/**
+ * Converts Data to CSV without quotes. Creates a download link and triggers
+ * click event on it to download the file.
+ */
 var DataToCSVExportNoQuotes = function (filename, csvData) {
     var csvString = csvData
         .map(function (row) {
@@ -424,6 +657,9 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
     pom.setAttribute('download', filename);
     pom.click();
 };
+/**
+ * A wrapper function for JSON.parse with try/catch.
+ */
 var JSONParse = function (json) {
     if (!json) {
         return null;
@@ -437,6 +673,23 @@ var JSONParse = function (json) {
     }
     return returnObj;
 };
+/**
+ * Removes properties from an object having the same value.
+ *
+ * @example
+ * let data = {
+ *   name: 'john doe',
+ *   age: 24,
+ * }
+ *
+ * let data2 = {
+ *   name: 'john smith',
+ *   age: 24,
+ * }
+ *
+ * // returns {name: 'john doe}
+ * RemoveDupProperties(data, data2)
+ */
 var RemoveDupProperties = function (original, propsToRemove) {
     var result = __assign({}, original);
     for (var key in propsToRemove) {
@@ -450,6 +703,27 @@ var RemoveDupProperties = function (original, propsToRemove) {
     }
     return result;
 };
+/**
+ * Removes properties from an object having the same value by ID.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = {
+ *   1: {
+ *     name: 'john smith',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByID(data, data2)
+ */
 var RemoveDupPropertiesByID = function (original, propsToRemove) {
     var result = __assign({}, original);
     for (var key in propsToRemove) {
@@ -467,20 +741,37 @@ var RemoveDupPropertiesByID = function (original, propsToRemove) {
     }
     return result;
 };
+/**
+ * Removes properties from an object having the same value by an array of objects.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = [
+ *   {id: '1', user: 'john smith', age: 24},
+ *   {id: '2', user: 'sally jones', age: 32}
+ * ]
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByIDArray(data, data2)
+ */
 var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
     var result = __assign({}, original);
     var _loop_1 = function (key) {
         if (original.hasOwnProperty(key)) {
-            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.ID === key; });
+            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id === key; });
             if (!!propsToRemove) {
-                if (propsToRemove.hasOwnProperty(key)) {
-                    var subResult = RemoveDupProperties(result[key], propsToRemove);
-                    if (Object.keys(subResult).length === 0) {
-                        delete result[key];
-                    }
-                    else {
-                        result[key] = subResult;
-                    }
+                var subResult = RemoveDupProperties(result[key], propsToRemove);
+                if (Object.keys(subResult).length === 0) {
+                    delete result[key];
+                }
+                else {
+                    result[key] = subResult;
                 }
             }
         }
@@ -490,6 +781,19 @@ var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
     }
     return result;
 };
+/**
+ * Returns the difference of two objects.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {id: 2, user: 'john doe', age: 23}
+ *
+ * // returns {id: 1, age: 24}
+ * ObjectDiffs(data, data2)
+ *
+ * // returns {age: 24}
+ * ObjectDiffs(data, data2, 'id')
+ */
 var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
     if (excludeKeys === void 0) { excludeKeys = []; }
     var results = {};
@@ -503,6 +807,19 @@ var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
     }
     return results;
 };
+/**
+ * Returns a reduces object to other keys.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {user: 'john doe'}
+ *
+ * // returns {user: '', age: ''}
+ * ReduceObjectToOtherKeys(data, data2)
+ *
+ * // returns {user: ''}
+ * ReduceObjectToOtherKeys(data, data2, ['age'])
+ */
 var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
     if (excludeKeys === void 0) { excludeKeys = []; }
     var results = {};
@@ -515,9 +832,23 @@ var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
     return results;
 };
 
+/**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
 var Trunc = function (subject, length) {
     return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
 };
+/**
+ * Returns a google maps link with the given coordinates.
+ *
+ * @example
+ * // returns "http://maps.google.com/maps?q=12345,12345"
+ * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
+ */
 var GoogleMapsGPSLink = function (dataArray, prefix) {
     var _a, _b;
     if (prefix === void 0) { prefix = ''; }
@@ -525,6 +856,19 @@ var GoogleMapsGPSLink = function (dataArray, prefix) {
     var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
     return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
 };
+/**
+ * Returns a google maps link with the given address
+ *
+ * @example
+ * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
+ *	GoogleMapsAddressLink({
+ *		address1: 'Blk 1, Lot 2, Some Street',
+ *		address2: 'Blk 2, Lot 3, Some Street',
+ *		city: 'Burr Ridge',
+ *		state: 'IL',
+ *		zip: '61257',
+ *	})
+ */
 var GoogleMapsAddressLink = function (dataArray, prefix) {
     var _a, _b, _c, _d;
     if (prefix === void 0) { prefix = ''; }
@@ -537,11 +881,24 @@ var GoogleMapsAddressLink = function (dataArray, prefix) {
     address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
     return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
 };
+/**
+ * Determines whether a value is a valid input decimal.
+ *
+ * @example
+ * // returns true
+ * IsValidInputDecimal('1')
+ *
+ * // returns false
+ * IsValidInputDecimal('1%')
+ */
 var IsValidInputDecimal = function (value) {
     // noinspection RegExpUnexpectedAnchor
-    var regEx = new RegExp('/^\\d{1,}(\\.\\d{0,4})?$/');
+    var regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$');
     return !value || regEx.test(value);
 };
+/**
+ * Generates a unique UID
+ */
 var GenerateUUID = function () {
     var d = new Date().getTime(); //Timestamp
     var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
@@ -561,9 +918,16 @@ var GenerateUUID = function () {
     });
 };
 /**
+ * Determines a value is active or on. Returns true when the value
+ * is one of the following:
+ * 'true', 'active', 'on', 'yes', 'y'
  *
- * @param value
- * @constructor
+ * @example
+ * // return true
+ * IsOn('active')
+ *
+ * // return false
+ * IsOn('inactive')
  */
 var IsOn = function (value) {
     if (!value) {
@@ -578,6 +942,23 @@ var IsOn = function (value) {
     }
     return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
 };
+/**
+ * Copies an address object to another object.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Blk 2, Lot 3, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * let address2 = {}
+ * AddressCopy(address1, '', address2, '')
+ * // address2 is now a copy of address1
+ * console.log(address2)
+ */
 var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
     if (includeName === void 0) { includeName = true; }
     if (includePhone === void 0) { includePhone = true; }
@@ -604,9 +985,36 @@ var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeN
         toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
     }
 };
+/**
+ * Determines whether an object has a property of "address_1".
+ *
+ * @example
+ * // returns false
+ * AddressValid({ address: 'Blk1, Lot1, Some street' })
+ *
+ * // returns false
+ * AddressValid({ address_1: '' })
+ *
+ * // returns true
+ * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
+ */
 var AddressValid = function (address, prefix) {
     return !!address[(prefix !== null && prefix !== void 0 ? prefix : '') + 'address_1'];
 };
+/**
+ * Combines an address object into a single row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL, 61257"
+ * AddressSingleRow(address1)
+ */
 var AddressSingleRow = function (object, prefix) {
     var _a, _b, _c, _d;
     var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
@@ -621,7 +1029,17 @@ var AddressSingleRow = function (object, prefix) {
 };
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
-var EvaluatorFunctions = ['abs', 'pow', 'int', 'round'];
+var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
+/**
+ * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
+ *
+ * @example
+ * // returns "Hello, Bob"
+ * EvaluateString("Hello, [Name]!", {Name: "Bob"})
+ *
+ * // returns "1 + SomeValue = 3"
+ * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
+ */
 var EvaluateString = function (expression, variables) {
     var _a, _b, _c;
     var returnValue = expression;
@@ -642,6 +1060,17 @@ var EvaluateString = function (expression, variables) {
     returnValue = ExecuteFunctions(returnValue);
     return returnValue;
 };
+/**
+ * Accepts a string, processes variables against the entire string, and returns a boolean if the condition is true or false.
+ *
+ * @example
+ *
+ * // returns false
+ * EvaluateCondition("1 = SomeValue", {SomeValue: 2})
+ *
+ * // returns true
+ * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
+ */
 var EvaluateCondition = function (expression, variables) {
     return IsOn(EvaluateString("[" + expression + "]", variables));
 };
@@ -811,9 +1240,9 @@ var FindFunction = function (expression, startPosition) {
         return null;
     for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
         var evaluatorFunction = EvaluatorFunctions_1[_i];
-        var pos = ('' + expression).indexOf(evaluatorFunction + '(', startPosition);
+        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
         if (pos >= 0) {
-            var postFunctionName = expression.substr(pos + evaluatorFunction.length);
+            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
             var parens = FindInnerSetLocations(postFunctionName, '(', ')');
             if (!!parens) {
                 var argumentText = postFunctionName.substr(1, parens[1] - 1);
@@ -859,6 +1288,24 @@ var ExecuteFunction = function (foundFunction) {
                 return (roundedTempNumber / factor).toString();
             }
             break;
+        case 'includes':
+            var index = 1;
+            var arrayValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[index] !== undefined) {
+                arrayValues.push(foundFunction.arguments[index]);
+                index++;
+            }
+            return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0';
+        case 'includesinarray':
+            var key = 1;
+            var arrValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[key] !== undefined) {
+                arrValues.push(foundFunction.arguments[key]);
+                key++;
+            }
+            return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0';
     }
     return '';
 };
@@ -872,6 +1319,7 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
+var moment = require('moment-timezone');
 var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
@@ -881,9 +1329,9 @@ var MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", YYYY";
 var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', moment.ISO_8601];
+var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601];
 var TIME_FORMAT_TRIES = [
-    moment.ISO_8601,
+    momentTimezone.ISO_8601,
     'YYYY-MM-DD HH:mm:ss',
     'YYYY-MM-DD HH:mm',
     'HH:mm:ss',
@@ -913,7 +1361,7 @@ var FormatIsDateTime = function (format) {
 /**
  * Returns the current time zone.
  */
-var MomentCurrentTimeZone = function () { var _a; return ((_a = moment__default['default']().tz()) !== null && _a !== void 0 ? _a : 'UTC').toString(); };
+var MomentCurrentTimeZone = function () { var _a; return ((_a = moment().tz()) !== null && _a !== void 0 ? _a : 'UTC').toString(); };
 /**
  * Returns the Moment object from a given value. If the given value is invalid,
  * it returns null.
@@ -929,13 +1377,13 @@ var MomentFromString = function (value) {
     }
     var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
     if (typeof value !== 'string') {
-        var momentObject = moment__default['default'](value);
+        var momentObject = moment(value);
         if (momentObject.isValid()) {
             return momentObject.utc().tz(MomentCurrentTimeZone());
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment__default['default'](value, formatTries, true) : moment$1.utc(value, formatTries, true);
+        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$1.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }
@@ -1008,7 +1456,7 @@ var MomentDisplayDayDateTime = function (value, showYear) {
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear
+    return momentObject.format(momentObject.year() === moment().year() && !showYear
         ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY
         : MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY);
 };
@@ -1022,7 +1470,7 @@ var MomentDisplayDayDate = function (value, showYear) {
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment__default['default']().year() && !showYear
+    return momentObject.format(momentObject.year() === moment().year() && !showYear
         ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR
         : MOMENT_FORMAT_DATE_DISPLAY);
 };
@@ -1043,6 +1491,13 @@ var MomentDisplayTime = function (value) {
     Stages["ProdSupport"] = "prodsupport";
     Stages["Prod"] = "prod";
 })(exports.Stages || (exports.Stages = {}));
+/**
+ * Determines whether the app in a particular stage.
+ *
+ * @example
+ * // If the app is in 'local', it returns true
+ * IsStage('local')
+ */
 var IsStage = function (stages) {
     var envs;
     if (typeof stages === 'string') {
@@ -1053,10 +1508,18 @@ var IsStage = function (stages) {
     }
     return !!envs.find(function (env) { return GetStage() === env; });
 };
+/**
+ */
 var GetStage = function () {
     var _a, _b;
     return ((_b = (_a = process.env.REACT_APP_STAGE) !== null && _a !== void 0 ? _a : process.env.STAGE) !== null && _b !== void 0 ? _b : exports.Stages.Local);
 };
+/**
+ * Returns the full name of the stage.
+ * @example
+ * // return Development
+ * GetStageName('dev')
+ */
 var GetStageName = function (stage) {
     var _a;
     var workingStage = stage !== null && stage !== void 0 ? stage : GetStage();
@@ -1073,16 +1536,38 @@ var GetStageName = function (stage) {
             return (_a = UCWords(workingStage)) !== null && _a !== void 0 ? _a : 'Local';
     }
 };
+/**
+ * Determines whether the stage is one of the following: local, migrate, dev, qa
+ */
 var IsStageDevFocused = function () {
     return IsStage([exports.Stages.Local, exports.Stages.Migrate, exports.Stages.Dev, exports.Stages.QA]);
 };
+/**
+ * Determines whether the stage is one of the following: qa, test
+ */
 var IsStageTestFocused = function () {
     return IsStage([exports.Stages.QA, exports.Stages.Test]);
 };
+/**
+ * Determines whether the stage is one of the following: local, migrate, dev, qa, test
+ */
 var IsStageDevTestFocused = function () {
     return IsStageDevFocused() || IsStageTestFocused();
 };
 
+/**
+ * Returns an array of numbers to be used for pagination links.
+ *
+ * @example
+ * // returns [1, 2, 3, null, 10]
+ * PagesForRange(1, 10)
+ *
+ * // returns [1, null, 7, 8, 9, 10]
+ * PagesForRange(9, 10)
+ *
+ * // returns [1, 2, 3, 4, null, 10]
+ * PagesForRange(1, 10, 3)
+ */
 function PagesForRange(current, length, spread) {
     if (spread === void 0) { spread = 2; }
     if (!(length > 0)) {
@@ -1119,6 +1604,21 @@ var initialSortColumn = {
     secondaryAscending: true,
     secondaryEmptyToBottom: null
 };
+/**
+ * Updates a the primary sort key of a sort column object, and returns the updated object.
+ *
+ * @example
+ * // returns the updated object:
+ * {
+ *   primarySort: 'name',
+ *   primaryAscending: true,
+ *   primaryEmptyToBottom: null,
+ *   secondarySort: '',
+ *   secondaryAscending: true,
+ *   secondaryEmptyToBottom: null
+ * }
+ * SortColumnUpdate('name', initialSortColumn)
+ */
 var SortColumnUpdate = function (columnToSort, sortColumn, firstClickAscending, emptyToBottom) {
     if (firstClickAscending === void 0) { firstClickAscending = true; }
     if (emptyToBottom === void 0) { emptyToBottom = null; }
@@ -1136,6 +1636,25 @@ var SortColumnUpdate = function (columnToSort, sortColumn, firstClickAscending, 
         };
     }
 };
+/**
+ * Accepts an array of data and a sort column object, and returns the sorted array of data.
+ *
+ * @example
+ * const sortColumn = SortColumnUpdate('name', initialSortColumn)
+ * const data = [
+ *   {id: 1, name: 'brad', age: 24},
+ *   {id: 2, name: 'sally', age: 32},
+ *   {id: 3, name: 'abby', age: 28}
+ * ]
+ *
+ * // returns
+ * [
+ *   {id: 3, name: 'abby', age: 28}
+ *   {id: 1, name: 'brad', age: 24},
+ *   {id: 2, name: 'sally', age: 32},
+ * ]
+ * SortColumns(data, sortColumn)
+ */
 var SortColumns = function (arrayTable, sortColumn) {
     return arrayTable.sort(function (a, b) {
         var _a, _b, _c, _d, _e;
@@ -1160,6 +1679,13 @@ var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) {
     }
     return (numbA - numbB) * (isAscending ? 1 : -1);
 };
+/**
+ * Converts each word of a string to an array element for searching.
+ *
+ * @example
+ * // returns ['john', 'doe', 'johndoe@mail.com']
+ * SearchTerms('john doe johndoe@mail.com')
+ */
 var SearchTerms = function (search, toLowerCase) {
     if (toLowerCase === void 0) { toLowerCase = true; }
     return (search !== null && search !== void 0 ? search : '')
@@ -1168,6 +1694,13 @@ var SearchTerms = function (search, toLowerCase) {
         .map(function (term) { return (toLowerCase ? term.trim().toLowerCase() : term.trim()); })
         .filter(function (term) { return !!term; });
 };
+/**
+ * Determines whether a string contains search terms.
+ *
+ * @example
+ * // returns true
+ * StringContainsSearchTerms('user age', ['user', 'age'])
+ */
 var StringContainsSearchTerms = function (value, searchTerms) {
     if (searchTerms.length === 0)
         return true;
@@ -1175,6 +1708,16 @@ var StringContainsSearchTerms = function (value, searchTerms) {
         return false;
     return searchTerms.every(function (term) { return value.includes(term); });
 };
+/**
+ * Determines whether a string contains search string.
+ *
+ * @example
+ * // return true
+ * StringContainsSearch('user age', 'user')
+ *
+ * // return false
+ * StringContainsSearch('user age', 'address')
+ */
 var StringContainsSearch = function (value, search) {
     if (!search)
         return true;
@@ -1183,6 +1726,16 @@ var StringContainsSearch = function (value, search) {
     var searchTerms = SearchTerms(search);
     return StringContainsSearchTerms(value, searchTerms);
 };
+/**
+ * Determines whether an object contains search terms.
+ *
+ * @example
+ * // returns true
+ * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24'])
+ *
+ * // returns true
+ * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
+ */
 var ObjectContainsSearchTerms = function (object, searchTerms) {
     if (searchTerms.length === 0)
         return true;
@@ -1192,6 +1745,16 @@ var ObjectContainsSearchTerms = function (object, searchTerms) {
         return Object.keys(object).some(function (column) { var _a; return ((_a = object[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term); });
     });
 };
+/**
+ * Determines whether an object contains search string.
+ *
+ * @example
+ * // returns true
+ * ObjectContainsSearch({user: 'john doe', age: 24}, '24')
+ *
+ * // returns true
+ * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
+ */
 var ObjectContainsSearch = function (object, search) {
     if (!search)
         return true;
@@ -1200,6 +1763,18 @@ var ObjectContainsSearch = function (object, search) {
     var searchTerms = SearchTerms(search);
     return ObjectContainsSearchTerms(object, searchTerms);
 };
+/**
+ * Searches an array of objects with a given search string, and returns the list of objects that match.
+ *
+ * @example
+ * let data = [{id: 1, user: 'john doe'}, {id: 2, user: 'john smith'}]
+ *
+ * // returns [{id: 1, user: 'john doe'}, {id: 2, user: 'john smith'}]
+ * SearchRows(data, 'john')
+ *
+ * // returns [{id: 2, user: 'john smith'}]
+ * SearchRows(data, 'smith')
+ */
 var SearchRows = function (arrayTable, search) {
     var searchTerms = SearchTerms(search);
     if (searchTerms.length === 0) {
@@ -1207,6 +1782,13 @@ var SearchRows = function (arrayTable, search) {
     }
     return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms); });
 };
+/**
+ * Determines whether a search item object contains value from the search string.
+ *
+ * @example
+ * // returns true
+ * SearchRow({user: 'john doe', age: '24'}, 'john 24')
+ */
 var SearchRow = function (searchItem, search) {
     var searchTerms = SearchTerms(search);
     if (searchTerms.length === 0) {
@@ -1214,6 +1796,24 @@ var SearchRow = function (searchItem, search) {
     }
     return ObjectContainsSearchTerms(searchItem, searchTerms);
 };
+/**
+ * Accepts an array of data, a search string, and a sort column object. Returns the
+ * sorted search results array.
+ *
+ * @example
+ * const sortColumn = SortColumnUpdate('name', initialSortColumn)
+ * const data = [
+ *   {id: 1, name: 'john smith', age: 24},
+ *   {id: 2, name: 'sally jones', age: 32},
+ *   {id: 3, name: 'john doe', age: 28}
+ * ]
+ *
+ * // returns [{id: 3, name: 'john doe', age: 28}, {id: 1, name: 'john smith', age: 24}]
+ * SearchSort(data, 'john', sortColumn)
+ *
+ * // returns [{id: 1, name: 'john smith', age: 24}]
+ * SearchSort(data, 'john 24', sortColumn)
+ */
 var SearchSort = function (arrayTable, search, sortColumn) {
     return SortColumns(SearchRows(arrayTable, search), sortColumn);
 };
