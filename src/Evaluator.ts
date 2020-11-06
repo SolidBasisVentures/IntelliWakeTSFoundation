@@ -18,7 +18,7 @@
 import {IsOn} from './Functions'
 import {ReplaceAll} from './StringManipulation'
 const EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^']
-const EvaluatorFunctions = ['abs', 'pow', 'int', 'round']
+const EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray']
 
 export type TVariables = {[key: string]: any}
 
@@ -267,10 +267,10 @@ const FindFunction = (expression: string, startPosition: number): IFoundFunction
 	if (!expression) return null
 
 	for (const evaluatorFunction of EvaluatorFunctions) {
-		const pos = ('' + expression).indexOf(evaluatorFunction + '(', startPosition)
+		const pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition)
 
 		if (pos >= 0) {
-			const postFunctionName = expression.substr(pos + evaluatorFunction.length)
+			const postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase()
 			const parens = FindInnerSetLocations(postFunctionName, '(', ')')
 			if (!!parens) {
 				const argumentText = postFunctionName.substr(1, parens[1] - 1)
@@ -319,6 +319,28 @@ const ExecuteFunction = (foundFunction: IFoundFunction): string => {
 				return (roundedTempNumber / factor).toString()
 			}
 			break
+		case 'includes':
+			let index = 1
+			let arrayValues = []
+
+			// get array values from the 2nd argument and so on...
+			while (foundFunction.arguments[index] !== undefined) {
+				arrayValues.push(foundFunction.arguments[index])
+				index++
+			}
+
+			return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0'
+		case 'includesinarray':
+			let key = 1
+			let arrValues = []
+
+			// get array values from the 2nd argument and so on...
+			while (foundFunction.arguments[key] !== undefined) {
+				arrValues.push(foundFunction.arguments[key])
+				key++
+			}
+
+			return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0'
 	}
 
 	return ''
