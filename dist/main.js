@@ -620,7 +620,15 @@ var RandomString = function (length, validChars) {
 };
 
 var initialChanges = {};
+var ApplyChange = function (name, value, changes) {
+    var _a;
+    return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
+};
 var initialIDChanges = {};
+var ApplyIDChange = function (id, name, value, idChanges) {
+    var _a, _b;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
+};
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
@@ -1821,6 +1829,8 @@ var SearchSort = function (arrayTable, search, sortColumn) {
 exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
+exports.ApplyChange = ApplyChange;
+exports.ApplyIDChange = ApplyIDChange;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
 exports.DataToCSVExport = DataToCSVExport;

@@ -2,12 +2,14 @@ export declare type IChanges = {
     [key: string]: any;
 };
 export declare const initialChanges: {};
+export declare const ApplyChange: (name: string, value: any, changes: IChanges) => IChanges;
 export declare type IIDChanges = {
     [key: number]: {
         [key: string]: any;
     };
 };
 export declare const initialIDChanges: {};
+export declare const ApplyIDChange: (id: number, name: string, value: any, idChanges: IIDChanges) => IIDChanges;
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
