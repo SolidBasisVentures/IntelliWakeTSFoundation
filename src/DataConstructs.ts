@@ -3,7 +3,7 @@ import {ReplaceAll} from './StringManipulation'
 export type IChanges = {[key: string]: any}
 export const initialChanges = {}
 
-export const ApplyChange = (name: string, value: any, changes: IChanges): IChanges => ({
+export const AddChange = (name: string, value: any, changes: IChanges): IChanges => ({
 	...changes,
 	[name]: value
 })
@@ -11,7 +11,7 @@ export const ApplyChange = (name: string, value: any, changes: IChanges): IChang
 export type IIDChanges = {[key: number]: {[key: string]: any}}
 export const initialIDChanges = {}
 
-export const ApplyIDChange = (id: number, name: string, value: any, idChanges: IIDChanges): IIDChanges => ({
+export const AddIDChange = (id: number, name: string, value: any, idChanges: IIDChanges): IIDChanges => ({
 	...idChanges,
 	[id]: {
 		...idChanges[id],
