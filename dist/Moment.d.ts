@@ -18,6 +18,10 @@ export declare enum EDateAndOrTime {
  */
 export declare const MomentCurrentTimeZone: () => string;
 /**
+ * Current time in ISO string format
+ */
+export declare const NowISOString: () => string;
+/**
  * Returns the Moment object from a given value. If the given value is invalid,
  * it returns null.
  *
@@ -61,5 +65,22 @@ export declare const MomentDisplayDayDate: (value: string | Moment | Date | null
  * Returns the time with 12-hour clock format.
  */
 export declare const MomentDisplayTime: (value: string | Moment | Date | null | undefined) => string | null;
+/**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ */
 export declare const MomentDurationShortText: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
+/**
+ * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
+ *
+ * If the second parameter is empty, the current date/time is used.
+ 
+ * @example
+ * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
+ */
 export declare const MomentDurationShortTextAligned: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;

@@ -48,7 +48,12 @@ const FormatIsDateTime = (format: string) =>
 /**
  * Returns the current time zone.
  */
-export const MomentCurrentTimeZone = (): string => (moment().tz() ?? 'UTC').toString()
+export const MomentCurrentTimeZone = (): string => moment.tz().format('z')
+
+/**
+ * Current time in ISO string format
+ */
+export const NowISOString = (): string => new Date().toISOString()
 
 /**
  * Returns the Moment object from a given value. If the given value is invalid,
@@ -190,6 +195,15 @@ export const MomentDisplayDayDate = (
 export const MomentDisplayTime = (value: string | Moment | Date | null | undefined): string | null =>
 	MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY)
 
+/**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ */
 export const MomentDurationShortText = (start: string | Moment | Date, end?: string | Moment | Date): string => {
 	const duration = moment.duration((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()))
 	
@@ -228,6 +242,14 @@ export const MomentDurationShortText = (start: string | Moment | Date, end?: str
 	return text.trim()
 }
 
+/**
+ * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
+ *
+ * If the second parameter is empty, the current date/time is used.
+ 
+ * @example
+ * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
+ */
 export const MomentDurationShortTextAligned = (start: string | Moment | Date, end?: string | Moment | Date): string => {
 	const duration = moment.duration((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()))
 	

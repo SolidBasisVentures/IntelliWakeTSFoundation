@@ -1417,7 +1417,11 @@ var FormatIsDateTime = function (format) {
 /**
  * Returns the current time zone.
  */
-var MomentCurrentTimeZone = function () { var _a; return ((_a = moment().tz()) !== null && _a !== void 0 ? _a : 'UTC').toString(); };
+var MomentCurrentTimeZone = function () { return moment.tz().format('z'); };
+/**
+ * Current time in ISO string format
+ */
+var NowISOString = function () { return new Date().toISOString(); };
 /**
  * Returns the Moment object from a given value. If the given value is invalid,
  * it returns null.
@@ -1536,6 +1540,15 @@ var MomentDisplayDayDate = function (value, showYear) {
 var MomentDisplayTime = function (value) {
     return MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY);
 };
+/**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ */
 var MomentDurationShortText = function (start, end) {
     var _a, _b;
     var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
@@ -1574,6 +1587,14 @@ var MomentDurationShortText = function (start, end) {
     }
     return text.trim();
 };
+/**
+ * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
+ *
+ * If the second parameter is empty, the current date/time is used.
+ 
+ * @example
+ * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
+ */
 var MomentDurationShortTextAligned = function (start, end) {
     var _a, _b;
     var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
@@ -2002,6 +2023,7 @@ exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
 exports.MomentFormatString = MomentFormatString;
 exports.MomentFromString = MomentFromString;
 exports.MomentTimeString = MomentTimeString;
+exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;

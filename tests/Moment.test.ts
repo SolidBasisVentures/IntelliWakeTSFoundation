@@ -4,7 +4,7 @@ import {
 	MomentDateTimeString,
 	MomentDisplayDayDate,
 	MomentDisplayDayDateTime,
-	MomentDisplayTime,
+	MomentDisplayTime, MomentDurationShortText, MomentDurationShortTextAligned,
 	MomentFormatString,
 	MomentFromString,
 	MomentTimeString
@@ -119,4 +119,16 @@ test('Moment Display Time from Blank', () => {
 
 test('Moment Display Time from Date', () => {
 	expect(MomentDisplayTime('2020-01-01')).toBe(null)
+})
+
+test('MomentDurationShortText 30m 20s', () => {
+	expect(MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20')).toBe('30m 20s')
+})
+
+test('MomentDurationShortText 2M 10D', () => {
+	expect(MomentDurationShortText('2020-01-01 13:00:00', '2020-03-12 13:30:20')).toBe('2M 10D')
+})
+
+test('MomentDurationShortTextAligned 2D  1h 30m 20s', () => {
+	expect(MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20')).toBe('2D  1h 30m 20s')
 })
