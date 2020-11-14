@@ -67,6 +67,8 @@ export interface IAddress {
 /**
  * Copies an address object to another object.
  *
+ * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
+ *
  * @example
  * let address1 = {
  *   address_1: 'Blk 1, Lot 2, Some Street',
