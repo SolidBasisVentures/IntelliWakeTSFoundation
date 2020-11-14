@@ -1536,6 +1536,83 @@ var MomentDisplayDayDate = function (value, showYear) {
 var MomentDisplayTime = function (value) {
     return MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY);
 };
+var MomentDurationShortText = function (start, end) {
+    var _a, _b;
+    var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + "Y";
+        text += " " + ToDigits(duration.months(), 0) + "M";
+        text += " " + ToDigits(duration.days(), 0) + "D";
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0) + "M";
+        if (duration.days()) {
+            text += " " + ToDigits(duration.days(), 0) + "D";
+        }
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0) + "D";
+        text += " " + ToDigits(duration.hours(), 0) + "h";
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0) + "h";
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+    }
+    else {
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+        if (duration.seconds()) {
+            text += " " + ToDigits(duration.seconds(), 0) + "s";
+        }
+    }
+    return text.trim();
+};
+var MomentDurationShortTextAligned = function (start, end) {
+    var _a, _b;
+    var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + "Y";
+        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.minutes()) {
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.seconds()) {
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    return text.trim();
+};
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -1920,6 +1997,8 @@ exports.MomentDateTimeString = MomentDateTimeString;
 exports.MomentDisplayDayDate = MomentDisplayDayDate;
 exports.MomentDisplayDayDateTime = MomentDisplayDayDateTime;
 exports.MomentDisplayTime = MomentDisplayTime;
+exports.MomentDurationShortText = MomentDurationShortText;
+exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
 exports.MomentFormatString = MomentFormatString;
 exports.MomentFromString = MomentFromString;
 exports.MomentTimeString = MomentTimeString;

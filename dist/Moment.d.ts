@@ -61,3 +61,5 @@ export declare const MomentDisplayDayDate: (value: string | Moment | Date | null
  * Returns the time with 12-hour clock format.
  */
 export declare const MomentDisplayTime: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDurationShortText: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
+export declare const MomentDurationShortTextAligned: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
