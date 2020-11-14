@@ -1,15 +1,85 @@
+/**
+ * IChanges provides a structure for tracking changes for an object.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
 export declare type IChanges = {
     [key: string]: any;
 };
 export declare const initialChanges: {};
+/**
+ * Adds a change to the IChange object.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ *
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
 export declare const AddChange: (name: string, value: any, changes: IChanges) => IChanges;
+/**
+ * Returns the final state of an object with changes applied.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+export declare const ObjectWithChanges: <T>(item: T, changes: IChanges) => T;
+export declare type IIDObject = {
+    id: number;
+};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
 export declare type IIDChanges = {
-    [key: number]: {
-        [key: string]: any;
-    };
+    [key: number]: IChanges;
 };
 export declare const initialIDChanges: {};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
+ *
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
 export declare const AddIDChange: (id: number, name: string, value: any, idChanges: IIDChanges) => IIDChanges;
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+export declare const ArrayWithIDChanges: <T extends IIDObject>(items: T[], idChanges: IIDChanges) => T[];
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.

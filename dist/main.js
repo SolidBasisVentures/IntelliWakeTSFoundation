@@ -620,15 +620,63 @@ var RandomString = function (length, validChars) {
 };
 
 var initialChanges = {};
+/**
+ * Adds a change to the IChange object.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ *
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
 var AddChange = function (name, value, changes) {
     var _a;
     return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
 };
+/**
+ * Returns the final state of an object with changes applied.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
 var initialIDChanges = {};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
+ *
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
 var AddIDChange = function (id, name, value, idChanges) {
     var _a, _b;
     return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
 };
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
@@ -1831,6 +1879,7 @@ exports.AddIDChange = AddIDChange;
 exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
+exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
 exports.DataToCSVExport = DataToCSVExport;
@@ -1877,6 +1926,7 @@ exports.MomentTimeString = MomentTimeString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
+exports.ObjectWithChanges = ObjectWithChanges;
 exports.PagesForRange = PagesForRange;
 exports.RandomString = RandomString;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;
