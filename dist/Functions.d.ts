@@ -67,6 +67,8 @@ export interface IAddress {
 /**
  * Copies an address object to another object.
  *
+ * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
+ *
  * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
  *
  * @example

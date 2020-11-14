@@ -126,6 +126,8 @@ export interface IAddress {
 /**
  * Copies an address object to another object.
  *
+ * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
+ *
  * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
  *
  * @example
@@ -152,7 +154,7 @@ export const AddressCopy = (
 	includeTimeZone = true,
 	includeGPS = true
 ): void => {
-	if (includeName && !!fromObject[toPrefix + 'name']) {
+	if (includeName && !!fromObject[fromPrefix + 'name']) {
 		toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name']
 	}
 	toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1']
@@ -160,16 +162,16 @@ export const AddressCopy = (
 	toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city']
 	toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state']
 	toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip']
-	if (includePhone && !!fromObject[toPrefix + 'phone']) {
+	if (includePhone && !!fromObject[fromPrefix + 'phone']) {
 		toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone']
 	}
-	if (includeTimeZone && !!fromObject[toPrefix + 'timezone']) {
+	if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
 		toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone']
 	}
-	if (includeGPS && !!fromObject[toPrefix + 'latitude']) {
+	if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
 		toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude']
 	}
-	if (includeGPS && !!fromObject[toPrefix + 'longitude']) {
+	if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
 		toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude']
 	}
 }

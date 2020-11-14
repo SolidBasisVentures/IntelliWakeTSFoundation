@@ -1001,6 +1001,8 @@ var IsOn = function (value) {
 /**
  * Copies an address object to another object.
  *
+ * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
+ *
  * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
  *
  * @example
@@ -1022,7 +1024,7 @@ var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeN
     if (includePhone === void 0) { includePhone = true; }
     if (includeTimeZone === void 0) { includeTimeZone = true; }
     if (includeGPS === void 0) { includeGPS = true; }
-    if (includeName && !!fromObject[toPrefix + 'name']) {
+    if (includeName && !!fromObject[fromPrefix + 'name']) {
         toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name'];
     }
     toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1'];
@@ -1030,16 +1032,16 @@ var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeN
     toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city'];
     toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state'];
     toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip'];
-    if (includePhone && !!fromObject[toPrefix + 'phone']) {
+    if (includePhone && !!fromObject[fromPrefix + 'phone']) {
         toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone'];
     }
-    if (includeTimeZone && !!fromObject[toPrefix + 'timezone']) {
+    if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
         toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone'];
     }
-    if (includeGPS && !!fromObject[toPrefix + 'latitude']) {
+    if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
         toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude'];
     }
-    if (includeGPS && !!fromObject[toPrefix + 'longitude']) {
+    if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
         toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
     }
 };
