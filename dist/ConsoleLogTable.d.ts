@@ -9,6 +9,33 @@ export declare type TConsoleLogTableDef = {
     columns?: TConsoleLogTableColumnDef[];
 };
 export declare const initialConsoleLogTableDef: TConsoleLogTableDef;
+export declare const ConsoleColor: {
+    Reset: string;
+    Underscore: string;
+    Reverse: string;
+    fg: {
+        Black: string;
+        Red: string;
+        Green: string;
+        Yellow: string;
+        Blue: string;
+        Magenta: string;
+        Cyan: string;
+        White: string;
+        Crimson: string;
+    };
+    bg: {
+        Black: string;
+        Red: string;
+        Green: string;
+        Yellow: string;
+        Blue: string;
+        Magenta: string;
+        Cyan: string;
+        White: string;
+        Crimson: string;
+    };
+};
 /**
  * Formats an array of data into a table format and prints it in the console.
  *
