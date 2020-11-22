@@ -140,7 +140,7 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export const JSONParse = (json: string | null | undefined): object | null => {
+export const JSONParse = (json: any): object | null => {
 	if (!json) {
 		return null
 	}
@@ -158,6 +158,9 @@ export const JSONParse = (json: string | null | undefined): object | null => {
 	return returnObj
 }
 
+/**
+ * Checks if a string is a valid JSON structure
+ */
 export const IsJSON = (json: any): boolean => {
 	if (!json) return false
 	
