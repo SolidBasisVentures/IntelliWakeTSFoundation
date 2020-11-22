@@ -101,7 +101,7 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExport = function (filename: string, csvData: any) {
+export const DataToCSVExport = function(filename: string, csvData: any) {
 	const csvString = csvData
 		.map((row: any) =>
 			row
@@ -111,7 +111,7 @@ export const DataToCSVExport = function (filename: string, csvData: any) {
 				.join(',')
 		)
 		.join('\n')
-
+	
 	let pom = document.createElement('a')
 	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
 	pom.href = URL.createObjectURL(blob)
@@ -123,13 +123,13 @@ export const DataToCSVExport = function (filename: string, csvData: any) {
  * Converts Data to CSV without quotes. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExportNoQuotes = function (filename: string, csvData: any) {
+export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) {
 	const csvString = csvData
 		.map((row: any) =>
 			row.map((item: any) => (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item ?? '')).join(',')
 		)
 		.join('\n')
-
+	
 	let pom = document.createElement('a')
 	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
 	pom.href = URL.createObjectURL(blob)
@@ -144,16 +144,32 @@ export const JSONParse = (json: string | null | undefined): object | null => {
 	if (!json) {
 		return null
 	}
-
+	
 	let returnObj = null
-
+	
 	try {
 		returnObj = JSON.parse(json)
 	} catch (err) {
-		console.log('JSONParse', err)
+		// console.log('JSONParse', err)
+		
+		return null
 	}
-
+	
 	return returnObj
+}
+
+export const IsJSON = (json: any): boolean => {
+	if (!json) return false
+	
+	if (typeof json !== 'string') return false
+	
+	try {
+		const result = JSON.parse(json)
+		const type = Object.prototype.toString.call(result)
+		return type === '[object Object]' || type === '[object Array]'
+	} catch (err) {
+		return false
+	}
 }
 
 /**
@@ -175,7 +191,7 @@ export const JSONParse = (json: string | null | undefined): object | null => {
  */
 export const RemoveDupProperties = (original: IChanges, propsToRemove: IChanges): IChanges => {
 	const result: any = {...original}
-
+	
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
 			if (result.hasOwnProperty(key)) {
@@ -185,7 +201,7 @@ export const RemoveDupProperties = (original: IChanges, propsToRemove: IChanges)
 			}
 		}
 	}
-
+	
 	return result
 }
 
@@ -212,12 +228,12 @@ export const RemoveDupProperties = (original: IChanges, propsToRemove: IChanges)
  */
 export const RemoveDupPropertiesByID = (original: IIDChanges, propsToRemove: IIDChanges): IIDChanges => {
 	const result: any = {...original}
-
+	
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
 			if (result.hasOwnProperty(key)) {
 				const subResult = RemoveDupProperties(result[key], propsToRemove[key])
-
+				
 				if (Object.keys(subResult).length === 0) {
 					delete result[key]
 				} else {
@@ -226,7 +242,7 @@ export const RemoveDupPropertiesByID = (original: IIDChanges, propsToRemove: IID
 			}
 		}
 	}
-
+	
 	return result
 }
 
@@ -251,14 +267,14 @@ export const RemoveDupPropertiesByID = (original: IIDChanges, propsToRemove: IID
  */
 export const RemoveDupPropertiesByIDArray = (original: IIDChanges, propsToRemoveArray: any[]): IIDChanges => {
 	const result: any = {...original}
-
+	
 	for (const key in original) {
 		if (original.hasOwnProperty(key)) {
 			const propsToRemove = propsToRemoveArray.find((propsToRemove) => propsToRemove.id === key)
-
+			
 			if (!!propsToRemove) {
 				const subResult = RemoveDupProperties(result[key], propsToRemove)
-
+				
 				if (Object.keys(subResult).length === 0) {
 					delete result[key]
 				} else {
@@ -267,7 +283,7 @@ export const RemoveDupPropertiesByIDArray = (original: IIDChanges, propsToRemove
 			}
 		}
 	}
-
+	
 	return result
 }
 
@@ -286,7 +302,7 @@ export const RemoveDupPropertiesByIDArray = (original: IIDChanges, propsToRemove
  */
 export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[] = []): any => {
 	let results: any = {}
-
+	
 	for (const key of Object.keys(compare)) {
 		if (!excludeKeys.includes(key)) {
 			if (compare[key] !== comparedTo[key]) {
@@ -294,7 +310,7 @@ export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[]
 			}
 		}
 	}
-
+	
 	return results
 }
 
@@ -313,12 +329,12 @@ export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[]
  */
 export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: string[] = []): any => {
 	let results: any = {}
-
+	
 	for (const key of Object.keys(main)) {
 		if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
 			results[key] = main[key]
 		}
 	}
-
+	
 	return results
 }

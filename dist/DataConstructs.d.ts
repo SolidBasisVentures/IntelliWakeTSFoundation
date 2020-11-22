@@ -94,6 +94,7 @@ export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) =
  * A wrapper function for JSON.parse with try/catch.
  */
 export declare const JSONParse: (json: string | null | undefined) => object | null;
+export declare const IsJSON: (json: any) => boolean;
 /**
  * Removes properties from an object having the same value.
  *

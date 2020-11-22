@@ -24,6 +24,7 @@ import {
 	ToStringArray,
 	UCWords
 } from '../src/StringManipulation'
+import {IsJSON, JSONParse} from '../src/DataConstructs'
 
 test('ToSnakeCase', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
@@ -192,3 +193,32 @@ test('RandomString length', () => {
 test('RandomString validChars', () => {
 	expect(RandomString(5, '1')).toContain('1')
 })
+
+test('JSONParse valid', () => {
+	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
+})
+
+test('JSONParse empty', () => {
+	expect(JSONParse(undefined)).toEqual(null)
+})
+
+test('JSONParse string', () => {
+	expect(JSONParse('Test')).toEqual(null)
+})
+
+test('IsJSON valid', () => {
+	expect(IsJSON('{"id": 1}')).toEqual(true)
+})
+
+test('IsJSON empty', () => {
+	expect(IsJSON(undefined)).toEqual(false)
+})
+
+test('IsJSON string', () => {
+	expect(IsJSON('Test')).toEqual(false)
+})
+
+test('IsJSON number', () => {
+	expect(IsJSON(1)).toEqual(false)
+})
+

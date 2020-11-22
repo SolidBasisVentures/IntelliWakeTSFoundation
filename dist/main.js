@@ -756,9 +756,24 @@ var JSONParse = function (json) {
         returnObj = JSON.parse(json);
     }
     catch (err) {
-        console.log('JSONParse', err);
+        // console.log('JSONParse', err)
+        return null;
     }
     return returnObj;
+};
+var IsJSON = function (json) {
+    if (!json)
+        return false;
+    if (typeof json !== 'string')
+        return false;
+    try {
+        var result = JSON.parse(json);
+        var type = Object.prototype.toString.call(result);
+        return type === '[object Object]' || type === '[object Array]';
+    }
+    catch (err) {
+        return false;
+    }
 };
 /**
  * Removes properties from an object having the same value.
@@ -2031,6 +2046,7 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
 exports.IsStageDevFocused = IsStageDevFocused;
