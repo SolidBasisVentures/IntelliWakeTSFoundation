@@ -61,6 +61,11 @@ export interface ITZItem {
 	hours: string
 }
 
+/**
+ * Returns a list of olson time zone items, sorted by hour diff from UTC
+ *
+ * Defaults to 'US'
+ */
 export const TimeZoneOlsons = (forCountry = 'US'): ITZItem[] =>
 	(moment.tz.zonesForCountry(forCountry) as string[])
 		.map((tzItem) => ({
@@ -69,6 +74,12 @@ export const TimeZoneOlsons = (forCountry = 'US'): ITZItem[] =>
 			hours: moment.tz(tzItem).format('Z')
 		}))
 		.sort((a, b) => (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)))
+
+/**
+ * Display timezone and olson
+ */
+export const DisplayTZItem = (tzItem: ITZItem | undefined | null): string =>
+	!tzItem || !tzItem.olson ? '' : !tzItem.zone ? tzItem.olson : `${tzItem.zone}: ${tzItem.olson}`
 
 /**
  * Current time in ISO string format

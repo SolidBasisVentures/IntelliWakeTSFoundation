@@ -26,7 +26,16 @@ export interface ITZItem {
     olson: string;
     hours: string;
 }
+/**
+ * Returns a list of olson time zone items, sorted by hour diff from UTC
+ *
+ * Defaults to 'US'
+ */
 export declare const TimeZoneOlsons: (forCountry?: string) => ITZItem[];
+/**
+ * Display timezone and olson
+ */
+export declare const DisplayTZItem: (tzItem: ITZItem | undefined | null) => string;
 /**
  * Current time in ISO string format
  */

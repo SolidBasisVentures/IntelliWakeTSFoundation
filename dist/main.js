@@ -1475,6 +1475,11 @@ var MomentCurrentTimeZone = function () { return moment.tz().format('z'); };
  * Returns the current olson time zone.
  */
 var MomentCurrentTimeZoneOlson = function () { return moment.tz.guess(); };
+/**
+ * Returns a list of olson time zone items, sorted by hour diff from UTC
+ *
+ * Defaults to 'US'
+ */
 var TimeZoneOlsons = function (forCountry) {
     if (forCountry === void 0) { forCountry = 'US'; }
     return moment.tz.zonesForCountry(forCountry)
@@ -1484,6 +1489,12 @@ var TimeZoneOlsons = function (forCountry) {
         hours: moment.tz(tzItem).format('Z')
     }); })
         .sort(function (a, b) { return (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)); });
+};
+/**
+ * Display timezone and olson
+ */
+var DisplayTZItem = function (tzItem) {
+    return !tzItem || !tzItem.olson ? '' : !tzItem.zone ? tzItem.olson : tzItem.zone + ": " + tzItem.olson;
 };
 /**
  * Current time in ISO string format
@@ -2052,6 +2063,7 @@ exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
+exports.DisplayTZItem = DisplayTZItem;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormatExternalURL = FormatExternalURL;
