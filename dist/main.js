@@ -761,6 +761,9 @@ var JSONParse = function (json) {
     }
     return returnObj;
 };
+/**
+ * Checks if a string is a valid JSON structure
+ */
 var IsJSON = function (json) {
     if (!json)
         return false;
@@ -1469,6 +1472,20 @@ var FormatIsDateTime = function (format) {
  */
 var MomentCurrentTimeZone = function () { return moment.tz().format('z'); };
 /**
+ * Returns the current olson time zone.
+ */
+var MomentCurrentTimeZoneOlson = function () { return moment.tz.guess(); };
+var TimeZoneOlsons = function (forCountry) {
+    if (forCountry === void 0) { forCountry = 'US'; }
+    return moment.tz.zonesForCountry(forCountry)
+        .map(function (tzItem) { return ({
+        zone: moment.tz(tzItem).zoneAbbr(),
+        olson: tzItem,
+        hours: moment.tz(tzItem).format('Z')
+    }); })
+        .sort(function (a, b) { return (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)); });
+};
+/**
  * Current time in ISO string format
  */
 var NowISOString = function () { return new Date().toISOString(); };
@@ -2065,6 +2082,7 @@ exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
 exports.MomentCurrentTimeZone = MomentCurrentTimeZone;
+exports.MomentCurrentTimeZoneOlson = MomentCurrentTimeZoneOlson;
 exports.MomentDateString = MomentDateString;
 exports.MomentDateTimeString = MomentDateTimeString;
 exports.MomentDisplayDayDate = MomentDisplayDayDate;
@@ -2098,6 +2116,7 @@ exports.SortColumns = SortColumns;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.TextToHTML = TextToHTML;
+exports.TimeZoneOlsons = TimeZoneOlsons;
 exports.ToCurrency = ToCurrency;
 exports.ToCurrencyBlank = ToCurrencyBlank;
 exports.ToCurrencyDash = ToCurrencyDash;

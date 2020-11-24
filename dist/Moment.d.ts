@@ -18,6 +18,16 @@ export declare enum EDateAndOrTime {
  */
 export declare const MomentCurrentTimeZone: () => string;
 /**
+ * Returns the current olson time zone.
+ */
+export declare const MomentCurrentTimeZoneOlson: () => string;
+export interface ITZItem {
+    zone: string;
+    olson: string;
+    hours: string;
+}
+export declare const TimeZoneOlsons: (forCountry?: string) => ITZItem[];
+/**
  * Current time in ISO string format
  */
 export declare const NowISOString: () => string;

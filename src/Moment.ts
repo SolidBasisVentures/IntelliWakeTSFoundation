@@ -51,6 +51,26 @@ const FormatIsDateTime = (format: string) =>
 export const MomentCurrentTimeZone = (): string => moment.tz().format('z')
 
 /**
+ * Returns the current olson time zone.
+ */
+export const MomentCurrentTimeZoneOlson = (): string => moment.tz.guess()
+
+export interface ITZItem {
+	zone: string
+	olson: string
+	hours: string
+}
+
+export const TimeZoneOlsons = (forCountry = 'US'): ITZItem[] =>
+	(moment.tz.zonesForCountry(forCountry) as string[])
+		.map((tzItem) => ({
+			zone: moment.tz(tzItem).zoneAbbr(),
+			olson: tzItem,
+			hours: moment.tz(tzItem).format('Z')
+		}))
+		.sort((a, b) => (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)))
+
+/**
  * Current time in ISO string format
  */
 export const NowISOString = (): string => new Date().toISOString()
@@ -68,9 +88,9 @@ export const MomentFromString = (value: string | Moment | Date | null | undefine
 	if (!value) {
 		return null
 	}
-	
+
 	const formatTries: moment.MomentFormatSpecification = [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES]
-	
+
 	if (typeof value !== 'string') {
 		const momentObject = moment(value)
 		if (momentObject.isValid()) {
@@ -82,7 +102,7 @@ export const MomentFromString = (value: string | Moment | Date | null | undefine
 			return momentObject
 		}
 	}
-	
+
 	return null
 }
 
@@ -95,37 +115,37 @@ export const MomentFromString = (value: string | Moment | Date | null | undefine
  */
 export const MomentFormatString = (value: string | Moment | Date | null | undefined, format: string): string | null => {
 	if (!value) return null
-	
+
 	if (typeof value == 'string') {
 		if (FormatIsTime(format) && !StringHasTimeData(value)) {
 			return null
 		}
-		
+
 		if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value)) return null
-		
+
 		let moment = MomentFromString(value)?.format(format) ?? null
-		
+
 		if (!moment) return null
-		
+
 		if (format === MOMENT_FORMAT_TIME_SECONDS || format === MOMENT_FORMAT_TIME_NO_SECONDS) {
 			if (!StringHasTimeData(moment)) return null
-			
+
 			return moment.substr(format.length * -1, format.length)
 		}
-		
+
 		if (format === MOMENT_FORMAT_DATE) {
 			if (!StringHasDateData(moment)) return null
-			
+
 			return moment.substr(0, format.length)
 		}
-		
+
 		if (format === MOMENT_FORMAT_DATE_TIME) {
 			if (!StringHasDateData(moment) || !StringHasTimeData(moment)) return null
 		}
-		
+
 		return moment
 	}
-	
+
 	return MomentFromString(value)?.format(format) ?? null
 }
 
@@ -156,11 +176,11 @@ export const MomentDisplayDayDateTime = (
 	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
-	
+
 	if (!momentObject) {
 		return null
 	}
-	
+
 	return momentObject.format(
 		momentObject.year() === moment().year() && !showYear
 			? `${MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR}, ${MOMENT_FORMAT_TIME_DISPLAY}`
@@ -177,11 +197,11 @@ export const MomentDisplayDayDate = (
 	showYear = false
 ): string | null => {
 	const momentObject = MomentFromString(value)
-	
+
 	if (!momentObject) {
 		return null
 	}
-	
+
 	return momentObject.format(
 		momentObject.year() === moment().year() && !showYear
 			? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR
@@ -206,16 +226,16 @@ export const MomentDisplayTime = (value: string | Moment | Date | null | undefin
  */
 export const MomentDurationShortText = (start: string | Moment | Date, end?: string | Moment | Date): string => {
 	const duration = moment.duration((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()))
-	
+
 	let text = ''
-	
+
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)}Y`
 		text += ` ${ToDigits(duration.months(), 0)}M`
 		text += ` ${ToDigits(duration.days(), 0)}D`
 	} else if (duration.months()) {
 		text += ` ${ToDigits(duration.months(), 0)}M`
-		
+
 		if (duration.days()) {
 			text += ` ${ToDigits(duration.days(), 0)}D`
 		}
@@ -238,7 +258,7 @@ export const MomentDurationShortText = (start: string | Moment | Date, end?: str
 			text += ` ${ToDigits(duration.seconds(), 0)}s`
 		}
 	}
-	
+
 	return text.trim()
 }
 
@@ -252,9 +272,9 @@ export const MomentDurationShortText = (start: string | Moment | Date, end?: str
  */
 export const MomentDurationShortTextAligned = (start: string | Moment | Date, end?: string | Moment | Date): string => {
 	const duration = moment.duration((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()))
-	
+
 	let text = ''
-	
+
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)}Y`
 		text += ` ${ToDigits(duration.months(), 0).padStart(2)}M`
@@ -283,6 +303,6 @@ export const MomentDurationShortTextAligned = (start: string | Moment | Date, en
 	} else if (duration.seconds()) {
 		text += ` ${ToDigits(duration.seconds(), 0).padStart(2)}s`
 	}
-	
+
 	return text.trim()
 }
