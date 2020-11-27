@@ -93,11 +93,11 @@ test('Moment Display Day Date Time from Date Time', () => {
 })
 
 test('Moment Display Day Date Time from Date DoW', () => {
-	expect(MomentDisplayDayDateTimeDoW('2020-01-01')).toBe('We Jan 1 2020')
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01')).toBe('We, Jan 1 2020')
 })
 
 test('Moment Display Day Date Time from Date Time DoW', () => {
-	expect(MomentDisplayDayDateTimeDoW('2020-01-01 01:00:00')).toBe('We Jan 1 2020, 1:00 am')
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01 01:00:00')).toBe('We, Jan 1 2020, 1:00 am')
 })
 
 // Display Date Date Tests
@@ -114,11 +114,11 @@ test('Moment Display Day Date from Date Time', () => {
 })
 
 test('Moment Display Day Date from Date', () => {
-	expect(MomentDisplayDayDateDoW('2020-01-01')).toBe('We Jan 1 2020')
+	expect(MomentDisplayDayDateDoW('2020-01-01')).toBe('We, Jan 1 2020')
 })
 
 test('Moment Display Day Date from Date Time', () => {
-	expect(MomentDisplayDayDateDoW('2020-01-01 01:00:00')).toBe('We Jan 1 2020')
+	expect(MomentDisplayDayDateDoW('2020-01-01 01:00:00')).toBe('We, Jan 1 2020')
 })
 
 test('Moment Locale', () => {
