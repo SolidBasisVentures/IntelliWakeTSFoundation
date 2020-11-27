@@ -1433,9 +1433,11 @@ var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
 var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var MOMENT_FORMAT_DATE_DISPLAY = "ddd, MMM D, YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY = "MMM D YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY_DOW = "dd " + MOMENT_FORMAT_DATE_DISPLAY;
 var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
 var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
+var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601];
 var TIME_FORMAT_TRIES = [
     momentTimezone.ISO_8601,
@@ -1456,12 +1458,15 @@ var TIME_FORMAT_TRIES = [
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-'); };
 var StringHasTimeZoneData = function (value) { return value.includes('T'); };
+var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {
     return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);
 };
-var FormatIsDate = function (format) { return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY].includes(format); };
+var FormatIsDate = function (format) {
+    return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY, MOMENT_FORMAT_DATE_DISPLAY_DOW].includes(format);
+};
 var FormatIsDateTime = function (format) {
-    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format);
+    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW].includes(format);
 };
 /**
  * Returns the current time zone.
@@ -1571,9 +1576,7 @@ var MomentTimeString = function (value) {
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD".
  */
-var MomentDateString = function (value) {
-    return MomentFormatString(value, MOMENT_FORMAT_DATE);
-};
+var MomentDateString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE); };
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
@@ -1588,7 +1591,12 @@ var MomentDisplayDayDateTime = function (value) {
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY);
+    if (!!MomentTimeString(value)) {
+        return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY);
+    }
+    else {
+        return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY);
+    }
 };
 /**
  * Returns display day date format.
@@ -1599,6 +1607,31 @@ var MomentDisplayDayDate = function (value) {
         return null;
     }
     return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY);
+};
+/**
+ * Returns display day date time format with day of week.
+ */
+var MomentDisplayDayDateTimeDoW = function (value) {
+    var momentObject = MomentFromString(value);
+    if (!momentObject) {
+        return null;
+    }
+    if (!!MomentTimeString(value)) {
+        return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW);
+    }
+    else {
+        return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW);
+    }
+};
+/**
+ * Returns display day date format with day of week.
+ */
+var MomentDisplayDayDateDoW = function (value) {
+    var momentObject = MomentFromString(value);
+    if (!momentObject) {
+        return null;
+    }
+    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW);
 };
 /**
  * Returns the time with 12-hour clock format.
@@ -1700,6 +1733,7 @@ var MomentDurationShortTextAligned = function (start, end) {
     }
     return text.trim();
 };
+var MomentStringToDateLocale = function (value) { var _a; return (_a = MomentFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2043,6 +2077,7 @@ exports.AddIDChange = AddIDChange;
 exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
+exports.AnyDateValueIsObject = AnyDateValueIsObject;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
@@ -2074,8 +2109,10 @@ exports.JSONParse = JSONParse;
 exports.LeftPad = LeftPad;
 exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
 exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
+exports.MOMENT_FORMAT_DATE_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW;
 exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
 exports.MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_TIME_DISPLAY;
+exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW;
 exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
@@ -2084,12 +2121,15 @@ exports.MomentCurrentTimeZoneOlson = MomentCurrentTimeZoneOlson;
 exports.MomentDateString = MomentDateString;
 exports.MomentDateTimeString = MomentDateTimeString;
 exports.MomentDisplayDayDate = MomentDisplayDayDate;
+exports.MomentDisplayDayDateDoW = MomentDisplayDayDateDoW;
 exports.MomentDisplayDayDateTime = MomentDisplayDayDateTime;
+exports.MomentDisplayDayDateTimeDoW = MomentDisplayDayDateTimeDoW;
 exports.MomentDisplayTime = MomentDisplayTime;
 exports.MomentDurationShortText = MomentDurationShortText;
 exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
 exports.MomentFormatString = MomentFormatString;
 exports.MomentFromString = MomentFromString;
+exports.MomentStringToDateLocale = MomentStringToDateLocale;
 exports.MomentTimeString = MomentTimeString;
 exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;

@@ -3,12 +3,15 @@ import {
 	MomentDateString,
 	MomentDateTimeString,
 	MomentDisplayDayDate,
+	MomentDisplayDayDateDoW,
 	MomentDisplayDayDateTime,
+	MomentDisplayDayDateTimeDoW,
 	MomentDisplayTime,
 	MomentDurationShortText,
 	MomentDurationShortTextAligned,
 	MomentFormatString,
 	MomentFromString,
+	MomentStringToDateLocale,
 	MomentTimeString
 } from '../src/Moment'
 
@@ -82,11 +85,19 @@ test('Moment Display Day Date Time from Blank', () => {
 })
 
 test('Moment Display Day Date Time from Date', () => {
-	expect(MomentDisplayDayDateTime('2020-01-01')).toBe('Wed, Jan 1, 2020, 12:00 am')
+	expect(MomentDisplayDayDateTime('2020-01-01')).toBe('Jan 1 2020')
 })
 
 test('Moment Display Day Date Time from Date Time', () => {
-	expect(MomentDisplayDayDateTime('2020-01-01 01:00:00')).toBe('Wed, Jan 1, 2020, 1:00 am')
+	expect(MomentDisplayDayDateTime('2020-01-01 01:00:00')).toBe('Jan 1 2020, 1:00 am')
+})
+
+test('Moment Display Day Date Time from Date DoW', () => {
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01')).toBe('We Jan 1 2020')
+})
+
+test('Moment Display Day Date Time from Date Time DoW', () => {
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01 01:00:00')).toBe('We Jan 1 2020, 1:00 am')
 })
 
 // Display Date Date Tests
@@ -95,11 +106,23 @@ test('Moment Display Day Date from Blank', () => {
 })
 
 test('Moment Display Day Date from Date', () => {
-	expect(MomentDisplayDayDate('2020-01-01')).toBe('Wed, Jan 1, 2020')
+	expect(MomentDisplayDayDate('2020-01-01')).toBe('Jan 1 2020')
 })
 
 test('Moment Display Day Date from Date Time', () => {
-	expect(MomentDisplayDayDate('2020-01-01 01:00:00')).toBe('Wed, Jan 1, 2020')
+	expect(MomentDisplayDayDate('2020-01-01 01:00:00')).toBe('Jan 1 2020')
+})
+
+test('Moment Display Day Date from Date', () => {
+	expect(MomentDisplayDayDateDoW('2020-01-01')).toBe('We Jan 1 2020')
+})
+
+test('Moment Display Day Date from Date Time', () => {
+	expect(MomentDisplayDayDateDoW('2020-01-01 01:00:00')).toBe('We Jan 1 2020')
+})
+
+test('Moment Locale', () => {
+	expect(MomentStringToDateLocale('2020-01-02')).toBe('01/02/2020')
 })
 
 // Moment Display Time Tests

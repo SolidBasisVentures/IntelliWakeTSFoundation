@@ -3,14 +3,18 @@ export declare const MOMENT_FORMAT_DATE = "YYYY-MM-DD";
 export declare const MOMENT_FORMAT_TIME_SECONDS = "HH:mm:ss";
 export declare const MOMENT_FORMAT_TIME_NO_SECONDS = "HH:mm";
 export declare const MOMENT_FORMAT_DATE_TIME: string;
-export declare const MOMENT_FORMAT_DATE_DISPLAY = "ddd, MMM D, YYYY";
+export declare const MOMENT_FORMAT_DATE_DISPLAY = "MMM D YYYY";
+export declare const MOMENT_FORMAT_DATE_DISPLAY_DOW: string;
 export declare const MOMENT_FORMAT_TIME_DISPLAY = "h:mm a";
 export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY: string;
+export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW: string;
 export declare enum EDateAndOrTime {
     DATE = 0,
     TIME = 1,
     DATETIME = 2
 }
+export declare type TAnyDateValue = string | Moment | Date | null | undefined;
+export declare const AnyDateValueIsObject: (value: TAnyDateValue) => boolean;
 /**
  * Returns the current time zone.
  */
@@ -47,7 +51,7 @@ export declare const NowISOString: () => string;
  * // returns Moment<2020-10-02T00:00:00Z>
  * MomentFromString('2020-10-02')
  */
-export declare const MomentFromString: (value: string | Moment | Date | null | undefined) => Moment | null;
+export declare const MomentFromString: (value: TAnyDateValue) => Moment | null;
 /**
  * Does the same thing as MomentFromString() but instead returns a string based on the format specified.
  *
@@ -55,31 +59,39 @@ export declare const MomentFromString: (value: string | Moment | Date | null | u
  * // returns "Oct 2, 2020"
  * MomentFromString('2020-10-02', 'll')
  */
-export declare const MomentFormatString: (value: string | Moment | Date | null | undefined, format: string) => string | null;
+export declare const MomentFormatString: (value: TAnyDateValue, format: string) => string | null;
 /**
  * Returns the moment time string in the format of "HH:mm:ss".
  */
-export declare const MomentTimeString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentTimeString: (value: TAnyDateValue) => string | null;
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD".
  */
-export declare const MomentDateString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDateString: (value: TAnyDateValue) => string | null;
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
-export declare const MomentDateTimeString: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDateTimeString: (value: TAnyDateValue) => string | null;
 /**
  * Returns display day date time format.
  */
-export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayDayDateTime: (value: TAnyDateValue) => string | null;
 /**
  * Returns display day date format.
  */
-export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayDayDate: (value: TAnyDateValue) => string | null;
+/**
+ * Returns display day date time format with day of week.
+ */
+export declare const MomentDisplayDayDateTimeDoW: (value: TAnyDateValue) => string | null;
+/**
+ * Returns display day date format with day of week.
+ */
+export declare const MomentDisplayDayDateDoW: (value: TAnyDateValue) => string | null;
 /**
  * Returns the time with 12-hour clock format.
  */
-export declare const MomentDisplayTime: (value: string | Moment | Date | null | undefined) => string | null;
+export declare const MomentDisplayTime: (value: TAnyDateValue) => string | null;
 /**
  * Displays difference between two times in a simplified duration format.
  *
@@ -99,3 +111,4 @@ export declare const MomentDurationShortText: (start: string | Moment | Date, en
  * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
  */
 export declare const MomentDurationShortTextAligned: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
+export declare const MomentStringToDateLocale: (value: string | Moment | null) => string;

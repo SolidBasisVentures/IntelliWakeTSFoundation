@@ -9,9 +9,11 @@ export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'
 export const MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm'
 export const MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS
 
-export const MOMENT_FORMAT_DATE_DISPLAY = `ddd, MMM D, YYYY`
+export const MOMENT_FORMAT_DATE_DISPLAY = `MMM D YYYY`
+export const MOMENT_FORMAT_DATE_DISPLAY_DOW = `dd ${MOMENT_FORMAT_DATE_DISPLAY}`
 export const MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a'
 export const MOMENT_FORMAT_DATE_TIME_DISPLAY = `${MOMENT_FORMAT_DATE_DISPLAY}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+export const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = `${MOMENT_FORMAT_DATE_DISPLAY_DOW}, ${MOMENT_FORMAT_TIME_DISPLAY}`
 
 const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', ISO_8601]
 const TIME_FORMAT_TRIES: moment.MomentFormatSpecification = [
@@ -32,15 +34,20 @@ export enum EDateAndOrTime {
 	DATETIME
 }
 
+export type TAnyDateValue = string | Moment | Date | null | undefined
+
 const StringHasTimeData = (value: string): boolean => value.includes(':')
 const StringHasDateData = (value: string): boolean => value.includes('-')
 const StringHasTimeZoneData = (value: string): boolean => value.includes('T')
 
+export const AnyDateValueIsObject = (value: TAnyDateValue) => (!value ? false : typeof value !== 'string')
+
 const FormatIsTime = (format: string) =>
 	[MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format)
-const FormatIsDate = (format: string) => [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY].includes(format)
+const FormatIsDate = (format: string) =>
+	[MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY, MOMENT_FORMAT_DATE_DISPLAY_DOW].includes(format)
 const FormatIsDateTime = (format: string) =>
-	[MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format)
+	[MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW].includes(format)
 
 /**
  * Returns the current time zone.
@@ -92,7 +99,7 @@ export const NowISOString = (): string => new Date().toISOString()
  * // returns Moment<2020-10-02T00:00:00Z>
  * MomentFromString('2020-10-02')
  */
-export const MomentFromString = (value: string | Moment | Date | null | undefined): Moment | null => {
+export const MomentFromString = (value: TAnyDateValue): Moment | null => {
 	if (!value) {
 		return null
 	}
@@ -121,7 +128,7 @@ export const MomentFromString = (value: string | Moment | Date | null | undefine
  * // returns "Oct 2, 2020"
  * MomentFromString('2020-10-02', 'll')
  */
-export const MomentFormatString = (value: string | Moment | Date | null | undefined, format: string): string | null => {
+export const MomentFormatString = (value: TAnyDateValue, format: string): string | null => {
 	if (!value) return null
 
 	if (typeof value == 'string') {
@@ -160,38 +167,41 @@ export const MomentFormatString = (value: string | Moment | Date | null | undefi
 /**
  * Returns the moment time string in the format of "HH:mm:ss".
  */
-export const MomentTimeString = (value: string | Moment | Date | null | undefined): string | null =>
+export const MomentTimeString = (value: TAnyDateValue): string | null =>
 	MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS)
 
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD".
  */
-export const MomentDateString = (value: string | Moment | Date | null | undefined): string | null =>
-	MomentFormatString(value, MOMENT_FORMAT_DATE)
+export const MomentDateString = (value: TAnyDateValue): string | null => MomentFormatString(value, MOMENT_FORMAT_DATE)
 
 /**
  * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
-export const MomentDateTimeString = (value: string | Moment | Date | null | undefined): string | null =>
+export const MomentDateTimeString = (value: TAnyDateValue): string | null =>
 	MomentFormatString(value, MOMENT_FORMAT_DATE_TIME)
 
 /**
  * Returns display day date time format.
  */
-export const MomentDisplayDayDateTime = (value: string | Moment | Date | null | undefined): string | null => {
+export const MomentDisplayDayDateTime = (value: TAnyDateValue): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
 		return null
 	}
 
-	return momentObject.format(`${MOMENT_FORMAT_DATE_DISPLAY}, ${MOMENT_FORMAT_TIME_DISPLAY}`)
+	if (!!MomentTimeString(value)) {
+		return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY)
+	} else {
+		return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY)
+	}
 }
 
 /**
  * Returns display day date format.
  */
-export const MomentDisplayDayDate = (value: string | Moment | Date | null | undefined): string | null => {
+export const MomentDisplayDayDate = (value: TAnyDateValue): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
@@ -202,9 +212,39 @@ export const MomentDisplayDayDate = (value: string | Moment | Date | null | unde
 }
 
 /**
+ * Returns display day date time format with day of week.
+ */
+export const MomentDisplayDayDateTimeDoW = (value: TAnyDateValue): string | null => {
+	const momentObject = MomentFromString(value)
+
+	if (!momentObject) {
+		return null
+	}
+
+	if (!!MomentTimeString(value)) {
+		return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW)
+	} else {
+		return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW)
+	}
+}
+
+/**
+ * Returns display day date format with day of week.
+ */
+export const MomentDisplayDayDateDoW = (value: TAnyDateValue): string | null => {
+	const momentObject = MomentFromString(value)
+
+	if (!momentObject) {
+		return null
+	}
+
+	return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW)
+}
+
+/**
  * Returns the time with 12-hour clock format.
  */
-export const MomentDisplayTime = (value: string | Moment | Date | null | undefined): string | null =>
+export const MomentDisplayTime = (value: TAnyDateValue): string | null =>
 	MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY)
 
 /**
@@ -298,3 +338,6 @@ export const MomentDurationShortTextAligned = (start: string | Moment | Date, en
 
 	return text.trim()
 }
+
+export const MomentStringToDateLocale = (value: string | Moment | null): string =>
+	MomentFormatString(value, 'MM/DD/YYYY') ?? ''

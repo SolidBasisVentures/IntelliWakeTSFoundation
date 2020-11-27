@@ -1,13 +1,15 @@
 import {
 	MomentCurrentTimeZone,
 	MomentCurrentTimeZoneOlson,
+	MomentDisplayDayDateTime,
 	MomentFormatString,
+	MomentStringToDateLocale,
 	NowISOString,
 	TimeZoneOlsons
 } from '../src/Moment'
 import {ConsoleColor} from '../src/ConsoleLogTable'
 
-const moment = require('moment-timezone')
+// const moment = require('moment-timezone')
 
 require('source-map-support').install()
 
@@ -24,3 +26,6 @@ console.log(MomentFormatString('2020-10-03', 'l'))
 console.log(MomentCurrentTimeZone())
 console.log(MomentCurrentTimeZoneOlson())
 console.log(TimeZoneOlsons())
+console.log(MomentStringToDateLocale('2020-01-02'))
+
+console.log(MomentDisplayDayDateTime('2020-01-02 14:30:00'))
