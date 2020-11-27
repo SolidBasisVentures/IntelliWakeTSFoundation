@@ -3,10 +3,8 @@ export declare const MOMENT_FORMAT_DATE = "YYYY-MM-DD";
 export declare const MOMENT_FORMAT_TIME_SECONDS = "HH:mm:ss";
 export declare const MOMENT_FORMAT_TIME_NO_SECONDS = "HH:mm";
 export declare const MOMENT_FORMAT_DATE_TIME: string;
-export declare const MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = "ddd, MMM D";
-export declare const MOMENT_FORMAT_DATE_DISPLAY: string;
+export declare const MOMENT_FORMAT_DATE_DISPLAY = "ddd, MMM D, YYYY";
 export declare const MOMENT_FORMAT_TIME_DISPLAY = "h:mm a";
-export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR: string;
 export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY: string;
 export declare enum EDateAndOrTime {
     DATE = 0,
@@ -71,15 +69,13 @@ export declare const MomentDateString: (value: string | Moment | Date | null | u
  */
 export declare const MomentDateTimeString: (value: string | Moment | Date | null | undefined) => string | null;
 /**
- * Returns display day date time format. Includes the year if the current year
- * is not the same with the given year.
+ * Returns display day date time format.
  */
-export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined, showYear?: boolean) => string | null;
+export declare const MomentDisplayDayDateTime: (value: string | Moment | Date | null | undefined) => string | null;
 /**
- * Returns display day date format. Includes the year if the current year
- * is not the same with the given year.
+ * Returns display day date format.
  */
-export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined, showYear?: boolean) => string | null;
+export declare const MomentDisplayDayDate: (value: string | Moment | Date | null | undefined) => string | null;
 /**
  * Returns the time with 12-hour clock format.
  */

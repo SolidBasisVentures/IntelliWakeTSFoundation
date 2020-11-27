@@ -1433,10 +1433,8 @@ var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
 var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = 'ddd, MMM D';
-var MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY = "ddd, MMM D, YYYY";
 var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
-var MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601];
 var TIME_FORMAT_TRIES = [
@@ -1461,11 +1459,9 @@ var StringHasTimeZoneData = function (value) { return value.includes('T'); };
 var FormatIsTime = function (format) {
     return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);
 };
-var FormatIsDate = function (format) {
-    return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_DISPLAY].includes(format);
-};
+var FormatIsDate = function (format) { return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY].includes(format); };
 var FormatIsDateTime = function (format) {
-    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format);
+    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY].includes(format);
 };
 /**
  * Returns the current time zone.
@@ -1585,32 +1581,24 @@ var MomentDateTimeString = function (value) {
     return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME);
 };
 /**
- * Returns display day date time format. Includes the year if the current year
- * is not the same with the given year.
+ * Returns display day date time format.
  */
-var MomentDisplayDayDateTime = function (value, showYear) {
-    if (showYear === void 0) { showYear = false; }
+var MomentDisplayDayDateTime = function (value) {
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment().year() && !showYear
-        ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR + ", " + MOMENT_FORMAT_TIME_DISPLAY
-        : MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY);
+    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY);
 };
 /**
- * Returns display day date format. Includes the year if the current year
- * is not the same with the given year.
+ * Returns display day date format.
  */
-var MomentDisplayDayDate = function (value, showYear) {
-    if (showYear === void 0) { showYear = false; }
+var MomentDisplayDayDate = function (value) {
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(momentObject.year() === moment().year() && !showYear
-        ? MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR
-        : MOMENT_FORMAT_DATE_DISPLAY);
+    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY);
 };
 /**
  * Returns the time with 12-hour clock format.
@@ -2086,10 +2074,8 @@ exports.JSONParse = JSONParse;
 exports.LeftPad = LeftPad;
 exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
 exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
-exports.MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_DISPLAY_NO_YEAR;
 exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
 exports.MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_TIME_DISPLAY;
-exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR = MOMENT_FORMAT_DATE_TIME_DISPLAY_NO_YEAR;
 exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
