@@ -59,7 +59,7 @@ export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): stri
 export const IsValidInputDecimal = (value: string): boolean => {
 	// noinspection RegExpUnexpectedAnchor
 	const regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$')
-
+	
 	return !value || regEx.test(value)
 }
 
@@ -69,7 +69,7 @@ export const IsValidInputDecimal = (value: string): boolean => {
 export const GenerateUUID = () => {
 	let d = new Date().getTime() //Timestamp
 	let d2 = (performance && performance.now && performance.now() * 1000) || 0 //Time in microseconds since page-load or 0 if unsupported
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		let r = Math.random() * 16 //random number between 0 and 16
 		if (d > 0) {
 			//Use timestamp until depleted
@@ -100,16 +100,16 @@ export const IsOn = (value: any): boolean => {
 	if (!value) {
 		return false
 	}
-
+	
 	if (value === true) {
 		return value
 	}
-
+	
 	const floatValue = parseFloat(value)
 	if (!isNaN(floatValue)) {
 		return floatValue > 0
 	}
-
+	
 	return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim())
 }
 
@@ -209,12 +209,32 @@ export const AddressValid = (address: any, prefix?: string): boolean => {
  */
 export const AddressSingleRow = (object: any, prefix?: string): string => {
 	const usePrefix = prefix ?? ''
-
+	
 	let singleRow = (object[usePrefix + 'address_1'] ?? '').trim()
-
+	
 	if (!!(object[usePrefix + 'city'] ?? '')) singleRow += ', ' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) singleRow += ', ' + object[usePrefix + 'state']
 	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += ', ' + object[usePrefix + 'zip']
-
+	
 	return singleRow
+}
+
+export const ArrayToGuidString = (byteArray: any): string => {
+	return Array.from(byteArray, function(byte: any) {
+		return ('0' + (byte & 0xff).toString(16)).slice(-2)
+	})
+		.join('')
+		.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
+}
+
+export const StringToByteArray = (str: string): any => {
+	let decoded = atob(str)
+	let i, il = decoded.length
+	let array = new Uint8Array(il)
+	
+	for (i = 0; i < il; ++i) {
+		array[i] = decoded.charCodeAt(i)
+	}
+	
+	return array
 }

@@ -1136,6 +1136,22 @@ var AddressSingleRow = function (object, prefix) {
         singleRow += ', ' + object[usePrefix + 'zip'];
     return singleRow;
 };
+var ArrayToGuidString = function (byteArray) {
+    return Array.from(byteArray, function (byte) {
+        return ('0' + (byte & 0xff).toString(16)).slice(-2);
+    })
+        .join('')
+        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+};
+var StringToByteArray = function (str) {
+    var decoded = atob(str);
+    var i, il = decoded.length;
+    var array = new Uint8Array(il);
+    for (i = 0; i < il; ++i) {
+        array[i] = decoded.charCodeAt(i);
+    }
+    return array;
+};
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
 var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
@@ -2078,6 +2094,7 @@ exports.AddressCopy = AddressCopy;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.AnyDateValueIsObject = AnyDateValueIsObject;
+exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
@@ -2153,6 +2170,7 @@ exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
+exports.StringToByteArray = StringToByteArray;
 exports.TextToHTML = TextToHTML;
 exports.TimeZoneOlsons = TimeZoneOlsons;
 exports.ToCurrency = ToCurrency;

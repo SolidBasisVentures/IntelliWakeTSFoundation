@@ -115,3 +115,5 @@ export declare const AddressValid: (address: any, prefix?: string | undefined) =
  * AddressSingleRow(address1)
  */
 export declare const AddressSingleRow: (object: any, prefix?: string | undefined) => string;
+export declare const ArrayToGuidString: (byteArray: any) => string;
+export declare const StringToByteArray: (str: string) => any;
