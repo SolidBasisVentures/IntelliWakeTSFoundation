@@ -1,31 +1,22 @@
-import {
-	MomentCurrentTimeZone,
-	MomentCurrentTimeZoneOlson,
-	MomentDisplayDayDateTime,
-	MomentFormatString,
-	MomentStringToDateLocale,
-	NowISOString,
-	TimeZoneOlsons
-} from '../src/Moment'
-import {ConsoleColor} from '../src/ConsoleLogTable'
-
 // const moment = require('moment-timezone')
+
+import {SortCompare, SortCompareNull} from '../src/SortSearch'
 
 require('source-map-support').install()
 
-console.log(NowISOString())
+const items = [
+	{id: 1, name: 'AAA', prioritized: false},
+	{id: 2, name: 'ZZZ', prioritized: false},
+	{id: 3, name: 'CCC', prioritized: true},
+	{id: 4, name: 'BBB', prioritized: false}
+]
 
-console.log('Console test', ConsoleColor.fg.Blue, 'Blue', ConsoleColor.Reset)
-console.log('Console test', ConsoleColor.fg.Green, 'Green', ConsoleColor.Reset)
-console.log('Console test', ConsoleColor.fg.Yellow, 'Yellow', ConsoleColor.Reset)
-console.log('Console test', ConsoleColor.fg.Black, 'Black', ConsoleColor.Reset)
-console.log('Console test', ConsoleColor.fg.Red, 'Red', ConsoleColor.Reset)
+// const itemsResult = [
+// 	{ id: 3, name: 'CCC', prioritized: true },
+// 	{ id: 1, name: 'AAA', prioritized: false },
+// 	{ id: 4, name: 'BBB', prioritized: false },
+// 	{ id: 2, name: 'ZZZ', prioritized: false }
+// ]
 
-console.log(MomentFormatString('2020-10-03', 'l'))
-
-console.log(MomentCurrentTimeZone())
-console.log(MomentCurrentTimeZoneOlson())
-console.log(TimeZoneOlsons())
-console.log(MomentStringToDateLocale('2020-01-02'))
-
-console.log(MomentDisplayDayDateTime('2020-01-02 14:30:00'))
+console.log(items.map(item => item.name).sort())
+console.log(items.sort((a, b) => SortCompareNull(b.prioritized, a.prioritized) ?? SortCompare(a.name, b.name)))

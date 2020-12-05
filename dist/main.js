@@ -1935,6 +1935,60 @@ var SortColumns = function (arrayTable, sortColumn) {
                 : SortColumnResult((_d = a[sortColumn.secondarySort]) !== null && _d !== void 0 ? _d : null, (_e = b[sortColumn.secondarySort]) !== null && _e !== void 0 ? _e : null, sortColumn.secondaryAscending, sortColumn.secondaryEmptyToBottom));
     });
 };
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+        {id: 1, name: 'AAA', prioritized: false},
+        {id: 2, name: 'ZZZ', prioritized: false},
+        {id: 3, name: 'CCC', prioritized: true},
+        {id: 4, name: 'BBB', prioritized: false}
+    ]
+ .sort((a, b) =>
+        SortCompare(a.name, b.name)) = [
+        { id: 1, name: 'AAA', prioritized: false },
+        { id: 4, name: 'BBB', prioritized: false },
+        { id: 3, name: 'CCC', prioritized: true },
+        { id: 2, name: 'ZZZ', prioritized: false }
+    ]
+ */
+var SortCompare = function (beforeValue, afterValue) {
+    var _a;
+    return (_a = SortCompareNull(beforeValue, afterValue)) !== null && _a !== void 0 ? _a : 0;
+};
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+        {id: 1, name: 'AAA', prioritized: false},
+        {id: 2, name: 'ZZZ', prioritized: false},
+        {id: 3, name: 'CCC', prioritized: true},
+        {id: 4, name: 'BBB', prioritized: false}
+    ]
+ .sort((a, b) =>
+        SortCompareNull(b.prioritized, a.prioritized)
+        ?? SortCompare(a.name, b.name)) = [
+        { id: 3, name: 'CCC', prioritized: true },
+        { id: 1, name: 'AAA', prioritized: false },
+        { id: 4, name: 'BBB', prioritized: false },
+        { id: 2, name: 'ZZZ', prioritized: false }
+    ]
+ */
+var SortCompareNull = function (beforeValue, afterValue) {
+    if (beforeValue === afterValue)
+        return null;
+    if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
+        return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0);
+    }
+    var beforeNumber = CleanNumber(beforeValue);
+    var afterNumber = CleanNumber(afterValue);
+    if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
+        return beforeNumber - afterNumber;
+    }
+    return ((beforeValue !== null && beforeValue !== void 0 ? beforeValue : '').toString()).localeCompare((afterValue !== null && afterValue !== void 0 ? afterValue : '').toString(), undefined, { sensitivity: 'base' });
+};
 var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) {
     if (!!emptyToBottom) {
         if (!valueA && !!valueB)
@@ -2168,6 +2222,8 @@ exports.SearchSort = SearchSort;
 exports.SearchTerms = SearchTerms;
 exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
+exports.SortCompare = SortCompare;
+exports.SortCompareNull = SortCompareNull;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;

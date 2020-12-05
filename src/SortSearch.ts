@@ -144,6 +144,65 @@ export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] =>
 					  ))
 	)
 }
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false}
+	]
+ .sort((a, b) =>
+ 		SortCompare(a.name, b.name)) = [
+		{ id: 1, name: 'AAA', prioritized: false },
+		{ id: 4, name: 'BBB', prioritized: false },
+		{ id: 3, name: 'CCC', prioritized: true },
+		{ id: 2, name: 'ZZZ', prioritized: false }
+	]
+ */
+export const SortCompare = (beforeValue: any, afterValue: any): number => {
+	return SortCompareNull(beforeValue, afterValue) ?? 0
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false}
+	]
+ .sort((a, b) =>
+ 		SortCompareNull(b.prioritized, a.prioritized)
+ 		?? SortCompare(a.name, b.name)) = [
+		{ id: 3, name: 'CCC', prioritized: true },
+		{ id: 1, name: 'AAA', prioritized: false },
+		{ id: 4, name: 'BBB', prioritized: false },
+		{ id: 2, name: 'ZZZ', prioritized: false }
+	]
+ */
+export const SortCompareNull = (beforeValue: any, afterValue: any): number | null => {
+	if (beforeValue === afterValue) return null
+	
+	if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
+		return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0)
+	}
+	
+	const beforeNumber = CleanNumber(beforeValue)
+	const afterNumber = CleanNumber(afterValue)
+	
+	if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
+		return beforeNumber - afterNumber
+	}
+	
+	return ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
+}
+
 const SortColumnResult = (
 	valueA: any,
 	valueB: any,
