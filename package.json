@@ -7,6 +7,7 @@
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
     "YarnInstall": "yarn install",
+    "YarnUpgrade": "yarn upgrade",
     "Test": "jest",
     "TSNode": "ts-node --script-mode consoles/consoles.ts",
     "TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts"
