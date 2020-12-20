@@ -1121,7 +1121,7 @@ var AddressValid = function (address, prefix) {
  *   zip: '61257',
  * }
  *
- * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL, 61257"
+ * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
 var AddressSingleRow = function (object, prefix) {
@@ -1133,8 +1133,41 @@ var AddressSingleRow = function (object, prefix) {
     if (!!((_c = object[usePrefix + 'state']) !== null && _c !== void 0 ? _c : ''))
         singleRow += ', ' + object[usePrefix + 'state'];
     if (!!((_d = object[usePrefix + 'zip']) !== null && _d !== void 0 ? _d : ''))
-        singleRow += ', ' + object[usePrefix + 'zip'];
+        singleRow += '  ' + object[usePrefix + 'zip'];
     return singleRow;
+};
+/**
+ * Combines an address object into a multiline row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Appt 1',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "
+ * // Blk 1, Lot 2, Some Street
+ * // Appt 1
+ * // Burr Ridge, IL, 61257"
+ * AddressMultiRow(address1)
+ */
+var AddressMultiRow = function (object, prefix) {
+    var _a, _b, _c, _d, _e;
+    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
+    var multiRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
+    if (!!object[usePrefix + 'address_2']) {
+        multiRow += '\n' + ((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : '').trim();
+    }
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
+        multiRow += '\n' + object[usePrefix + 'city'];
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
+        multiRow += ', ' + object[usePrefix + 'state'];
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
+        multiRow += '  ' + object[usePrefix + 'zip'];
+    return multiRow;
 };
 var ArrayToGuidString = function (byteArray) {
     return Array.from(byteArray, function (byte) {
@@ -2153,6 +2186,7 @@ var SearchSort = function (arrayTable, search, sortColumn) {
 exports.AddChange = AddChange;
 exports.AddIDChange = AddIDChange;
 exports.AddressCopy = AddressCopy;
+exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.AnyDateValueIsObject = AnyDateValueIsObject;

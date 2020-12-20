@@ -8,6 +8,10 @@ export declare const MOMENT_FORMAT_DATE_DISPLAY_DOW: string;
 export declare const MOMENT_FORMAT_TIME_DISPLAY = "h:mm a";
 export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY: string;
 export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW: string;
+export declare const MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D YYYY";
+export declare const MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG: string;
+export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG: string;
+export declare const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG: string;
 export declare enum EDateAndOrTime {
     DATE = 0,
     TIME = 1,
@@ -75,19 +79,19 @@ export declare const MomentDateTimeString: (value: TAnyDateValue) => string | nu
 /**
  * Returns display day date time format.
  */
-export declare const MomentDisplayDayDateTime: (value: TAnyDateValue) => string | null;
+export declare const MomentDisplayDayDateTime: (value: TAnyDateValue, showLong?: boolean) => string | null;
 /**
  * Returns display day date format.
  */
-export declare const MomentDisplayDayDate: (value: TAnyDateValue) => string | null;
+export declare const MomentDisplayDayDate: (value: TAnyDateValue, showLong?: boolean) => string | null;
 /**
  * Returns display day date time format with day of week.
  */
-export declare const MomentDisplayDayDateTimeDoW: (value: TAnyDateValue) => string | null;
+export declare const MomentDisplayDayDateTimeDoW: (value: TAnyDateValue, showLong?: boolean) => string | null;
 /**
  * Returns display day date format with day of week.
  */
-export declare const MomentDisplayDayDateDoW: (value: TAnyDateValue) => string | null;
+export declare const MomentDisplayDayDateDoW: (value: TAnyDateValue, showLong?: boolean) => string | null;
 /**
  * Returns the time with 12-hour clock format.
  */
