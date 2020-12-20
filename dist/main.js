@@ -1454,6 +1454,10 @@ var MOMENT_FORMAT_DATE_DISPLAY_DOW = "dd, " + MOMENT_FORMAT_DATE_DISPLAY;
 var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
 var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW + ", " + MOMENT_FORMAT_TIME_DISPLAY;
+var MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + MOMENT_FORMAT_DATE_DISPLAY_LONG;
+var MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
+var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601];
 var TIME_FORMAT_TRIES = [
     momentTimezone.ISO_8601,
@@ -1602,52 +1606,56 @@ var MomentDateTimeString = function (value) {
 /**
  * Returns display day date time format.
  */
-var MomentDisplayDayDateTime = function (value) {
+var MomentDisplayDayDateTime = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
     if (!!MomentTimeString(value)) {
-        return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY);
+        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY);
     }
     else {
-        return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY);
+        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY);
     }
 };
 /**
  * Returns display day date format.
  */
-var MomentDisplayDayDate = function (value) {
+var MomentDisplayDayDate = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY);
+    return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY);
 };
 /**
  * Returns display day date time format with day of week.
  */
-var MomentDisplayDayDateTimeDoW = function (value) {
+var MomentDisplayDayDateTimeDoW = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
     if (!!MomentTimeString(value)) {
-        return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW);
+        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW);
     }
     else {
-        return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW);
+        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW);
     }
 };
 /**
  * Returns display day date format with day of week.
  */
-var MomentDisplayDayDateDoW = function (value) {
+var MomentDisplayDayDateDoW = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
     var momentObject = MomentFromString(value);
     if (!momentObject) {
         return null;
     }
-    return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW);
+    return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW);
 };
 /**
  * Returns the time with 12-hour clock format.
@@ -2181,9 +2189,13 @@ exports.LeftPad = LeftPad;
 exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
 exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
 exports.MOMENT_FORMAT_DATE_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW;
+exports.MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG;
+exports.MOMENT_FORMAT_DATE_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG;
 exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
 exports.MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_TIME_DISPLAY;
 exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW;
+exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
+exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG;
 exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;

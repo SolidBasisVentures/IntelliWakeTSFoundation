@@ -15,6 +15,11 @@ export const MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a'
 export const MOMENT_FORMAT_DATE_TIME_DISPLAY = `${MOMENT_FORMAT_DATE_DISPLAY}, ${MOMENT_FORMAT_TIME_DISPLAY}`
 export const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = `${MOMENT_FORMAT_DATE_DISPLAY_DOW}, ${MOMENT_FORMAT_TIME_DISPLAY}`
 
+export const MOMENT_FORMAT_DATE_DISPLAY_LONG = `MMMM D YYYY`
+export const MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = `dddd, ${MOMENT_FORMAT_DATE_DISPLAY_LONG}`
+export const MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = `${MOMENT_FORMAT_DATE_DISPLAY_LONG}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+export const MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG}, ${MOMENT_FORMAT_TIME_DISPLAY}`
+
 const DATE_FORMAT_TRIES: moment.MomentFormatSpecification = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', ISO_8601]
 const TIME_FORMAT_TRIES: moment.MomentFormatSpecification = [
 	ISO_8601,
@@ -184,7 +189,7 @@ export const MomentDateTimeString = (value: TAnyDateValue): string | null =>
 /**
  * Returns display day date time format.
  */
-export const MomentDisplayDayDateTime = (value: TAnyDateValue): string | null => {
+export const MomentDisplayDayDateTime = (value: TAnyDateValue, showLong = false): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
@@ -192,29 +197,29 @@ export const MomentDisplayDayDateTime = (value: TAnyDateValue): string | null =>
 	}
 
 	if (!!MomentTimeString(value)) {
-		return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY)
+		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY)
 	} else {
-		return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY)
+		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY)
 	}
 }
 
 /**
  * Returns display day date format.
  */
-export const MomentDisplayDayDate = (value: TAnyDateValue): string | null => {
+export const MomentDisplayDayDate = (value: TAnyDateValue, showLong = false): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
 		return null
 	}
 
-	return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY)
+	return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY)
 }
 
 /**
  * Returns display day date time format with day of week.
  */
-export const MomentDisplayDayDateTimeDoW = (value: TAnyDateValue): string | null => {
+export const MomentDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = false): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
@@ -222,23 +227,23 @@ export const MomentDisplayDayDateTimeDoW = (value: TAnyDateValue): string | null
 	}
 
 	if (!!MomentTimeString(value)) {
-		return momentObject.format(MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW)
+		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW)
 	} else {
-		return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW)
+		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW)
 	}
 }
 
 /**
  * Returns display day date format with day of week.
  */
-export const MomentDisplayDayDateDoW = (value: TAnyDateValue): string | null => {
+export const MomentDisplayDayDateDoW = (value: TAnyDateValue, showLong = false): string | null => {
 	const momentObject = MomentFromString(value)
 
 	if (!momentObject) {
 		return null
 	}
 
-	return momentObject.format(MOMENT_FORMAT_DATE_DISPLAY_DOW)
+	return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW)
 }
 
 /**
