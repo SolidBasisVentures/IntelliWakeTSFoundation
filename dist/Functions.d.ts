@@ -111,9 +111,28 @@ export declare const AddressValid: (address: any, prefix?: string | undefined) =
  *   zip: '61257',
  * }
  *
- * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL, 61257"
+ * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
 export declare const AddressSingleRow: (object: any, prefix?: string | undefined) => string;
+/**
+ * Combines an address object into a multiline row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Appt 1',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "
+ * // Blk 1, Lot 2, Some Street
+ * // Appt 1
+ * // Burr Ridge, IL, 61257"
+ * AddressMultiRow(address1)
+ */
+export declare const AddressMultiRow: (object: any, prefix?: string | undefined) => string;
 export declare const ArrayToGuidString: (byteArray: any) => string;
 export declare const StringToByteArray: (str: string) => any;
