@@ -1791,6 +1791,7 @@ var MomentDurationShortTextAligned = function (start, end) {
     return text.trim();
 };
 var MomentStringToDateLocale = function (value) { var _a; return (_a = MomentFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
+var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; return (_c = MomentDateTimeString(((_a = MomentDateString(valueDate)) !== null && _a !== void 0 ? _a : '') + " " + ((_b = MomentTimeString(valueTime)) !== null && _b !== void 0 ? _b : ''))) !== null && _c !== void 0 ? _c : ''; };
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2197,6 +2198,7 @@ exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DateAndTimeToDateTime = DateAndTimeToDateTime;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DisplayTZItem = DisplayTZItem;

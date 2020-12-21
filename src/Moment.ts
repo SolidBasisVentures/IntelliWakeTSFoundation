@@ -227,7 +227,9 @@ export const MomentDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = fal
 	}
 
 	if (!!MomentTimeString(value)) {
-		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW)
+		return momentObject.format(
+			showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW
+		)
 	} else {
 		return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW)
 	}
@@ -346,3 +348,6 @@ export const MomentDurationShortTextAligned = (start: string | Moment | Date, en
 
 export const MomentStringToDateLocale = (value: string | Moment | null): string =>
 	MomentFormatString(value, 'MM/DD/YYYY') ?? ''
+
+export const DateAndTimeToDateTime = (valueDate: string | Moment | null, valueTime: string | null): string =>
+	MomentDateTimeString(`${MomentDateString(valueDate) ?? ''} ${MomentTimeString(valueTime) ?? ''}`) ?? ''
