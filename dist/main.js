@@ -1510,7 +1510,7 @@ var TIME_FORMAT_TRIES = [
 })(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-'); };
-var StringHasTimeZoneData = function (value) { return value.includes('T'); };
+var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+'); };
 var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {
     return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);

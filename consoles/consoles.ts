@@ -1,6 +1,7 @@
 // const moment = require('moment-timezone')
 
 import {SortCompare, SortCompareNull} from '../src/SortSearch'
+import {MomentDisplayDayDateTime} from '../src/Moment'
 
 require('source-map-support').install()
 
@@ -20,3 +21,8 @@ const items = [
 
 console.log(items.map(item => item.name).sort())
 console.log(items.sort((a, b) => SortCompareNull(b.prioritized, a.prioritized) ?? SortCompare(a.name, b.name)))
+
+const val = '2020-12-21 22:04:59.827+00'
+
+console.log(val)
+console.log(MomentDisplayDayDateTime(val))

@@ -43,7 +43,7 @@ export type TAnyDateValue = string | Moment | Date | null | undefined
 
 const StringHasTimeData = (value: string): boolean => value.includes(':')
 const StringHasDateData = (value: string): boolean => value.includes('-')
-const StringHasTimeZoneData = (value: string): boolean => value.includes('T')
+const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.includes('+')
 
 export const AnyDateValueIsObject = (value: TAnyDateValue) => (!value ? false : typeof value !== 'string')
 
