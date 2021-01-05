@@ -2025,10 +2025,10 @@ var SortCompareNull = function (beforeValue, afterValue, emptyBottom) {
         return null;
     if (emptyBottom) {
         if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
-            return 1;
+            return -1;
         }
         if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
-            return -1;
+            return 1;
         }
     }
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {

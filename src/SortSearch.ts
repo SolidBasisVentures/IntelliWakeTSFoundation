@@ -191,10 +191,10 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyBottom =
 	
 	if (emptyBottom) {
 		if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
-			return 1
+			return -1
 		}
 		if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
-			return -1
+			return 1
 		}
 	}
 	
