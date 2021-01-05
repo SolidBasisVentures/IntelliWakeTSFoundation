@@ -1995,10 +1995,10 @@ var SortColumns = function (arrayTable, sortColumn) {
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-var SortCompare = function (beforeValue, afterValue, emptyBottom) {
+var SortCompare = function (beforeValue, afterValue, emptyTo) {
     var _a;
-    if (emptyBottom === void 0) { emptyBottom = false; }
-    return (_a = SortCompareNull(beforeValue, afterValue, emptyBottom)) !== null && _a !== void 0 ? _a : 0;
+    if (emptyTo === void 0) { emptyTo = null; }
+    return (_a = SortCompareNull(beforeValue, afterValue, emptyTo)) !== null && _a !== void 0 ? _a : 0;
 };
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
@@ -2019,16 +2019,16 @@ var SortCompare = function (beforeValue, afterValue, emptyBottom) {
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-var SortCompareNull = function (beforeValue, afterValue, emptyBottom) {
-    if (emptyBottom === void 0) { emptyBottom = false; }
+var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
+    if (emptyTo === void 0) { emptyTo = null; }
     if (beforeValue === afterValue)
         return null;
-    if (emptyBottom) {
+    if (!!emptyTo) {
         if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
-            return -1;
+            return emptyTo === 'Top' ? -1 : 1;
         }
         if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
-            return 1;
+            return emptyTo === 'Top' ? 1 : -1;
         }
     }
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
