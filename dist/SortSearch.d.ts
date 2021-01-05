@@ -75,7 +75,7 @@ export declare const SortColumns: <T>(arrayTable: T[], sortColumn: ISortColumn) 
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-export declare const SortCompare: (beforeValue: any, afterValue: any) => number;
+export declare const SortCompare: (beforeValue: any, afterValue: any, emptyBottom?: boolean) => number;
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
  *
@@ -95,7 +95,7 @@ export declare const SortCompare: (beforeValue: any, afterValue: any) => number;
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-export declare const SortCompareNull: (beforeValue: any, afterValue: any) => number | null;
+export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyBottom?: boolean) => number | null;
 /**
  * Converts each word of a string to an array element for searching.
  *

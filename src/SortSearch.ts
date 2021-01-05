@@ -163,8 +163,8 @@ export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] =>
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompare = (beforeValue: any, afterValue: any): number => {
-	return SortCompareNull(beforeValue, afterValue) ?? 0
+export const SortCompare = (beforeValue: any, afterValue: any, emptyBottom = false): number => {
+	return SortCompareNull(beforeValue, afterValue, emptyBottom) ?? 0
 }
 
 /**
@@ -186,8 +186,17 @@ export const SortCompare = (beforeValue: any, afterValue: any): number => {
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompareNull = (beforeValue: any, afterValue: any): number | null => {
+export const SortCompareNull = (beforeValue: any, afterValue: any, emptyBottom = false): number | null => {
 	if (beforeValue === afterValue) return null
+	
+	if (emptyBottom) {
+		if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
+			return 1
+		}
+		if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
+			return -1
+		}
+	}
 	
 	if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
 		return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0)
