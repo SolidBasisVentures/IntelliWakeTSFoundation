@@ -12,13 +12,14 @@
  * PagesForRange(1, 10, 3)
  */
 export declare function PagesForRange(current: number, length: number, spread?: number): (number | null)[];
+export declare type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz';
 export interface ISortColumn {
     primarySort: string;
     primaryAscending: boolean;
-    primaryEmptyToBottom: null | 'string' | 'number' | 'null';
+    primaryEmptyToBottom: TSortColumnToBottom;
     secondarySort: string | null;
     secondaryAscending: boolean;
-    secondaryEmptyToBottom: null | 'string' | 'number' | 'null';
+    secondaryEmptyToBottom: TSortColumnToBottom;
 }
 export declare const initialSortColumn: ISortColumn;
 /**
@@ -36,7 +37,7 @@ export declare const initialSortColumn: ISortColumn;
  * }
  * SortColumnUpdate('name', initialSortColumn)
  */
-export declare const SortColumnUpdate: (columnToSort: string, sortColumn: ISortColumn, firstClickAscending?: boolean, emptyToBottom?: null | 'string' | 'number' | 'null') => ISortColumn;
+export declare const SortColumnUpdate: (columnToSort: string, sortColumn: ISortColumn, firstClickAscending?: boolean, emptyToBottom?: TSortColumnToBottom) => ISortColumn;
 /**
  * Accepts an array of data and a sort column object, and returns the sorted array of data.
  *
