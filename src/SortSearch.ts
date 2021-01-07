@@ -48,13 +48,15 @@ export function PagesForRange(current: number, length: number, spread: number = 
 	return rangeWithNull
 }
 
+export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz'
+
 export interface ISortColumn {
 	primarySort: string
 	primaryAscending: boolean
-	primaryEmptyToBottom: null | 'string' | 'number' | 'null'
+	primaryEmptyToBottom: TSortColumnToBottom
 	secondarySort: string | null
 	secondaryAscending: boolean
-	secondaryEmptyToBottom: null | 'string' | 'number' | 'null'
+	secondaryEmptyToBottom: TSortColumnToBottom
 }
 
 export const initialSortColumn: ISortColumn = {
@@ -85,7 +87,7 @@ export const SortColumnUpdate = (
 	columnToSort: string,
 	sortColumn: ISortColumn,
 	firstClickAscending: boolean = true,
-	emptyToBottom: null | 'string' | 'number' | 'null' = null
+	emptyToBottom: TSortColumnToBottom = null
 ): ISortColumn => {
 	if (sortColumn.primarySort === columnToSort) {
 		return {
@@ -216,7 +218,7 @@ const SortColumnResult = (
 	valueA: any,
 	valueB: any,
 	isAscending: boolean,
-	emptyToBottom: null | 'string' | 'number' | 'null'
+	emptyToBottom: TSortColumnToBottom
 ): number => {
 	if (!!emptyToBottom) {
 		if (!valueA && !!valueB) return 1
