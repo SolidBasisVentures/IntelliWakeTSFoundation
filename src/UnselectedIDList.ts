@@ -3,7 +3,7 @@ export namespace UnselectedIDList {
 	
 	const ToID = (item: TNumberObject): number => typeof item === 'number' ? item : (item as any).id as number
 	
-	export const IsSelected = (item: TNumberObject, unselectedIDs: number[]): boolean => unselectedIDs.includes(ToID(item))
+	export const IsSelected = (item: TNumberObject, unselectedIDs: number[]): boolean => !unselectedIDs.includes(ToID(item))
 	
 	export const SelectedIDs = (items: TNumberObject[], unselectedIDs: number[]): number[] => items.reduce<number[]>(
 		(result, cur) => {
@@ -27,7 +27,7 @@ export namespace UnselectedIDList {
 		
 		const select = !IsSelected(nextID, unselectedIDs)
 		
-		let betweenIDs: number[] = []
+		let betweenIDs: number[] = [lastID, nextID]
 		let firstFound = false
 		
 		for (const checkID of allNumbers) {

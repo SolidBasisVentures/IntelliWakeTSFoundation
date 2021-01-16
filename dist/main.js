@@ -2196,7 +2196,7 @@ var SearchSort = function (arrayTable, search, sortColumn) {
 
 (function (UnselectedIDList) {
     var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
-    UnselectedIDList.IsSelected = function (item, unselectedIDs) { return unselectedIDs.includes(ToID(item)); };
+    UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
         var curID = ToID(cur);
         return (!unselectedIDs.find(function (id) { return id === curID; }) ? __spreadArrays(result, [curID]) : result);
@@ -2211,7 +2211,7 @@ var SearchSort = function (arrayTable, search, sortColumn) {
     UnselectedIDList.SelectedBetween = function (allIDs, lastID, nextID, unselectedIDs) {
         var allNumbers = allIDs.map(function (allID) { return ToID(allID); });
         var select = !UnselectedIDList.IsSelected(nextID, unselectedIDs);
-        var betweenIDs = [];
+        var betweenIDs = [lastID, nextID];
         var firstFound = false;
         for (var _i = 0, allNumbers_1 = allNumbers; _i < allNumbers_1.length; _i++) {
             var checkID = allNumbers_1[_i];
