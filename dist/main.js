@@ -2194,6 +2194,42 @@ var SearchSort = function (arrayTable, search, sortColumn) {
     return SortColumns(SearchRows(arrayTable, search), sortColumn);
 };
 
+(function (UnselectedIDList) {
+    var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
+    UnselectedIDList.IsSelected = function (item, unselectedIDs) { return unselectedIDs.includes(ToID(item)); };
+    UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
+        var curID = ToID(cur);
+        return (!unselectedIDs.find(function (id) { return id === curID; }) ? __spreadArrays(result, [curID]) : result);
+    }, []); };
+    UnselectedIDList.ToggleUnSelectedID = function (toggleID, unselectedIDs) { return unselectedIDs.includes(toggleID) ? unselectedIDs.filter(function (id) { return id !== toggleID; }) : __spreadArrays(unselectedIDs, [toggleID]); };
+    UnselectedIDList.SelectIDs = function (ids, unselectedIDs) {
+        return unselectedIDs.filter(function (unselectedID) { return !ids.find(function (id) { return unselectedID === ToID(id); }); });
+    };
+    UnselectedIDList.UnSelectIDs = function (ids, unselectedIDs) {
+        return __spreadArrays(unselectedIDs, (ids.map(function (id) { return ToID(id); })));
+    };
+    UnselectedIDList.SelectedBetween = function (allIDs, lastID, nextID, unselectedIDs) {
+        var allNumbers = allIDs.map(function (allID) { return ToID(allID); });
+        var select = !UnselectedIDList.IsSelected(nextID, unselectedIDs);
+        var betweenIDs = [];
+        var firstFound = false;
+        for (var _i = 0, allNumbers_1 = allNumbers; _i < allNumbers_1.length; _i++) {
+            var checkID = allNumbers_1[_i];
+            if (checkID === lastID || checkID === nextID) {
+                if (firstFound) {
+                    betweenIDs.push(checkID);
+                    break;
+                }
+                firstFound = true;
+            }
+            else if (firstFound) {
+                betweenIDs.push(checkID);
+            }
+        }
+        return select ? UnselectedIDList.SelectedIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
+    };
+})(exports.UnselectedIDList || (exports.UnselectedIDList = {}));
+
 exports.AddChange = AddChange;
 exports.AddIDChange = AddIDChange;
 exports.AddressCopy = AddressCopy;
