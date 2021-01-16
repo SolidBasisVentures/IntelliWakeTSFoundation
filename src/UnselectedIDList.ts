@@ -27,13 +27,13 @@ export namespace UnselectedIDList {
 		
 		const select = !IsSelected(nextID, unselectedIDs)
 		
-		let betweenIDs: number[] = [lastID, nextID]
+		let betweenIDs: number[] = []
 		let firstFound = false
 		
 		for (const checkID of allNumbers) {
 			if (checkID === lastID || checkID === nextID) {
+				betweenIDs.push(checkID)
 				if (firstFound) {
-					betweenIDs.push(checkID)
 					break
 				}
 				firstFound = true
@@ -42,6 +42,6 @@ export namespace UnselectedIDList {
 			}
 		}
 		
-		return select ? SelectedIDs(betweenIDs, unselectedIDs) : UnSelectIDs(betweenIDs, unselectedIDs)
+		return select ? SelectIDs(betweenIDs, unselectedIDs) : UnSelectIDs(betweenIDs, unselectedIDs)
 	}
 }

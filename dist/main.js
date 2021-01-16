@@ -2211,13 +2211,13 @@ var SearchSort = function (arrayTable, search, sortColumn) {
     UnselectedIDList.SelectedBetween = function (allIDs, lastID, nextID, unselectedIDs) {
         var allNumbers = allIDs.map(function (allID) { return ToID(allID); });
         var select = !UnselectedIDList.IsSelected(nextID, unselectedIDs);
-        var betweenIDs = [lastID, nextID];
+        var betweenIDs = [];
         var firstFound = false;
         for (var _i = 0, allNumbers_1 = allNumbers; _i < allNumbers_1.length; _i++) {
             var checkID = allNumbers_1[_i];
             if (checkID === lastID || checkID === nextID) {
+                betweenIDs.push(checkID);
                 if (firstFound) {
-                    betweenIDs.push(checkID);
                     break;
                 }
                 firstFound = true;
@@ -2226,7 +2226,7 @@ var SearchSort = function (arrayTable, search, sortColumn) {
                 betweenIDs.push(checkID);
             }
         }
-        return select ? UnselectedIDList.SelectedIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
+        return select ? UnselectedIDList.SelectIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
     };
 })(exports.UnselectedIDList || (exports.UnselectedIDList = {}));
 
