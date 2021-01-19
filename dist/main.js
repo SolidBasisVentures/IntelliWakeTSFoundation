@@ -1185,6 +1185,7 @@ var StringToByteArray = function (str) {
     }
     return array;
 };
+var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
 var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
@@ -2250,6 +2251,7 @@ exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DisplayTZItem = DisplayTZItem;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
+exports.FormUrlEncoded = FormUrlEncoded;
 exports.FormatExternalURL = FormatExternalURL;
 exports.FormatPhoneNumber = FormatPhoneNumber;
 exports.FormatPhoneNumberDots = FormatPhoneNumberDots;

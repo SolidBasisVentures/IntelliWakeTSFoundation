@@ -271,3 +271,5 @@ export const StringToByteArray = (str: string): any => {
 	
 	return array
 }
+
+export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
