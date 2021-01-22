@@ -1,4 +1,4 @@
-import {IsOn} from '../src/Functions'
+import {IsOn, RoundTo} from '../src/Functions'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true);
@@ -10,4 +10,20 @@ test('IsOn null', () => {
 
 test('IsOn active', () => {
 	expect(IsOn('active')).toBe(true);
+})
+
+test ('RoundTo 10.15, 1', () => {
+	expect(RoundTo(10.15, 1)).toBe(10.2)
+})
+
+test ('RoundTo 10.14, 1', () => {
+	expect(RoundTo(10.14, 1)).toBe(10.1)
+})
+
+test ('RoundTo 10.15, 0', () => {
+	expect(RoundTo(10.15, 0)).toBe(10)
+})
+
+test ('RoundTo 10.5, 0', () => {
+	expect(RoundTo(10.5, 0)).toBe(11)
 })

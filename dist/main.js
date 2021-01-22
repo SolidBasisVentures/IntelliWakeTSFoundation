@@ -1186,6 +1186,10 @@ var StringToByteArray = function (str) {
     return array;
 };
 var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
+var RoundTo = function (num, decimalPlaces) {
+    if (decimalPlaces === void 0) { decimalPlaces = 0; }
+    return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
+};
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
 var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
@@ -2312,6 +2316,7 @@ exports.RemoveDupPropertiesByIDArray = RemoveDupPropertiesByIDArray;
 exports.ReplaceAll = ReplaceAll;
 exports.ReplaceLinks = ReplaceLinks;
 exports.RightPad = RightPad;
+exports.RoundTo = RoundTo;
 exports.SearchRow = SearchRow;
 exports.SearchRows = SearchRows;
 exports.SearchSort = SearchSort;

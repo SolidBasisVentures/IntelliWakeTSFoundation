@@ -137,3 +137,4 @@ export declare const AddressMultiRow: (object: any, prefix?: string | undefined)
 export declare const ArrayToGuidString: (byteArray: any) => string;
 export declare const StringToByteArray: (str: string) => any;
 export declare const FormUrlEncoded: (x: any) => string;
+export declare const RoundTo: (num: any, decimalPlaces?: number) => number;
