@@ -1797,6 +1797,10 @@ var MomentDurationShortTextAligned = function (start, end) {
 };
 var MomentStringToDateLocale = function (value) { var _a; return (_a = MomentFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
 var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; return (_c = MomentDateTimeString(((_a = MomentDateString(valueDate)) !== null && _a !== void 0 ? _a : '') + " " + ((_b = MomentTimeString(valueTime)) !== null && _b !== void 0 ? _b : ''))) !== null && _c !== void 0 ? _c : ''; };
+var MomentID = function (value) {
+    if (value === void 0) { value = null; }
+    return MomentFormatString(value, "YYYY-MM-DD_HH-mm-ss");
+};
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2300,6 +2304,7 @@ exports.MomentDurationShortText = MomentDurationShortText;
 exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
 exports.MomentFormatString = MomentFormatString;
 exports.MomentFromString = MomentFromString;
+exports.MomentID = MomentID;
 exports.MomentStringToDateLocale = MomentStringToDateLocale;
 exports.MomentTimeString = MomentTimeString;
 exports.NowISOString = NowISOString;
