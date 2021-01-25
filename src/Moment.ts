@@ -352,5 +352,5 @@ export const MomentStringToDateLocale = (value: string | Moment | null): string 
 export const DateAndTimeToDateTime = (valueDate: string | Moment | null, valueTime: string | null): string =>
 	MomentDateTimeString(`${MomentDateString(valueDate) ?? ''} ${MomentTimeString(valueTime) ?? ''}`) ?? ''
 
-export const MomentID = (value: TAnyDateValue = null): string | null =>
-	MomentFormatString(value, `YYYY-MM-DD_HH-mm-ss`)
+export const MomentID = (value: TAnyDateValue = null, offsetHours = 5): string | null =>
+	MomentFormatString(value ?? moment().subtract(offsetHours, 'hours'), `YYYY-MM-DD_HH-mm-ss`)

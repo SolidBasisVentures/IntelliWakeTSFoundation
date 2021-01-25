@@ -117,4 +117,4 @@ export declare const MomentDurationShortText: (start: string | Moment | Date, en
 export declare const MomentDurationShortTextAligned: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
 export declare const MomentStringToDateLocale: (value: string | Moment | null) => string;
 export declare const DateAndTimeToDateTime: (valueDate: string | Moment | null, valueTime: string | null) => string;
-export declare const MomentID: (value?: TAnyDateValue) => string | null;
+export declare const MomentID: (value?: TAnyDateValue, offsetHours?: number) => string | null;
