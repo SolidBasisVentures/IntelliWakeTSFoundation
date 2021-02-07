@@ -1190,6 +1190,8 @@ var RoundTo = function (num, decimalPlaces) {
     if (decimalPlaces === void 0) { decimalPlaces = 0; }
     return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
 };
+var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
+var JSONStringToObject = function (val) { return JSONParse(val.toString().substr(5)); };
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
 var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
@@ -2278,6 +2280,7 @@ exports.IsStageDevTestFocused = IsStageDevTestFocused;
 exports.IsStageTestFocused = IsStageTestFocused;
 exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
+exports.JSONStringToObject = JSONStringToObject;
 exports.LeftPad = LeftPad;
 exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
 exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
@@ -2312,6 +2315,7 @@ exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
+exports.ObjectToJSONString = ObjectToJSONString;
 exports.ObjectWithChanges = ObjectWithChanges;
 exports.PagesForRange = PagesForRange;
 exports.RandomString = RandomString;

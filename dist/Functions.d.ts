@@ -1,10 +1,3 @@
-/**
- * Truncates a string and replaces the remaining characters with ellipsis.
- *
- * @example
- * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
- * Trunc('Welcome to TSFoundation', 11)
- */
 export declare const Trunc: (subject: string, length: number) => string;
 /**
  * Returns a google maps link with the given coordinates.
@@ -138,3 +131,5 @@ export declare const ArrayToGuidString: (byteArray: any) => string;
 export declare const StringToByteArray: (str: string) => any;
 export declare const FormUrlEncoded: (x: any) => string;
 export declare const RoundTo: (num: any, decimalPlaces?: number) => number;
+export declare const ObjectToJSONString: (val: any) => string;
+export declare const JSONStringToObject: (val: string) => object | null;

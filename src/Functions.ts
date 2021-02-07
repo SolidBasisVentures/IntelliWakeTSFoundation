@@ -279,6 +279,6 @@ export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&
 export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 	+Math.round((num + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 
-export const ObjectToJSONString = (val: object) => `json:${JSON.stringify(val)}`
+export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
 export const JSONStringToObject = (val: string) => JSONParse(val.toString().substr(5))
