@@ -5,6 +5,8 @@
  * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
  * Trunc('Welcome to TSFoundation', 11)
  */
+import {JSONParse} from './DataConstructs'
+
 export const Trunc = (subject: string, length: number): string => {
 	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
 }
@@ -277,3 +279,6 @@ export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&
 export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 	+Math.round((num + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 
+export const ObjectToJSONString = (val: object) => `json:${JSON.stringify(val)}`
+
+export const JSONStringToObject = (val: string) => JSONParse(val.toString().substr(5))
