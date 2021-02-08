@@ -10,13 +10,13 @@ import {
 	RandomString,
 	ReplaceAll,
 	ReplaceLinks,
-	TextToHTML,
+	TextToHTML, ToCamelCase,
 	ToCurrency,
 	ToCurrencyBlank,
 	ToCurrencyDash,
 	ToDigits,
 	ToDigitsBlank,
-	ToDigitsDash,
+	ToDigitsDash, ToKebabCase, ToPascalCase,
 	ToPercent,
 	ToPercentBlank,
 	ToPercentDash,
@@ -26,16 +26,92 @@ import {
 } from '../src/StringManipulation'
 import {IsJSON, JSONParse} from '../src/DataConstructs'
 
-test('ToSnakeCase', () => {
+test('ToSnakeCase From Pascal', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
 })
 
-test('ToSnakeCase with ID', () => {
+test('ToSnakeCase From Camel', () => {
+	expect(ToSnakeCase('userToken')).toBe('user_token')
+})
+
+test('ToSnakeCase From Kebab', () => {
+	expect(ToSnakeCase('user-token')).toBe('user_token')
+})
+
+test('ToSnakeCase From Snake', () => {
+	expect(ToSnakeCase('user_token')).toBe('user_token')
+})
+
+test('ToSnakeCase with _id', () => {
+	expect(ToSnakeCase('userID')).toBe('user_id')
+})
+
+test('ToSnakeCase with -id', () => {
 	expect(ToSnakeCase('userID')).toBe('user_id')
 })
 
 test('ToSnakeCase ID only', () => {
 	expect(ToSnakeCase('ID')).toBe('id')
+})
+
+test('ToKebabCase from Pascal', () => {
+	expect(ToKebabCase('UserToken')).toBe('user-token')
+})
+
+test('ToKebabCase from Camel', () => {
+	expect(ToKebabCase('userToken')).toBe('user-token')
+})
+
+test('ToKebabCase from Snake', () => {
+	expect(ToKebabCase('user_token')).toBe('user-token')
+})
+
+test('ToKebabCase with ID', () => {
+	expect(ToKebabCase('userID')).toBe('user-id')
+})
+
+test('ToKebabCase ID only', () => {
+	expect(ToKebabCase('ID')).toBe('id')
+})
+
+test('ToCamelCase from Snake', () => {
+	expect(ToCamelCase('user_token')).toBe('userToken')
+})
+
+test('ToCamelCase from Camel', () => {
+	expect(ToCamelCase('userToken')).toBe('userToken')
+})
+
+test('ToCamelCase from Pascal', () => {
+	expect(ToCamelCase('UserToken')).toBe('userToken')
+})
+
+test('ToCamelCase with ID', () => {
+	expect(ToCamelCase('user_id')).toBe('userID')
+})
+
+test('ToCamelCase ID only', () => {
+	expect(ToCamelCase('id')).toBe('ID')
+})
+
+test('ToPascalCase from Snake', () => {
+	expect(ToPascalCase('user_token')).toBe('UserToken')
+})
+
+test('ToPascalCase from Camel', () => {
+	expect(ToPascalCase('userToken')).toBe('UserToken')
+})
+
+test('ToPascalCase from Kebab', () => {
+	expect(ToPascalCase('user-token')).toBe('UserToken')
+})
+
+test('ToPascalCase with ID', () => {
+	expect(ToPascalCase('user_id')).toBe('UserID')
+})
+
+test('ToPascalCase ID only', () => {
+	expect(ToPascalCase('id')).toBe('ID')
 })
 
 test('ReplaceAll', () => {

@@ -1,19 +1,56 @@
 /**
- * Converts a string to snake case.
+ * Converts a string to snake_case.
  *
  * @example
- * // returns "user_token"
- * ToSnakeCase('UserToken')
+ * ToSnakeCase('UserToken')  // returns "user_token"
  */
 export const ToSnakeCase = (str: string): string => {
 	if (str === 'ID') return 'id'
-
-	let calcStr = str.replace('ID', '_id')
-
+	
+	let calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'))
+	
 	return (
 		calcStr[0].toLowerCase() +
 		calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, (letter) => `_${letter.toLowerCase()}`)
 	)
+}
+
+/**
+ * Converts a string to kebab-case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user-token"
+ */
+export const ToKebabCase = (str: string): string => ReplaceAll('_', '-', ToSnakeCase(str))
+
+/**
+ * Converts a string to camelCase.
+ *
+ * @example
+ * ToCamelCase('user_token') //  returns "userToken
+ */
+export const ToCamelCase = (str: string): string => {
+	if (str === 'id') return 'ID'
+	
+	let calcStr = ToSnakeCase(str).replace('_id', 'ID')
+	
+	return calcStr.replace(/([-_][a-z])/ig, ($1) => {
+		return $1.toUpperCase()
+			.replace('-', '')
+			.replace('_', '')
+	})
+}
+
+/**
+ * Converts a string to PascalCase.
+ *
+ * @example
+ * ToPascalCase('user_token') //  returns "UserToken
+ */
+export const ToPascalCase = (str: string): string => {
+	let calcStr = ToCamelCase(str)
+	
+	return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1)
 }
 
 /**
@@ -23,7 +60,7 @@ export const ToSnakeCase = (str: string): string => {
  * // returns "john-doe-bob"
  * ReplaceAll(' ', '-', 'john doe bob')
  */
-export const ReplaceAll = function (find: string, replace: string, subject: string): string {
+export const ReplaceAll = function(find: string, replace: string, subject: string): string {
 	// eslint-disable-next-line no-useless-escape
 	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
 }
@@ -35,10 +72,10 @@ export const ReplaceAll = function (find: string, replace: string, subject: stri
  * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
  * ReplaceLinks('https://www.google.com')
  */
-export const ReplaceLinks = function (subject: string): string {
+export const ReplaceLinks = function(subject: string): string {
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
-	const target = "<a href='$1' target='_blank'>$1</a>"
+	const target = '<a href=\'$1\' target=\'_blank\'>$1</a>'
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
@@ -50,7 +87,7 @@ export const ReplaceLinks = function (subject: string): string {
  * // returns "blank"
  * CleanScripts('<script>console.log(1)</script>blank')
  */
-export const CleanScripts = function (subject: string): string {
+export const CleanScripts = function(subject: string): string {
 	return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
 
@@ -61,22 +98,22 @@ export const CleanScripts = function (subject: string): string {
  * // returns "john doe"
  * TextToHTML('<p>john doe</p>')
  */
-export const TextToHTML = function (subject: string): string {
+export const TextToHTML = function(subject: string): string {
 	let str = subject.replace(/(<([^>]+)>)/gi, '')
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
 }
 export const LeftPad = (subject: string, length: number, padString: string): string => {
 	let str = subject
-
+	
 	while (str.length < length) str = padString + str
-
+	
 	return str
 }
 export const RightPad = (subject: string, length: number, padString: string): string => {
 	let str = subject
-
+	
 	while (str.length < length) str = str + padString
-
+	
 	return str
 }
 
@@ -95,7 +132,7 @@ export const RightPad = (subject: string, length: number, padString: string): st
  */
 export const CleanNumber = (value: any): number => {
 	if (!value) return 0
-
+	
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)
 	str = ReplaceAll(',', '', str)
@@ -151,7 +188,7 @@ export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
 	}
-
+	
 	return (
 		'$' +
 		CleanNumber(value).toLocaleString(undefined, {
@@ -175,7 +212,7 @@ export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
-
+	
 	return (
 		'$' +
 		CleanNumber(value).toLocaleString(undefined, {
@@ -200,7 +237,7 @@ export const ToPercentBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
 	}
-
+	
 	return (
 		(CleanNumber(value) * 100).toLocaleString(undefined, {
 			maximumFractionDigits: decimals,
@@ -224,7 +261,7 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
-
+	
 	return (
 		(CleanNumber(value) * 100).toLocaleString(undefined, {
 			maximumFractionDigits: decimals,
@@ -240,7 +277,7 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
  * // return 10.00
  * ToDigits(10)
  */
-export const ToDigits = function (value: any, decimals: number = 2): string {
+export const ToDigits = function(value: any, decimals: number = 2): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
@@ -258,11 +295,11 @@ export const ToDigits = function (value: any, decimals: number = 2): string {
  * // returns ''
  * ToDigits('')
  */
-export const ToDigitsBlank = function (value: any, decimals: number = 2) {
+export const ToDigitsBlank = function(value: any, decimals: number = 2) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return ''
 	}
-
+	
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
@@ -280,11 +317,11 @@ export const ToDigitsBlank = function (value: any, decimals: number = 2) {
  * // returns '-'
  * ToDigits('')
  */
-export const ToDigitsDash = function (value: any, decimals: number = 2) {
+export const ToDigitsDash = function(value: any, decimals: number = 2) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
-
+	
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
@@ -302,7 +339,7 @@ export const ToStringArray = (value: string | string[]): string[] => {
 	if (!value) {
 		return []
 	}
-
+	
 	if (typeof value === 'string') {
 		return [value]
 	} else {
@@ -320,17 +357,17 @@ export const ToStringArray = (value: string | string[]): string[] => {
 export const FormatPhoneNumber = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
-
+	
 	//Check if the input is of correct
 	const match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
-
+	
 	if (match) {
 		//Remove the matched extension code
 		//Change this to format for any country code.
 		let intlCode = match[1] ? '+1 ' : ''
 		return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
 	}
-
+	
 	return phone
 }
 
@@ -344,17 +381,17 @@ export const FormatPhoneNumber = (phone: string, forceNumeric: boolean = false) 
 export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
-
+	
 	//Check if the input is of correct
 	const match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
-
+	
 	if (match) {
 		//Remove the matched extension code
 		//Change this to format for any country code.
 		let intlCode = match[1] ? '+1 ' : ''
 		return [intlCode, match[2], '.', match[3], '.', match[4]].join('')
 	}
-
+	
 	return phone
 }
 
@@ -368,12 +405,12 @@ export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = fal
 export const FormatZip = (zip: string) => {
 	//Filter only numbers from the input
 	let cleaned = ('' + zip).replace(/\D/g, '')
-
+	
 	// check if the input is a 9 digit code
 	if (cleaned.length === 9) {
 		cleaned = cleaned.replace(/(\d{5})/, '$1-')
 	}
-
+	
 	return cleaned
 }
 
@@ -389,10 +426,10 @@ export const FormatExternalURL = (url: string): string => {
 		if (!url.startsWith('http')) {
 			return 'http://' + url
 		}
-
+		
 		return url
 	}
-
+	
 	return ''
 }
 
@@ -405,13 +442,13 @@ export const FormatExternalURL = (url: string): string => {
  */
 export const DisplayNameFromFL = (first?: string, last?: string, middle?: string, suffix?: string): string => {
 	let returnName = ''
-
+	
 	if (!!last) {
 		returnName += last
-
+		
 		if (!!first) {
 			returnName += ', ' + first
-
+			
 			if (!!middle) {
 				returnName += ' ' + middle
 			}
@@ -421,7 +458,7 @@ export const DisplayNameFromFL = (first?: string, last?: string, middle?: string
 	} else {
 		if (!!first) {
 			returnName += first
-
+			
 			if (!!middle) {
 				returnName += ' ' + middle
 			}
@@ -431,15 +468,15 @@ export const DisplayNameFromFL = (first?: string, last?: string, middle?: string
 			}
 		}
 	}
-
+	
 	if (!!suffix) {
 		if (!!returnName) {
 			returnName += ', '
 		}
-
+		
 		returnName += suffix
 	}
-
+	
 	return returnName
 }
 
@@ -457,9 +494,9 @@ export const DisplayNameFromFL = (first?: string, last?: string, middle?: string
  */
 export const DisplayNameFromObject = (object?: any, prefix?: string): string => {
 	if (!object) return ''
-
+	
 	const actualPrefix = !!prefix ? `_${prefix}` : ''
-
+	
 	return DisplayNameFromFL(
 		object[actualPrefix + 'first_name'],
 		object[actualPrefix + 'last_name'],
@@ -496,11 +533,11 @@ export const UCWords = (str: string | null): string | null => {
  */
 export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789') => {
 	const validCharLength = validChars.length - 1
-
+	
 	let result = ''
 	for (let i = 0; i < length; i++) {
 		result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
 	}
-
+	
 	return result
 }
