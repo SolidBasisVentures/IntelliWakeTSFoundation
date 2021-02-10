@@ -201,19 +201,20 @@ export const AddressValid = (address: any, prefix?: string): boolean => {
  * @example
  * let address1 = {
  *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Suite 100',
  *   city: 'Burr Ridge',
  *   state: 'IL',
  *   zip: '61257',
  * }
  *
- * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL  61257"
+ * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
 export const AddressSingleRow = (object: any, prefix?: string): string => {
 	const usePrefix = prefix ?? ''
 	
 	let singleRow = (object[usePrefix + 'address_1'] ?? '').trim()
-	
+	if (!!(object[usePrefix + 'address_2'] ?? '')) singleRow += ', ' + object[usePrefix + 'address_2']
 	if (!!(object[usePrefix + 'city'] ?? '')) singleRow += ', ' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) singleRow += ', ' + object[usePrefix + 'state']
 	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + object[usePrefix + 'zip']
