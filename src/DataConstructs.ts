@@ -9,7 +9,7 @@ import {ReplaceAll} from './StringManipulation'
  * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export type IChanges = {[key: string]: any}
+export type IChanges<T = object> = Partial<T>
 export const initialChanges = {}
 
 /**
@@ -23,7 +23,7 @@ export const initialChanges = {}
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export const AddChange = (name: string, value: any, changes: IChanges): IChanges => ({
+export const AddChange = <T = object>(name: keyof T, value: any, changes: IChanges<T>): IChanges<T> => ({
 	...changes,
 	[name]: value
 })
@@ -38,10 +38,10 @@ export const AddChange = (name: string, value: any, changes: IChanges): IChanges
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export const ObjectWithChanges = <T>(item: T, changes: IChanges): T => ({
+export const ObjectWithChanges = <T = object>(item: T, changes: IChanges<T>): T => ({
 	...item,
 	...changes
-})
+} as T)
 
 export type IIDObject = {
 	id: number
@@ -59,7 +59,7 @@ export type IIDObject = {
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export type IIDChanges = {[key: number]: IChanges}
+export type IIDChanges<T = object> = {[key: number]: IChanges<T>}
 export const initialIDChanges = {}
 
 /**
@@ -75,7 +75,7 @@ export const initialIDChanges = {}
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export const AddIDChange = (id: number, name: string, value: any, idChanges: IIDChanges): IIDChanges => ({
+export const AddIDChange = <T = object>(id: number, name: keyof T, value: any, idChanges: IIDChanges<T>): IIDChanges<T> => ({
 	...idChanges,
 	[id]: {
 		...idChanges[id],
@@ -140,7 +140,7 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export const JSONParse = (json: any): object | null => {
+export const JSONParse = <T = object>(json: any): T | null => {
 	if (!json) {
 		return null
 	}
@@ -192,15 +192,13 @@ export const IsJSON = (json: any): boolean => {
  * // returns {name: 'john doe}
  * RemoveDupProperties(data, data2)
  */
-export const RemoveDupProperties = (original: IChanges, propsToRemove: IChanges): IChanges => {
-	const result: any = {...original}
+export const RemoveDupProperties = <T = object>(original: IChanges<T>, propsToRemove: IChanges<T>): IChanges<T> => {
+	const result: IChanges<T> = {...original}
 	
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
-			if (result.hasOwnProperty(key)) {
-				if (propsToRemove[key] === result[key]) {
-					delete result[key]
-				}
+			if (propsToRemove[key] === result[key]) {
+				delete result[key]
 			}
 		}
 	}
@@ -229,7 +227,7 @@ export const RemoveDupProperties = (original: IChanges, propsToRemove: IChanges)
  * // returns {1: {name: 'john doe}}
  * RemoveDupPropertiesByID(data, data2)
  */
-export const RemoveDupPropertiesByID = (original: IIDChanges, propsToRemove: IIDChanges): IIDChanges => {
+export const RemoveDupPropertiesByID = <T = object>(original: IIDChanges<T>, propsToRemove: IIDChanges<T>): IIDChanges<T> => {
 	const result: any = {...original}
 	
 	for (const key in propsToRemove) {
@@ -268,7 +266,7 @@ export const RemoveDupPropertiesByID = (original: IIDChanges, propsToRemove: IID
  * // returns {1: {name: 'john doe}}
  * RemoveDupPropertiesByIDArray(data, data2)
  */
-export const RemoveDupPropertiesByIDArray = (original: IIDChanges, propsToRemoveArray: any[]): IIDChanges => {
+export const RemoveDupPropertiesByIDArray = <T = object>(original: IIDChanges<T>, propsToRemoveArray: any[]): IIDChanges<T> => {
 	const result: any = {...original}
 	
 	for (const key in original) {
