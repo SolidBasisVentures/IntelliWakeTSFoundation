@@ -7,9 +7,7 @@
  * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export declare type IChanges = {
-    [key: string]: any;
-};
+export declare type IChanges<T> = Partial<T>;
 export declare const initialChanges: {};
 /**
  * Adds a change to the IChange object.
@@ -22,7 +20,7 @@ export declare const initialChanges: {};
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export declare const AddChange: (name: string, value: any, changes: IChanges) => IChanges;
+export declare const AddChange: <T>(name: keyof T, value: any, changes: Partial<T>) => Partial<T>;
 /**
  * Returns the final state of an object with changes applied.
  *
@@ -33,7 +31,7 @@ export declare const AddChange: (name: string, value: any, changes: IChanges) =>
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export declare const ObjectWithChanges: <T>(item: T, changes: IChanges) => T;
+export declare const ObjectWithChanges: <T>(item: T, changes: Partial<T>) => T;
 export declare type IIDObject = {
     id: number;
 };
@@ -49,8 +47,8 @@ export declare type IIDObject = {
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export declare type IIDChanges = {
-    [key: number]: IChanges;
+export declare type IIDChanges<T> = {
+    [key: number]: IChanges<T>;
 };
 export declare const initialIDChanges: {};
 /**
@@ -66,7 +64,7 @@ export declare const initialIDChanges: {};
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export declare const AddIDChange: (id: number, name: string, value: any, idChanges: IIDChanges) => IIDChanges;
+export declare const AddIDChange: <T>(id: number, name: keyof T, value: any, idChanges: IIDChanges<T>) => IIDChanges<T>;
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
@@ -79,7 +77,7 @@ export declare const AddIDChange: (id: number, name: string, value: any, idChang
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export declare const ArrayWithIDChanges: <T extends IIDObject>(items: T[], idChanges: IIDChanges) => T[];
+export declare const ArrayWithIDChanges: <T extends IIDObject>(items: T[], idChanges: IIDChanges<T>) => T[];
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
@@ -93,7 +91,7 @@ export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) =
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export declare const JSONParse: (json: any) => object | null;
+export declare const JSONParse: <T = any>(json: any) => T | null;
 /**
  * Checks if a string is a valid JSON structure
  */
@@ -115,7 +113,7 @@ export declare const IsJSON: (json: any) => boolean;
  * // returns {name: 'john doe}
  * RemoveDupProperties(data, data2)
  */
-export declare const RemoveDupProperties: (original: IChanges, propsToRemove: IChanges) => IChanges;
+export declare const RemoveDupProperties: <T>(original: Partial<T>, propsToRemove: Partial<T>) => Partial<T>;
 /**
  * Removes properties from an object having the same value by ID.
  *
@@ -137,7 +135,7 @@ export declare const RemoveDupProperties: (original: IChanges, propsToRemove: IC
  * // returns {1: {name: 'john doe}}
  * RemoveDupPropertiesByID(data, data2)
  */
-export declare const RemoveDupPropertiesByID: (original: IIDChanges, propsToRemove: IIDChanges) => IIDChanges;
+export declare const RemoveDupPropertiesByID: <T>(original: IIDChanges<T>, propsToRemove: IIDChanges<T>) => IIDChanges<T>;
 /**
  * Removes properties from an object having the same value by an array of objects.
  *
@@ -157,7 +155,7 @@ export declare const RemoveDupPropertiesByID: (original: IIDChanges, propsToRemo
  * // returns {1: {name: 'john doe}}
  * RemoveDupPropertiesByIDArray(data, data2)
  */
-export declare const RemoveDupPropertiesByIDArray: (original: IIDChanges, propsToRemoveArray: any[]) => IIDChanges;
+export declare const RemoveDupPropertiesByIDArray: <T>(original: IIDChanges<T>, propsToRemoveArray: any[]) => IIDChanges<T>;
 /**
  * Returns the difference of two objects.
  *

@@ -199,18 +199,50 @@ var consoleLogTable = function (arrayData, tableDef) {
 };
 
 /**
- * Converts a string to snake case.
+ * Converts a string to snake_case.
  *
  * @example
- * // returns "user_token"
- * ToSnakeCase('UserToken')
+ * ToSnakeCase('UserToken')  // returns "user_token"
  */
 var ToSnakeCase = function (str) {
     if (str === 'ID')
         return 'id';
-    var calcStr = str.replace('ID', '_id');
+    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
     return (calcStr[0].toLowerCase() +
         calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
+};
+/**
+ * Converts a string to kebab-case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user-token"
+ */
+var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
+/**
+ * Converts a string to camelCase.
+ *
+ * @example
+ * ToCamelCase('user_token') //  returns "userToken
+ */
+var ToCamelCase = function (str) {
+    if (str === 'id')
+        return 'ID';
+    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
+    return calcStr.replace(/([-_][a-z])/ig, function ($1) {
+        return $1.toUpperCase()
+            .replace('-', '')
+            .replace('_', '');
+    });
+};
+/**
+ * Converts a string to PascalCase.
+ *
+ * @example
+ * ToPascalCase('user_token') //  returns "UserToken
+ */
+var ToPascalCase = function (str) {
+    var calcStr = ToCamelCase(str);
+    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
 };
 /**
  * Replace all occurences of a string.
@@ -233,7 +265,7 @@ var ReplaceAll = function (find, replace, subject) {
 var ReplaceLinks = function (subject) {
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
-    var target = "<a href='$1' target='_blank'>$1</a>";
+    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
     // noinspection RegExpRedundantEscape
     return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
 };
@@ -799,10 +831,8 @@ var RemoveDupProperties = function (original, propsToRemove) {
     var result = __assign({}, original);
     for (var key in propsToRemove) {
         if (propsToRemove.hasOwnProperty(key)) {
-            if (result.hasOwnProperty(key)) {
-                if (propsToRemove[key] === result[key]) {
-                    delete result[key];
-                }
+            if (propsToRemove[key] === result[key]) {
+                delete result[key];
             }
         }
     }
@@ -2340,12 +2370,15 @@ exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;
 exports.TextToHTML = TextToHTML;
 exports.TimeZoneOlsons = TimeZoneOlsons;
+exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;
 exports.ToCurrencyBlank = ToCurrencyBlank;
 exports.ToCurrencyDash = ToCurrencyDash;
 exports.ToDigits = ToDigits;
 exports.ToDigitsBlank = ToDigitsBlank;
 exports.ToDigitsDash = ToDigitsDash;
+exports.ToKebabCase = ToKebabCase;
+exports.ToPascalCase = ToPascalCase;
 exports.ToPercent = ToPercent;
 exports.ToPercentBlank = ToPercentBlank;
 exports.ToPercentDash = ToPercentDash;

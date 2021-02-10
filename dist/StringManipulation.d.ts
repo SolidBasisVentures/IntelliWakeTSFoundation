@@ -1,11 +1,31 @@
 /**
- * Converts a string to snake case.
+ * Converts a string to snake_case.
  *
  * @example
- * // returns "user_token"
- * ToSnakeCase('UserToken')
+ * ToSnakeCase('UserToken')  // returns "user_token"
  */
 export declare const ToSnakeCase: (str: string) => string;
+/**
+ * Converts a string to kebab-case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user-token"
+ */
+export declare const ToKebabCase: (str: string) => string;
+/**
+ * Converts a string to camelCase.
+ *
+ * @example
+ * ToCamelCase('user_token') //  returns "userToken
+ */
+export declare const ToCamelCase: (str: string) => string;
+/**
+ * Converts a string to PascalCase.
+ *
+ * @example
+ * ToPascalCase('user_token') //  returns "UserToken
+ */
+export declare const ToPascalCase: (str: string) => string;
 /**
  * Replace all occurences of a string.
  *
