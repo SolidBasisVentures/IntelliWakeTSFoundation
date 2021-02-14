@@ -1962,11 +1962,12 @@ var initialSortColumn = {
     secondaryEmptyToBottom: null
 };
 var initialFilterSortPaginator = {
-    Page: 1,
-    Search: '',
-    SortColumns: initialSortColumn,
-    ActiveFlag: true,
-    OtherValues: {}
+    page: 1,
+    countPerPage: 50,
+    search: '',
+    sortColumns: initialSortColumn,
+    active: true,
+    filterValues: {}
 };
 /**
  * Updates a the primary sort key of a sort column object, and returns the updated object.

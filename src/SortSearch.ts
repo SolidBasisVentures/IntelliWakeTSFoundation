@@ -1,5 +1,4 @@
 import {CleanNumber} from './StringManipulation'
-import {TFindIsActive} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -74,48 +73,53 @@ export const initialSortColumn: ISortColumn = {
 	secondaryEmptyToBottom: null
 }
 
+export type TFindIsActive = boolean | null
+
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
  *
- * Page = What page of data to retrieve
- * Search = A search string if any
- * SortColumns = Tells the server how to sort the data
- * ActiveFlag = Tells the server whether to find active, inactive or all items
- * OtherValues = Other filter data (of type T) to pass to the structure to limit result sets (e.g. customer_id = 1 for all items that match customer 1)
+ * page = What page of data to retrieve
+ * search = A search string if any
+ * sortColumns = Tells the server how to sort the data
+ * active = Tells the server whether to find active, inactive or all items
+ * filterValues = Other filter data (of type T) to pass to the structure to limit result sets (e.g. customer_id = 1 for all items that match customer 1)
  *
  * IFilterSortPaginatorReturn should be in the RESPONSE of the API to tell the app about the data it received (e.g. how many pages there are, etc.)
  */
-export interface IFilterSortPaginator<T = {[key: string]: any}> {
-	Page: number
-	Search: string
-	SortColumns: ISortColumn
-	ActiveFlag: TFindIsActive
-	OtherValues: T
+export interface IPaginatorRequest<T = {[key: string]: any}> {
+	page: number
+	countPerPage: number
+	search: string
+	sortColumns: ISortColumn
+	active: TFindIsActive
+	filterValues: T
 }
 
-export const initialFilterSortPaginator: IFilterSortPaginator = {
-	Page: 1,
-	Search: '',
-	SortColumns: initialSortColumn,
-	ActiveFlag: true,
-	OtherValues: {}
+export const initialFilterSortPaginator: IPaginatorRequest = {
+	page: 1,
+	countPerPage: 50,
+	search: '',
+	sortColumns: initialSortColumn,
+	active: true,
+	filterValues: {}
 }
 
 /**
  * A structure returned in an API RESPONSE that tells the app what kind of data the counts found.
  *
- * Page = The actual page returned, which may be different than the page requested if fewer pages exist than the page that was requested.
- * PageCount = The total number of pages there would be based on the count of rows found
- * RowCount = The total number of rows found
- * CountPerPage = How many rows make up a page
- * CurrentOffset = More used by the database, but this would be the offset (e.g. 51 on the second page of a set that had CountPerPage = 50 and RowCount > 50)
+ * page = The actual page returned, which may be different than the page requested if fewer pages exist than the page that was requested.
+ * pageCount = The total number of pages there would be based on the count of rows found
+ * rowCount = The total number of rows found
+ * countPerPage = How many rows make up a page
+ * currentOffset = More used by the database, but this would be the offset (e.g. 51 on the second page of a set that had CountPerPage = 50 and RowCount > 50)
  */
-export interface IFilterSortPaginatorReturn {
-	Page: number
-	PageCount: number
-	RowCount: number
-	CountPerPage: number
-	CurrentOffset: number
+export interface IPaginatorReturn<T = any> {
+	page: number
+	pageCount: number
+	rowCount: number
+	countPerPage: number
+	currentOffset: number
+	rows: T[]
 }
 
 /**
