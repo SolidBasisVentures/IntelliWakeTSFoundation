@@ -115,8 +115,6 @@ export const IsOn = (value: any): boolean => {
 	return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim())
 }
 
-export type TFindIsActive = boolean | null
-
 export interface IAddress {
 	address_1: string
 	address_2: string

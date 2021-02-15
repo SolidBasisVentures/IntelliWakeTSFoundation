@@ -49,7 +49,6 @@ export declare const GenerateUUID: () => string;
  * IsOn('inactive')
  */
 export declare const IsOn: (value: any) => boolean;
-export declare type TFindIsActive = boolean | null;
 export interface IAddress {
     address_1: string;
     address_2: string;

@@ -1961,6 +1961,14 @@ var initialSortColumn = {
     secondaryAscending: true,
     secondaryEmptyToBottom: null
 };
+var initialFilterSortPaginator = {
+    page: 1,
+    countPerPage: 50,
+    search: '',
+    sortColumns: initialSortColumn,
+    active: true,
+    filterValues: {}
+};
 /**
  * Updates a the primary sort key of a sort column object, and returns the updated object.
  *
@@ -2392,5 +2400,6 @@ exports.UCWords = UCWords;
 exports.consoleLogTable = consoleLogTable;
 exports.initialChanges = initialChanges;
 exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
+exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
