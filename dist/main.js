@@ -1146,23 +1146,26 @@ var AddressValid = function (address, prefix) {
  * @example
  * let address1 = {
  *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Suite 100',
  *   city: 'Burr Ridge',
  *   state: 'IL',
  *   zip: '61257',
  * }
  *
- * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL  61257"
+ * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
 var AddressSingleRow = function (object, prefix) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
     var singleRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
-    if (!!((_b = object[usePrefix + 'city']) !== null && _b !== void 0 ? _b : ''))
+    if (!!((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : ''))
+        singleRow += ', ' + object[usePrefix + 'address_2'];
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
         singleRow += ', ' + object[usePrefix + 'city'];
-    if (!!((_c = object[usePrefix + 'state']) !== null && _c !== void 0 ? _c : ''))
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
         singleRow += ', ' + object[usePrefix + 'state'];
-    if (!!((_d = object[usePrefix + 'zip']) !== null && _d !== void 0 ? _d : ''))
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
         singleRow += '  ' + object[usePrefix + 'zip'];
     return singleRow;
 };

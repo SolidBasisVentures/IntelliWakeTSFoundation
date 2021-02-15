@@ -99,12 +99,13 @@ export declare const AddressValid: (address: any, prefix?: string | undefined) =
  * @example
  * let address1 = {
  *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Suite 100',
  *   city: 'Burr Ridge',
  *   state: 'IL',
  *   zip: '61257',
  * }
  *
- * // returns "Blk 1, Lot 2, Some Street, Burr Ridge, IL  61257"
+ * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
 export declare const AddressSingleRow: (object: any, prefix?: string | undefined) => string;
@@ -132,4 +133,4 @@ export declare const StringToByteArray: (str: string) => any;
 export declare const FormUrlEncoded: (x: any) => string;
 export declare const RoundTo: (num: any, decimalPlaces?: number) => number;
 export declare const ObjectToJSONString: (val: any) => string;
-export declare const JSONStringToObject: (val: string) => object | null;
+export declare const JSONStringToObject: (val: string) => any;

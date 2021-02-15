@@ -354,3 +354,5 @@ export const DateAndTimeToDateTime = (valueDate: string | Moment | null, valueTi
 
 export const MomentID = (value: TAnyDateValue = null, offsetHours = 5): string | null =>
 	MomentFormatString(value ?? moment().subtract(offsetHours, 'hours'), `YYYY-MM-DD_HH-mm-ss`)
+
+export const IANAZoneAbbr = (ianaValue: string) => moment.tz(ianaValue).format('z')
