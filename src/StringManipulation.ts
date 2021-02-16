@@ -41,6 +41,16 @@ export const ToCamelCase = (str: string): string => {
 	})
 }
 
+export const ToUpperCaseWords = (str: string): string => {
+	let result = UCWords(ReplaceAll('_', ' ', ToSnakeCase(str) ?? '') ?? '') ?? ''
+	
+	if (result.endsWith(' Id')) {
+		return result.substr(0, result.length - 1) + 'D'
+	}
+	
+	return result
+}
+
 /**
  * Converts a string to PascalCase.
  *

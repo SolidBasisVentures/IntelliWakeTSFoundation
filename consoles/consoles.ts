@@ -2,6 +2,7 @@
 
 import {IANAZoneAbbr, MomentID} from '../src/Moment'
 import {IChanges, ObjectWithChanges} from '../src/DataConstructs'
+import {ToUpperCaseWords} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -32,3 +33,5 @@ console.log(employeeChanged.name)
 console.log('IANA NY', IANAZoneAbbr('America/New_York'))
 
 console.log('IANA Ind', IANAZoneAbbr('America/Indiana/Indianapolis'))
+
+console.log('test_table_identifier_id', ToUpperCaseWords('test_table_identifier_id'))

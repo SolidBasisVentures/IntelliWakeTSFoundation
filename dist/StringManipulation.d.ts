@@ -19,6 +19,7 @@ export declare const ToKebabCase: (str: string) => string;
  * ToCamelCase('user_token') //  returns "userToken
  */
 export declare const ToCamelCase: (str: string) => string;
+export declare const ToUpperCaseWords: (str: string) => string;
 /**
  * Converts a string to PascalCase.
  *

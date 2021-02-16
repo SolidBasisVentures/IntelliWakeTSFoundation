@@ -234,6 +234,14 @@ var ToCamelCase = function (str) {
             .replace('_', '');
     });
 };
+var ToUpperCaseWords = function (str) {
+    var _a, _b, _c;
+    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
+    if (result.endsWith(' Id')) {
+        return result.substr(0, result.length - 1) + 'D';
+    }
+    return result;
+};
 /**
  * Converts a string to PascalCase.
  *
@@ -1837,6 +1845,7 @@ var MomentID = function (value, offsetHours) {
     if (offsetHours === void 0) { offsetHours = 5; }
     return MomentFormatString(value !== null && value !== void 0 ? value : moment().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
 };
+var IANAZoneAbbr = function (ianaValue) { return moment.tz(ianaValue).format('z'); };
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2313,6 +2322,7 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.IANAZoneAbbr = IANAZoneAbbr;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
@@ -2395,6 +2405,7 @@ exports.ToPercentBlank = ToPercentBlank;
 exports.ToPercentDash = ToPercentDash;
 exports.ToSnakeCase = ToSnakeCase;
 exports.ToStringArray = ToStringArray;
+exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
 exports.consoleLogTable = consoleLogTable;
