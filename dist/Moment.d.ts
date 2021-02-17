@@ -118,3 +118,4 @@ export declare const MomentDurationShortTextAligned: (start: string | Moment | D
 export declare const MomentStringToDateLocale: (value: string | Moment | null) => string;
 export declare const DateAndTimeToDateTime: (valueDate: string | Moment | null, valueTime: string | null) => string;
 export declare const MomentID: (value?: TAnyDateValue, offsetHours?: number) => string | null;
+export declare const IANAZoneAbbr: (ianaValue: string) => any;

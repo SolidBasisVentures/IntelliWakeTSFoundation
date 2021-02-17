@@ -59,7 +59,7 @@ export declare const initialFilterSortPaginator: IPaginatorRequest;
  * countPerPage = How many rows make up a page
  * currentOffset = More used by the database, but this would be the offset (e.g. 51 on the second page of a set that had CountPerPage = 50 and RowCount > 50)
  */
-export interface IPaginatorReturn<T = any> {
+export interface IPaginatorResponse<T = any> {
     page: number;
     pageCount: number;
     rowCount: number;
