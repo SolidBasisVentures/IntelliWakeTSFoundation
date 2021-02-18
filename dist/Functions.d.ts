@@ -132,4 +132,4 @@ export declare const StringToByteArray: (str: string) => any;
 export declare const FormUrlEncoded: (x: any) => string;
 export declare const RoundTo: (num: any, decimalPlaces?: number) => number;
 export declare const ObjectToJSONString: (val: any) => string;
-export declare const JSONStringToObject: (val: string) => any;
+export declare const JSONStringToObject: <T = any>(val: string) => T;

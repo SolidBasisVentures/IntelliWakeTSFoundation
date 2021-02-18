@@ -280,4 +280,4 @@ export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
-export const JSONStringToObject = (val: string) => JSONParse(val.toString().substr(5))
+export const JSONStringToObject = <T = any>(val: string): T => JSONParse(val.toString().substr(5)) as T
