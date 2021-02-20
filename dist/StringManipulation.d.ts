@@ -1,9 +1,3 @@
-/**
- * Converts a string to snake_case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user_token"
- */
 export declare const ToSnakeCase: (str: string) => string;
 /**
  * Converts a string to kebab-case.
@@ -65,16 +59,21 @@ export declare const RightPad: (subject: string, length: number, padString: stri
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
- * // return $100
- * CleanNumber('100')
+ * // return 100
+ * CleanNumber('$100')
  *
  * // return 1000
  * CleanNumber('1,000')
  *
- * // return 50%
- * CleanNumber('50')
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
  */
-export declare const CleanNumber: (value: any) => number;
+export declare const CleanNumber: (value: any, roundTo?: number | undefined) => number;
 /**
  * Returns the given number with a dollar sign.
  *

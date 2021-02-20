@@ -199,6 +199,265 @@ var consoleLogTable = function (arrayData, tableDef) {
 };
 
 /**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
+var Trunc = function (subject, length) {
+    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
+};
+/**
+ * Returns a google maps link with the given coordinates.
+ *
+ * @example
+ * // returns "http://maps.google.com/maps?q=12345,12345"
+ * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
+ */
+var GoogleMapsGPSLink = function (dataArray, prefix) {
+    var _a, _b;
+    if (prefix === void 0) { prefix = ''; }
+    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
+    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
+    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
+};
+/**
+ * Returns a google maps link with the given address
+ *
+ * @example
+ * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
+ *	GoogleMapsAddressLink({
+ *		address1: 'Blk 1, Lot 2, Some Street',
+ *		address2: 'Blk 2, Lot 3, Some Street',
+ *		city: 'Burr Ridge',
+ *		state: 'IL',
+ *		zip: '61257',
+ *	})
+ */
+var GoogleMapsAddressLink = function (dataArray, prefix) {
+    var _a, _b, _c, _d;
+    if (prefix === void 0) { prefix = ''; }
+    var address = ((_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : '') + ' ';
+    if (dataArray[prefix + 'address2']) {
+        address += dataArray[prefix + 'address2'] + ' ';
+    }
+    address += ((_b = dataArray[prefix + 'city']) !== null && _b !== void 0 ? _b : '') + ', ';
+    address += ((_c = dataArray[prefix + 'state']) !== null && _c !== void 0 ? _c : '') + ' ';
+    address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
+};
+/**
+ * Determines whether a value is a valid input decimal.
+ *
+ * @example
+ * // returns true
+ * IsValidInputDecimal('1')
+ *
+ * // returns false
+ * IsValidInputDecimal('1%')
+ */
+var IsValidInputDecimal = function (value) {
+    // noinspection RegExpUnexpectedAnchor
+    var regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$');
+    return !value || regEx.test(value);
+};
+/**
+ * Generates a unique UID
+ */
+var GenerateUUID = function () {
+    var d = new Date().getTime(); //Timestamp
+    var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16; //random number between 0 and 16
+        if (d > 0) {
+            //Use timestamp until depleted
+            r = (d + r) % 16 | 0;
+            d = Math.floor(d / 16);
+        }
+        else {
+            //Use microseconds since page-load if supported
+            r = (d2 + r) % 16 | 0;
+            d2 = Math.floor(d2 / 16);
+        }
+        return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
+    });
+};
+/**
+ * Determines a value is active or on. Returns true when the value
+ * is one of the following:
+ * 'true', 'active', 'on', 'yes', 'y'
+ *
+ * @example
+ * // return true
+ * IsOn('active')
+ *
+ * // return false
+ * IsOn('inactive')
+ */
+var IsOn = function (value) {
+    if (!value) {
+        return false;
+    }
+    if (value === true) {
+        return value;
+    }
+    var floatValue = parseFloat(value);
+    if (!isNaN(floatValue)) {
+        return floatValue > 0;
+    }
+    return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
+};
+/**
+ * Copies an address object to another object.
+ *
+ * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
+ *
+ * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Blk 2, Lot 3, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * let address2 = {}
+ * AddressCopy(address1, '', address2, '')
+ * // address2 is now a copy of address1
+ * console.log(address2)
+ */
+var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
+    if (includeName === void 0) { includeName = true; }
+    if (includePhone === void 0) { includePhone = true; }
+    if (includeTimeZone === void 0) { includeTimeZone = true; }
+    if (includeGPS === void 0) { includeGPS = true; }
+    if (includeName && !!fromObject[fromPrefix + 'name']) {
+        toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name'];
+    }
+    toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1'];
+    toObject[toPrefix + 'address_2'] = fromObject[fromPrefix + 'address_2'];
+    toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city'];
+    toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state'];
+    toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip'];
+    if (includePhone && !!fromObject[fromPrefix + 'phone']) {
+        toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone'];
+    }
+    if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
+        toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone'];
+    }
+    if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
+        toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude'];
+    }
+    if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
+        toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
+    }
+};
+/**
+ * Determines whether an object has a property of "address_1".
+ *
+ * @example
+ * // returns false
+ * AddressValid({ address: 'Blk1, Lot1, Some street' })
+ *
+ * // returns false
+ * AddressValid({ address_1: '' })
+ *
+ * // returns true
+ * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
+ */
+var AddressValid = function (address, prefix) {
+    return !!address[(prefix !== null && prefix !== void 0 ? prefix : '') + 'address_1'];
+};
+/**
+ * Combines an address object into a single row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Suite 100',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
+ * AddressSingleRow(address1)
+ */
+var AddressSingleRow = function (object, prefix) {
+    var _a, _b, _c, _d, _e;
+    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
+    var singleRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
+    if (!!((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : ''))
+        singleRow += ', ' + object[usePrefix + 'address_2'];
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
+        singleRow += ', ' + object[usePrefix + 'city'];
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
+        singleRow += ', ' + object[usePrefix + 'state'];
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
+        singleRow += '  ' + object[usePrefix + 'zip'];
+    return singleRow;
+};
+/**
+ * Combines an address object into a multiline row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Appt 1',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "
+ * // Blk 1, Lot 2, Some Street
+ * // Appt 1
+ * // Burr Ridge, IL, 61257"
+ * AddressMultiRow(address1)
+ */
+var AddressMultiRow = function (object, prefix) {
+    var _a, _b, _c, _d, _e;
+    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
+    var multiRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
+    if (!!object[usePrefix + 'address_2']) {
+        multiRow += '\n' + ((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : '').trim();
+    }
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
+        multiRow += '\n' + object[usePrefix + 'city'];
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
+        multiRow += ', ' + object[usePrefix + 'state'];
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
+        multiRow += '  ' + object[usePrefix + 'zip'];
+    return multiRow;
+};
+var ArrayToGuidString = function (byteArray) {
+    return Array.from(byteArray, function (byte) {
+        return ('0' + (byte & 0xff).toString(16)).slice(-2);
+    })
+        .join('')
+        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+};
+var StringToByteArray = function (str) {
+    var decoded = atob(str);
+    var i, il = decoded.length;
+    var array = new Uint8Array(il);
+    for (i = 0; i < il; ++i) {
+        array[i] = decoded.charCodeAt(i);
+    }
+    return array;
+};
+var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
+var RoundTo = function (num, decimalPlaces) {
+    if (decimalPlaces === void 0) { decimalPlaces = 0; }
+    return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
+};
+var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
+var JSONStringToObject = function (val) { return JSONParse(val.toString().substr(5)); };
+
+/**
  * Converts a string to snake_case.
  *
  * @example
@@ -228,10 +487,8 @@ var ToCamelCase = function (str) {
     if (str === 'id')
         return 'ID';
     var calcStr = ToSnakeCase(str).replace('_id', 'ID');
-    return calcStr.replace(/([-_][a-z])/ig, function ($1) {
-        return $1.toUpperCase()
-            .replace('-', '')
-            .replace('_', '');
+    return calcStr.replace(/([-_][a-z])/gi, function ($1) {
+        return $1.toUpperCase().replace('-', '').replace('_', '');
     });
 };
 var ToUpperCaseWords = function (str) {
@@ -273,7 +530,7 @@ var ReplaceAll = function (find, replace, subject) {
 var ReplaceLinks = function (subject) {
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
-    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
+    var target = "<a href='$1' target='_blank'>$1</a>";
     // noinspection RegExpRedundantEscape
     return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
 };
@@ -314,16 +571,22 @@ var RightPad = function (subject, length, padString) {
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
- * // return $100
- * CleanNumber('100')
+ * // return 100
+ * CleanNumber('$100')
  *
  * // return 1000
  * CleanNumber('1,000')
  *
- * // return 50%
- * CleanNumber('50')
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
  */
-var CleanNumber = function (value) {
+var CleanNumber = function (value, roundTo) {
+    if (roundTo === void 0) { roundTo = undefined; }
     if (!value)
         return 0;
     var str = value.toString();
@@ -332,7 +595,7 @@ var CleanNumber = function (value) {
     str = ReplaceAll('%', '', str);
     if (isNaN(str))
         return NaN;
-    return parseFloat(str);
+    return RoundTo(parseFloat(str), roundTo);
 };
 /**
  * Returns the given number with a dollar sign.
@@ -974,265 +1237,6 @@ var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
     }
     return results;
 };
-
-/**
- * Truncates a string and replaces the remaining characters with ellipsis.
- *
- * @example
- * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
- * Trunc('Welcome to TSFoundation', 11)
- */
-var Trunc = function (subject, length) {
-    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
-};
-/**
- * Returns a google maps link with the given coordinates.
- *
- * @example
- * // returns "http://maps.google.com/maps?q=12345,12345"
- * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
- */
-var GoogleMapsGPSLink = function (dataArray, prefix) {
-    var _a, _b;
-    if (prefix === void 0) { prefix = ''; }
-    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
-    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
-    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
-};
-/**
- * Returns a google maps link with the given address
- *
- * @example
- * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
- *	GoogleMapsAddressLink({
- *		address1: 'Blk 1, Lot 2, Some Street',
- *		address2: 'Blk 2, Lot 3, Some Street',
- *		city: 'Burr Ridge',
- *		state: 'IL',
- *		zip: '61257',
- *	})
- */
-var GoogleMapsAddressLink = function (dataArray, prefix) {
-    var _a, _b, _c, _d;
-    if (prefix === void 0) { prefix = ''; }
-    var address = ((_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : '') + ' ';
-    if (dataArray[prefix + 'address2']) {
-        address += dataArray[prefix + 'address2'] + ' ';
-    }
-    address += ((_b = dataArray[prefix + 'city']) !== null && _b !== void 0 ? _b : '') + ', ';
-    address += ((_c = dataArray[prefix + 'state']) !== null && _c !== void 0 ? _c : '') + ' ';
-    address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
-    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
-};
-/**
- * Determines whether a value is a valid input decimal.
- *
- * @example
- * // returns true
- * IsValidInputDecimal('1')
- *
- * // returns false
- * IsValidInputDecimal('1%')
- */
-var IsValidInputDecimal = function (value) {
-    // noinspection RegExpUnexpectedAnchor
-    var regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$');
-    return !value || regEx.test(value);
-};
-/**
- * Generates a unique UID
- */
-var GenerateUUID = function () {
-    var d = new Date().getTime(); //Timestamp
-    var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16; //random number between 0 and 16
-        if (d > 0) {
-            //Use timestamp until depleted
-            r = (d + r) % 16 | 0;
-            d = Math.floor(d / 16);
-        }
-        else {
-            //Use microseconds since page-load if supported
-            r = (d2 + r) % 16 | 0;
-            d2 = Math.floor(d2 / 16);
-        }
-        return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
-    });
-};
-/**
- * Determines a value is active or on. Returns true when the value
- * is one of the following:
- * 'true', 'active', 'on', 'yes', 'y'
- *
- * @example
- * // return true
- * IsOn('active')
- *
- * // return false
- * IsOn('inactive')
- */
-var IsOn = function (value) {
-    if (!value) {
-        return false;
-    }
-    if (value === true) {
-        return value;
-    }
-    var floatValue = parseFloat(value);
-    if (!isNaN(floatValue)) {
-        return floatValue > 0;
-    }
-    return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
-};
-/**
- * Copies an address object to another object.
- *
- * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
- *
- * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Blk 2, Lot 3, Some Street',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * let address2 = {}
- * AddressCopy(address1, '', address2, '')
- * // address2 is now a copy of address1
- * console.log(address2)
- */
-var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
-    if (includeName === void 0) { includeName = true; }
-    if (includePhone === void 0) { includePhone = true; }
-    if (includeTimeZone === void 0) { includeTimeZone = true; }
-    if (includeGPS === void 0) { includeGPS = true; }
-    if (includeName && !!fromObject[fromPrefix + 'name']) {
-        toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name'];
-    }
-    toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1'];
-    toObject[toPrefix + 'address_2'] = fromObject[fromPrefix + 'address_2'];
-    toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city'];
-    toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state'];
-    toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip'];
-    if (includePhone && !!fromObject[fromPrefix + 'phone']) {
-        toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone'];
-    }
-    if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
-        toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone'];
-    }
-    if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
-        toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude'];
-    }
-    if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
-        toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
-    }
-};
-/**
- * Determines whether an object has a property of "address_1".
- *
- * @example
- * // returns false
- * AddressValid({ address: 'Blk1, Lot1, Some street' })
- *
- * // returns false
- * AddressValid({ address_1: '' })
- *
- * // returns true
- * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
- */
-var AddressValid = function (address, prefix) {
-    return !!address[(prefix !== null && prefix !== void 0 ? prefix : '') + 'address_1'];
-};
-/**
- * Combines an address object into a single row string.
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Suite 100',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
- * AddressSingleRow(address1)
- */
-var AddressSingleRow = function (object, prefix) {
-    var _a, _b, _c, _d, _e;
-    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
-    var singleRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
-    if (!!((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : ''))
-        singleRow += ', ' + object[usePrefix + 'address_2'];
-    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
-        singleRow += ', ' + object[usePrefix + 'city'];
-    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
-        singleRow += ', ' + object[usePrefix + 'state'];
-    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
-        singleRow += '  ' + object[usePrefix + 'zip'];
-    return singleRow;
-};
-/**
- * Combines an address object into a multiline row string.
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Appt 1',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * // returns "
- * // Blk 1, Lot 2, Some Street
- * // Appt 1
- * // Burr Ridge, IL, 61257"
- * AddressMultiRow(address1)
- */
-var AddressMultiRow = function (object, prefix) {
-    var _a, _b, _c, _d, _e;
-    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
-    var multiRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
-    if (!!object[usePrefix + 'address_2']) {
-        multiRow += '\n' + ((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : '').trim();
-    }
-    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
-        multiRow += '\n' + object[usePrefix + 'city'];
-    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
-        multiRow += ', ' + object[usePrefix + 'state'];
-    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
-        multiRow += '  ' + object[usePrefix + 'zip'];
-    return multiRow;
-};
-var ArrayToGuidString = function (byteArray) {
-    return Array.from(byteArray, function (byte) {
-        return ('0' + (byte & 0xff).toString(16)).slice(-2);
-    })
-        .join('')
-        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
-};
-var StringToByteArray = function (str) {
-    var decoded = atob(str);
-    var i, il = decoded.length;
-    var array = new Uint8Array(il);
-    for (i = 0; i < il; ++i) {
-        array[i] = decoded.charCodeAt(i);
-    }
-    return array;
-};
-var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
-var RoundTo = function (num, decimalPlaces) {
-    if (decimalPlaces === void 0) { decimalPlaces = 0; }
-    return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
-};
-var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
-var JSONStringToObject = function (val) { return JSONParse(val.toString().substr(5)); };
 
 var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
 var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
