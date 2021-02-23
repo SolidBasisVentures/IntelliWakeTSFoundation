@@ -163,6 +163,17 @@ test('CleanNumber %', () => {
 	expect(CleanNumber('50%')).toBe(50)
 })
 
+test('CleanNumber(1.234)', () => {
+	expect(CleanNumber(1.234)).toBe(1.234)
+})
+test('CleanNumber(1.234, 0)', () => {
+	expect(CleanNumber(1.234, 0)).toBe(1)
+})
+test('CleanNumber(1.234, 1)', () => {
+	expect(CleanNumber(1.234, 1)).toBe(1.2)
+})
+
+
 let symbolFunctions = [
 	{name: 'ToCurrency', method: ToCurrency, value: 100, expected: '$100.00', decimal: '$100.0', empty: '$0.00'},
 	{name: 'ToCurrencyBlank', method: ToCurrencyBlank, value: 100, expected: '$100.00', decimal: '$100.0', empty: ''},

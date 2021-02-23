@@ -145,7 +145,7 @@ export const RightPad = (subject: string, length: number, padString: string): st
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-export const CleanNumber = (value: any, roundTo: number | undefined = undefined): number => {
+export const CleanNumber = (value: any, roundClean?: number): number => {
 	if (!value) return 0
 
 	let str = value.toString()
@@ -153,8 +153,11 @@ export const CleanNumber = (value: any, roundTo: number | undefined = undefined)
 	str = ReplaceAll(',', '', str)
 	str = ReplaceAll('%', '', str)
 	if (isNaN(str)) return NaN
-	if (roundTo === undefined) parseFloat(str)
-	return RoundTo(parseFloat(str), roundTo)
+	
+	if (roundClean !== undefined) {
+		return RoundTo(parseFloat(str), roundClean)
+	}
+	return parseFloat(str)
 }
 
 /**

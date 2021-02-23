@@ -73,7 +73,7 @@ export declare const RightPad: (subject: string, length: number, padString: stri
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-export declare const CleanNumber: (value: any, roundTo?: number | undefined) => number;
+export declare const CleanNumber: (value: any, roundClean?: number | undefined) => number;
 /**
  * Returns the given number with a dollar sign.
  *

@@ -585,8 +585,7 @@ var RightPad = function (subject, length, padString) {
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-var CleanNumber = function (value, roundTo) {
-    if (roundTo === void 0) { roundTo = undefined; }
+var CleanNumber = function (value, roundClean) {
     if (!value)
         return 0;
     var str = value.toString();
@@ -595,7 +594,10 @@ var CleanNumber = function (value, roundTo) {
     str = ReplaceAll('%', '', str);
     if (isNaN(str))
         return NaN;
-    return RoundTo(parseFloat(str), roundTo);
+    if (roundClean !== undefined) {
+        return RoundTo(parseFloat(str), roundClean);
+    }
+    return parseFloat(str);
 };
 /**
  * Returns the given number with a dollar sign.
