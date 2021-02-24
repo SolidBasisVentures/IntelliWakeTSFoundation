@@ -5,6 +5,7 @@
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
 import {RoundTo} from './Functions'
+import moment from 'moment/moment'
 
 export const ToSnakeCase = (str: string): string => {
 	if (str === 'ID') return 'id'
@@ -556,6 +557,14 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 	let result = ''
 	for (let i = 0; i < length; i++) {
 		result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
+	}
+	
+	const ts = moment().valueOf().toString()
+	
+	if (length > ts.length * 0.5) {
+		const offset = RoundTo((length - ts.length) / 2, 0)
+		
+		return result.substr(0, offset) + ts + result.substr(offset + ts.length)
 	}
 
 	return result

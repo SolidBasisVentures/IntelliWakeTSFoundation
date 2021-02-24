@@ -1,8 +1,6 @@
 // const moment = require('moment-timezone')
 
-import {IANAZoneAbbr, MomentID} from '../src/Moment'
-import {IChanges, ObjectWithChanges} from '../src/DataConstructs'
-import {CleanNumber, ToUpperCaseWords} from '../src/StringManipulation'
+import {RandomString} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -36,4 +34,7 @@ require('source-map-support').install()
 //
 // console.log('test_table_identifier_id', ToUpperCaseWords('test_table_identifier_id'))
 
+const rand = RandomString(128)
 
+console.log(rand.length)
+console.log(rand)
