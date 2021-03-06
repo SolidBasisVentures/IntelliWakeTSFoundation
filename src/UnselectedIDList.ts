@@ -1,7 +1,8 @@
+export type TNumberObject = number | object
+
+export const ToID = (item: TNumberObject): number => typeof item === 'number' ? item : (item as any).id as number
+
 export namespace UnselectedIDList {
-	type TNumberObject = number | object
-	
-	const ToID = (item: TNumberObject): number => typeof item === 'number' ? item : (item as any).id as number
 	
 	export const IsSelected = (item: TNumberObject, unselectedIDs: number[]): boolean => !unselectedIDs.includes(ToID(item))
 	
@@ -44,4 +45,23 @@ export namespace UnselectedIDList {
 		
 		return select ? SelectIDs(betweenIDs, unselectedIDs) : UnSelectIDs(betweenIDs, unselectedIDs)
 	}
+}
+
+export const SelectBetweenIDs = (allIDs: number[], lastID: number, nextID: number, inclusive: boolean = true): number[] => {
+	let betweenIDs: number[] = []
+	let firstFound = false
+	
+	for (const checkID of allIDs) {
+		if (checkID === lastID || checkID === nextID) {
+			if (inclusive) betweenIDs.push(checkID)
+			if (firstFound) {
+				break
+			}
+			firstFound = true
+		} else if (firstFound) {
+			betweenIDs.push(checkID)
+		}
+	}
+	
+	return betweenIDs
 }

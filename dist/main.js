@@ -2,8 +2,13 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var moment$1 = require('moment/moment');
 var momentTimezone = require('moment-timezone');
-var moment$1 = require('moment');
+var moment$2 = require('moment');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment$1);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -952,6 +957,11 @@ var RandomString = function (length, validChars) {
     for (var i = 0; i < length; i++) {
         result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
     }
+    var ts = moment__default['default']().valueOf().toString();
+    if (length > ts.length * 0.5) {
+        var offset = RoundTo((length - ts.length) / 2, 0);
+        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
+    }
     return result;
 };
 
@@ -1629,7 +1639,7 @@ var MomentFromString = function (value) {
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$1.utc(value, formatTries, true);
+        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$2.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }
@@ -2262,8 +2272,8 @@ var SearchSort = function (arrayTable, search, sortColumn) {
     return SortColumns(SearchRows(arrayTable, search), sortColumn);
 };
 
+var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
 (function (UnselectedIDList) {
-    var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
     UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
         var curID = ToID(cur);
@@ -2297,6 +2307,26 @@ var SearchSort = function (arrayTable, search, sortColumn) {
         return select ? UnselectedIDList.SelectIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
     };
 })(exports.UnselectedIDList || (exports.UnselectedIDList = {}));
+var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
+    if (inclusive === void 0) { inclusive = true; }
+    var betweenIDs = [];
+    var firstFound = false;
+    for (var _i = 0, allIDs_1 = allIDs; _i < allIDs_1.length; _i++) {
+        var checkID = allIDs_1[_i];
+        if (checkID === lastID || checkID === nextID) {
+            if (inclusive)
+                betweenIDs.push(checkID);
+            if (firstFound) {
+                break;
+            }
+            firstFound = true;
+        }
+        else if (firstFound) {
+            betweenIDs.push(checkID);
+        }
+    }
+    return betweenIDs;
+};
 
 exports.AddChange = AddChange;
 exports.AddIDChange = AddIDChange;
@@ -2388,6 +2418,7 @@ exports.SearchRow = SearchRow;
 exports.SearchRows = SearchRows;
 exports.SearchSort = SearchSort;
 exports.SearchTerms = SearchTerms;
+exports.SelectBetweenIDs = SelectBetweenIDs;
 exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.SortCompare = SortCompare;
@@ -2404,6 +2435,7 @@ exports.ToCurrencyDash = ToCurrencyDash;
 exports.ToDigits = ToDigits;
 exports.ToDigitsBlank = ToDigitsBlank;
 exports.ToDigitsDash = ToDigitsDash;
+exports.ToID = ToID;
 exports.ToKebabCase = ToKebabCase;
 exports.ToPascalCase = ToPascalCase;
 exports.ToPercent = ToPercent;
