@@ -1,10 +1,11 @@
+export declare type TNumberObject = number | object;
+export declare const ToID: (item: TNumberObject) => number;
 export declare namespace UnselectedIDList {
-    type TNumberObject = number | object;
-    export const IsSelected: (item: TNumberObject, unselectedIDs: number[]) => boolean;
-    export const SelectedIDs: (items: TNumberObject[], unselectedIDs: number[]) => number[];
-    export const ToggleUnSelectedID: (toggleID: number, unselectedIDs: number[]) => number[];
-    export const SelectIDs: (ids: TNumberObject[], unselectedIDs: number[]) => number[];
-    export const UnSelectIDs: (ids: TNumberObject[], unselectedIDs: number[]) => number[];
-    export const SelectedBetween: (allIDs: TNumberObject[], lastID: number, nextID: number, unselectedIDs: number[]) => number[];
-    export {};
+    const IsSelected: (item: TNumberObject, unselectedIDs: number[]) => boolean;
+    const SelectedIDs: (items: TNumberObject[], unselectedIDs: number[]) => number[];
+    const ToggleUnSelectedID: (toggleID: number, unselectedIDs: number[]) => number[];
+    const SelectIDs: (ids: TNumberObject[], unselectedIDs: number[]) => number[];
+    const UnSelectIDs: (ids: TNumberObject[], unselectedIDs: number[]) => number[];
+    const SelectedBetween: (allIDs: TNumberObject[], lastID: number, nextID: number, unselectedIDs: number[]) => number[];
 }
+export declare const SelectBetweenIDs: (allIDs: number[], lastID: number, nextID: number, inclusive?: boolean) => number[];
