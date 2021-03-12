@@ -264,7 +264,7 @@ export const MomentDisplayTime = (value: TAnyDateValue): string | null =>
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
 export const MomentDurationShortText = (start: string | Moment | Date, end?: string | Moment | Date): string =>
-	DurationShortText((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()) * 1000)
+	DurationShortText((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()) / 1000)
 
 /**
  * Displays a simplified duration format from seconds.

@@ -1769,9 +1769,15 @@ var MomentDisplayTime = function (value) {
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
-var MomentDurationShortText = function (start, end) {
-    var _a, _b;
-    var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
+var MomentDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()) / 1000); };
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30m 20s
+ */
+var DurationShortText = function (seconds) {
+    var duration = moment.duration(seconds * 1000);
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + "Y";
@@ -2346,6 +2352,7 @@ exports.DateAndTimeToDateTime = DateAndTimeToDateTime;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DisplayTZItem = DisplayTZItem;
+exports.DurationShortText = DurationShortText;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormUrlEncoded = FormUrlEncoded;
