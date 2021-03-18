@@ -14,21 +14,21 @@ import {CleanNumber} from './StringManipulation'
  * PagesForRange(1, 10, 3)
  */
 export function PagesForRange(current: number, length: number, spread: number = 2): (number | null)[] {
-	if (!(length > 0)) {
+	if (!(+length > 0)) {
 		return []
 	}
 
-	const current_adjusted = current < 1 ? 1 : current > length ? length : current
-	const spread_adjusted = current < spread || current > length - spread ? spread : Math.ceil(spread / 2)
+	const current_adjusted = +current < 1 ? 1 : +current > +length ? +length : +current
+	const spread_adjusted = +current < +spread || +current > +length - +spread ? +spread : Math.ceil(+spread / 2)
 
-	let left = current_adjusted - spread_adjusted,
-		right = current_adjusted + spread_adjusted,
+	let left = +current_adjusted - +spread_adjusted,
+		right = +current_adjusted + +spread_adjusted,
 		range: number[] = [],
 		rangeWithNull: (number | null)[] = [],
 		l
 
-	for (let i = 1; i <= length; i++) {
-		if (i === 1 || i === length || (i >= left && i <= right)) {
+	for (let i = 1; i <= +length; i++) {
+		if (i === 1 || i === +length || (i >= left && i <= right)) {
 			range.push(i)
 		}
 	}

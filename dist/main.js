@@ -1958,14 +1958,14 @@ var IsStageDevTestFocused = function () {
  */
 function PagesForRange(current, length, spread) {
     if (spread === void 0) { spread = 2; }
-    if (!(length > 0)) {
+    if (!(+length > 0)) {
         return [];
     }
-    var current_adjusted = current < 1 ? 1 : current > length ? length : current;
-    var spread_adjusted = current < spread || current > length - spread ? spread : Math.ceil(spread / 2);
-    var left = current_adjusted - spread_adjusted, right = current_adjusted + spread_adjusted, range = [], rangeWithNull = [], l;
-    for (var i = 1; i <= length; i++) {
-        if (i === 1 || i === length || (i >= left && i <= right)) {
+    var current_adjusted = +current < 1 ? 1 : +current > +length ? +length : +current;
+    var spread_adjusted = +current < +spread || +current > +length - +spread ? +spread : Math.ceil(+spread / 2);
+    var left = +current_adjusted - +spread_adjusted, right = +current_adjusted + +spread_adjusted, range = [], rangeWithNull = [], l;
+    for (var i = 1; i <= +length; i++) {
+        if (i === 1 || i === +length || (i >= left && i <= right)) {
             range.push(i);
         }
     }
