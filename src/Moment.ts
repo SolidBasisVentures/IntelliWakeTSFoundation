@@ -365,3 +365,17 @@ export const MomentID = (value: TAnyDateValue = null, offsetHours = 5): string |
 	MomentFormatString(value ?? moment().subtract(offsetHours, 'hours'), `YYYY-MM-DD_HH-mm-ss`)
 
 export const IANAZoneAbbr = (ianaValue: string) => moment.tz(ianaValue).format('z')
+
+export const MomentAddWeekDays = (weekDays: number, value?: TAnyDateValue): Moment => {
+	let newMoment = (MomentFromString(value) ?? moment())
+	
+	newMoment.add(Math.floor(weekDays / 5), 'weeks')
+	
+	let days = weekDays % 5
+	
+	if (newMoment.isoWeekday() + days >= 5) days += 2
+	
+	newMoment.add(days, 'days')
+	
+	return newMoment
+}

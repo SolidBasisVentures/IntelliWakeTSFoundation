@@ -1,6 +1,6 @@
 // const moment = require('moment-timezone')
 
-import {RandomString} from '../src/StringManipulation'
+import {MomentAddWeekDays, MomentDisplayDayDateDoW} from '../src/Moment'
 
 require('source-map-support').install()
 
@@ -34,7 +34,11 @@ require('source-map-support').install()
 //
 // console.log('test_table_identifier_id', ToUpperCaseWords('test_table_identifier_id'))
 
-const rand = RandomString(128)
+// const rand = RandomString(128)
+//
+// console.log(rand.length)
+// console.log(rand)
 
-console.log(rand.length)
-console.log(rand)
+for (let i = 0; i < 15; i++) {
+	console.log('WeekDays', i, 'Weeks', Math.floor(i / 5), 'Days', i % 5, MomentDisplayDayDateDoW(MomentAddWeekDays(i)))
+}

@@ -1111,10 +1111,16 @@ var IsJSON = function (json) {
  * RemoveDupProperties(data, data2)
  */
 var RemoveDupProperties = function (original, propsToRemove) {
+    var _a, _b;
     var result = __assign({}, original);
     for (var key in propsToRemove) {
         if (propsToRemove.hasOwnProperty(key)) {
-            if (propsToRemove[key] === result[key]) {
+            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
+                if (JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
+                    delete result[key];
+                }
+            }
+            else if (propsToRemove[key] === result[key]) {
                 delete result[key];
             }
         }
@@ -1868,6 +1874,16 @@ var MomentID = function (value, offsetHours) {
     return MomentFormatString(value !== null && value !== void 0 ? value : moment().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
 };
 var IANAZoneAbbr = function (ianaValue) { return moment.tz(ianaValue).format('z'); };
+var MomentAddWeekDays = function (weekDays, value) {
+    var _a;
+    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment());
+    newMoment.add(Math.floor(weekDays / 5), 'weeks');
+    var days = weekDays % 5;
+    if (newMoment.isoWeekday() + days >= 5)
+        days += 2;
+    newMoment.add(days, 'days');
+    return newMoment;
+};
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2389,6 +2405,7 @@ exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_TIME_DISPLAY_L
 exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
 exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
 exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
+exports.MomentAddWeekDays = MomentAddWeekDays;
 exports.MomentCurrentTimeZone = MomentCurrentTimeZone;
 exports.MomentCurrentTimeZoneOlson = MomentCurrentTimeZoneOlson;
 exports.MomentDateString = MomentDateString;
