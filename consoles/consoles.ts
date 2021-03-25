@@ -1,6 +1,6 @@
 // const moment = require('moment-timezone')
 
-import {MomentAddWeekDays, MomentDisplayDayDateDoW} from '../src/Moment'
+import {MomentAddWeekDays, MomentDisplayDayDateDoW, MomentWeekDays} from '../src/Moment'
 
 require('source-map-support').install()
 
@@ -39,6 +39,18 @@ require('source-map-support').install()
 // console.log(rand.length)
 // console.log(rand)
 
-for (let i = 0; i < 15; i++) {
-	console.log('WeekDays', i, 'Weeks', Math.floor(i / 5), 'Days', i % 5, MomentDisplayDayDateDoW(MomentAddWeekDays(i)))
+console.log('--- Wednesday')
+for (let i = 0; i < 7; i++) {
+	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)))
+}
+for (let i = 0; i < 7; i++) {
+	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)), MomentWeekDays(null, MomentAddWeekDays(i)))
+}
+
+console.log('--- Saturday')
+for (let i = 0; i < 7; i++) {
+	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')))
+}
+for (let i = 0; i < 7; i++) {
+	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')), MomentWeekDays('2021-03-20', MomentAddWeekDays(i, '2021-03-20')))
 }

@@ -367,15 +367,49 @@ export const MomentID = (value: TAnyDateValue = null, offsetHours = 5): string |
 export const IANAZoneAbbr = (ianaValue: string) => moment.tz(ianaValue).format('z')
 
 export const MomentAddWeekDays = (weekDays: number, value?: TAnyDateValue): Moment => {
-	let newMoment = (MomentFromString(value) ?? moment())
+	let newMoment = (MomentFromString(value) ?? moment()).startOf('day')
+	
+	while (newMoment.isoWeekday() >= 5) {
+		newMoment.add(1, 'day')
+	}
 	
 	newMoment.add(Math.floor(weekDays / 5), 'weeks')
 	
 	let days = weekDays % 5
 	
-	if (newMoment.isoWeekday() + days >= 5) days += 2
+	if ((newMoment.isoWeekday() + days) >= 6) days += 2
 	
 	newMoment.add(days, 'days')
 	
 	return newMoment
+}
+
+export const MomentWeekDays = (startDate: TAnyDateValue, endDate: TAnyDateValue): number => {
+	let start = MomentFromString(startDate) ?? MomentFromString(moment().subtract(5, 'hours'))
+	let end = MomentFromString(endDate) ?? MomentFromString(moment().subtract(5, 'hours'))
+	
+	if (!start || !end) return 0
+	
+	while (start.isoWeekday() >= 5) {
+		start.add(1, 'day')
+	}
+
+	while (end.isoWeekday() > 5) {
+		end.subtract(1, 'day')
+	}
+	
+	const weeks = end.startOf('day').diff(start.startOf('day'), 'weeks')
+	
+	let weekDays = weeks * 5
+	
+	let checkDate = start.add(weeks, 'weeks')
+	
+	while (checkDate.isBefore(end, 'day')) {
+		checkDate.add(1, 'day')
+		if (checkDate.isoWeekday() <= 5) {
+			weekDays++
+		}
+	}
+	
+	return weekDays
 }
