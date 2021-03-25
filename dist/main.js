@@ -1876,13 +1876,39 @@ var MomentID = function (value, offsetHours) {
 var IANAZoneAbbr = function (ianaValue) { return moment.tz(ianaValue).format('z'); };
 var MomentAddWeekDays = function (weekDays, value) {
     var _a;
-    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment());
+    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment()).startOf('day');
+    while (newMoment.isoWeekday() >= 5) {
+        newMoment.add(1, 'day');
+    }
     newMoment.add(Math.floor(weekDays / 5), 'weeks');
     var days = weekDays % 5;
-    if (newMoment.isoWeekday() + days >= 5)
+    if ((newMoment.isoWeekday() + days) >= 6)
         days += 2;
     newMoment.add(days, 'days');
     return newMoment;
+};
+var MomentWeekDays = function (startDate, endDate) {
+    var _a, _b;
+    var start = (_a = MomentFromString(startDate)) !== null && _a !== void 0 ? _a : MomentFromString(moment().subtract(5, 'hours'));
+    var end = (_b = MomentFromString(endDate)) !== null && _b !== void 0 ? _b : MomentFromString(moment().subtract(5, 'hours'));
+    if (!start || !end)
+        return 0;
+    while (start.isoWeekday() >= 5) {
+        start.add(1, 'day');
+    }
+    while (end.isoWeekday() > 5) {
+        end.subtract(1, 'day');
+    }
+    var weeks = end.startOf('day').diff(start.startOf('day'), 'weeks');
+    var weekDays = weeks * 5;
+    var checkDate = start.add(weeks, 'weeks');
+    while (checkDate.isBefore(end, 'day')) {
+        checkDate.add(1, 'day');
+        if (checkDate.isoWeekday() <= 5) {
+            weekDays++;
+        }
+    }
+    return weekDays;
 };
 
 (function (Stages) {
@@ -2422,6 +2448,7 @@ exports.MomentFromString = MomentFromString;
 exports.MomentID = MomentID;
 exports.MomentStringToDateLocale = MomentStringToDateLocale;
 exports.MomentTimeString = MomentTimeString;
+exports.MomentWeekDays = MomentWeekDays;
 exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;

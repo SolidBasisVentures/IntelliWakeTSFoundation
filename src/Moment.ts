@@ -384,7 +384,7 @@ export const MomentAddWeekDays = (weekDays: number, value?: TAnyDateValue): Mome
 	return newMoment
 }
 
-export const MomentWeekDays = (startDate: TAnyDateValue, endDate: TAnyDateValue): number => {
+export const MomentWeekDays = (startDate: TAnyDateValue, endDate?: TAnyDateValue): number => {
 	let start = MomentFromString(startDate) ?? MomentFromString(moment().subtract(5, 'hours'))
 	let end = MomentFromString(endDate) ?? MomentFromString(moment().subtract(5, 'hours'))
 	
