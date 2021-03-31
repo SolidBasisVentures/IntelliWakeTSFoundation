@@ -198,7 +198,7 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
 			if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-				if (JSON.stringify(propsToRemove[key] ?? {}) !== JSON.stringify(result[key] ?? {})) {
+				if ((!propsToRemove[key] && !result[key]) || JSON.stringify(propsToRemove[key] ?? {}) !== JSON.stringify(result[key] ?? {})) {
 					delete result[key]
 				}
 			} else if (propsToRemove[key] === result[key]) {

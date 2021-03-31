@@ -2,9 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var moment$1 = require('moment/moment');
+var moment$1 = require('moment');
 var momentTimezone = require('moment-timezone');
-var moment$2 = require('moment');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -533,6 +532,7 @@ var ReplaceAll = function (find, replace, subject) {
  * ReplaceLinks('https://www.google.com')
  */
 var ReplaceLinks = function (subject) {
+    // noinspection RegExpUnnecessaryNonCapturingGroup
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
     var target = "<a href='$1' target='_blank'>$1</a>";
@@ -558,6 +558,7 @@ var CleanScripts = function (subject) {
  */
 var TextToHTML = function (subject) {
     var str = subject.replace(/(<([^>]+)>)/gi, '');
+    // noinspection RegExpUnnecessaryNonCapturingGroup
     return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
 };
 var LeftPad = function (subject, length, padString) {
@@ -1116,7 +1117,7 @@ var RemoveDupProperties = function (original, propsToRemove) {
     for (var key in propsToRemove) {
         if (propsToRemove.hasOwnProperty(key)) {
             if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-                if (JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
+                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
                     delete result[key];
                 }
             }
@@ -1580,7 +1581,7 @@ var TIME_FORMAT_TRIES = [
 })(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-'); };
-var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+'); };
+var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
 var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {
     return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);
@@ -1645,7 +1646,7 @@ var MomentFromString = function (value) {
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$2.utc(value, formatTries, true);
+        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$1.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }

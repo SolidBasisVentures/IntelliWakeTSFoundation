@@ -1,9 +1,12 @@
 // const moment = require('moment-timezone')
 
-import {MomentCurrentTimeZone, MomentDisplayDayDateTime, MomentFromString} from '../src/Moment'
-import {RandomString} from '../src/StringManipulation'
+import {RemoveDupProperties} from '../src/DataConstructs'
 
 require('source-map-support').install()
+
+const changes = {item_one: null, item_two: 2}
+
+console.log(changes, RemoveDupProperties(changes, changes))
 
 // console.log(MomentID())
 //
@@ -56,14 +59,14 @@ require('source-map-support').install()
 // 	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')), MomentWeekDays('2021-03-20', MomentAddWeekDays(i, '2021-03-20')))
 // }
 
-let times = ['2020-12-31 21:15:29.078-05', '2021-01-01 02:15:29.078+00']
-
-console.log(MomentCurrentTimeZone())
-
-times.forEach(time => {
-	console.log('-------- ', time)
-	console.log(MomentFromString(time))
-	console.log(MomentDisplayDayDateTime(time))
-})
-
-console.log(RandomString(12))
+// let times = ['2020-12-31 21:15:29.078-05', '2021-01-01 02:15:29.078+00']
+//
+// console.log(MomentCurrentTimeZone())
+//
+// times.forEach(time => {
+// 	console.log('-------- ', time)
+// 	console.log(MomentFromString(time))
+// 	console.log(MomentDisplayDayDateTime(time))
+// })
+//
+// console.log(RandomString(12))
