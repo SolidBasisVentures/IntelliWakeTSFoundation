@@ -1,6 +1,7 @@
 // const moment = require('moment-timezone')
 
-import {MomentAddWeekDays, MomentDisplayDayDateDoW, MomentWeekDays} from '../src/Moment'
+import {MomentCurrentTimeZone, MomentDisplayDayDateTime, MomentFromString} from '../src/Moment'
+import {RandomString} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -39,18 +40,30 @@ require('source-map-support').install()
 // console.log(rand.length)
 // console.log(rand)
 
-console.log('--- Wednesday')
-for (let i = 0; i < 7; i++) {
-	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)))
-}
-for (let i = 0; i < 7; i++) {
-	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)), MomentWeekDays(null, MomentAddWeekDays(i)))
-}
+// console.log('--- Wednesday')
+// for (let i = 0; i < 7; i++) {
+// 	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)))
+// }
+// for (let i = 0; i < 7; i++) {
+// 	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i)), MomentWeekDays(null, MomentAddWeekDays(i)))
+// }
+//
+// console.log('--- Saturday')
+// for (let i = 0; i < 7; i++) {
+// 	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')))
+// }
+// for (let i = 0; i < 7; i++) {
+// 	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')), MomentWeekDays('2021-03-20', MomentAddWeekDays(i, '2021-03-20')))
+// }
 
-console.log('--- Saturday')
-for (let i = 0; i < 7; i++) {
-	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')))
-}
-for (let i = 0; i < 7; i++) {
-	console.log('WeekDays', i, MomentDisplayDayDateDoW(MomentAddWeekDays(i, '2021-03-20')), MomentWeekDays('2021-03-20', MomentAddWeekDays(i, '2021-03-20')))
-}
+let times = ['2020-12-31 21:15:29.078-05', '2021-01-01 02:15:29.078+00']
+
+console.log(MomentCurrentTimeZone())
+
+times.forEach(time => {
+	console.log('-------- ', time)
+	console.log(MomentFromString(time))
+	console.log(MomentDisplayDayDateTime(time))
+})
+
+console.log(RandomString(12))

@@ -5,7 +5,7 @@
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
 import {RoundTo} from './Functions'
-import moment from 'moment/moment'
+import moment from 'moment'
 
 export const ToSnakeCase = (str: string): string => {
 	if (str === 'ID') return 'id'
@@ -84,6 +84,7 @@ export const ReplaceAll = function (find: string, replace: string, subject: stri
  * ReplaceLinks('https://www.google.com')
  */
 export const ReplaceLinks = function (subject: string): string {
+	// noinspection RegExpUnnecessaryNonCapturingGroup
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
 	const target = "<a href='$1' target='_blank'>$1</a>"
@@ -111,6 +112,7 @@ export const CleanScripts = function (subject: string): string {
  */
 export const TextToHTML = function (subject: string): string {
 	let str = subject.replace(/(<([^>]+)>)/gi, '')
+	// noinspection RegExpUnnecessaryNonCapturingGroup
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
 }
 export const LeftPad = (subject: string, length: number, padString: string): string => {

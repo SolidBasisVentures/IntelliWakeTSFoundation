@@ -149,3 +149,11 @@ test('MomentDurationShortText 2M 10D', () => {
 test('MomentDurationShortTextAligned 2D  1h 30m 20s', () => {
 	expect(MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20')).toBe('2D  1h 30m 20s')
 })
+
+test('MomentDisplayDayDateTime TZ EST', () => {
+	expect(MomentDisplayDayDateTime('2020-12-31 21:15:29.078-05')).toBe('Dec 31 2020, 9:15 pm')
+})
+
+test('MomentDisplayDayDateTime TZ UTC', () => {
+	expect(MomentDisplayDayDateTime('2021-01-01 02:15:29.078+00')).toBe('Dec 31 2020, 9:15 pm')
+})

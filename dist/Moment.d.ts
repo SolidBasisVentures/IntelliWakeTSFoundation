@@ -127,4 +127,4 @@ export declare const DateAndTimeToDateTime: (valueDate: string | Moment | null, 
 export declare const MomentID: (value?: TAnyDateValue, offsetHours?: number) => string | null;
 export declare const IANAZoneAbbr: (ianaValue: string) => any;
 export declare const MomentAddWeekDays: (weekDays: number, value?: TAnyDateValue) => Moment;
-export declare const MomentWeekDays: (startDate: TAnyDateValue, endDate: TAnyDateValue) => number;
+export declare const MomentWeekDays: (startDate: TAnyDateValue, endDate?: TAnyDateValue) => number;
