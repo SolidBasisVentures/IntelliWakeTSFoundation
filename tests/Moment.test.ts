@@ -85,19 +85,19 @@ test('Moment Display Day Date Time from Blank', () => {
 })
 
 test('Moment Display Day Date Time from Date', () => {
-	expect(MomentDisplayDayDateTime('2020-01-01')).toBe('Jan 1 2020')
+	expect(MomentDisplayDayDateTime('2020-01-01')).toBe('Jan 1, 2020')
 })
 
 test('Moment Display Day Date Time from Date Time', () => {
-	expect(MomentDisplayDayDateTime('2020-01-01 01:00:00')).toBe('Jan 1 2020, 1:00 am')
+	expect(MomentDisplayDayDateTime('2020-01-01 01:00:00')).toBe('Jan 1, 2020, 1:00 am')
 })
 
 test('Moment Display Day Date Time from Date DoW', () => {
-	expect(MomentDisplayDayDateTimeDoW('2020-01-01')).toBe('We, Jan 1 2020')
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01')).toBe('We, Jan 1, 2020')
 })
 
 test('Moment Display Day Date Time from Date Time DoW', () => {
-	expect(MomentDisplayDayDateTimeDoW('2020-01-01 01:00:00')).toBe('We, Jan 1 2020, 1:00 am')
+	expect(MomentDisplayDayDateTimeDoW('2020-01-01 01:00:00')).toBe('We, Jan 1, 2020, 1:00 am')
 })
 
 // Display Date Date Tests
@@ -106,19 +106,19 @@ test('Moment Display Day Date from Blank', () => {
 })
 
 test('Moment Display Day Date from Date', () => {
-	expect(MomentDisplayDayDate('2020-01-01')).toBe('Jan 1 2020')
+	expect(MomentDisplayDayDate('2020-01-01')).toBe('Jan 1, 2020')
 })
 
 test('Moment Display Day Date from Date Time', () => {
-	expect(MomentDisplayDayDate('2020-01-01 01:00:00')).toBe('Jan 1 2020')
+	expect(MomentDisplayDayDate('2020-01-01 01:00:00')).toBe('Jan 1, 2020')
 })
 
 test('Moment Display Day Date from Date', () => {
-	expect(MomentDisplayDayDateDoW('2020-01-01')).toBe('We, Jan 1 2020')
+	expect(MomentDisplayDayDateDoW('2020-01-01')).toBe('We, Jan 1, 2020')
 })
 
 test('Moment Display Day Date from Date Time', () => {
-	expect(MomentDisplayDayDateDoW('2020-01-01 01:00:00')).toBe('We, Jan 1 2020')
+	expect(MomentDisplayDayDateDoW('2020-01-01 01:00:00')).toBe('We, Jan 1, 2020')
 })
 
 test('Moment Locale', () => {
@@ -151,9 +151,9 @@ test('MomentDurationShortTextAligned 2D  1h 30m 20s', () => {
 })
 
 test('MomentDisplayDayDateTime TZ EST', () => {
-	expect(MomentDisplayDayDateTime('2020-12-31 21:15:29.078-05')).toBe('Dec 31 2020, 9:15 pm')
+	expect(MomentDisplayDayDateTime('2020-12-31 21:15:29.078-05')).toBe('Dec 31, 2020, 9:15 pm')
 })
 
 test('MomentDisplayDayDateTime TZ UTC', () => {
-	expect(MomentDisplayDayDateTime('2021-01-01 02:15:29.078+00')).toBe('Dec 31 2020, 9:15 pm')
+	expect(MomentDisplayDayDateTime('2021-01-01 02:15:29.078+00')).toBe('Dec 31, 2020, 9:15 pm')
 })
