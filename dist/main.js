@@ -2,12 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var moment$1 = require('moment');
 var momentTimezone = require('moment-timezone');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment$1);
+var moment$2 = require('moment');
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -467,6 +463,7 @@ var JSONStringToObject = function (val) { return JSONParse(val.toString().substr
  * @example
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
+var moment = require('moment-timezone');
 var ToSnakeCase = function (str) {
     if (str === 'ID')
         return 'id';
@@ -958,7 +955,8 @@ var RandomString = function (length, validChars) {
     for (var i = 0; i < length; i++) {
         result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
     }
-    var ts = moment__default['default']().valueOf().toString();
+    var tsm = moment();
+    var ts = tsm.valueOf().toString();
     if (length > ts.length * 0.5) {
         var offset = RoundTo((length - ts.length) / 2, 0);
         return result.substr(0, offset) + ts + result.substr(offset + ts.length);
@@ -1548,17 +1546,17 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
-var moment = require('moment-timezone');
+var moment$1 = require('moment-timezone');
 var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
 var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var MOMENT_FORMAT_DATE_DISPLAY = "MMM D YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY = "MMM D, YYYY";
 var MOMENT_FORMAT_DATE_DISPLAY_DOW = "dd, " + MOMENT_FORMAT_DATE_DISPLAY;
 var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
 var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D YYYY";
+var MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
 var MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + MOMENT_FORMAT_DATE_DISPLAY_LONG;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
@@ -1595,11 +1593,11 @@ var FormatIsDateTime = function (format) {
 /**
  * Returns the current time zone.
  */
-var MomentCurrentTimeZone = function () { return moment.tz().format('z'); };
+var MomentCurrentTimeZone = function () { return moment$1.tz().format('z'); };
 /**
  * Returns the current olson time zone.
  */
-var MomentCurrentTimeZoneOlson = function () { return moment.tz.guess(); };
+var MomentCurrentTimeZoneOlson = function () { return moment$1.tz.guess(); };
 /**
  * Returns a list of olson time zone items, sorted by hour diff from UTC
  *
@@ -1607,11 +1605,11 @@ var MomentCurrentTimeZoneOlson = function () { return moment.tz.guess(); };
  */
 var TimeZoneOlsons = function (forCountry) {
     if (forCountry === void 0) { forCountry = 'US'; }
-    return moment.tz.zonesForCountry(forCountry)
+    return moment$1.tz.zonesForCountry(forCountry)
         .map(function (tzItem) { return ({
-        zone: moment.tz(tzItem).zoneAbbr(),
+        zone: moment$1.tz(tzItem).zoneAbbr(),
         olson: tzItem,
-        hours: moment.tz(tzItem).format('Z')
+        hours: moment$1.tz(tzItem).format('Z')
     }); })
         .sort(function (a, b) { return (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)); });
 };
@@ -1640,13 +1638,13 @@ var MomentFromString = function (value) {
     }
     var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
     if (typeof value !== 'string') {
-        var momentObject = moment(value);
+        var momentObject = moment$1(value);
         if (momentObject.isValid()) {
             return momentObject.utc().tz(MomentCurrentTimeZone());
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment(value, formatTries, true) : moment$1.utc(value, formatTries, true);
+        var momentObject = StringHasTimeZoneData(value) ? moment$1(value, formatTries, true) : moment$2.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }
@@ -1776,7 +1774,7 @@ var MomentDisplayTime = function (value) {
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
-var MomentDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()) / 1000); };
+var MomentDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()) / 1000); };
 /**
  * Displays a simplified duration format from seconds.
  *
@@ -1784,7 +1782,7 @@ var MomentDurationShortText = function (start, end) { var _a, _b; return Duratio
  * MomentDurationShortText((30 * 60) + 20) // result: 30m 20s
  */
 var DurationShortText = function (seconds) {
-    var duration = moment.duration(seconds * 1000);
+    var duration = moment$1.duration(seconds * 1000);
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + "Y";
@@ -1830,7 +1828,7 @@ var DurationShortText = function (seconds) {
  */
 var MomentDurationShortTextAligned = function (start, end) {
     var _a, _b;
-    var duration = moment.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment()));
+    var duration = moment$1.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()));
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + "Y";
@@ -1872,12 +1870,12 @@ var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; re
 var MomentID = function (value, offsetHours) {
     if (value === void 0) { value = null; }
     if (offsetHours === void 0) { offsetHours = 5; }
-    return MomentFormatString(value !== null && value !== void 0 ? value : moment().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
+    return MomentFormatString(value !== null && value !== void 0 ? value : moment$1().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
 };
-var IANAZoneAbbr = function (ianaValue) { return moment.tz(ianaValue).format('z'); };
+var IANAZoneAbbr = function (ianaValue) { return moment$1.tz(ianaValue).format('z'); };
 var MomentAddWeekDays = function (weekDays, value) {
     var _a;
-    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment()).startOf('day');
+    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment$1()).startOf('day');
     while (newMoment.isoWeekday() >= 5) {
         newMoment.add(1, 'day');
     }
@@ -1890,8 +1888,8 @@ var MomentAddWeekDays = function (weekDays, value) {
 };
 var MomentWeekDays = function (startDate, endDate) {
     var _a, _b;
-    var start = (_a = MomentFromString(startDate)) !== null && _a !== void 0 ? _a : MomentFromString(moment().subtract(5, 'hours'));
-    var end = (_b = MomentFromString(endDate)) !== null && _b !== void 0 ? _b : MomentFromString(moment().subtract(5, 'hours'));
+    var start = (_a = MomentFromString(startDate)) !== null && _a !== void 0 ? _a : MomentFromString(moment$1().subtract(5, 'hours'));
+    var end = (_b = MomentFromString(endDate)) !== null && _b !== void 0 ? _b : MomentFromString(moment$1().subtract(5, 'hours'));
     if (!start || !end)
         return 0;
     while (start.isoWeekday() >= 5) {
