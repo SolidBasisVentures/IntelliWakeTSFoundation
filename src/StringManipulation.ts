@@ -37,9 +37,9 @@ export const ToCamelCase = (str: string): string => {
 
 	let calcStr = ToSnakeCase(str).replace('_id', 'ID')
 
-	return calcStr.replace(/([-_ ][a-z])/gi, ($1) => {
+	return ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, ($1) => {
 		return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '')
-	})
+	}))
 }
 
 export const ToUpperCaseWords = (str: string): string => {

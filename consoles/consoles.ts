@@ -1,10 +1,14 @@
 // const moment = require('moment-timezone')
 
 import {RemoveDupProperties} from '../src/DataConstructs'
+import {ToCamelCase, ToPascalCase} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
 const changes = {item_one: null, item_two: 2}
+
+console.log('Camel', ToCamelCase('Service Extensions'))
+console.log('Pascal', ToPascalCase('Service Extensions'))
 
 console.log(changes, RemoveDupProperties(changes, changes))
 
