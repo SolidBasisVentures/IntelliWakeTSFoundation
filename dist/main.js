@@ -488,8 +488,8 @@ var ToCamelCase = function (str) {
     if (str === 'id')
         return 'ID';
     var calcStr = ToSnakeCase(str).replace('_id', 'ID');
-    return calcStr.replace(/([-_][a-z])/gi, function ($1) {
-        return $1.toUpperCase().replace('-', '').replace('_', '');
+    return calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
+        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
     });
 };
 var ToUpperCaseWords = function (str) {
