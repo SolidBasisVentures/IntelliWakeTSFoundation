@@ -236,15 +236,15 @@ var GoogleMapsGPSLink = function (dataArray, prefix) {
  *	})
  */
 var GoogleMapsAddressLink = function (dataArray, prefix) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     if (prefix === void 0) { prefix = ''; }
-    var address = ((_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : '') + ' ';
-    if (dataArray[prefix + 'address2']) {
-        address += dataArray[prefix + 'address2'] + ' ';
+    var address = ((_b = (_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : dataArray[prefix + 'address_1']) !== null && _b !== void 0 ? _b : '') + ' ';
+    if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
+        address += ((_c = dataArray[prefix + 'address2']) !== null && _c !== void 0 ? _c : dataArray[prefix + 'address_2']) + ' ';
     }
-    address += ((_b = dataArray[prefix + 'city']) !== null && _b !== void 0 ? _b : '') + ', ';
-    address += ((_c = dataArray[prefix + 'state']) !== null && _c !== void 0 ? _c : '') + ' ';
-    address += (_d = dataArray[prefix + 'zip']) !== null && _d !== void 0 ? _d : '';
+    address += ((_d = dataArray[prefix + 'city']) !== null && _d !== void 0 ? _d : '') + ', ';
+    address += ((_e = dataArray[prefix + 'state']) !== null && _e !== void 0 ? _e : '') + ' ';
+    address += (_f = dataArray[prefix + 'zip']) !== null && _f !== void 0 ? _f : '';
     return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
 };
 /**

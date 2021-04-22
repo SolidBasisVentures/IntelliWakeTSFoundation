@@ -38,9 +38,9 @@ export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string =
  *	})
  */
 export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): string => {
-	let address = (dataArray[prefix + 'address1'] ?? '') + ' '
-	if (dataArray[prefix + 'address2']) {
-		address += dataArray[prefix + 'address2'] + ' '
+	let address = (dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1'] ?? '') + ' '
+	if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
+		address += (dataArray[prefix + 'address2'] ?? dataArray[prefix + 'address_2']) + ' '
 	}
 	address += (dataArray[prefix + 'city'] ?? '') + ', '
 	address += (dataArray[prefix + 'state'] ?? '') + ' '
