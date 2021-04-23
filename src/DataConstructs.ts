@@ -83,6 +83,14 @@ export const AddIDChange = <T>(id: number, name: keyof T, value: any, idChanges:
 	}
 })
 
+export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IIDChanges<T>): IIDChanges<T> => ({
+	...idChanges,
+	[id]: {
+		...idChanges[id],
+		...changes
+	}
+})
+
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
