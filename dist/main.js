@@ -1930,15 +1930,15 @@ var MomentWeekDays = function (startDate, endDate) {
         var event_text = '';
         event_text += 'BEGIN:VEVENT\n';
         event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED:' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
+        event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
         event_text += 'DESCRIPTION:' + event.description + '\n';
-        event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n';
-        event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n';
-        event_text += 'DTSTAMP:' + ICSDateFormat(new Date().toISOString()) + '\n';
+        event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
+        event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n';
         if (!!event.organizerName && !!event.organizerEmail) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
-        event_text += 'LAST-MODIFIED:' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
+        event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
         event_text += 'LOCATION:' + event.location + '\n';
         if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
