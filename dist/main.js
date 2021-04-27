@@ -1566,20 +1566,21 @@ var ExecuteFunctions = function (expression) {
     ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
     var ICSDateFormat = function (date) { return !date ? '' : moment__default['default'](date).toDate().toISOString(); };
     ICS.VEVENT_Text = function (event) {
+        var _a, _b;
         var event_text = '';
         event_text += 'BEGIN:VEVENT\n';
         event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED:' + ICSDateFormat(event.dateTimeCreated) + '\n';
+        event_text += 'CREATED:' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
         event_text += 'DESCRIPTION:' + event.description + '\n';
         event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n';
         event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n';
-        event_text += 'DTSTAMP:' + ICSDateFormat(null) + '\n';
+        event_text += 'DTSTAMP:' + ICSDateFormat(new Date().toISOString()) + '\n';
         if (!!event.organizerName && !!event.organizerEmail) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
-        event_text += 'LAST-MODIFIED:' + ICSDateFormat(event.dateTimeModified) + '\n';
+        event_text += 'LAST-MODIFIED:' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
         event_text += 'LOCATION:' + event.location + '\n';
-        if (!!event.priority !== undefined) {
+        if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
         }
         event_text += 'SEQUENCE:0\n';
@@ -1589,7 +1590,7 @@ var ExecuteFunctions = function (expression) {
         event_text += 'UID:' + event.UID + '\n';
         if (event.alarmTriggerMinutes !== undefined) {
             event_text += 'BEGIN:VALARM\n';
-            event_text += "TRIGGER:'-PT" + event.alarmTriggerMinutes + "M\n";
+            event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
             event_text += 'ACTION:DISPLAY\n';
             event_text += 'DESCRIPTION:Reminder\n';
             event_text += 'END:VALARM\n';
