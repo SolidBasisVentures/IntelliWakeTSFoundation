@@ -2,12 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var moment$2 = require('moment');
 var momentTimezone = require('moment-timezone');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment$2);
+var moment$2 = require('moment');
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1554,53 +1550,6 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
-(function (ICS) {
-    ICS.Header = function (filenameNoExtension) {
-        if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
-        return ({
-            'Content-Type': 'text/Calendar',
-            'Content-Disposition': "inline; filename=" + filenameNoExtension + ".ics"
-        });
-    };
-    ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nPRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN\nVERSION:2.0\nMETHOD:PUBLISH\nX-MS-OLK-FORCEINSPECTOROPEN:TRUE\n';
-    ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
-    var ICSDateFormat = function (date) { return !date ? '' : moment__default['default'](date).toDate().toISOString(); };
-    ICS.VEVENT_Text = function (event) {
-        var _a, _b;
-        var event_text = '';
-        event_text += 'BEGIN:VEVENT\n';
-        event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED:' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
-        event_text += 'DESCRIPTION:' + event.description + '\n';
-        event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n';
-        event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n';
-        event_text += 'DTSTAMP:' + ICSDateFormat(new Date().toISOString()) + '\n';
-        if (!!event.organizerName && !!event.organizerEmail) {
-            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
-        }
-        event_text += 'LAST-MODIFIED:' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
-        event_text += 'LOCATION:' + event.location + '\n';
-        if (!!event.priority) {
-            event_text += "PRIORITY:" + event.priority + "\n";
-        }
-        event_text += 'SEQUENCE:0\n';
-        //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
-        event_text += 'SUMMARY:' + event.subject + '\n';
-        event_text += 'TRANSP:OPAQUE\n';
-        event_text += 'UID:' + event.UID + '\n';
-        if (event.alarmTriggerMinutes !== undefined) {
-            event_text += 'BEGIN:VALARM\n';
-            event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
-            event_text += 'ACTION:DISPLAY\n';
-            event_text += 'DESCRIPTION:Reminder\n';
-            event_text += 'END:VALARM\n';
-        }
-        event_text += 'END:VEVENT\n';
-        return event_text;
-    };
-    ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
-})(exports.ICS || (exports.ICS = {}));
-
 var moment$1 = require('moment-timezone');
 var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -1964,6 +1913,53 @@ var MomentWeekDays = function (startDate, endDate) {
     }
     return weekDays;
 };
+
+(function (ICS) {
+    ICS.Header = function (filenameNoExtension) {
+        if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
+        return ({
+            'Content-Type': 'text/Calendar',
+            'Content-Disposition': "inline; filename=" + filenameNoExtension + ".ics"
+        });
+    };
+    ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n';
+    ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
+    var ICSDateFormat = function (date, timezone) { var _a, _b; return !date ? '' : "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + ((_b = (_a = MomentFromString(date)) === null || _a === void 0 ? void 0 : _a.format('YYYYMMDDTHHmmss')) !== null && _b !== void 0 ? _b : ''); };
+    ICS.VEVENT_Text = function (event) {
+        var _a, _b;
+        var event_text = '';
+        event_text += 'BEGIN:VEVENT\n';
+        event_text += 'CLASS:PUBLIC\n';
+        event_text += 'CREATED:' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
+        event_text += 'DESCRIPTION:' + event.description + '\n';
+        event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n';
+        event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        event_text += 'DTSTAMP:' + ICSDateFormat(new Date().toISOString()) + '\n';
+        if (!!event.organizerName && !!event.organizerEmail) {
+            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
+        }
+        event_text += 'LAST-MODIFIED:' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
+        event_text += 'LOCATION:' + event.location + '\n';
+        if (!!event.priority) {
+            event_text += "PRIORITY:" + event.priority + "\n";
+        }
+        event_text += 'SEQUENCE:0\n';
+        //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
+        event_text += 'SUMMARY:' + event.subject + '\n';
+        event_text += 'TRANSP:OPAQUE\n';
+        event_text += 'UID:' + event.UID + '\n';
+        if (event.alarmTriggerMinutes !== undefined) {
+            event_text += 'BEGIN:VALARM\n';
+            event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
+            event_text += 'ACTION:DISPLAY\n';
+            event_text += 'DESCRIPTION:Reminder\n';
+            event_text += 'END:VALARM\n';
+        }
+        event_text += 'END:VEVENT\n';
+        return event_text;
+    };
+    ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
+})(exports.ICS || (exports.ICS = {}));
 
 (function (Stages) {
     Stages["Local"] = "local";
