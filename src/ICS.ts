@@ -36,7 +36,7 @@ export namespace ICS {
 		event_text += 'CLASS:PUBLIC\n'
 		event_text += 'CREATED;' + ICSDateFormat(event.dateTimeCreated ?? new Date().toISOString()) + '\n'
 		
-		event_text += 'DESCRIPTION:' + event.description + '\n'
+		event_text += 'DESCRIPTION:' + escape(event.description) + '\n'
 		event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n'
 		if (!!event.durationMinutes) {
 			event_text += 'DURATION:PT' + event.durationMinutes + 'M\n'
@@ -48,13 +48,13 @@ export namespace ICS {
 			event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
 		}
 		event_text += 'LAST-MODIFIED;' + ICSDateFormat(event.dateTimeModified ?? new Date().toISOString()) + '\n'
-		event_text += 'LOCATION:' + event.location + '\n'
+		event_text += 'LOCATION:' + escape(event.location) + '\n'
 		if (!!event.priority) {
 			event_text += `PRIORITY:${event.priority}\n`
 		}
 		event_text += 'SEQUENCE:0\n'
 //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
-		event_text += 'SUMMARY:' + event.subject + '\n'
+		event_text += 'SUMMARY:' + escape(event.subject) + '\n'
 		event_text += 'TRANSP:OPAQUE\n'
 		event_text += 'UID:' + event.UID + '\n'
 		

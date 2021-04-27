@@ -1931,7 +1931,7 @@ var MomentWeekDays = function (startDate, endDate) {
         event_text += 'BEGIN:VEVENT\n';
         event_text += 'CLASS:PUBLIC\n';
         event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
-        event_text += 'DESCRIPTION:' + event.description + '\n';
+        event_text += 'DESCRIPTION:' + escape(event.description) + '\n';
         event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
         if (!!event.durationMinutes) {
             event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
@@ -1944,13 +1944,13 @@ var MomentWeekDays = function (startDate, endDate) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
         event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
-        event_text += 'LOCATION:' + event.location + '\n';
+        event_text += 'LOCATION:' + escape(event.location) + '\n';
         if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
         }
         event_text += 'SEQUENCE:0\n';
         //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
-        event_text += 'SUMMARY:' + event.subject + '\n';
+        event_text += 'SUMMARY:' + escape(event.subject) + '\n';
         event_text += 'TRANSP:OPAQUE\n';
         event_text += 'UID:' + event.UID + '\n';
         if (event.alarmTriggerMinutes !== undefined) {
