@@ -33,16 +33,16 @@ export namespace ICS {
 		
 		event_text += 'BEGIN:VEVENT\n'
 		event_text += 'CLASS:PUBLIC\n'
-		event_text += 'CREATED:' + ICSDateFormat(event.dateTimeCreated ?? new Date().toISOString()) + '\n'
+		event_text += 'CREATED;' + ICSDateFormat(event.dateTimeCreated ?? new Date().toISOString()) + '\n'
 		
 		event_text += 'DESCRIPTION:' + event.description + '\n'
-		event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n'
-		event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n'
-		event_text += 'DTSTAMP:' + ICSDateFormat(new Date().toISOString()) + '\n'
+		event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n'
+		event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n'
+		event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n'
 		if (!!event.organizerName && !!event.organizerEmail) {
 			event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
 		}
-		event_text += 'LAST-MODIFIED:' + ICSDateFormat(event.dateTimeModified ?? new Date().toISOString()) + '\n'
+		event_text += 'LAST-MODIFIED;' + ICSDateFormat(event.dateTimeModified ?? new Date().toISOString()) + '\n'
 		event_text += 'LOCATION:' + event.location + '\n'
 		if (!!event.priority) {
 			event_text += `PRIORITY:${event.priority}\n`

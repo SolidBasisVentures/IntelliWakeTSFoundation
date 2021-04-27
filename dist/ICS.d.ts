@@ -8,6 +8,7 @@ export declare namespace ICS {
         description: string;
         priority?: 1 | 2 | 3 | 4 | 5;
         alarmTriggerMinutes?: number;
+        timezone?: string | null;
         dateTimeCreated?: string;
         dateTimeModified?: string;
         organizerName?: string;
@@ -17,7 +18,7 @@ export declare namespace ICS {
         'Content-Type': string;
         'Content-Disposition': string;
     };
-    const VCALENDAROpen_Text = "BEGIN:VCALENDAR\nPRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN\nVERSION:2.0\nMETHOD:PUBLISH\nX-MS-OLK-FORCEINSPECTOROPEN:TRUE\n";
+    const VCALENDAROpen_Text = "BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n";
     const VCALENDARClose_Text = "END:VCALENDAR\n";
     const VEVENT_Text: (event: IEvent) => string;
     const ICS_Text: (event: IEvent) => string;
