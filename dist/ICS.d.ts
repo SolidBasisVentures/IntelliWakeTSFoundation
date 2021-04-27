@@ -1,7 +1,8 @@
 export declare namespace ICS {
     interface IEvent {
         dateTimeStart: string;
-        dateTimeEnd: string;
+        dateTimeEnd?: string;
+        durationMinutes?: number;
         UID: string;
         subject: string;
         location: string;

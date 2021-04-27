@@ -3,7 +3,8 @@ import {MomentFromString} from './Moment'
 export namespace ICS {
 	export interface IEvent {
 		dateTimeStart: string,
-		dateTimeEnd: string,
+		dateTimeEnd?: string,
+		durationMinutes?: number,
 		UID: string,
 		subject: string,
 		location: string,
@@ -37,7 +38,11 @@ export namespace ICS {
 		
 		event_text += 'DESCRIPTION:' + event.description + '\n'
 		event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n'
-		event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n'
+		if (!!event.durationMinutes) {
+			event_text += 'DURATION;+P' + event.durationMinutes + 'M\n'
+		} else if (!!event.dateTimeEnd) {
+			event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n'
+		}
 		event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n'
 		if (!!event.organizerName && !!event.organizerEmail) {
 			event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`

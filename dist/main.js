@@ -1933,7 +1933,12 @@ var MomentWeekDays = function (startDate, endDate) {
         event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
         event_text += 'DESCRIPTION:' + event.description + '\n';
         event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
-        event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        if (!!event.durationMinutes) {
+            event_text += 'DURATION;+P' + event.durationMinutes + 'M\n';
+        }
+        else if (!!event.dateTimeEnd) {
+            event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        }
         event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n';
         if (!!event.organizerName && !!event.organizerEmail) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
