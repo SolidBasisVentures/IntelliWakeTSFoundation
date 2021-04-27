@@ -5,7 +5,8 @@ export declare namespace ICS {
         durationMinutes?: number;
         UID: string;
         subject: string;
-        location: string;
+        location?: string;
+        location_altrep?: string;
         description: string;
         priority?: 1 | 2 | 3 | 4 | 5;
         alarmTriggerMinutes?: number;

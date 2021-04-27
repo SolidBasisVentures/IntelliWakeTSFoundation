@@ -8,7 +8,8 @@ export namespace ICS {
 		durationMinutes?: number,
 		UID: string,
 		subject: string,
-		location: string,
+		location?: string,
+		location_altrep?: string,
 		description: string,
 		priority?: 1 | 2 | 3 | 4 | 5,
 		alarmTriggerMinutes?: number,
@@ -51,7 +52,13 @@ export namespace ICS {
 			event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
 		}
 		event_text += 'LAST-MODIFIED;' + ICSDateFormat(event.dateTimeModified ?? new Date().toISOString()) + '\n'
-		event_text += 'LOCATION:' + EscapeText(event.location) + '\n'
+		if (!!event.location) {
+			if (!!event.location_altrep) {
+				event_text += `LOCATION;ALTREP="${EscapeText(event.location_altrep)}":` + EscapeText(event.location) + '\n'
+			} else {
+				event_text += 'LOCATION:' + EscapeText(event.location) + '\n'
+			}
+		}
 		if (!!event.priority) {
 			event_text += `PRIORITY:${event.priority}\n`
 		}

@@ -1945,7 +1945,14 @@ var MomentWeekDays = function (startDate, endDate) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
         event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
-        event_text += 'LOCATION:' + EscapeText(event.location) + '\n';
+        if (!!event.location) {
+            if (!!event.location_altrep) {
+                event_text += "LOCATION;ALTREP=\"" + EscapeText(event.location_altrep) + "\":" + EscapeText(event.location) + '\n';
+            }
+            else {
+                event_text += 'LOCATION:' + EscapeText(event.location) + '\n';
+            }
+        }
         if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
         }
