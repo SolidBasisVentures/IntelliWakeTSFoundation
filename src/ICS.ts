@@ -43,7 +43,7 @@ export namespace ICS {
 		}
 		event_text += 'LAST-MODIFIED:' + ICSDateFormat(event.dateTimeModified) + '\n'
 		event_text += 'LOCATION:' + event.location + '\n'
-		if (!!event.priority !== undefined) {
+		if (!!event.priority) {
 			event_text += `PRIORITY:${event.priority}\n`
 		}
 		event_text += 'SEQUENCE:0\n'
@@ -54,7 +54,7 @@ export namespace ICS {
 		
 		if (event.alarmTriggerMinutes !== undefined) {
 			event_text += 'BEGIN:VALARM\n'
-			event_text += `TRIGGER:'-PT${event.alarmTriggerMinutes}M\n`
+			event_text += `TRIGGER:-PT${event.alarmTriggerMinutes}M\n`
 			event_text += 'ACTION:DISPLAY\n'
 			event_text += 'DESCRIPTION:Reminder\n'
 			event_text += 'END:VALARM\n'
