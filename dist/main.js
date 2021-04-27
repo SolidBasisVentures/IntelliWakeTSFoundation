@@ -1009,6 +1009,10 @@ var AddIDChange = function (id, name, value, idChanges) {
     var _a, _b;
     return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
 };
+var AddIDChanges = function (id, changes, idChanges) {
+    var _a;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
+};
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
@@ -2377,6 +2381,7 @@ var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
 
 exports.AddChange = AddChange;
 exports.AddIDChange = AddIDChange;
+exports.AddIDChanges = AddIDChanges;
 exports.AddressCopy = AddressCopy;
 exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;

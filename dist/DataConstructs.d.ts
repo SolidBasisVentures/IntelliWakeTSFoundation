@@ -65,6 +65,7 @@ export declare const initialIDChanges: {};
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
 export declare const AddIDChange: <T>(id: number, name: keyof T, value: any, idChanges: IIDChanges<T>) => IIDChanges<T>;
+export declare const AddIDChanges: <T>(id: number, changes: Partial<T>, idChanges: IIDChanges<T>) => IIDChanges<T>;
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
