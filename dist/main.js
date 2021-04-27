@@ -1934,7 +1934,7 @@ var MomentWeekDays = function (startDate, endDate) {
         event_text += 'DESCRIPTION:' + event.description + '\n';
         event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
         if (!!event.durationMinutes) {
-            event_text += 'DURATION;+P' + event.durationMinutes + 'M\n';
+            event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
         }
         else if (!!event.dateTimeEnd) {
             event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
