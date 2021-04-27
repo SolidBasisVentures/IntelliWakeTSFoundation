@@ -1925,13 +1925,14 @@ var MomentWeekDays = function (startDate, endDate) {
     ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n';
     ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
     var ICSDateFormat = function (date, timezone) { var _a, _b; return !date ? '' : "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + ((_b = (_a = MomentFromString(date)) === null || _a === void 0 ? void 0 : _a.format('YYYYMMDDTHHmmss')) !== null && _b !== void 0 ? _b : ''); };
+    var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
     ICS.VEVENT_Text = function (event) {
         var _a, _b;
         var event_text = '';
         event_text += 'BEGIN:VEVENT\n';
         event_text += 'CLASS:PUBLIC\n';
         event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
-        event_text += 'DESCRIPTION:' + escape(event.description) + '\n';
+        event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n';
         event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
         if (!!event.durationMinutes) {
             event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
@@ -1944,13 +1945,13 @@ var MomentWeekDays = function (startDate, endDate) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
         event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
-        event_text += 'LOCATION:' + escape(event.location) + '\n';
+        event_text += 'LOCATION:' + EscapeText(event.location) + '\n';
         if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
         }
         event_text += 'SEQUENCE:0\n';
         //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
-        event_text += 'SUMMARY:' + escape(event.subject) + '\n';
+        event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n';
         event_text += 'TRANSP:OPAQUE\n';
         event_text += 'UID:' + event.UID + '\n';
         if (event.alarmTriggerMinutes !== undefined) {
