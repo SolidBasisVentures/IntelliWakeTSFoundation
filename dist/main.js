@@ -558,6 +558,13 @@ var TextToHTML = function (subject) {
     // noinspection RegExpUnnecessaryNonCapturingGroup
     return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
 };
+/**
+ * Strips scripts and other tags from HTML
+ *
+ * @param subject
+ * HTMLToText('<p>john doe</p>') // returns john doe
+ */
+var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
 var LeftPad = function (subject, length, padString) {
     var str = subject;
     while (str.length < length)
@@ -2471,6 +2478,7 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.HTMLToText = HTMLToText;
 exports.IANAZoneAbbr = IANAZoneAbbr;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;

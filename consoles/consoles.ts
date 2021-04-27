@@ -1,7 +1,7 @@
 // const moment = require('moment-timezone')
 
 import {RemoveDupProperties} from '../src/DataConstructs'
-import {ToCamelCase, ToPascalCase} from '../src/StringManipulation'
+import {HTMLToText, ToCamelCase, ToPascalCase} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -11,6 +11,8 @@ console.log('Camel', ToCamelCase('Service Extensions'))
 console.log('Pascal', ToPascalCase('Service Extensions'))
 
 console.log(changes, RemoveDupProperties(changes, changes))
+
+console.log(HTMLToText('<p>john doe</p>'))
 
 // console.log(MomentID())
 //

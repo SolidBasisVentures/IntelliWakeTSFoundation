@@ -5,6 +5,7 @@
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
 import {RoundTo} from './Functions'
+
 const moment = require('moment-timezone')
 
 export const ToSnakeCase = (str: string): string => {
@@ -115,6 +116,15 @@ export const TextToHTML = function (subject: string): string {
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
 }
+
+/**
+ * Strips scripts and other tags from HTML
+ *
+ * @param subject
+ * HTMLToText('<p>john doe</p>') // returns john doe
+ */
+export const HTMLToText = (subject: string): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
+
 export const LeftPad = (subject: string, length: number, padString: string): string => {
 	let str = subject
 
