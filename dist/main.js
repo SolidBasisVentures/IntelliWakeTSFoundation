@@ -2,8 +2,12 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var momentTimezone = require('moment-timezone');
 var moment$2 = require('moment');
+var momentTimezone = require('moment-timezone');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment$2);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1549,6 +1553,52 @@ var ExecuteFunctions = function (expression) {
     }
     return updatedExpression;
 };
+
+(function (ICS) {
+    ICS.Header = function (filenameNoExtension) {
+        if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
+        return ({
+            'Content-Type': 'text/Calendar',
+            'Content-Disposition': "inline; filename=" + filenameNoExtension + ".ics"
+        });
+    };
+    ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nPRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN\nVERSION:2.0\nMETHOD:PUBLISH\nX-MS-OLK-FORCEINSPECTOROPEN:TRUE\n';
+    ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
+    var ICSDateFormat = function (date) { return !date ? '' : moment__default['default'](date).toDate().toISOString(); };
+    ICS.VEVENT_Text = function (event) {
+        var event_text = '';
+        event_text += 'BEGIN:VEVENT\n';
+        event_text += 'CLASS:PUBLIC\n';
+        event_text += 'CREATED:' + ICSDateFormat(event.dateTimeCreated) + '\n';
+        event_text += 'DESCRIPTION:' + event.description + '\n';
+        event_text += 'DTSTART:' + ICSDateFormat(event.dateTimeStart) + '\n';
+        event_text += 'DTEND:' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        event_text += 'DTSTAMP:' + ICSDateFormat(null) + '\n';
+        if (!!event.organizerName && !!event.organizerEmail) {
+            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
+        }
+        event_text += 'LAST-MODIFIED:' + ICSDateFormat(event.dateTimeModified) + '\n';
+        event_text += 'LOCATION:' + event.location + '\n';
+        if (!!event.priority !== undefined) {
+            event_text += "PRIORITY:" + event.priority + "\n";
+        }
+        event_text += 'SEQUENCE:0\n';
+        //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
+        event_text += 'SUMMARY:' + event.subject + '\n';
+        event_text += 'TRANSP:OPAQUE\n';
+        event_text += 'UID:' + event.UID + '\n';
+        if (event.alarmTriggerMinutes !== undefined) {
+            event_text += 'BEGIN:VALARM\n';
+            event_text += "TRIGGER:'-PT" + event.alarmTriggerMinutes + "M\n";
+            event_text += 'ACTION:DISPLAY\n';
+            event_text += 'DESCRIPTION:Reminder\n';
+            event_text += 'END:VALARM\n';
+        }
+        event_text += 'END:VEVENT\n';
+        return event_text;
+    };
+    ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
+})(exports.ICS || (exports.ICS = {}));
 
 var moment$1 = require('moment-timezone');
 var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
