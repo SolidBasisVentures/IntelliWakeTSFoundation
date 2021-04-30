@@ -245,12 +245,14 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
 export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number | null => {
 	if (beforeValue === afterValue) return null
 	
+	const isEmpty = (val: any) => val === null || val === undefined || val === ''
+	
 	if (!!emptyTo) {
-		if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
-			return emptyTo === 'Top' ? -1 : 1
-		}
-		if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
+		if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
 			return emptyTo === 'Top' ? 1 : -1
+		}
+		if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
+			return emptyTo === 'Top' ? -1 : 1
 		}
 	}
 	

@@ -53,6 +53,13 @@ export declare const CleanScripts: (subject: string) => string;
  * TextToHTML('<p>john doe</p>')
  */
 export declare const TextToHTML: (subject: string) => string;
+/**
+ * Strips scripts and other tags from HTML
+ *
+ * @param subject
+ * HTMLToText('<p>john doe</p>') // returns john doe
+ */
+export declare const HTMLToText: (subject: string) => string;
 export declare const LeftPad: (subject: string, length: number, padString: string) => string;
 export declare const RightPad: (subject: string, length: number, padString: string) => string;
 /**
