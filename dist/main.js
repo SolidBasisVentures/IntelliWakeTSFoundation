@@ -2332,7 +2332,7 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
                 }
             }
             if (typeofColumn === 'object') {
-                return ObjectContainsSearchTerms(checkObject, [term]);
+                return ObjectContainsSearchTerms(checkObject[column], [term]);
             }
             return false;
         });

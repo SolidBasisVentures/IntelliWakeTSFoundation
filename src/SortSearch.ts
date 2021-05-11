@@ -375,7 +375,7 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 			}
 			
 			if (typeofColumn === 'object') {
-				return ObjectContainsSearchTerms(checkObject, [term])
+				return ObjectContainsSearchTerms(checkObject[column], [term])
 			}
 			
 			return false
