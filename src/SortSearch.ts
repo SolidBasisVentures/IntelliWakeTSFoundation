@@ -1,4 +1,5 @@
 import {CleanNumber} from './StringManipulation'
+import {IsOn} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -350,32 +351,36 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export const ObjectContainsSearchTerms = (object: object | null | undefined | object[], searchTerms: string[]): boolean => {
+export const ObjectContainsSearchTerms = (checkObject: object | null | undefined | object[], searchTerms: string[]): boolean => {
 	if (searchTerms.length === 0) return true
 	
-	if (!object) return false
+	if (!checkObject) return false
 	
-	const doesContainTerm = (term: string) => {
-		Object.keys(object).some((column) => {
-			if (!Array.isArray(object[column]) && typeof object[column] !== 'object') {
-				return (object[column] ?? '').toString().toLowerCase().includes(term)
+	return searchTerms.every((term: string) => {
+		Object.keys(checkObject).some((column) => {
+			const typeofColumn = typeof checkObject[column]
+			
+			if (!Array.isArray(checkObject[column]) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
+				return (checkObject[column] ?? '').toString().toLowerCase().includes(term)
 			}
 			
-			if (typeof object[column] !== 'object') {
-				return ObjectContainsSearchTerms(object, [term])
+			if (typeofColumn === 'boolean') {
+				return IsOn(term) === checkObject[column]
 			}
 			
-			if (Array.isArray(object[column])) {
-				for (const obj of object[column]) {
+			if (Array.isArray(checkObject[column])) {
+				for (const obj of checkObject[column]) {
 					if (ObjectContainsSearchTerms(obj, [term])) return true
 				}
 			}
 			
+			if (typeofColumn === 'object') {
+				return ObjectContainsSearchTerms(checkObject, [term])
+			}
+			
 			return false
 		})
-	}
-	
-	return searchTerms.every(doesContainTerm)
+	})
 }
 
 /**

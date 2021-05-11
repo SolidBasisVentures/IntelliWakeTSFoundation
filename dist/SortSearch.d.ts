@@ -179,7 +179,7 @@ export declare const StringContainsSearch: (value: string | null | undefined, se
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export declare const ObjectContainsSearchTerms: (object: object | null | undefined, searchTerms: string[]) => boolean;
+export declare const ObjectContainsSearchTerms: (checkObject: object | null | undefined | object[], searchTerms: string[]) => boolean;
 /**
  * Determines whether an object contains search string.
  *
