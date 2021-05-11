@@ -2219,12 +2219,13 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     if (emptyTo === void 0) { emptyTo = null; }
     if (beforeValue === afterValue)
         return null;
+    var isEmpty = function (val) { return val === null || val === undefined || val === ''; };
     if (!!emptyTo) {
-        if ((beforeValue === null || beforeValue === undefined) && afterValue !== null && afterValue !== undefined) {
-            return emptyTo === 'Top' ? -1 : 1;
-        }
-        if ((afterValue === null || afterValue === undefined) && beforeValue !== null && beforeValue !== undefined) {
+        if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
             return emptyTo === 'Top' ? 1 : -1;
+        }
+        if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
+            return emptyTo === 'Top' ? -1 : 1;
         }
     }
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
@@ -2313,9 +2314,26 @@ var ObjectContainsSearchTerms = function (object, searchTerms) {
         return true;
     if (!object)
         return false;
-    return searchTerms.every(function (term) {
-        return Object.keys(object).some(function (column) { var _a; return ((_a = object[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term); });
-    });
+    var doesContainTerm = function (term) {
+        Object.keys(object).some(function (column) {
+            var _a;
+            if (!Array.isArray(object[column]) && typeof object[column] !== 'object') {
+                return ((_a = object[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term);
+            }
+            if (typeof object[column] !== 'object') {
+                return ObjectContainsSearchTerms(object, [term]);
+            }
+            if (Array.isArray(object[column])) {
+                for (var _i = 0, _b = object[column]; _i < _b.length; _i++) {
+                    var obj = _b[_i];
+                    if (ObjectContainsSearchTerms(obj, [term]))
+                        return true;
+                }
+            }
+            return false;
+        });
+    };
+    return searchTerms.every(doesContainTerm);
 };
 /**
  * Determines whether an object contains search string.

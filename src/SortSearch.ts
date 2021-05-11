@@ -17,22 +17,22 @@ export function PagesForRange(current: number, length: number, spread: number = 
 	if (!(+length > 0)) {
 		return []
 	}
-
+	
 	const current_adjusted = +current < 1 ? 1 : +current > +length ? +length : +current
 	const spread_adjusted = +current < +spread || +current > +length - +spread ? +spread : Math.ceil(+spread / 2)
-
+	
 	let left = +current_adjusted - +spread_adjusted,
 		right = +current_adjusted + +spread_adjusted,
 		range: number[] = [],
 		rangeWithNull: (number | null)[] = [],
 		l
-
+	
 	for (let i = 1; i <= +length; i++) {
 		if (i === 1 || i === +length || (i >= left && i <= right)) {
 			range.push(i)
 		}
 	}
-
+	
 	for (let i of range) {
 		if (l) {
 			if (i - l === 2) {
@@ -44,7 +44,7 @@ export function PagesForRange(current: number, length: number, spread: number = 
 		rangeWithNull.push(i)
 		l = i
 	}
-
+	
 	return rangeWithNull
 }
 
@@ -185,19 +185,19 @@ export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] =>
 		!sortColumn.primarySort
 			? 0
 			: SortColumnResult(
-					a[sortColumn.primarySort] ?? null,
-					b[sortColumn.primarySort] ?? null,
-					sortColumn.primaryAscending,
-					sortColumn.primaryEmptyToBottom
-			  ) ??
-			  (!sortColumn.secondarySort
-					? 0
-					: SortColumnResult(
-							a[sortColumn.secondarySort] ?? null,
-							b[sortColumn.secondarySort] ?? null,
-							sortColumn.secondaryAscending,
-							sortColumn.secondaryEmptyToBottom
-					  ))
+			a[sortColumn.primarySort] ?? null,
+			b[sortColumn.primarySort] ?? null,
+			sortColumn.primaryAscending,
+			sortColumn.primaryEmptyToBottom
+			) ??
+			(!sortColumn.secondarySort
+				? 0
+				: SortColumnResult(
+					a[sortColumn.secondarySort] ?? null,
+					b[sortColumn.secondarySort] ?? null,
+					sortColumn.secondaryAscending,
+					sortColumn.secondaryEmptyToBottom
+				))
 	)
 }
 
@@ -280,14 +280,14 @@ const SortColumnResult = (
 		if (!valueA && !!valueB) return 1
 		if (!!valueA && !valueB) return -1
 	}
-
+	
 	const numbA = CleanNumber(valueA)
 	const numbB = CleanNumber(valueB)
-
+	
 	if (isNaN(numbA ?? 0) || isNaN(numbB ?? 0)) {
 		return (valueA ?? '').localeCompare(valueB ?? '', undefined, {sensitivity: 'base'}) * (isAscending ? 1 : -1)
 	}
-
+	
 	return (numbA - numbB) * (isAscending ? 1 : -1)
 }
 
@@ -314,9 +314,9 @@ export const SearchTerms = (search: string | null | undefined, toLowerCase = tru
  */
 export const StringContainsSearchTerms = (value: string | null | undefined, searchTerms: string[]): boolean => {
 	if (searchTerms.length === 0) return true
-
+	
 	if (!value) return false
-
+	
 	return searchTerms.every((term) => value.includes(term))
 }
 
@@ -332,11 +332,11 @@ export const StringContainsSearchTerms = (value: string | null | undefined, sear
  */
 export const StringContainsSearch = (value: string | null | undefined, search: string | null | undefined): boolean => {
 	if (!search) return true
-
+	
 	if (!value) return false
-
+	
 	const searchTerms = SearchTerms(search)
-
+	
 	return StringContainsSearchTerms(value, searchTerms)
 }
 
@@ -350,14 +350,32 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export const ObjectContainsSearchTerms = (object: object | null | undefined, searchTerms: string[]): boolean => {
+export const ObjectContainsSearchTerms = (object: object | null | undefined | object[], searchTerms: string[]): boolean => {
 	if (searchTerms.length === 0) return true
-
+	
 	if (!object) return false
-
-	return searchTerms.every((term) =>
-		Object.keys(object).some((column) => (object[column] ?? '').toString().toLowerCase().includes(term))
-	)
+	
+	const doesContainTerm = (term: string) => {
+		Object.keys(object).some((column) => {
+			if (!Array.isArray(object[column]) && typeof object[column] !== 'object') {
+				return (object[column] ?? '').toString().toLowerCase().includes(term)
+			}
+			
+			if (typeof object[column] !== 'object') {
+				return ObjectContainsSearchTerms(object, [term])
+			}
+			
+			if (Array.isArray(object[column])) {
+				for (const obj of object[column]) {
+					if (ObjectContainsSearchTerms(obj, [term])) return true
+				}
+			}
+			
+			return false
+		})
+	}
+	
+	return searchTerms.every(doesContainTerm)
 }
 
 /**
@@ -372,11 +390,11 @@ export const ObjectContainsSearchTerms = (object: object | null | undefined, sea
  */
 export const ObjectContainsSearch = (object: any | null | undefined, search: string | null | undefined): boolean => {
 	if (!search) return true
-
+	
 	if (!object) return false
-
+	
 	const searchTerms = SearchTerms(search)
-
+	
 	return ObjectContainsSearchTerms(object, searchTerms)
 }
 
@@ -394,11 +412,11 @@ export const ObjectContainsSearch = (object: any | null | undefined, search: str
  */
 export const SearchRows = <T>(arrayTable: T[], search: string): T[] => {
 	const searchTerms = SearchTerms(search)
-
+	
 	if (searchTerms.length === 0) {
 		return arrayTable
 	}
-
+	
 	return (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms))
 }
 
@@ -411,11 +429,11 @@ export const SearchRows = <T>(arrayTable: T[], search: string): T[] => {
  */
 export const SearchRow = (searchItem: object, search: string): boolean => {
 	const searchTerms = SearchTerms(search)
-
+	
 	if (searchTerms.length === 0) {
 		return true
 	}
-
+	
 	return ObjectContainsSearchTerms(searchItem, searchTerms)
 }
 
