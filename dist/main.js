@@ -2319,6 +2319,9 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
             var columnValue = checkObject[column];
             var typeofColumn = typeof columnValue;
             if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
+                if (columnValue.toString().toLowerCase().includes(term.toLowerCase())) {
+                    console.log('True @', column, columnValue, typeofColumn);
+                }
                 return columnValue.toString().toLowerCase().includes(term.toLowerCase());
             }
             if (typeofColumn === 'boolean') {
