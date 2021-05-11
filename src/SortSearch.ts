@@ -357,25 +357,26 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 	if (!checkObject) return false
 	
 	return searchTerms.every((term: string) => {
-		Object.keys(checkObject).some((column) => {
-			const typeofColumn = typeof checkObject[column]
+		return Object.keys(checkObject).some((column) => {
+			const columnValue = checkObject[column]
+			const typeofColumn = typeof columnValue
 			
-			if (!Array.isArray(checkObject[column]) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
-				return (checkObject[column] ?? '').toString().toLowerCase().includes(term)
+			if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
+				return columnValue.toString().toLowerCase().includes(term.toLowerCase())
 			}
 			
 			if (typeofColumn === 'boolean') {
-				return IsOn(term) === checkObject[column]
+				return IsOn(term) === columnValue
 			}
 			
-			if (Array.isArray(checkObject[column])) {
-				for (const obj of checkObject[column]) {
+			if (Array.isArray(columnValue)) {
+				for (const obj of columnValue) {
 					if (ObjectContainsSearchTerms(obj, [term])) return true
 				}
 			}
 			
 			if (typeofColumn === 'object') {
-				return ObjectContainsSearchTerms(checkObject[column], [term])
+				return ObjectContainsSearchTerms(columnValue, [term])
 			}
 			
 			return false

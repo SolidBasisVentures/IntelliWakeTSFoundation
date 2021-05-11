@@ -1,18 +1,23 @@
 // const moment = require('moment-timezone')
 
-import {RemoveDupProperties} from '../src/DataConstructs'
-import {HTMLToText, ToCamelCase, ToPascalCase} from '../src/StringManipulation'
+import {ObjectContainsSearchTerms} from '../src/SortSearch'
 
 require('source-map-support').install()
 
-const changes = {item_one: null, item_two: 2}
+// const changes = {item_one: null, item_two: 2}
+//
+// console.log('Camel', ToCamelCase('Service Extensions'))
+// console.log('Pascal', ToPascalCase('Service Extensions'))
+//
+// console.log(changes, RemoveDupProperties(changes, changes))
+//
+// console.log(HTMLToText('<p>john doe</p>'))
 
-console.log('Camel', ToCamelCase('Service Extensions'))
-console.log('Pascal', ToPascalCase('Service Extensions'))
+const testObject = {name: 'The quick brown fox', amount: 1234.56, subObj: {item: 'One', desc: 'Two'}, subArr: ['Bird', 'Cat', 'Dog'], subArrObjs: [{counter: 1, description: 'First'}, {counter: 2, description: 'Second'}]}
 
-console.log(changes, RemoveDupProperties(changes, changes))
+console.log(ObjectContainsSearchTerms(testObject, ['Quick', 'One', 'bird', 'first']))
 
-console.log(HTMLToText('<p>john doe</p>'))
+
 
 // console.log(MomentID())
 //

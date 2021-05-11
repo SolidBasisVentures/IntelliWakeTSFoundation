@@ -2315,24 +2315,24 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
     if (!checkObject)
         return false;
     return searchTerms.every(function (term) {
-        Object.keys(checkObject).some(function (column) {
-            var _a;
-            var typeofColumn = typeof checkObject[column];
-            if (!Array.isArray(checkObject[column]) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
-                return ((_a = checkObject[column]) !== null && _a !== void 0 ? _a : '').toString().toLowerCase().includes(term);
+        return Object.keys(checkObject).some(function (column) {
+            var columnValue = checkObject[column];
+            var typeofColumn = typeof columnValue;
+            if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
+                return columnValue.toString().toLowerCase().includes(term.toLowerCase());
             }
             if (typeofColumn === 'boolean') {
-                return IsOn(term) === checkObject[column];
+                return IsOn(term) === columnValue;
             }
-            if (Array.isArray(checkObject[column])) {
-                for (var _i = 0, _b = checkObject[column]; _i < _b.length; _i++) {
-                    var obj = _b[_i];
+            if (Array.isArray(columnValue)) {
+                for (var _i = 0, columnValue_1 = columnValue; _i < columnValue_1.length; _i++) {
+                    var obj = columnValue_1[_i];
                     if (ObjectContainsSearchTerms(obj, [term]))
                         return true;
                 }
             }
             if (typeofColumn === 'object') {
-                return ObjectContainsSearchTerms(checkObject[column], [term]);
+                return ObjectContainsSearchTerms(columnValue, [term]);
             }
             return false;
         });
