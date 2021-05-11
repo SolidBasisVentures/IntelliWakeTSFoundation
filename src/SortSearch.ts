@@ -1,5 +1,4 @@
 import {CleanNumber} from './StringManipulation'
-import {IsOn} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -362,14 +361,7 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 			const typeofColumn = typeof columnValue
 			
 			if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
-				if (columnValue.toString().toLowerCase().includes(term.toLowerCase())) {
-					console.log('True @', column, columnValue, typeofColumn)
-				}
 				return columnValue.toString().toLowerCase().includes(term.toLowerCase())
-			}
-			
-			if (typeofColumn === 'boolean') {
-				return IsOn(term) === columnValue
 			}
 			
 			if (Array.isArray(columnValue)) {
