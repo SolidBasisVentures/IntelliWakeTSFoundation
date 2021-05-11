@@ -16,6 +16,7 @@ require('source-map-support').install()
 const testObject = {name: 'The quick brown fox', amount: 1234.56, subObj: {item: 'One', desc: 'Two'}, subArr: ['Bird', 'Cat', 'Dog'], subArrObjs: [{counter: 1, description: 'First'}, {counter: 2, description: 'Second'}]}
 
 console.log(ObjectContainsSearchTerms(testObject, ['Quick', 'One', 'bird', 'first']))
+console.log(ObjectContainsSearchTerms(testObject, ['klak', 'Quick', 'One', 'bird', 'first']))
 
 
 
