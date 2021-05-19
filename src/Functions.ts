@@ -6,6 +6,7 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 import {JSONParse} from './DataConstructs'
+import {CleanNumber} from './StringManipulation'
 
 export const Trunc = (subject: string, length: number): string => {
 	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
@@ -281,3 +282,12 @@ export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
 export const JSONStringToObject = <T = any>(val: string): T => JSONParse(val.toString().substr(5)) as T
+
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * @param text
+ * @param count
+ * @constructor
+ */
+export const AddS = (text?: string | null, count?: number | null): string =>
+	!text ? '' : text + (CleanNumber(count ?? 0) !== 1 ? 's' : '')
