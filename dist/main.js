@@ -456,6 +456,15 @@ var RoundTo = function (num, decimalPlaces) {
 };
 var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
 var JSONStringToObject = function (val) { return JSONParse(val.toString().substr(5)); };
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * @param text
+ * @param count
+ * @constructor
+ */
+var AddS = function (text, count) {
+    return !text ? '' : text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '');
+};
 
 /**
  * Converts a string to snake_case.
@@ -2268,6 +2277,33 @@ var SearchTerms = function (search, toLowerCase) {
         .filter(function (term) { return !!term; });
 };
 /**
+ * Converts multiple elements into a single string
+ *
+ * @example
+ * TermsToSearch(['One ', null, 'Two '])
+ * // returns 'One Two'
+ */
+var TermsToSearch = function (terms, spacer, toLowerCase) {
+    if (spacer === void 0) { spacer = ' '; }
+    if (toLowerCase === void 0) { toLowerCase = true; }
+    if (!terms)
+        return '';
+    var search = '';
+    if (!Array.isArray(terms)) {
+        search = terms.trim();
+    }
+    else {
+        search = terms
+            .map(function (term) { return (term !== null && term !== void 0 ? term : '').trim(); })
+            .filter(function (item) { return !!item; })
+            .join(spacer)
+            .trim();
+    }
+    if (toLowerCase)
+        return search.toLowerCase();
+    return search;
+};
+/**
  * Determines whether a string contains search terms.
  *
  * @example
@@ -2467,6 +2503,7 @@ var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
 exports.AddChange = AddChange;
 exports.AddIDChange = AddIDChange;
 exports.AddIDChanges = AddIDChanges;
+exports.AddS = AddS;
 exports.AddressCopy = AddressCopy;
 exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;
@@ -2567,6 +2604,7 @@ exports.SortCompareNull = SortCompareNull;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;
+exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
 exports.TimeZoneOlsons = TimeZoneOlsons;
 exports.ToCamelCase = ToCamelCase;

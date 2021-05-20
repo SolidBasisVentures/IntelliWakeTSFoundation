@@ -306,6 +306,33 @@ export const SearchTerms = (search: string | null | undefined, toLowerCase = tru
 		.filter((term) => !!term)
 
 /**
+ * Converts multiple elements into a single string
+ *
+ * @example
+ * TermsToSearch(['One ', null, 'Two '])
+ * // returns 'One Two'
+ */
+export const TermsToSearch = (terms: string | (string | null | undefined)[] | null | undefined, spacer = ' ', toLowerCase = true): string => {
+	if (!terms) return ''
+	
+	let search: string
+	
+	if (!Array.isArray(terms)) {
+		search = terms.trim()
+	} else {
+		search = terms
+			.map(term => (term ?? '').trim())
+			.filter(item => !!item)
+			.join(spacer)
+			.trim()
+	}
+	
+	if (toLowerCase) return search.toLowerCase()
+	
+	return search
+}
+
+/**
  * Determines whether a string contains search terms.
  *
  * @example

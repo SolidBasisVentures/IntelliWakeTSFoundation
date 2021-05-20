@@ -133,3 +133,10 @@ export declare const FormUrlEncoded: (x: any) => string;
 export declare const RoundTo: (num: any, decimalPlaces?: number) => number;
 export declare const ObjectToJSONString: (val: any) => string;
 export declare const JSONStringToObject: <T = any>(val: string) => T;
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * @param text
+ * @param count
+ * @constructor
+ */
+export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined) => string;
