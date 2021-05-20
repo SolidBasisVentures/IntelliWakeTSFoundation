@@ -151,6 +151,14 @@ export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyT
  */
 export declare const SearchTerms: (search: string | null | undefined, toLowerCase?: boolean) => string[];
 /**
+ * Converts multiple elements into a single string
+ *
+ * @example
+ * TermsToSearch(['One ', null, 'Two '])
+ * // returns 'One Two'
+ */
+export declare const TermsToSearch: (terms: string | (string | null | undefined)[] | null | undefined, spacer?: string, toLowerCase?: boolean) => string;
+/**
  * Determines whether a string contains search terms.
  *
  * @example

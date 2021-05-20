@@ -2288,7 +2288,7 @@ var TermsToSearch = function (terms, spacer, toLowerCase) {
     if (toLowerCase === void 0) { toLowerCase = true; }
     if (!terms)
         return '';
-    var search = '';
+    var search;
     if (!Array.isArray(terms)) {
         search = terms.trim();
     }
