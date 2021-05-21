@@ -263,7 +263,7 @@ export const MomentDisplayTime = (value: TAnyDateValue): string | null =>
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
-export const MomentDurationShortText = (start: string | Moment | Date, end?: string | Moment | Date): string =>
+export const MomentDurationShortText = (start: TAnyDateValue, end?: TAnyDateValue): string =>
 	DurationShortText((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()) / 1000)
 
 /**
@@ -318,7 +318,7 @@ export const DurationShortText = (seconds: number): string => {
  * @example
  * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
  */
-export const MomentDurationShortTextAligned = (start: string | Moment | Date, end?: string | Moment | Date): string => {
+export const MomentDurationShortTextAligned = (start: TAnyDateValue, end?: TAnyDateValue): string => {
 	const duration = moment.duration((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()))
 	
 	let text = ''
@@ -355,10 +355,10 @@ export const MomentDurationShortTextAligned = (start: string | Moment | Date, en
 	return text.trim()
 }
 
-export const MomentStringToDateLocale = (value: string | Moment | null): string =>
+export const MomentStringToDateLocale = (value: TAnyDateValue): string =>
 	MomentFormatString(value, 'MM/DD/YYYY') ?? ''
 
-export const DateAndTimeToDateTime = (valueDate: string | Moment | null, valueTime: string | null): string =>
+export const DateAndTimeToDateTime = (valueDate: TAnyDateValue, valueTime: string | null): string =>
 	MomentDateTimeString(`${MomentDateString(valueDate) ?? ''} ${MomentTimeString(valueTime) ?? ''}`) ?? ''
 
 export const MomentID = (value: TAnyDateValue = null, offsetHours = 5): string | null =>
