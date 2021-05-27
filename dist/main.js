@@ -465,6 +465,23 @@ var JSONStringToObject = function (val) { return JSONParse(val.toString().substr
 var AddS = function (text, count) {
     return !text ? '' : text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '');
 };
+/**
+ * ArrayBuffer to String
+ * @param buf
+ */
+var ab2str = function (buf) { return String.fromCharCode.apply(null, new Uint16Array(buf)); };
+/**
+ * String to ArrayBuffer
+ * @param str
+ */
+var str2ab = function (str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+};
 
 /**
  * Converts a string to snake_case.
@@ -2625,9 +2642,11 @@ exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
+exports.ab2str = ab2str;
 exports.consoleLogTable = consoleLogTable;
 exports.initialChanges = initialChanges;
 exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
 exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
+exports.str2ab = str2ab;

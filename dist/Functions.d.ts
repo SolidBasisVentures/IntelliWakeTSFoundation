@@ -140,3 +140,13 @@ export declare const JSONStringToObject: <T = any>(val: string) => T;
  * @constructor
  */
 export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined) => string;
+/**
+ * ArrayBuffer to String
+ * @param buf
+ */
+export declare const ab2str: (buf: ArrayBuffer) => string;
+/**
+ * String to ArrayBuffer
+ * @param str
+ */
+export declare const str2ab: (str: string) => ArrayBuffer;

@@ -291,3 +291,23 @@ export const JSONStringToObject = <T = any>(val: string): T => JSONParse(val.toS
  */
 export const AddS = (text?: string | null, count?: number | null): string =>
 	!text ? '' : text + (CleanNumber(count ?? 0) !== 1 ? 's' : '')
+
+
+/**
+ * ArrayBuffer to String
+ * @param buf
+ */
+export const ab2str = (buf: ArrayBuffer): string => String.fromCharCode.apply(null, new Uint16Array(buf))
+
+/**
+ * String to ArrayBuffer
+ * @param str
+ */
+export const str2ab = (str: string): ArrayBuffer => {
+	let buf = new ArrayBuffer(str.length * 2) // 2 bytes for each char
+	let bufView = new Uint16Array(buf)
+	for (var i = 0, strLen = str.length; i < strLen; i++) {
+		bufView[i] = str.charCodeAt(i)
+	}
+	return buf
+}

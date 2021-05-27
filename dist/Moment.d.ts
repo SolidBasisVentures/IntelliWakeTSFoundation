@@ -105,7 +105,7 @@ export declare const MomentDisplayTime: (value: TAnyDateValue) => string | null;
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
-export declare const MomentDurationShortText: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
+export declare const MomentDurationShortText: (start: TAnyDateValue, end?: TAnyDateValue) => string;
 /**
  * Displays a simplified duration format from seconds.
  *
@@ -121,9 +121,9 @@ export declare const DurationShortText: (seconds: number) => string;
  * @example
  * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
  */
-export declare const MomentDurationShortTextAligned: (start: string | Moment | Date, end?: string | Moment | Date | undefined) => string;
-export declare const MomentStringToDateLocale: (value: string | Moment | null) => string;
-export declare const DateAndTimeToDateTime: (valueDate: string | Moment | null, valueTime: string | null) => string;
+export declare const MomentDurationShortTextAligned: (start: TAnyDateValue, end?: TAnyDateValue) => string;
+export declare const MomentStringToDateLocale: (value: TAnyDateValue) => string;
+export declare const DateAndTimeToDateTime: (valueDate: TAnyDateValue, valueTime: string | null) => string;
 export declare const MomentID: (value?: TAnyDateValue, offsetHours?: number) => string | null;
 export declare const IANAZoneAbbr: (ianaValue: string) => any;
 export declare const MomentAddWeekDays: (weekDays: number, value?: TAnyDateValue) => Moment;
