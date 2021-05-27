@@ -292,12 +292,18 @@ export const JSONStringToObject = <T = any>(val: string): T => JSONParse(val.toS
 export const AddS = (text?: string | null, count?: number | null): string =>
 	!text ? '' : text + (CleanNumber(count ?? 0) !== 1 ? 's' : '')
 
+// noinspection JSPotentiallyInvalidConstructorUsage
+/**
+ * Is ArrayBuffer
+ * @param buf
+ */
+export const isAB = (buf: ArrayBuffer | string): boolean =>  buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor
 
 /**
  * ArrayBuffer to String
  * @param buf
  */
-export const ab2str = (buf: ArrayBuffer): string => String.fromCharCode.apply(null, new Uint16Array(buf))
+export const ab2str = (buf: ArrayBuffer | string): string => isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf as ArrayBuffer)) : buf
 
 /**
  * String to ArrayBuffer

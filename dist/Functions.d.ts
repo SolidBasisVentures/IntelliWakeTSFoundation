@@ -141,10 +141,15 @@ export declare const JSONStringToObject: <T = any>(val: string) => T;
  */
 export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined) => string;
 /**
+ * Is ArrayBuffer
+ * @param buf
+ */
+export declare const isAB: (buf: ArrayBuffer | string) => boolean;
+/**
  * ArrayBuffer to String
  * @param buf
  */
-export declare const ab2str: (buf: ArrayBuffer) => string;
+export declare const ab2str: (buf: ArrayBuffer | string) => string;
 /**
  * String to ArrayBuffer
  * @param str

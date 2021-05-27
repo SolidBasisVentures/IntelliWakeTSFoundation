@@ -465,11 +465,17 @@ var JSONStringToObject = function (val) { return JSONParse(val.toString().substr
 var AddS = function (text, count) {
     return !text ? '' : text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '');
 };
+// noinspection JSPotentiallyInvalidConstructorUsage
+/**
+ * Is ArrayBuffer
+ * @param buf
+ */
+var isAB = function (buf) { return buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor; };
 /**
  * ArrayBuffer to String
  * @param buf
  */
-var ab2str = function (buf) { return String.fromCharCode.apply(null, new Uint16Array(buf)); };
+var ab2str = function (buf) { return isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf)) : buf; };
 /**
  * String to ArrayBuffer
  * @param str
@@ -2649,4 +2655,5 @@ exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
 exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
+exports.isAB = isAB;
 exports.str2ab = str2ab;
