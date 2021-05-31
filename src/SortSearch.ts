@@ -382,6 +382,8 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 	
 	if (!checkObject) return false
 	
+	if (typeof checkObject === 'object' && (checkObject as any).type?.toString().includes('react.')) return false
+	
 	return searchTerms.every((term: string) => {
 		return Object.keys(checkObject).some((column) => {
 			const columnValue = checkObject[column]
