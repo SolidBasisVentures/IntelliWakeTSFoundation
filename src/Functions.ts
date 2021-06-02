@@ -297,7 +297,7 @@ export const AddS = (text?: string | null, count?: number | null): string =>
  * Is ArrayBuffer
  * @param buf
  */
-export const isAB = (buf: ArrayBuffer | string): boolean =>  buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor
+export const isAB = (buf: ArrayBuffer | string): boolean => buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor
 
 /**
  * ArrayBuffer to String
@@ -316,4 +316,75 @@ export const str2ab = (str: string): ArrayBuffer => {
 		bufView[i] = str.charCodeAt(i)
 	}
 	return buf
+}
+
+/**
+ * Async version of find
+ * @param array
+ * @param predicate
+ */
+export const findAsync = async <T>(
+	array: T[],
+	predicate: (t: T) => Promise<boolean>
+): Promise<T | undefined> => {
+	for (const t of array) {
+		if (await predicate(t)) {
+			return t
+		}
+	}
+	return undefined
+}
+
+/**
+ * Async version of some
+ * @param array
+ * @param predicate
+ */
+export const someAsync = async <T>(
+	array: T[],
+	predicate: (t: T) => Promise<boolean>
+): Promise<boolean> => {
+	for (const t of array) {
+		if (await predicate(t)) {
+			return true
+		}
+	}
+	return false
+}
+
+/**
+ * Async version of every
+ * @param array
+ * @param predicate
+ */
+export const everyAsync = async <T>(
+	array: T[],
+	predicate: (t: T) => Promise<boolean>
+): Promise<boolean> => {
+	for (const t of array) {
+		if (!await predicate(t)) {
+			return false
+		}
+	}
+	return true
+}
+
+/**
+ * Async version of filter
+ * @param array
+ * @param predicate
+ */
+export const filterAsync = async <T>(
+	array: T[],
+	predicate: (t: T) => Promise<boolean>
+): Promise<T[]> => {
+	let returnArray: T[] = []
+	
+	for (const t of array) {
+		if (await predicate(t)) {
+			returnArray.push(t)
+		}
+	}
+	
+	return returnArray
 }
