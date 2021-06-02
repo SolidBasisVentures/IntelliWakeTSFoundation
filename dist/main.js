@@ -906,7 +906,7 @@ var ToPercentDash = function (value, decimals) {
  * ToDigits(10)
  */
 var ToDigits = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
+    if (decimals === void 0) { decimals = 0; }
     return CleanNumber(value).toLocaleString(undefined, {
         maximumFractionDigits: decimals,
         minimumFractionDigits: decimals
@@ -924,7 +924,7 @@ var ToDigits = function (value, decimals) {
  * ToDigits('')
  */
 var ToDigitsBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
+    if (decimals === void 0) { decimals = 0; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
         return '';
     }
@@ -945,7 +945,7 @@ var ToDigitsBlank = function (value, decimals) {
  * ToDigits('')
  */
 var ToDigitsDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
+    if (decimals === void 0) { decimals = 0; }
     if (!value || isNaN(value) || CleanNumber(value) === 0) {
         return '-';
     }

@@ -155,3 +155,27 @@ export declare const ab2str: (buf: ArrayBuffer | string) => string;
  * @param str
  */
 export declare const str2ab: (str: string) => ArrayBuffer;
+/**
+ * Async version of find
+ * @param array
+ * @param predicate
+ */
+export declare const findAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<T | undefined>;
+/**
+ * Async version of some
+ * @param array
+ * @param predicate
+ */
+export declare const someAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<boolean>;
+/**
+ * Async version of every
+ * @param array
+ * @param predicate
+ */
+export declare const everyAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<boolean>;
+/**
+ * Async version of filter
+ * @param array
+ * @param predicate
+ */
+export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<T[]>;
