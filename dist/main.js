@@ -1765,7 +1765,7 @@ var TIME_FORMAT_TRIES = [
     EDateAndOrTime[EDateAndOrTime["DATETIME"] = 2] = "DATETIME";
 })(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
 var StringHasTimeData = function (value) { return value.includes(':'); };
-var StringHasDateData = function (value) { return value.includes('-') || value.length === 8; };
+var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
 var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
 var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {

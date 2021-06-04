@@ -181,9 +181,9 @@ let symbolFunctions = [
 	{name: 'ToPercent', method: ToPercent, value: 1, expected: '100%', decimal: '100.0%', empty: '0%'},
 	{name: 'ToPercentBlank', method: ToPercentBlank, value: 1, expected: '100.00%', decimal: '100.0%', empty: ''},
 	{name: 'ToPercentDash', method: ToPercentDash, value: 1, expected: '100.00%', decimal: '100.0%', empty: '-'},
-	{name: 'ToDigits', method: ToDigits, value: 10, expected: '10.00', decimal: '10.0', empty: '0.00'},
-	{name: 'ToDigitsBlank', method: ToDigitsBlank, value: 10, expected: '10.00', decimal: '10.0', empty: ''},
-	{name: 'ToDigitsDash', method: ToDigitsDash, value: 10, expected: '10.00', decimal: '10.0', empty: '-'}
+	{name: 'ToDigits', method: ToDigits, value: 10, expected: '10', decimal: '10.0', empty: '0'},
+	{name: 'ToDigitsBlank', method: ToDigitsBlank, value: 10, expected: '10', decimal: '10.0', empty: ''},
+	{name: 'ToDigitsDash', method: ToDigitsDash, value: 10, expected: '10', decimal: '10.0', empty: '-'}
 ]
 
 for (const symbolFunction of symbolFunctions) {

@@ -42,7 +42,7 @@ export enum EDateAndOrTime {
 export type TAnyDateValue = string | Moment | Date | null | undefined
 
 const StringHasTimeData = (value: string): boolean => value.includes(':')
-const StringHasDateData = (value: string): boolean => value.includes('-') || value.length === 8
+const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
 const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.includes('+') || value.substr(15).includes('-')
 
 export const AnyDateValueIsObject = (value: TAnyDateValue) => (!value ? false : typeof value !== 'string')
