@@ -1747,7 +1747,7 @@ var MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
 var MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + MOMENT_FORMAT_DATE_DISPLAY_LONG;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
 var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601];
+var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601, 'YYYYMMDD'];
 var TIME_FORMAT_TRIES = [
     momentTimezone.ISO_8601,
     'YYYY-MM-DD HH:mm:ss',
@@ -1765,7 +1765,7 @@ var TIME_FORMAT_TRIES = [
     EDateAndOrTime[EDateAndOrTime["DATETIME"] = 2] = "DATETIME";
 })(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
 var StringHasTimeData = function (value) { return value.includes(':'); };
-var StringHasDateData = function (value) { return value.includes('-'); };
+var StringHasDateData = function (value) { return value.includes('-') || value.length === 8; };
 var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
 var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {
