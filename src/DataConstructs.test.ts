@@ -1,4 +1,4 @@
-import {AddChange, AddIDChange, ArrayWithIDChanges, ObjectWithChanges} from '../src/DataConstructs'
+import {AddChange, AddIDChange, ArrayWithIDChanges, ObjectWithChanges} from './DataConstructs'
 
 test('AddChange New Prop', () => {
 	expect(AddChange('name', 'Bob', {})).toEqual({name: 'Bob'})

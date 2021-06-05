@@ -1,4 +1,4 @@
-import {SortCompare, SortCompareNull} from '../src/SortSearch'
+import {SortCompare, SortCompareNull} from './SortSearch'
 
 test('SortCompare', () => {
 	expect([

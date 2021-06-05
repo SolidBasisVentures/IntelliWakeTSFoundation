@@ -1,4 +1,4 @@
-import {AddS, IsOn, RoundTo} from '../src/Functions'
+import {AddS, IsOn, RoundTo} from './Functions'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true);

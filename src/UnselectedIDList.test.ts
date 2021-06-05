@@ -1,4 +1,4 @@
-import {UnselectedIDList} from '../src/UnselectedIDList'
+import {UnselectedIDList} from './UnselectedIDList'
 
 test('Un - SelectedIDs - num', () => {
 	expect(UnselectedIDList.SelectedIDs([1, 2, 3, 4], [1, 3])).toEqual([2, 4])

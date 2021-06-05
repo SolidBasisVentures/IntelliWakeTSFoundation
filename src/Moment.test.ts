@@ -13,7 +13,7 @@ import {
 	MomentFromString,
 	MomentStringToDateLocale,
 	MomentTimeString
-} from '../src/Moment'
+} from './Moment'
 
 // Timezone
 test('Timezone UTC', () => {

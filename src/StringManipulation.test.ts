@@ -23,8 +23,8 @@ import {
 	ToSnakeCase,
 	ToStringArray,
 	UCWords
-} from '../src/StringManipulation'
-import {IsJSON, JSONParse} from '../src/DataConstructs'
+} from './StringManipulation'
+import {IsJSON, JSONParse} from './DataConstructs'
 
 test('ToSnakeCase From Pascal', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')

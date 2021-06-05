@@ -1,4 +1,4 @@
-import {EvaluateCondition, EvaluateString, TVariables} from '../src/Evaluator'
+import {EvaluateCondition, EvaluateString, TVariables} from './Evaluator'
 
 const variables: TVariables = {
 	Zero: '0',
