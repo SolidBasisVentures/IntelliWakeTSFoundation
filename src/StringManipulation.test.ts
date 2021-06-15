@@ -1,5 +1,4 @@
 import {
-	CleanNumber,
 	CleanScripts,
 	DisplayNameFromFL,
 	DisplayNameFromObject,
@@ -8,7 +7,6 @@ import {
 	FormatPhoneNumberDots,
 	FormatZip,
 	RandomString,
-	ReplaceAll,
 	ReplaceLinks,
 	TextToHTML, ToCamelCase,
 	ToCurrency,
@@ -24,7 +22,7 @@ import {
 	ToStringArray,
 	UCWords
 } from './StringManipulation'
-import {IsJSON, JSONParse} from './DataConstructs'
+import {IsJSON} from './DataConstructs'
 
 test('ToSnakeCase From Pascal', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
@@ -114,10 +112,6 @@ test('ToPascalCase ID only', () => {
 	expect(ToPascalCase('id')).toBe('ID')
 })
 
-test('ReplaceAll', () => {
-	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
-})
-
 test('ReplaceLinks', () => {
 	let link = 'https://www.google.com'
 	let anchor = "<a href='https://www.google.com' target='_blank'>https://www.google.com</a>"
@@ -146,33 +140,6 @@ test('TextToHTML', () => {
 test('TextToHTML with new line', () => {
 	expect(TextToHTML('<p>john doe\nnew line</p>')).toBe('john doe<br />new line')
 })
-
-test('CleanNumber NaN', () => {
-	expect(CleanNumber('$')).toBe(NaN)
-})
-
-test('CleanNumber $', () => {
-	expect(CleanNumber('$100')).toBe(100)
-})
-
-test('CleanNumber ,', () => {
-	expect(CleanNumber('1,000')).toBe(1000)
-})
-
-test('CleanNumber %', () => {
-	expect(CleanNumber('50%')).toBe(50)
-})
-
-test('CleanNumber(1.234)', () => {
-	expect(CleanNumber(1.234)).toBe(1.234)
-})
-test('CleanNumber(1.234, 0)', () => {
-	expect(CleanNumber(1.234, 0)).toBe(1)
-})
-test('CleanNumber(1.234, 1)', () => {
-	expect(CleanNumber(1.234, 1)).toBe(1.2)
-})
-
 
 let symbolFunctions = [
 	{name: 'ToCurrency', method: ToCurrency, value: 100, expected: '$100.00', decimal: '$100.0', empty: '$0.00'},
@@ -279,18 +246,6 @@ test('RandomString length', () => {
 
 test('RandomString validChars', () => {
 	expect(RandomString(5, '1')).toContain('1')
-})
-
-test('JSONParse valid', () => {
-	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
-})
-
-test('JSONParse empty', () => {
-	expect(JSONParse(undefined)).toEqual(null)
-})
-
-test('JSONParse string', () => {
-	expect(JSONParse('Test')).toEqual(null)
 })
 
 test('IsJSON valid', () => {

@@ -1,8 +1,10 @@
-import {ISO_8601, Moment} from 'moment-timezone'
-import {utc} from 'moment'
-import {ToDigits} from './StringManipulation'
-
 const moment = require('moment-timezone')
+
+import {utc, ISO_8601, Moment} from 'moment-timezone'
+
+// import {ISO_8601, Moment} from 'moment-timezone'
+// import {utc} from 'moment'
+import {ToDigits} from './StringManipulation'
 
 export const MOMENT_FORMAT_DATE = 'YYYY-MM-DD'
 export const MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss'

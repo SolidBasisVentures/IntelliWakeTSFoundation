@@ -4,7 +4,7 @@
  * @example
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
-import {RoundTo} from './Functions'
+import {CleanNumber, ReplaceAll, RoundTo} from './Functions'
 
 const moment = require('moment-timezone')
 
@@ -63,18 +63,6 @@ export const ToPascalCase = (str: string): string => {
 	let calcStr = ToCamelCase(str)
 
 	return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1)
-}
-
-/**
- * Replace all occurences of a string.
- *
- * @example
- * // returns "john-doe-bob"
- * ReplaceAll(' ', '-', 'john doe bob')
- */
-export const ReplaceAll = function (find: string, replace: string, subject: string): string {
-	// eslint-disable-next-line no-useless-escape
-	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
 }
 
 /**
@@ -138,39 +126,6 @@ export const RightPad = (subject: string, length: number, padString: string): st
 	while (str.length < length) str = str + padString
 
 	return str
-}
-
-/**
- * Cleans a number with a symbol like '$', ',' or '%'.
- *
- * @example
- * // return 100
- * CleanNumber('$100')
- *
- * // return 1000
- * CleanNumber('1,000')
- *
- * // return 50
- * CleanNumber('50%')
- *
- * Add a rounding to round to a certain number of digits:
- *
- * // return 100.1
- * CleanNumber('100.12', 1)
- */
-export const CleanNumber = (value: any, roundClean?: number): number => {
-	if (!value) return 0
-
-	let str = value.toString()
-	str = ReplaceAll('$', '', str)
-	str = ReplaceAll(',', '', str)
-	str = ReplaceAll('%', '', str)
-	if (isNaN(str)) return NaN
-	
-	if (roundClean !== undefined) {
-		return RoundTo(parseFloat(str), roundClean)
-	}
-	return parseFloat(str)
 }
 
 /**

@@ -1,3 +1,41 @@
+/**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
+export declare const ReplaceAll: (find: string, replace: string, subject: string) => string;
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumber('$100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
+ */
+export declare const CleanNumber: (value: any, roundClean?: number | undefined) => number;
+/**
+ * A wrapper function for JSON.parse with try/catch.
+ */
+export declare const JSONParse: <T = any>(json: any) => T | null;
 export declare const Trunc: (subject: string, length: number) => string;
 /**
  * Returns a google maps link with the given coordinates.
@@ -180,3 +218,4 @@ export declare const everyAsync: <T>(array: T[], predicate: (t: T) => Promise<bo
  */
 export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<T[]>;
 export declare const DeepEqual: (object1: any, object2: any) => boolean;
+export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;

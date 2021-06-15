@@ -5,8 +5,72 @@
  * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
  * Trunc('Welcome to TSFoundation', 11)
  */
-import {JSONParse} from './DataConstructs'
-import {CleanNumber} from './StringManipulation'
+
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
+export const ReplaceAll = function(find: string, replace: string, subject: string): string {
+	// eslint-disable-next-line no-useless-escape
+	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
+}
+
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumber('$100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
+ */
+export const CleanNumber = (value: any, roundClean?: number): number => {
+	if (!value) return 0
+	
+	let str = value.toString()
+	str = ReplaceAll('$', '', str)
+	str = ReplaceAll(',', '', str)
+	str = ReplaceAll('%', '', str)
+	if (isNaN(str)) return NaN
+	
+	if (roundClean !== undefined) {
+		return RoundTo(parseFloat(str), roundClean)
+	}
+	return parseFloat(str)
+}
+
+/**
+ * A wrapper function for JSON.parse with try/catch.
+ */
+export const JSONParse = <T = any>(json: any): T | null => {
+	if (!json) {
+		return null
+	}
+	
+	let returnObj = null
+	
+	try {
+		returnObj = JSON.parse(json)
+	} catch (err) {
+		// console.log('JSONParse', err)
+		
+		return null
+	}
+	
+	return returnObj
+}
 
 export const Trunc = (subject: string, length: number): string => {
 	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
@@ -442,16 +506,28 @@ function isObject(object: any) {
 }
 
 export function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> {
-	let ret: any = {};
-	const excludeSet: Set<string> = new Set(keys);
+	let ret: any = {}
+	const excludeSet: Set<string> = new Set(keys)
 	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
 	
 	for (let key in obj) {
 		// noinspection JSUnfilteredForInLoop
 		if (!excludeSet.has(key)) {
 			// noinspection JSUnfilteredForInLoop
-			ret[key] = obj[key];
+			ret[key] = obj[key]
 		}
 	}
-	return ret;
+	return ret
 }
+
+test('JSONParse valid', () => {
+	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
+})
+
+test('JSONParse empty', () => {
+	expect(JSONParse(undefined)).toEqual(null)
+})
+
+test('JSONParse string', () => {
+	expect(JSONParse('Test')).toEqual(null)
+})

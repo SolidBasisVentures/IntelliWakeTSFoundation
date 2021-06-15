@@ -1,4 +1,4 @@
-import {AddS, DeepEqual, IsOn, OmitProperty, RoundTo} from './Functions'
+import {AddS, CleanNumber, DeepEqual, IsOn, OmitProperty, ReplaceAll, RoundTo} from './Functions'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true)
@@ -77,6 +77,37 @@ test('Deep Equal - Fail Array', () => {
 test('Deep Equal - Fail Array Size', () => {
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
 })
+
+test('ReplaceAll', () => {
+	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
+})
+
+test('CleanNumber NaN', () => {
+	expect(CleanNumber('$')).toBe(NaN)
+})
+
+test('CleanNumber $', () => {
+	expect(CleanNumber('$100')).toBe(100)
+})
+
+test('CleanNumber ,', () => {
+	expect(CleanNumber('1,000')).toBe(1000)
+})
+
+test('CleanNumber %', () => {
+	expect(CleanNumber('50%')).toBe(50)
+})
+
+test('CleanNumber(1.234)', () => {
+	expect(CleanNumber(1.234)).toBe(1.234)
+})
+test('CleanNumber(1.234, 0)', () => {
+	expect(CleanNumber(1.234, 0)).toBe(1)
+})
+test('CleanNumber(1.234, 1)', () => {
+	expect(CleanNumber(1.234, 1)).toBe(1.2)
+})
+
 
 // const omitObject = {
 // 	id: 1,

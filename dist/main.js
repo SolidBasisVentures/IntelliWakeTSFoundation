@@ -3,7 +3,6 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var momentTimezone = require('moment-timezone');
-var moment$2 = require('moment');
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -236,6 +235,73 @@ var consoleLogTable = function (arrayData, tableDef) {
     }
 };
 
+/**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
+var ReplaceAll = function (find, replace, subject) {
+    // eslint-disable-next-line no-useless-escape
+    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
+};
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumber('$100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
+ */
+var CleanNumber = function (value, roundClean) {
+    if (!value)
+        return 0;
+    var str = value.toString();
+    str = ReplaceAll('$', '', str);
+    str = ReplaceAll(',', '', str);
+    str = ReplaceAll('%', '', str);
+    if (isNaN(str))
+        return NaN;
+    if (roundClean !== undefined) {
+        return RoundTo(parseFloat(str), roundClean);
+    }
+    return parseFloat(str);
+};
+/**
+ * A wrapper function for JSON.parse with try/catch.
+ */
+var JSONParse = function (json) {
+    if (!json) {
+        return null;
+    }
+    var returnObj = null;
+    try {
+        returnObj = JSON.parse(json);
+    }
+    catch (err) {
+        // console.log('JSONParse', err)
+        return null;
+    }
+    return returnObj;
+};
 var Trunc = function (subject, length) {
     return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
 };
@@ -678,520 +744,32 @@ var DeepEqual = function (object1, object2) {
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
 }
-
-/**
- * Converts a string to snake_case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user_token"
- */
-var moment = require('moment-timezone');
-var ToSnakeCase = function (str) {
-    if (str === 'ID')
-        return 'id';
-    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
-    return (calcStr[0].toLowerCase() +
-        calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
-};
-/**
- * Converts a string to kebab-case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user-token"
- */
-var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
-/**
- * Converts a string to camelCase.
- *
- * @example
- * ToCamelCase('user_token') //  returns "userToken
- */
-var ToCamelCase = function (str) {
-    if (str === 'id')
-        return 'ID';
-    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
-    return ReplaceAll('_', '', ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
-        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
-    })));
-};
-var ToUpperCaseWords = function (str) {
-    var _a, _b, _c;
-    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
-    if (result.endsWith(' Id')) {
-        return result.substr(0, result.length - 1) + 'D';
+function OmitProperty(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
     }
-    return result;
-};
-/**
- * Converts a string to PascalCase.
- *
- * @example
- * ToPascalCase('user_token') //  returns "UserToken
- */
-var ToPascalCase = function (str) {
-    var calcStr = ToCamelCase(str);
-    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
-};
-/**
- * Replace all occurences of a string.
- *
- * @example
- * // returns "john-doe-bob"
- * ReplaceAll(' ', '-', 'john doe bob')
- */
-var ReplaceAll = function (find, replace, subject) {
-    // eslint-disable-next-line no-useless-escape
-    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
-};
-/**
- * Replaces links to an anchor tag.
- *
- * @example
- * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
- * ReplaceLinks('https://www.google.com')
- */
-var ReplaceLinks = function (subject) {
-    // noinspection RegExpUnnecessaryNonCapturingGroup
-    var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
-    // noinspection HtmlUnknownTarget
-    var target = "<a href='$1' target='_blank'>$1</a>";
-    // noinspection RegExpRedundantEscape
-    return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
-};
-/**
- * Removes script tags.
- *
- * @example
- * // returns "blank"
- * CleanScripts('<script>console.log(1)</script>blank')
- */
-var CleanScripts = function (subject) {
-    return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
-};
-/**
- * Removes any given HTML tag and retains what's inside of the tag.
- *
- * @example
- * // returns "john doe"
- * TextToHTML('<p>john doe</p>')
- */
-var TextToHTML = function (subject) {
-    var str = subject.replace(/(<([^>]+)>)/gi, '');
-    // noinspection RegExpUnnecessaryNonCapturingGroup
-    return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
-};
-/**
- * Strips scripts and other tags from HTML
- *
- * @param subject
- * HTMLToText('<p>john doe</p>') // returns john doe
- */
-var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
-var LeftPad = function (subject, length, padString) {
-    var str = subject;
-    while (str.length < length)
-        str = padString + str;
-    return str;
-};
-var RightPad = function (subject, length, padString) {
-    var str = subject;
-    while (str.length < length)
-        str = str + padString;
-    return str;
-};
-/**
- * Cleans a number with a symbol like '$', ',' or '%'.
- *
- * @example
- * // return 100
- * CleanNumber('$100')
- *
- * // return 1000
- * CleanNumber('1,000')
- *
- * // return 50
- * CleanNumber('50%')
- *
- * Add a rounding to round to a certain number of digits:
- *
- * // return 100.1
- * CleanNumber('100.12', 1)
- */
-var CleanNumber = function (value, roundClean) {
-    if (!value)
-        return 0;
-    var str = value.toString();
-    str = ReplaceAll('$', '', str);
-    str = ReplaceAll(',', '', str);
-    str = ReplaceAll('%', '', str);
-    if (isNaN(str))
-        return NaN;
-    if (roundClean !== undefined) {
-        return RoundTo(parseFloat(str), roundClean);
-    }
-    return parseFloat(str);
-};
-/**
- * Returns the given number with a dollar sign.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- */
-var ToCurrency = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Converts the given number to a percentage with a percent sign.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- */
-var ToPercent = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- *
- * // returns ''
- * ToCurrencyBlank('')
- */
-var ToCurrencyBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- *
- * // returns ''
- * ToCurrencyBlank('-')
- */
-var ToCurrencyDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
- * returns empty string.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- *
- * // returns ''
- * ToPercent('')
- */
-var ToPercentBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
- * returns dash.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- *
- * // returns '-'
- * ToPercent('')
- */
-var ToPercentDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Returns the given number with decimal places.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- */
-var ToDigits = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Returns the given number with decimal places if not empty or 0. Otherwise,
- * returns empty string.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- *
- * // returns ''
- * ToDigits('')
- */
-var ToDigitsBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Returns the given number with decimal places if not empty or 0. Otherwise,
- * returns dash.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- *
- * // returns '-'
- * ToDigits('')
- */
-var ToDigitsDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Converts a string to an array.
- *
- * @example
- * // returns ['john doe']
- * ToStringArray('john doe')
- */
-var ToStringArray = function (value) {
-    if (!value) {
-        return [];
-    }
-    if (typeof value === 'string') {
-        return [value];
-    }
-    else {
-        return value;
-    }
-};
-/**
- * Returns a formatted phone number with parenthesis.
- *
- * @example
- * // returns (555) 555-1234
- * FormatPhoneNumber('5555551234')
- */
-var FormatPhoneNumber = function (phone, forceNumeric) {
-    if (forceNumeric === void 0) { forceNumeric = false; }
-    //Filter only numbers from the input
-    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
-    //Check if the input is of correct
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-        //Remove the matched extension code
-        //Change this to format for any country code.
-        var intlCode = match[1] ? '+1 ' : '';
-        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
-    }
-    return phone;
-};
-/**
- * Returns a formatted phone number with dots.
- *
- * @example
- * // returns 555.555.1234
- * FormatPhoneNumberDots('5555551234')
- */
-var FormatPhoneNumberDots = function (phone, forceNumeric) {
-    if (forceNumeric === void 0) { forceNumeric = false; }
-    //Filter only numbers from the input
-    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
-    //Check if the input is of correct
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-        //Remove the matched extension code
-        //Change this to format for any country code.
-        var intlCode = match[1] ? '+1 ' : '';
-        return [intlCode, match[2], '.', match[3], '.', match[4]].join('');
-    }
-    return phone;
-};
-/**
- * Formats a zip code by adding a hyphen in a 9 digit code.
- *
- * @example
- * // returns "12345-6789"
- * FormatZip('123456789')
- */
-var FormatZip = function (zip) {
-    //Filter only numbers from the input
-    var cleaned = ('' + zip).replace(/\D/g, '');
-    // check if the input is a 9 digit code
-    if (cleaned.length === 9) {
-        cleaned = cleaned.replace(/(\d{5})/, '$1-');
-    }
-    return cleaned;
-};
-/**
- * Adds "http" on urls that don't have it.
- *
- * @example
- * // returns "http://www.google.com"
- * FormatExternalURL('www.google.com')
- */
-var FormatExternalURL = function (url) {
-    if (!!url) {
-        if (!url.startsWith('http')) {
-            return 'http://' + url;
-        }
-        return url;
-    }
-    return '';
-};
-/**
- * Returns formatted full name.
- *
- * @example
- * // returns 'Doe, John Smith, Jr.'
- * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
- */
-var DisplayNameFromFL = function (first, last, middle, suffix) {
-    var returnName = '';
-    if (!!last) {
-        returnName += last;
-        if (!!first) {
-            returnName += ', ' + first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else if (!!middle) {
-            returnName += ', ' + middle;
+    var ret = {};
+    var excludeSet = new Set(keys);
+    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+    for (var key in obj) {
+        // noinspection JSUnfilteredForInLoop
+        if (!excludeSet.has(key)) {
+            // noinspection JSUnfilteredForInLoop
+            ret[key] = obj[key];
         }
     }
-    else {
-        if (!!first) {
-            returnName += first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else {
-            if (!!middle) {
-                returnName += middle;
-            }
-        }
-    }
-    if (!!suffix) {
-        if (!!returnName) {
-            returnName += ', ';
-        }
-        returnName += suffix;
-    }
-    return returnName;
-};
-/**
- * Returns formatted name from an object.
- *
- * @example
- * // returns 'Doe, John Smith, Jr.'
- * DisplayNameFromObject({
- *   first_name: 'John',
- *   last_name: 'Doe',
- *   middle_name: 'Smith',
- *   suffix_name: 'Jr.',
- * })
- */
-var DisplayNameFromObject = function (object, prefix) {
-    if (!object)
-        return '';
-    var actualPrefix = !!prefix ? "_" + prefix : '';
-    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
-};
-/**
- * Converts the first character of each word of a string to uppercase.
- *
- * @example
- * // return This Is Awesome
- * UCWords('This is awesome')
- */
-var UCWords = function (str) {
-    if (!str) {
-        return str;
-    }
-    var strVal = '';
-    var strItems = str.toLowerCase().split(' ');
-    for (var chr = 0; chr < strItems.length; chr++) {
-        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
-    }
-    return strVal.trim();
-};
-/**
- * Generates a random string with a given length and valid characters.
- *
- * @example
- * // returns '32112'
- * RandomString(5, '12345')
- */
-var RandomString = function (length, validChars) {
-    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
-    var validCharLength = validChars.length - 1;
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
-    }
-    var tsm = moment();
-    var ts = tsm.valueOf().toString();
-    if (length > ts.length * 0.5) {
-        var offset = RoundTo((length - ts.length) / 2, 0);
-        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
-    }
-    return result;
-};
+    return ret;
+}
+test('JSONParse valid', function () {
+    expect(JSONParse('{"id": 1}')).toEqual({ id: 1 });
+});
+test('JSONParse empty', function () {
+    expect(JSONParse(undefined)).toEqual(null);
+});
+test('JSONParse string', function () {
+    expect(JSONParse('Test')).toEqual(null);
+});
 
 var initialChanges = {};
 /**
@@ -1290,23 +868,6 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
     pom.href = URL.createObjectURL(blob);
     pom.setAttribute('download', filename);
     pom.click();
-};
-/**
- * A wrapper function for JSON.parse with try/catch.
- */
-var JSONParse = function (json) {
-    if (!json) {
-        return null;
-    }
-    var returnObj = null;
-    try {
-        returnObj = JSON.parse(json);
-    }
-    catch (err) {
-        // console.log('JSONParse', err)
-        return null;
-    }
-    return returnObj;
 };
 /**
  * Checks if a string is a valid JSON structure
@@ -1779,6 +1340,477 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
+/**
+ * Converts a string to snake_case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user_token"
+ */
+var moment = require('moment-timezone');
+var ToSnakeCase = function (str) {
+    if (str === 'ID')
+        return 'id';
+    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
+    return (calcStr[0].toLowerCase() +
+        calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
+};
+/**
+ * Converts a string to kebab-case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user-token"
+ */
+var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
+/**
+ * Converts a string to camelCase.
+ *
+ * @example
+ * ToCamelCase('user_token') //  returns "userToken
+ */
+var ToCamelCase = function (str) {
+    if (str === 'id')
+        return 'ID';
+    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
+    return ReplaceAll('_', '', ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
+        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
+    })));
+};
+var ToUpperCaseWords = function (str) {
+    var _a, _b, _c;
+    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
+    if (result.endsWith(' Id')) {
+        return result.substr(0, result.length - 1) + 'D';
+    }
+    return result;
+};
+/**
+ * Converts a string to PascalCase.
+ *
+ * @example
+ * ToPascalCase('user_token') //  returns "UserToken
+ */
+var ToPascalCase = function (str) {
+    var calcStr = ToCamelCase(str);
+    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
+};
+/**
+ * Replaces links to an anchor tag.
+ *
+ * @example
+ * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
+ * ReplaceLinks('https://www.google.com')
+ */
+var ReplaceLinks = function (subject) {
+    // noinspection RegExpUnnecessaryNonCapturingGroup
+    var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    // noinspection HtmlUnknownTarget
+    var target = "<a href='$1' target='_blank'>$1</a>";
+    // noinspection RegExpRedundantEscape
+    return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
+};
+/**
+ * Removes script tags.
+ *
+ * @example
+ * // returns "blank"
+ * CleanScripts('<script>console.log(1)</script>blank')
+ */
+var CleanScripts = function (subject) {
+    return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
+};
+/**
+ * Removes any given HTML tag and retains what's inside of the tag.
+ *
+ * @example
+ * // returns "john doe"
+ * TextToHTML('<p>john doe</p>')
+ */
+var TextToHTML = function (subject) {
+    var str = subject.replace(/(<([^>]+)>)/gi, '');
+    // noinspection RegExpUnnecessaryNonCapturingGroup
+    return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+};
+/**
+ * Strips scripts and other tags from HTML
+ *
+ * @param subject
+ * HTMLToText('<p>john doe</p>') // returns john doe
+ */
+var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
+var LeftPad = function (subject, length, padString) {
+    var str = subject;
+    while (str.length < length)
+        str = padString + str;
+    return str;
+};
+var RightPad = function (subject, length, padString) {
+    var str = subject;
+    while (str.length < length)
+        str = str + padString;
+    return str;
+};
+/**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
+var ToCurrency = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
+var ToPercent = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('')
+ */
+var ToCurrencyBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('-')
+ */
+var ToCurrencyDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns ''
+ * ToPercent('')
+ */
+var ToPercentBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns '-'
+ * ToPercent('')
+ */
+var ToPercentDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
+var ToDigits = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
+var ToDigitsBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
+var ToDigitsDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+/**
+ * Converts a string to an array.
+ *
+ * @example
+ * // returns ['john doe']
+ * ToStringArray('john doe')
+ */
+var ToStringArray = function (value) {
+    if (!value) {
+        return [];
+    }
+    if (typeof value === 'string') {
+        return [value];
+    }
+    else {
+        return value;
+    }
+};
+/**
+ * Returns a formatted phone number with parenthesis.
+ *
+ * @example
+ * // returns (555) 555-1234
+ * FormatPhoneNumber('5555551234')
+ */
+var FormatPhoneNumber = function (phone, forceNumeric) {
+    if (forceNumeric === void 0) { forceNumeric = false; }
+    //Filter only numbers from the input
+    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
+    //Check if the input is of correct
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        //Remove the matched extension code
+        //Change this to format for any country code.
+        var intlCode = match[1] ? '+1 ' : '';
+        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
+    }
+    return phone;
+};
+/**
+ * Returns a formatted phone number with dots.
+ *
+ * @example
+ * // returns 555.555.1234
+ * FormatPhoneNumberDots('5555551234')
+ */
+var FormatPhoneNumberDots = function (phone, forceNumeric) {
+    if (forceNumeric === void 0) { forceNumeric = false; }
+    //Filter only numbers from the input
+    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
+    //Check if the input is of correct
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        //Remove the matched extension code
+        //Change this to format for any country code.
+        var intlCode = match[1] ? '+1 ' : '';
+        return [intlCode, match[2], '.', match[3], '.', match[4]].join('');
+    }
+    return phone;
+};
+/**
+ * Formats a zip code by adding a hyphen in a 9 digit code.
+ *
+ * @example
+ * // returns "12345-6789"
+ * FormatZip('123456789')
+ */
+var FormatZip = function (zip) {
+    //Filter only numbers from the input
+    var cleaned = ('' + zip).replace(/\D/g, '');
+    // check if the input is a 9 digit code
+    if (cleaned.length === 9) {
+        cleaned = cleaned.replace(/(\d{5})/, '$1-');
+    }
+    return cleaned;
+};
+/**
+ * Adds "http" on urls that don't have it.
+ *
+ * @example
+ * // returns "http://www.google.com"
+ * FormatExternalURL('www.google.com')
+ */
+var FormatExternalURL = function (url) {
+    if (!!url) {
+        if (!url.startsWith('http')) {
+            return 'http://' + url;
+        }
+        return url;
+    }
+    return '';
+};
+/**
+ * Returns formatted full name.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
+ */
+var DisplayNameFromFL = function (first, last, middle, suffix) {
+    var returnName = '';
+    if (!!last) {
+        returnName += last;
+        if (!!first) {
+            returnName += ', ' + first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else if (!!middle) {
+            returnName += ', ' + middle;
+        }
+    }
+    else {
+        if (!!first) {
+            returnName += first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else {
+            if (!!middle) {
+                returnName += middle;
+            }
+        }
+    }
+    if (!!suffix) {
+        if (!!returnName) {
+            returnName += ', ';
+        }
+        returnName += suffix;
+    }
+    return returnName;
+};
+/**
+ * Returns formatted name from an object.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromObject({
+ *   first_name: 'John',
+ *   last_name: 'Doe',
+ *   middle_name: 'Smith',
+ *   suffix_name: 'Jr.',
+ * })
+ */
+var DisplayNameFromObject = function (object, prefix) {
+    if (!object)
+        return '';
+    var actualPrefix = !!prefix ? "_" + prefix : '';
+    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
+};
+/**
+ * Converts the first character of each word of a string to uppercase.
+ *
+ * @example
+ * // return This Is Awesome
+ * UCWords('This is awesome')
+ */
+var UCWords = function (str) {
+    if (!str) {
+        return str;
+    }
+    var strVal = '';
+    var strItems = str.toLowerCase().split(' ');
+    for (var chr = 0; chr < strItems.length; chr++) {
+        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
+    }
+    return strVal.trim();
+};
+/**
+ * Generates a random string with a given length and valid characters.
+ *
+ * @example
+ * // returns '32112'
+ * RandomString(5, '12345')
+ */
+var RandomString = function (length, validChars) {
+    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
+    var validCharLength = validChars.length - 1;
+    var result = '';
+    for (var i = 0; i < length; i++) {
+        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
+    }
+    var tsm = moment();
+    var ts = tsm.valueOf().toString();
+    if (length > ts.length * 0.5) {
+        var offset = RoundTo((length - ts.length) / 2, 0);
+        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
+    }
+    return result;
+};
+
 var moment$1 = require('moment-timezone');
 var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
 var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -1877,7 +1909,7 @@ var MomentFromString = function (value) {
         }
     }
     else {
-        var momentObject = StringHasTimeZoneData(value) ? moment$1(value, formatTries, true) : moment$2.utc(value, formatTries, true);
+        var momentObject = StringHasTimeZoneData(value) ? moment$1(value, formatTries, true) : momentTimezone.utc(value, formatTries, true);
         if (momentObject.isValid()) {
             return momentObject;
         }
@@ -2799,6 +2831,7 @@ exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
 exports.ObjectToJSONString = ObjectToJSONString;
 exports.ObjectWithChanges = ObjectWithChanges;
+exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.RandomString = RandomString;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;

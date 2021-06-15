@@ -1,4 +1,4 @@
-import {ReplaceAll} from './StringManipulation'
+import {ReplaceAll} from './Functions'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -143,27 +143,6 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
 	pom.href = URL.createObjectURL(blob)
 	pom.setAttribute('download', filename)
 	pom.click()
-}
-
-/**
- * A wrapper function for JSON.parse with try/catch.
- */
-export const JSONParse = <T = any>(json: any): T | null => {
-	if (!json) {
-		return null
-	}
-	
-	let returnObj = null
-	
-	try {
-		returnObj = JSON.parse(json)
-	} catch (err) {
-		// console.log('JSONParse', err)
-		
-		return null
-	}
-	
-	return returnObj
 }
 
 /**

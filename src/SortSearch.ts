@@ -1,4 +1,4 @@
-import {CleanNumber} from './StringManipulation'
+import { CleanNumber } from "./Functions"
 
 /**
  * Returns an array of numbers to be used for pagination links.

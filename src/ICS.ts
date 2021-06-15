@@ -1,5 +1,5 @@
 import {MomentFromString} from './Moment'
-import {ReplaceAll} from './StringManipulation'
+import {ReplaceAll} from './Functions'
 
 export namespace ICS {
 	export interface IEvent {
