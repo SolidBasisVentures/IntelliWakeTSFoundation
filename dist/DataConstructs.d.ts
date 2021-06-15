@@ -90,10 +90,6 @@ export declare const DataToCSVExport: (filename: string, csvData: any) => void;
  */
 export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) => void;
 /**
- * A wrapper function for JSON.parse with try/catch.
- */
-export declare const JSONParse: <T = any>(json: any) => T | null;
-/**
  * Checks if a string is a valid JSON structure
  */
 export declare const IsJSON: (json: any) => boolean;

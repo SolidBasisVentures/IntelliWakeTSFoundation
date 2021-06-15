@@ -22,14 +22,6 @@ export declare const ToUpperCaseWords: (str: string) => string;
  */
 export declare const ToPascalCase: (str: string) => string;
 /**
- * Replace all occurences of a string.
- *
- * @example
- * // returns "john-doe-bob"
- * ReplaceAll(' ', '-', 'john doe bob')
- */
-export declare const ReplaceAll: (find: string, replace: string, subject: string) => string;
-/**
  * Replaces links to an anchor tag.
  *
  * @example
@@ -62,25 +54,6 @@ export declare const TextToHTML: (subject: string) => string;
 export declare const HTMLToText: (subject: string) => string;
 export declare const LeftPad: (subject: string, length: number, padString: string) => string;
 export declare const RightPad: (subject: string, length: number, padString: string) => string;
-/**
- * Cleans a number with a symbol like '$', ',' or '%'.
- *
- * @example
- * // return 100
- * CleanNumber('$100')
- *
- * // return 1000
- * CleanNumber('1,000')
- *
- * // return 50
- * CleanNumber('50%')
- *
- * Add a rounding to round to a certain number of digits:
- *
- * // return 100.1
- * CleanNumber('100.12', 1)
- */
-export declare const CleanNumber: (value: any, roundClean?: number | undefined) => number;
 /**
  * Returns the given number with a dollar sign.
  *
