@@ -440,3 +440,18 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
 }
+
+export function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> {
+	let ret: any = {};
+	const excludeSet: Set<string> = new Set(keys);
+	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+	
+	for (let key in obj) {
+		// noinspection JSUnfilteredForInLoop
+		if (!excludeSet.has(key)) {
+			// noinspection JSUnfilteredForInLoop
+			ret[key] = obj[key];
+		}
+	}
+	return ret;
+}

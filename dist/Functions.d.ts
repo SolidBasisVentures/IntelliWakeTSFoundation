@@ -179,3 +179,4 @@ export declare const everyAsync: <T>(array: T[], predicate: (t: T) => Promise<bo
  * @param predicate
  */
 export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<T[]>;
+export declare const DeepEqual: (object1: any, object2: any) => boolean;

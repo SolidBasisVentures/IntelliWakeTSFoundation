@@ -1,4 +1,4 @@
-import {AddS, DeepEqual, IsOn, RoundTo} from './Functions'
+import {AddS, DeepEqual, IsOn, OmitProperty, RoundTo} from './Functions'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true)
@@ -77,3 +77,21 @@ test('Deep Equal - Fail Array', () => {
 test('Deep Equal - Fail Array Size', () => {
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
 })
+
+// const omitObject = {
+// 	id: 1,
+// 	name: 'My Name',
+// 	is_active: true
+// }
+
+// const omittedObject = OmitProperty(omitObject, 'id',  'is_active')
+
+test('Omits', () => {
+	expect(OmitProperty({
+		id: 1,
+		name: 'My Name',
+		is_active: true
+	}, 'id',  'is_active')).toEqual({name: 'My Name'})
+})
+
+
