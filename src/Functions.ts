@@ -519,15 +519,3 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	}
 	return ret
 }
-
-test('JSONParse valid', () => {
-	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
-})
-
-test('JSONParse empty', () => {
-	expect(JSONParse(undefined)).toEqual(null)
-})
-
-test('JSONParse string', () => {
-	expect(JSONParse('Test')).toEqual(null)
-})

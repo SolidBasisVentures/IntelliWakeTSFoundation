@@ -1,4 +1,4 @@
-import {AddS, CleanNumber, DeepEqual, IsOn, OmitProperty, ReplaceAll, RoundTo} from './Functions'
+import {AddS, CleanNumber, DeepEqual, IsOn, JSONParse, OmitProperty, ReplaceAll, RoundTo} from './Functions'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true)
@@ -123,6 +123,18 @@ test('Omits', () => {
 		name: 'My Name',
 		is_active: true
 	}, 'id',  'is_active')).toEqual({name: 'My Name'})
+})
+
+test('JSONParse valid', () => {
+	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
+})
+
+test('JSONParse empty', () => {
+	expect(JSONParse(undefined)).toEqual(null)
+})
+
+test('JSONParse string', () => {
+	expect(JSONParse('Test')).toEqual(null)
 })
 
 

@@ -761,15 +761,6 @@ function OmitProperty(obj) {
     }
     return ret;
 }
-test('JSONParse valid', function () {
-    expect(JSONParse('{"id": 1}')).toEqual({ id: 1 });
-});
-test('JSONParse empty', function () {
-    expect(JSONParse(undefined)).toEqual(null);
-});
-test('JSONParse string', function () {
-    expect(JSONParse('Test')).toEqual(null);
-});
 
 var initialChanges = {};
 /**
