@@ -31,7 +31,7 @@ export declare const ReplaceAll: (find: string, replace: string, subject: string
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-export declare const CleanNumber: (value: any, roundClean?: number | undefined) => number;
+export declare const CleanNumber: (value: any, roundClean?: number | undefined, allowNaN?: boolean | undefined) => number;
 /**
  * A wrapper function for JSON.parse with try/catch.
  */

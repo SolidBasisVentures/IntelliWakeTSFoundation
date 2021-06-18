@@ -271,7 +271,7 @@ var ReplaceAll = function (find, replace, subject) {
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-var CleanNumber = function (value, roundClean) {
+var CleanNumber = function (value, roundClean, allowNaN) {
     if (!value)
         return 0;
     var str = value.toString();
@@ -279,7 +279,7 @@ var CleanNumber = function (value, roundClean) {
     str = ReplaceAll(',', '', str);
     str = ReplaceAll('%', '', str);
     if (isNaN(str))
-        return NaN;
+        return !!allowNaN ? NaN : 0;
     if (roundClean !== undefined) {
         return RoundTo(parseFloat(str), roundClean);
     }
@@ -2476,8 +2476,8 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
         return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0);
     }
-    var beforeNumber = CleanNumber(beforeValue);
-    var afterNumber = CleanNumber(afterValue);
+    var beforeNumber = CleanNumber(beforeValue, undefined, true);
+    var afterNumber = CleanNumber(afterValue, undefined, true);
     if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
         return beforeNumber - afterNumber;
     }
