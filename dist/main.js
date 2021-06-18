@@ -762,575 +762,6 @@ function OmitProperty(obj) {
     return ret;
 }
 
-var initialChanges = {};
-/**
- * Adds a change to the IChange object.
- *
- * @example
- * const employee = {id: 1, name: 'Bob'}
- * const [changes, setChanges] = useState({} as IChanges)
- *
- * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
- *
- * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
- */
-var AddChange = function (name, value, changes) {
-    var _a;
-    return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
-};
-/**
- * Returns the final state of an object with changes applied.
- *
- * @example
- * const employee = {id: 1, name: 'Bob'}
- * const [changes, setChanges] = useState({} as IChanges)
- * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
- *
- * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
- */
-var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
-var initialIDChanges = {};
-/**
- * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
- *
- * @example
- * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
- * const [idChanges, setIDChanges] = useState({} as IIDChanges)
- *
- * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
- *
- * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
- *
- * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
- */
-var AddIDChange = function (id, name, value, idChanges) {
-    var _a, _b;
-    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
-};
-var AddIDChanges = function (id, changes, idChanges) {
-    var _a;
-    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
-};
-/**
- * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
- *
- * @example
- * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
- * const [idChanges, setIDChanges] = useState({} as IIDChanges)
- *
- * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
- * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
- *
- * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
- */
-var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
-/**
- * Converts Data to CSV. Creates a download link and triggers
- * click event on it to download the file.
- */
-var DataToCSVExport = function (filename, csvData) {
-    var csvString = csvData
-        .map(function (row) {
-        return row
-            .map(function (item) {
-            return typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
-        })
-            .join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-/**
- * Converts Data to CSV without quotes. Creates a download link and triggers
- * click event on it to download the file.
- */
-var DataToCSVExportNoQuotes = function (filename, csvData) {
-    var csvString = csvData
-        .map(function (row) {
-        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-/**
- * Checks if a string is a valid JSON structure
- */
-var IsJSON = function (json) {
-    if (!json)
-        return false;
-    if (typeof json !== 'string')
-        return false;
-    try {
-        var result = JSON.parse(json);
-        var type = Object.prototype.toString.call(result);
-        return type === '[object Object]' || type === '[object Array]';
-    }
-    catch (err) {
-        return false;
-    }
-};
-/**
- * Removes properties from an object having the same value.
- *
- * @example
- * let data = {
- *   name: 'john doe',
- *   age: 24,
- * }
- *
- * let data2 = {
- *   name: 'john smith',
- *   age: 24,
- * }
- *
- * // returns {name: 'john doe}
- * RemoveDupProperties(data, data2)
- */
-var RemoveDupProperties = function (original, propsToRemove) {
-    var _a, _b;
-    var result = __assign({}, original);
-    for (var key in propsToRemove) {
-        if (propsToRemove.hasOwnProperty(key)) {
-            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
-                    delete result[key];
-                }
-            }
-            else if (propsToRemove[key] === result[key]) {
-                delete result[key];
-            }
-        }
-    }
-    return result;
-};
-/**
- * Removes properties from an object having the same value by ID.
- *
- * @example
- * let data = {
- *   1: {
- *     name: 'john doe',
- *     age: 24,
- *   }
- * }
- *
- * let data2 = {
- *   1: {
- *     name: 'john smith',
- *     age: 24,
- *   }
- * }
- *
- * // returns {1: {name: 'john doe}}
- * RemoveDupPropertiesByID(data, data2)
- */
-var RemoveDupPropertiesByID = function (original, propsToRemove) {
-    var result = __assign({}, original);
-    for (var key in propsToRemove) {
-        if (propsToRemove.hasOwnProperty(key)) {
-            if (result.hasOwnProperty(key)) {
-                var subResult = RemoveDupProperties(result[key], propsToRemove[key]);
-                if (Object.keys(subResult).length === 0) {
-                    delete result[key];
-                }
-                else {
-                    result[key] = subResult;
-                }
-            }
-        }
-    }
-    return result;
-};
-/**
- * Removes properties from an object having the same value by an array of objects.
- *
- * @example
- * let data = {
- *   1: {
- *     name: 'john doe',
- *     age: 24,
- *   }
- * }
- *
- * let data2 = [
- *   {id: '1', user: 'john smith', age: 24},
- *   {id: '2', user: 'sally jones', age: 32}
- * ]
- *
- * // returns {1: {name: 'john doe}}
- * RemoveDupPropertiesByIDArray(data, data2)
- */
-var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
-    var result = __assign({}, original);
-    var _loop_1 = function (key) {
-        if (original.hasOwnProperty(key)) {
-            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id === key; });
-            if (!!propsToRemove) {
-                var subResult = RemoveDupProperties(result[key], propsToRemove);
-                if (Object.keys(subResult).length === 0) {
-                    delete result[key];
-                }
-                else {
-                    result[key] = subResult;
-                }
-            }
-        }
-    };
-    for (var key in original) {
-        _loop_1(key);
-    }
-    return result;
-};
-/**
- * Returns the difference of two objects.
- *
- * @example
- * let data = {id: 1, user: 'john doe', age: 24}
- * let data2 = {id: 2, user: 'john doe', age: 23}
- *
- * // returns {id: 1, age: 24}
- * ObjectDiffs(data, data2)
- *
- * // returns {age: 24}
- * ObjectDiffs(data, data2, 'id')
- */
-var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key)) {
-            if (compare[key] !== comparedTo[key]) {
-                results[key] = compare[key];
-            }
-        }
-    }
-    return results;
-};
-/**
- * Returns a reduces object to other keys.
- *
- * @example
- * let data = {id: 1, user: 'john doe', age: 24}
- * let data2 = {user: 'john doe'}
- *
- * // returns {user: '', age: ''}
- * ReduceObjectToOtherKeys(data, data2)
- *
- * // returns {user: ''}
- * ReduceObjectToOtherKeys(data, data2, ['age'])
- */
-var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
-            results[key] = main[key];
-        }
-    }
-    return results;
-};
-
-var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
-var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
-/**
- * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
- *
- * @example
- * // returns "Hello, Bob"
- * EvaluateString("Hello, [Name]!", {Name: "Bob"})
- *
- * // returns "1 + SomeValue = 3"
- * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
- */
-var EvaluateString = function (expression, variables) {
-    var _a, _b, _c;
-    var returnValue = expression;
-    if (!!variables) {
-        for (var _i = 0, _d = Object.keys(variables); _i < _d.length; _i++) {
-            var key = _d[_i];
-            returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
-        }
-    }
-    var innerSet = FindInnerSetLocations(returnValue, '[', ']');
-    while (!!innerSet) {
-        var beforeValue = (_a = returnValue.substring(0, innerSet[0])) !== null && _a !== void 0 ? _a : '';
-        var replaceValue = (_b = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _b !== void 0 ? _b : '';
-        var afterValue = (_c = returnValue.substring(innerSet[1] + 1)) !== null && _c !== void 0 ? _c : '';
-        returnValue = "" + beforeValue + replaceValue + afterValue;
-        innerSet = FindInnerSetLocations(returnValue, '[', ']');
-    }
-    returnValue = ExecuteFunctions(returnValue);
-    return returnValue;
-};
-/**
- * Accepts a string, processes variables against the entire string, and returns a boolean if the condition is true or false.
- *
- * @example
- *
- * // returns false
- * EvaluateCondition("1 = SomeValue", {SomeValue: 2})
- *
- * // returns true
- * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
- */
-var EvaluateCondition = function (expression, variables) {
-    return IsOn(EvaluateString("[" + expression + "]", variables));
-};
-var FindInnerSetLocations = function (stringItem, setStart, setEnd) {
-    if (!!stringItem) {
-        var len = stringItem.length;
-        var openingLocation = null;
-        for (var i = 0; i < len; i++) {
-            if (stringItem.substr(i, 1) === setStart) {
-                openingLocation = i;
-            }
-            else if (openingLocation !== null && stringItem.substr(i, 1) === setEnd) {
-                return [openingLocation, i];
-            }
-        }
-    }
-    return null;
-};
-var ProcessPMDAS = function (expression) {
-    // console.log(expression);
-    var returnValue = ExecuteFunctions(expression);
-    returnValue = ReplaceAll(' ', '', returnValue);
-    var preOperators = __spreadArrays(EvaluatorOperators, ['(']);
-    var postOperators = __spreadArrays(EvaluatorOperators, [')']);
-    var innerSet = FindInnerSetLocations(returnValue, '(', ')');
-    while (!!innerSet) {
-        var newExpression = returnValue.substr(0, innerSet[0]);
-        if (newExpression.length > 0 &&
-            preOperators.indexOf(newExpression.substr(-1, 1)) === -1 &&
-            preOperators.indexOf(newExpression.substr(-2, 2)) === -1) {
-            newExpression = newExpression.concat('*');
-        }
-        newExpression = newExpression.concat(ProcessPMDAS(returnValue.substr(innerSet[0] + 1, innerSet[1] - innerSet[0] - 1)));
-        var lastSegment = returnValue.substr(innerSet[1] + 1, returnValue.length - innerSet[1]);
-        if (lastSegment.length > 0 &&
-            postOperators.indexOf(lastSegment.substr(0, 1)) === -1 &&
-            postOperators.indexOf(lastSegment.substr(0, 2)) === -1) {
-            newExpression = newExpression.concat('*');
-        }
-        returnValue = newExpression.concat(lastSegment);
-        innerSet = FindInnerSetLocations(returnValue, '(', ')');
-    }
-    for (var _i = 0, EvaluatorOperators_1 = EvaluatorOperators; _i < EvaluatorOperators_1.length; _i++) {
-        var operator = EvaluatorOperators_1[_i];
-        var processOperator = operator;
-        var nextOperator = operator;
-        var items = returnValue.split(operator);
-        if (items.length > 1) {
-            if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
-                processOperator = items[0].substr(-1);
-                items[0] = items[0].substr(0, items[0].length - 1);
-                items[1] = '-' + items[1];
-            }
-            var result = ProcessPMDAS(items[0]);
-            for (var itempos = 1; itempos < items.length; itempos++) {
-                nextOperator = operator;
-                if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
-                    nextOperator = items[itempos].substr(-1);
-                    items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
-                    items[itempos + 1] = '-' + items[itempos + 1];
-                }
-                var itemposValue = ProcessPMDAS(items[itempos]);
-                var floatResult = parseFloat(result);
-                var floatItemPosValue = parseFloat(itemposValue);
-                var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
-                switch (processOperator) {
-                    case '^':
-                        if (bothNumeric) {
-                            result = Math.pow(floatResult, floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '*':
-                        if (bothNumeric) {
-                            result = (floatResult * floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '/':
-                        if (bothNumeric) {
-                            if (floatItemPosValue === 0) {
-                                result = '0';
-                            }
-                            else {
-                                result = (floatResult / floatItemPosValue).toString();
-                            }
-                        }
-                        break;
-                    case '+':
-                        if (bothNumeric) {
-                            result = (floatResult + floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '-':
-                        if (bothNumeric) {
-                            result = (floatResult - floatItemPosValue).toString();
-                        }
-                        else {
-                            result = "-" + itemposValue;
-                        }
-                        break;
-                    case '<=':
-                        if (bothNumeric) {
-                            result = floatResult <= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result <= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>=':
-                        if (bothNumeric) {
-                            result = floatResult >= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result >= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '<':
-                        if (bothNumeric) {
-                            result = floatResult < floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result < itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>':
-                        if (bothNumeric) {
-                            result = floatResult > floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result > itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '=':
-                        result = result === itemposValue ? '1' : '0';
-                        break;
-                    case '!=':
-                        result = result !== itemposValue ? '1' : '0';
-                        break;
-                    case '||':
-                        result = result || itemposValue;
-                        break;
-                    case '&&':
-                        result = result && itemposValue;
-                        break;
-                    default:
-                        result = itemposValue;
-                }
-                processOperator = nextOperator;
-            }
-            // result = ExecuteFunctions(result);
-            return result;
-        }
-    }
-    // returnValue = ExecuteFunctions(returnValue);
-    return returnValue;
-};
-var FindFunction = function (expression, startPosition) {
-    if (!expression)
-        return null;
-    for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
-        var evaluatorFunction = EvaluatorFunctions_1[_i];
-        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
-        if (pos >= 0) {
-            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
-            var parens = FindInnerSetLocations(postFunctionName, '(', ')');
-            if (!!parens) {
-                var argumentText = postFunctionName.substr(1, parens[1] - 1);
-                return {
-                    expression: expression,
-                    pos: pos,
-                    pre: expression.substr(0, pos).trim(),
-                    post: postFunctionName.substr(parens[1] + 1).trim(),
-                    function: evaluatorFunction,
-                    argumentText: argumentText,
-                    arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
-                };
-            }
-        }
-    }
-    return null;
-};
-var ExecuteFunction = function (foundFunction) {
-    var _a, _b;
-    var arg1 = parseFloat(EvaluateString("[" + ((_a = foundFunction.arguments[0]) !== null && _a !== void 0 ? _a : '0') + "]"));
-    var arg2 = parseFloat(EvaluateString("[" + ((_b = foundFunction.arguments[1]) !== null && _b !== void 0 ? _b : '0') + "]"));
-    switch (foundFunction.function) {
-        case 'abs':
-            if (!isNaN(arg1)) {
-                return Math.abs(arg1).toString();
-            }
-            break;
-        case 'pow':
-            if (!isNaN(arg1) && !isNaN(arg2)) {
-                return Math.pow(arg1, arg2).toString();
-            }
-            break;
-        case 'int':
-            if (!isNaN(arg1)) {
-                return parseInt(foundFunction.arguments[0]).toString();
-            }
-            break;
-        case 'round':
-            if (!isNaN(arg1) && !isNaN(arg2)) {
-                var factor = Math.pow(10, arg2);
-                var tempNumber = arg1 * factor;
-                var roundedTempNumber = Math.round(tempNumber);
-                return (roundedTempNumber / factor).toString();
-            }
-            break;
-        case 'includes':
-            var index = 1;
-            var arrayValues = [];
-            // get array values from the 2nd argument and so on...
-            while (foundFunction.arguments[index] !== undefined) {
-                arrayValues.push(foundFunction.arguments[index]);
-                index++;
-            }
-            return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0';
-        case 'includesinarray':
-            var key = 1;
-            var arrValues = [];
-            // get array values from the 2nd argument and so on...
-            while (foundFunction.arguments[key] !== undefined) {
-                arrValues.push(foundFunction.arguments[key]);
-                key++;
-            }
-            return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0';
-    }
-    return '';
-};
-var ExecuteFunctions = function (expression) {
-    var updatedExpression = expression;
-    var foundFunction = FindFunction(updatedExpression, 0);
-    while (!!foundFunction) {
-        updatedExpression = foundFunction.pre + ExecuteFunction(foundFunction) + foundFunction.post;
-        foundFunction = FindFunction(updatedExpression, 0);
-    }
-    return updatedExpression;
-};
-
 /**
  * Converts a string to snake_case.
  *
@@ -2164,6 +1595,586 @@ var MomentWeekDays = function (startDate, endDate) {
         }
     }
     return weekDays;
+};
+
+var initialChanges = {};
+/**
+ * Adds a change to the IChange object.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ *
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+var AddChange = function (name, value, changes) {
+    var _a;
+    return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
+};
+/**
+ * Returns the final state of an object with changes applied.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
+var initialIDChanges = {};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
+ *
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+var AddIDChange = function (id, name, value, idChanges) {
+    var _a, _b;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
+};
+var AddIDChanges = function (id, changes, idChanges) {
+    var _a;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
+};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
+/**
+ * Converts Data to CSV. Creates a download link and triggers
+ * click event on it to download the file.
+ */
+var DataToCSVExport = function (filename, csvData) {
+    var csvString = csvData
+        .map(function (row) {
+        return row
+            .map(function (item) {
+            return typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
+        })
+            .join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+/**
+ * Converts Data to CSV without quotes. Creates a download link and triggers
+ * click event on it to download the file.
+ */
+var DataToCSVExportNoQuotes = function (filename, csvData) {
+    var csvString = csvData
+        .map(function (row) {
+        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+/**
+ * Checks if a string is a valid JSON structure
+ */
+var IsJSON = function (json) {
+    if (!json)
+        return false;
+    if (typeof json !== 'string')
+        return false;
+    try {
+        var result = JSON.parse(json);
+        var type = Object.prototype.toString.call(result);
+        return type === '[object Object]' || type === '[object Array]';
+    }
+    catch (err) {
+        return false;
+    }
+};
+/**
+ * Removes properties from an object having the same value.
+ *
+ * @example
+ * let data = {
+ *   name: 'john doe',
+ *   age: 24,
+ * }
+ *
+ * let data2 = {
+ *   name: 'john smith',
+ *   age: 24,
+ * }
+ *
+ * // returns {name: 'john doe}
+ * RemoveDupProperties(data, data2)
+ */
+var RemoveDupProperties = function (original, propsToRemove) {
+    var _a, _b;
+    var result = __assign({}, original);
+    for (var key in propsToRemove) {
+        if (propsToRemove.hasOwnProperty(key)) {
+            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
+                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
+                    delete result[key];
+                }
+            }
+            else if (propsToRemove[key] === result[key]) {
+                delete result[key];
+            }
+            else {
+                var pTRM = MomentFromString(propsToRemove[key]);
+                if (!!pTRM) {
+                    var rM = MomentFromString(result[key]);
+                    if (!!rM) {
+                        if (pTRM.isSame(rM)) {
+                            delete result[key];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return result;
+};
+/**
+ * Removes properties from an object having the same value by ID.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = {
+ *   1: {
+ *     name: 'john smith',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByID(data, data2)
+ */
+var RemoveDupPropertiesByID = function (original, propsToRemove) {
+    var result = __assign({}, original);
+    for (var key in propsToRemove) {
+        if (propsToRemove.hasOwnProperty(key)) {
+            if (result.hasOwnProperty(key)) {
+                var subResult = RemoveDupProperties(result[key], propsToRemove[key]);
+                if (Object.keys(subResult).length === 0) {
+                    delete result[key];
+                }
+                else {
+                    result[key] = subResult;
+                }
+            }
+        }
+    }
+    return result;
+};
+/**
+ * Removes properties from an object having the same value by an array of objects.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = [
+ *   {id: '1', user: 'john smith', age: 24},
+ *   {id: '2', user: 'sally jones', age: 32}
+ * ]
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByIDArray(data, data2)
+ */
+var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
+    var result = __assign({}, original);
+    var _loop_1 = function (key) {
+        if (original.hasOwnProperty(key)) {
+            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id === key; });
+            if (!!propsToRemove) {
+                var subResult = RemoveDupProperties(result[key], propsToRemove);
+                if (Object.keys(subResult).length === 0) {
+                    delete result[key];
+                }
+                else {
+                    result[key] = subResult;
+                }
+            }
+        }
+    };
+    for (var key in original) {
+        _loop_1(key);
+    }
+    return result;
+};
+/**
+ * Returns the difference of two objects.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {id: 2, user: 'john doe', age: 23}
+ *
+ * // returns {id: 1, age: 24}
+ * ObjectDiffs(data, data2)
+ *
+ * // returns {age: 24}
+ * ObjectDiffs(data, data2, 'id')
+ */
+var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key)) {
+            if (compare[key] !== comparedTo[key]) {
+                results[key] = compare[key];
+            }
+        }
+    }
+    return results;
+};
+/**
+ * Returns a reduces object to other keys.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {user: 'john doe'}
+ *
+ * // returns {user: '', age: ''}
+ * ReduceObjectToOtherKeys(data, data2)
+ *
+ * // returns {user: ''}
+ * ReduceObjectToOtherKeys(data, data2, ['age'])
+ */
+var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
+            results[key] = main[key];
+        }
+    }
+    return results;
+};
+
+var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
+var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
+/**
+ * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
+ *
+ * @example
+ * // returns "Hello, Bob"
+ * EvaluateString("Hello, [Name]!", {Name: "Bob"})
+ *
+ * // returns "1 + SomeValue = 3"
+ * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
+ */
+var EvaluateString = function (expression, variables) {
+    var _a, _b, _c;
+    var returnValue = expression;
+    if (!!variables) {
+        for (var _i = 0, _d = Object.keys(variables); _i < _d.length; _i++) {
+            var key = _d[_i];
+            returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
+        }
+    }
+    var innerSet = FindInnerSetLocations(returnValue, '[', ']');
+    while (!!innerSet) {
+        var beforeValue = (_a = returnValue.substring(0, innerSet[0])) !== null && _a !== void 0 ? _a : '';
+        var replaceValue = (_b = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _b !== void 0 ? _b : '';
+        var afterValue = (_c = returnValue.substring(innerSet[1] + 1)) !== null && _c !== void 0 ? _c : '';
+        returnValue = "" + beforeValue + replaceValue + afterValue;
+        innerSet = FindInnerSetLocations(returnValue, '[', ']');
+    }
+    returnValue = ExecuteFunctions(returnValue);
+    return returnValue;
+};
+/**
+ * Accepts a string, processes variables against the entire string, and returns a boolean if the condition is true or false.
+ *
+ * @example
+ *
+ * // returns false
+ * EvaluateCondition("1 = SomeValue", {SomeValue: 2})
+ *
+ * // returns true
+ * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
+ */
+var EvaluateCondition = function (expression, variables) {
+    return IsOn(EvaluateString("[" + expression + "]", variables));
+};
+var FindInnerSetLocations = function (stringItem, setStart, setEnd) {
+    if (!!stringItem) {
+        var len = stringItem.length;
+        var openingLocation = null;
+        for (var i = 0; i < len; i++) {
+            if (stringItem.substr(i, 1) === setStart) {
+                openingLocation = i;
+            }
+            else if (openingLocation !== null && stringItem.substr(i, 1) === setEnd) {
+                return [openingLocation, i];
+            }
+        }
+    }
+    return null;
+};
+var ProcessPMDAS = function (expression) {
+    // console.log(expression);
+    var returnValue = ExecuteFunctions(expression);
+    returnValue = ReplaceAll(' ', '', returnValue);
+    var preOperators = __spreadArrays(EvaluatorOperators, ['(']);
+    var postOperators = __spreadArrays(EvaluatorOperators, [')']);
+    var innerSet = FindInnerSetLocations(returnValue, '(', ')');
+    while (!!innerSet) {
+        var newExpression = returnValue.substr(0, innerSet[0]);
+        if (newExpression.length > 0 &&
+            preOperators.indexOf(newExpression.substr(-1, 1)) === -1 &&
+            preOperators.indexOf(newExpression.substr(-2, 2)) === -1) {
+            newExpression = newExpression.concat('*');
+        }
+        newExpression = newExpression.concat(ProcessPMDAS(returnValue.substr(innerSet[0] + 1, innerSet[1] - innerSet[0] - 1)));
+        var lastSegment = returnValue.substr(innerSet[1] + 1, returnValue.length - innerSet[1]);
+        if (lastSegment.length > 0 &&
+            postOperators.indexOf(lastSegment.substr(0, 1)) === -1 &&
+            postOperators.indexOf(lastSegment.substr(0, 2)) === -1) {
+            newExpression = newExpression.concat('*');
+        }
+        returnValue = newExpression.concat(lastSegment);
+        innerSet = FindInnerSetLocations(returnValue, '(', ')');
+    }
+    for (var _i = 0, EvaluatorOperators_1 = EvaluatorOperators; _i < EvaluatorOperators_1.length; _i++) {
+        var operator = EvaluatorOperators_1[_i];
+        var processOperator = operator;
+        var nextOperator = operator;
+        var items = returnValue.split(operator);
+        if (items.length > 1) {
+            if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
+                processOperator = items[0].substr(-1);
+                items[0] = items[0].substr(0, items[0].length - 1);
+                items[1] = '-' + items[1];
+            }
+            var result = ProcessPMDAS(items[0]);
+            for (var itempos = 1; itempos < items.length; itempos++) {
+                nextOperator = operator;
+                if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
+                    nextOperator = items[itempos].substr(-1);
+                    items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
+                    items[itempos + 1] = '-' + items[itempos + 1];
+                }
+                var itemposValue = ProcessPMDAS(items[itempos]);
+                var floatResult = parseFloat(result);
+                var floatItemPosValue = parseFloat(itemposValue);
+                var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
+                switch (processOperator) {
+                    case '^':
+                        if (bothNumeric) {
+                            result = Math.pow(floatResult, floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '*':
+                        if (bothNumeric) {
+                            result = (floatResult * floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '/':
+                        if (bothNumeric) {
+                            if (floatItemPosValue === 0) {
+                                result = '0';
+                            }
+                            else {
+                                result = (floatResult / floatItemPosValue).toString();
+                            }
+                        }
+                        break;
+                    case '+':
+                        if (bothNumeric) {
+                            result = (floatResult + floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '-':
+                        if (bothNumeric) {
+                            result = (floatResult - floatItemPosValue).toString();
+                        }
+                        else {
+                            result = "-" + itemposValue;
+                        }
+                        break;
+                    case '<=':
+                        if (bothNumeric) {
+                            result = floatResult <= floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result <= itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '>=':
+                        if (bothNumeric) {
+                            result = floatResult >= floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result >= itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '<':
+                        if (bothNumeric) {
+                            result = floatResult < floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result < itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '>':
+                        if (bothNumeric) {
+                            result = floatResult > floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result > itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '=':
+                        result = result === itemposValue ? '1' : '0';
+                        break;
+                    case '!=':
+                        result = result !== itemposValue ? '1' : '0';
+                        break;
+                    case '||':
+                        result = result || itemposValue;
+                        break;
+                    case '&&':
+                        result = result && itemposValue;
+                        break;
+                    default:
+                        result = itemposValue;
+                }
+                processOperator = nextOperator;
+            }
+            // result = ExecuteFunctions(result);
+            return result;
+        }
+    }
+    // returnValue = ExecuteFunctions(returnValue);
+    return returnValue;
+};
+var FindFunction = function (expression, startPosition) {
+    if (!expression)
+        return null;
+    for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
+        var evaluatorFunction = EvaluatorFunctions_1[_i];
+        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
+        if (pos >= 0) {
+            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
+            var parens = FindInnerSetLocations(postFunctionName, '(', ')');
+            if (!!parens) {
+                var argumentText = postFunctionName.substr(1, parens[1] - 1);
+                return {
+                    expression: expression,
+                    pos: pos,
+                    pre: expression.substr(0, pos).trim(),
+                    post: postFunctionName.substr(parens[1] + 1).trim(),
+                    function: evaluatorFunction,
+                    argumentText: argumentText,
+                    arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
+                };
+            }
+        }
+    }
+    return null;
+};
+var ExecuteFunction = function (foundFunction) {
+    var _a, _b;
+    var arg1 = parseFloat(EvaluateString("[" + ((_a = foundFunction.arguments[0]) !== null && _a !== void 0 ? _a : '0') + "]"));
+    var arg2 = parseFloat(EvaluateString("[" + ((_b = foundFunction.arguments[1]) !== null && _b !== void 0 ? _b : '0') + "]"));
+    switch (foundFunction.function) {
+        case 'abs':
+            if (!isNaN(arg1)) {
+                return Math.abs(arg1).toString();
+            }
+            break;
+        case 'pow':
+            if (!isNaN(arg1) && !isNaN(arg2)) {
+                return Math.pow(arg1, arg2).toString();
+            }
+            break;
+        case 'int':
+            if (!isNaN(arg1)) {
+                return parseInt(foundFunction.arguments[0]).toString();
+            }
+            break;
+        case 'round':
+            if (!isNaN(arg1) && !isNaN(arg2)) {
+                var factor = Math.pow(10, arg2);
+                var tempNumber = arg1 * factor;
+                var roundedTempNumber = Math.round(tempNumber);
+                return (roundedTempNumber / factor).toString();
+            }
+            break;
+        case 'includes':
+            var index = 1;
+            var arrayValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[index] !== undefined) {
+                arrayValues.push(foundFunction.arguments[index]);
+                index++;
+            }
+            return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0';
+        case 'includesinarray':
+            var key = 1;
+            var arrValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[key] !== undefined) {
+                arrValues.push(foundFunction.arguments[key]);
+                key++;
+            }
+            return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0';
+    }
+    return '';
+};
+var ExecuteFunctions = function (expression) {
+    var updatedExpression = expression;
+    var foundFunction = FindFunction(updatedExpression, 0);
+    while (!!foundFunction) {
+        updatedExpression = foundFunction.pre + ExecuteFunction(foundFunction) + foundFunction.post;
+        foundFunction = FindFunction(updatedExpression, 0);
+    }
+    return updatedExpression;
 };
 
 (function (ICS) {
