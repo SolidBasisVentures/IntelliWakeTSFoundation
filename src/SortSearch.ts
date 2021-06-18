@@ -275,21 +275,22 @@ const SortColumnResult = (
 	valueB: any,
 	isAscending: boolean,
 	emptyToBottom: TSortColumnToBottom
-): number => {
-	if (!!emptyToBottom) {
-		if (!valueA && !!valueB) return 1
-		if (!!valueA && !valueB) return -1
-	}
-	
-	const numbA = CleanNumber(valueA)
-	const numbB = CleanNumber(valueB)
-	
-	if (isNaN(numbA ?? 0) || isNaN(numbB ?? 0)) {
-		return (valueA ?? '').localeCompare(valueB ?? '', undefined, {sensitivity: 'base'}) * (isAscending ? 1 : -1)
-	}
-	
-	return (numbA - numbB) * (isAscending ? 1 : -1)
-}
+): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? 'Bottom' : undefined)
+// {
+// 	if (!!emptyToBottom) {
+// 		if (!valueA && !!valueB) return 1
+// 		if (!!valueA && !valueB) return -1
+// 	}
+//
+// 	const numbA = CleanNumber(valueA)
+// 	const numbB = CleanNumber(valueB)
+//
+// 	if (isNaN(numbA ?? 0) || isNaN(numbB ?? 0)) {
+// 		return (valueA ?? '').localeCompare(valueB ?? '', undefined, {sensitivity: 'base'}) * (isAscending ? 1 : -1)
+// 	}
+//
+// 	return (numbA - numbB) * (isAscending ? 1 : -1)
+// }
 
 /**
  * Converts each word of a string to an array element for searching.

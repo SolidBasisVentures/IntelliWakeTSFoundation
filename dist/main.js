@@ -2494,20 +2494,22 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     }
     return ((beforeValue !== null && beforeValue !== void 0 ? beforeValue : '').toString()).localeCompare((afterValue !== null && afterValue !== void 0 ? afterValue : '').toString(), undefined, { sensitivity: 'base' });
 };
-var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) {
-    if (!!emptyToBottom) {
-        if (!valueA && !!valueB)
-            return 1;
-        if (!!valueA && !valueB)
-            return -1;
-    }
-    var numbA = CleanNumber(valueA);
-    var numbB = CleanNumber(valueB);
-    if (isNaN(numbA !== null && numbA !== void 0 ? numbA : 0) || isNaN(numbB !== null && numbB !== void 0 ? numbB : 0)) {
-        return (valueA !== null && valueA !== void 0 ? valueA : '').localeCompare(valueB !== null && valueB !== void 0 ? valueB : '', undefined, { sensitivity: 'base' }) * (isAscending ? 1 : -1);
-    }
-    return (numbA - numbB) * (isAscending ? 1 : -1);
-};
+var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? 'Bottom' : undefined); };
+// {
+// 	if (!!emptyToBottom) {
+// 		if (!valueA && !!valueB) return 1
+// 		if (!!valueA && !valueB) return -1
+// 	}
+//
+// 	const numbA = CleanNumber(valueA)
+// 	const numbB = CleanNumber(valueB)
+//
+// 	if (isNaN(numbA ?? 0) || isNaN(numbB ?? 0)) {
+// 		return (valueA ?? '').localeCompare(valueB ?? '', undefined, {sensitivity: 'base'}) * (isAscending ? 1 : -1)
+// 	}
+//
+// 	return (numbA - numbB) * (isAscending ? 1 : -1)
+// }
 /**
  * Converts each word of a string to an array element for searching.
  *
