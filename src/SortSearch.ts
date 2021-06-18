@@ -260,8 +260,8 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 		return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0)
 	}
 	
-	const beforeNumber = CleanNumber(beforeValue)
-	const afterNumber = CleanNumber(afterValue)
+	const beforeNumber = CleanNumber(beforeValue, undefined, true)
+	const afterNumber = CleanNumber(afterValue, undefined, true)
 	
 	if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
 		return beforeNumber - afterNumber
@@ -386,7 +386,7 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 	
 	return searchTerms.every((term: string) => {
 		return Object.keys(checkObject).some((column) => {
-			const columnValue = checkObject[column]
+			const columnValue = (checkObject as any)[column]
 			const typeofColumn = typeof columnValue
 			
 			if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {

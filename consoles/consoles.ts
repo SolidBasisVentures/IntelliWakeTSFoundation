@@ -1,6 +1,6 @@
 // const moment = require('moment-timezone')
 
-import {ObjectContainsSearchTerms} from '../src/SortSearch'
+import {ObjectContainsSearchTerms, SortCompare, SortCompareNull} from '../src/SortSearch'
 
 require('source-map-support').install()
 
@@ -13,11 +13,25 @@ require('source-map-support').install()
 //
 // console.log(HTMLToText('<p>john doe</p>'))
 
-const testObject = {name: 'The quick brown fox', amount: 1234.56, subObj: {item: 'One', desc: 'Two'}, subArr: ['Bird', 'Cat', 'Dog'], subArrObjs: [{counter: 1, description: 'First'}, {counter: 2, description: 'Second'}]}
+console.log([
+	{id: 1, name: 'AAA', prioritized: false},
+	{id: 2, name: 'ZZZ', prioritized: false},
+	{id: 3, name: 'CCC', prioritized: true},
+	{id: 4, name: 'BBB', prioritized: false}
+].sort((a, b) =>
+	SortCompareNull(b.prioritized, a.prioritized) ??
+	SortCompare(a.name, b.name)))
+
+const testObject = {
+	name: 'The quick brown fox',
+	amount: 1234.56,
+	subObj: {item: 'One', desc: 'Two'},
+	subArr: ['Bird', 'Cat', 'Dog'],
+	subArrObjs: [{counter: 1, description: 'First'}, {counter: 2, description: 'Second'}]
+}
 
 console.log(ObjectContainsSearchTerms(testObject, ['Quick', 'One', 'bird', 'first']))
 console.log(ObjectContainsSearchTerms(testObject, ['klak', 'Quick', 'One', 'bird', 'first']))
-
 
 
 // console.log(MomentID())

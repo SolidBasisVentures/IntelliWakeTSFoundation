@@ -36,14 +36,14 @@ export const ReplaceAll = function(find: string, replace: string, subject: strin
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-export const CleanNumber = (value: any, roundClean?: number): number => {
+export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean): number => {
 	if (!value) return 0
 	
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)
 	str = ReplaceAll(',', '', str)
 	str = ReplaceAll('%', '', str)
-	if (isNaN(str)) return NaN
+	if (isNaN(str)) return !!allowNaN ? NaN : 0
 	
 	if (roundClean !== undefined) {
 		return RoundTo(parseFloat(str), roundClean)
@@ -367,7 +367,7 @@ export const isAB = (buf: ArrayBuffer | string): boolean => buf instanceof (new 
  * ArrayBuffer to String
  * @param buf
  */
-export const ab2str = (buf: ArrayBuffer | string): string => isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf as ArrayBuffer)) : buf
+export const ab2str = (buf: ArrayBuffer | string): string => isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf as ArrayBuffer) as any) as any : buf as any
 
 /**
  * String to ArrayBuffer
