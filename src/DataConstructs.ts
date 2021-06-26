@@ -14,6 +14,36 @@ export type IChanges<T> = Partial<T>
 export const initialChanges = {}
 
 /**
+ * Applies a value to a name on a change object, and removes the value if it matches what was in the original
+ *
+ * @param value
+ * @param name
+ * @param setChanges
+ * @param original
+ * @constructor
+ */
+export const ChangeValueChanges = <T>(
+	value: any,
+	name?: keyof T,
+	setChanges?: (prevState: (prevState: IChanges<T>) => IChanges<T>) => void,
+	original?: T
+) => {
+	if (!!setChanges && !!name) {
+		setChanges(prevState => {
+			let nextState = {...prevState}
+			
+			if (!!original && original[name] === value) {
+				delete nextState[name]
+			} else {
+				nextState[name] = value
+			}
+			
+			return nextState
+		})
+	}
+}
+
+/**
  * Adds a change to the IChange object.
  *
  * @example
