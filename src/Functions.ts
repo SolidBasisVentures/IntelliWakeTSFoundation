@@ -43,7 +43,7 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	str = ReplaceAll('$', '', str)
 	str = ReplaceAll(',', '', str)
 	str = ReplaceAll('%', '', str)
-	if (isNaN(str)) return !!allowNaN ? NaN : 0
+	if (str.trim().length === 0 || isNaN(str)) return !!allowNaN ? NaN : 0
 	
 	if (roundClean !== undefined) {
 		return RoundTo(parseFloat(str), roundClean)

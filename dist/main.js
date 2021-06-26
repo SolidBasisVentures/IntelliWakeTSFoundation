@@ -278,7 +278,7 @@ var CleanNumber = function (value, roundClean, allowNaN) {
     str = ReplaceAll('$', '', str);
     str = ReplaceAll(',', '', str);
     str = ReplaceAll('%', '', str);
-    if (isNaN(str))
+    if (str.trim().length === 0 || isNaN(str))
         return !!allowNaN ? NaN : 0;
     if (roundClean !== undefined) {
         return RoundTo(parseFloat(str), roundClean);
@@ -1599,6 +1599,29 @@ var MomentWeekDays = function (startDate, endDate) {
 
 var initialChanges = {};
 /**
+ * Applies a value to a name on a change object, and removes the value if it matches what was in the original
+ *
+ * @param value
+ * @param name
+ * @param setChanges
+ * @param original
+ * @constructor
+ */
+var ChangeValueChanges = function (value, name, setChanges, original) {
+    if (!!setChanges && !!name) {
+        setChanges(function (prevState) {
+            var nextState = __assign({}, prevState);
+            if (!!original && original[name] === value) {
+                delete nextState[name];
+            }
+            else {
+                nextState[name] = value;
+            }
+            return nextState;
+        });
+    }
+};
+/**
  * Adds a change to the IChange object.
  *
  * @example
@@ -2763,6 +2786,7 @@ exports.AddressValid = AddressValid;
 exports.AnyDateValueIsObject = AnyDateValueIsObject;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
+exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
