@@ -52,6 +52,32 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 }
 
 /**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumberNull('$100')
+ *
+ * // return 1000
+ * CleanNumberNull('1,000')
+ *
+ * // return 50
+ * CleanNumberNull('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumberNull('100.12', 1)
+ */
+export const CleanNumberNull = (value: any, roundClean?: number): number | null => {
+	let parsed = CleanNumber(value, roundClean, true)
+	
+	if (isNaN(parsed)) return null
+	
+	return parsed
+}
+
+/**
  * A wrapper function for JSON.parse with try/catch.
  */
 export const JSONParse = <T = any>(json: any): T | null => {
