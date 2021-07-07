@@ -286,6 +286,30 @@ var CleanNumber = function (value, roundClean, allowNaN) {
     return parseFloat(str);
 };
 /**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumberNull('$100')
+ *
+ * // return 1000
+ * CleanNumberNull('1,000')
+ *
+ * // return 50
+ * CleanNumberNull('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumberNull('100.12', 1)
+ */
+var CleanNumberNull = function (value, roundClean) {
+    var parsed = CleanNumber(value, roundClean, true);
+    if (isNaN(parsed))
+        return null;
+    return parsed;
+};
+/**
  * A wrapper function for JSON.parse with try/catch.
  */
 var JSONParse = function (json) {
@@ -2788,6 +2812,7 @@ exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
+exports.CleanNumberNull = CleanNumberNull;
 exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;

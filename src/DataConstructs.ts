@@ -140,11 +140,12 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExport = function(filename: string, csvData: any) {
+export const DataToCSVExport = function(filename: string, csvData: any, blankZeros = true) {
 	const csvString = csvData
 		.map((row: any) =>
 			row
 				.map((item: any) =>
+					(blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
 					typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item ?? '').toString()
 				)
 				.join(',')

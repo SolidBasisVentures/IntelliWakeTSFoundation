@@ -61,7 +61,7 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
  * // return 1000
  * CleanNumberNull('1,000')
  *
- * // return 50
+ * // return 50DataToCSVExport
  * CleanNumberNull('50%')
  *
  * Add a rounding to round to a certain number of digits:
