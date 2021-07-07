@@ -295,7 +295,7 @@ var CleanNumber = function (value, roundClean, allowNaN) {
  * // return 1000
  * CleanNumberNull('1,000')
  *
- * // return 50
+ * // return 50DataToCSVExport
  * CleanNumberNull('50%')
  *
  * Add a rounding to round to a certain number of digits:
@@ -1710,12 +1710,14 @@ var ArrayWithIDChanges = function (items, idChanges) { return items.map(function
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-var DataToCSVExport = function (filename, csvData) {
+var DataToCSVExport = function (filename, csvData, blankZeros) {
+    if (blankZeros === void 0) { blankZeros = true; }
     var csvString = csvData
         .map(function (row) {
         return row
             .map(function (item) {
-            return typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
+            return (blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
+                typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
         })
             .join(',');
     })

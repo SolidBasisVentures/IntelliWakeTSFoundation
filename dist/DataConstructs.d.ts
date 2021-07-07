@@ -93,7 +93,7 @@ export declare const ArrayWithIDChanges: <T extends IIDObject>(items: T[], idCha
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export declare const DataToCSVExport: (filename: string, csvData: any) => void;
+export declare const DataToCSVExport: (filename: string, csvData: any, blankZeros?: boolean) => void;
 /**
  * Converts Data to CSV without quotes. Creates a download link and triggers
  * click event on it to download the file.
