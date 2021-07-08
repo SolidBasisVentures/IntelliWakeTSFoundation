@@ -1334,6 +1334,16 @@ var DisplayTZItem = function (tzItem) {
  * Current time in ISO string format
  */
 var NowISOString = function () { return new Date().toISOString(); };
+var IsDateString = function (value) {
+    if (!value || typeof value !== 'string')
+        return false;
+    // if (!DATE_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length) && !TIME_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length)) {
+    // 	return false
+    // }
+    if (!StringHasDateData(value))
+        return false;
+    return !!MomentFromString(value);
+};
 /**
  * Returns the Moment object from a given value. If the given value is invalid,
  * it returns null.
@@ -1792,12 +1802,16 @@ var RemoveDupProperties = function (original, propsToRemove) {
                 delete result[key];
             }
             else {
-                var pTRM = MomentFromString(propsToRemove[key]);
-                if (!!pTRM) {
-                    var rM = MomentFromString(result[key]);
-                    if (!!rM) {
-                        if (pTRM.isSame(rM)) {
-                            delete result[key];
+                if (IsDateString(propsToRemove[key])) {
+                    var pTRM = MomentFromString(propsToRemove[key]);
+                    if (!!pTRM) {
+                        if (IsDateString(result[key])) {
+                            var rM = MomentFromString(result[key]);
+                            if (!!rM) {
+                                if (pTRM.isSame(rM)) {
+                                    delete result[key];
+                                }
+                            }
                         }
                     }
                 }
@@ -2839,6 +2853,7 @@ exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HTMLToText = HTMLToText;
 exports.IANAZoneAbbr = IANAZoneAbbr;
+exports.IsDateString = IsDateString;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
