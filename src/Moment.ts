@@ -97,6 +97,19 @@ export const DisplayTZItem = (tzItem: ITZItem | undefined | null): string =>
  */
 export const NowISOString = (): string => new Date().toISOString()
 
+export const IsDateString = (value: any): boolean => {
+	if (!value || typeof value !== 'string') return false
+	
+	if (!DATE_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length) && !TIME_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length)) {
+		return false
+	}
+	
+	if (!StringHasDateData(value))
+		return false
+	
+	return !!MomentFromString(value)
+}
+
 /**
  * Returns the Moment object from a given value. If the given value is invalid,
  * it returns null.

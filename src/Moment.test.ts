@@ -1,4 +1,5 @@
 import {
+	IsDateString,
 	MomentCurrentTimeZone,
 	MomentDateString,
 	MomentDateTimeString,
@@ -156,4 +157,16 @@ test('MomentDisplayDayDateTime TZ EST', () => {
 
 test('MomentDisplayDayDateTime TZ UTC', () => {
 	expect(MomentDisplayDayDateTime('2021-01-01 02:15:29.078+00')).toBe('Dec 31, 2020, 9:15 pm')
+})
+
+test('IsDateString', () => {
+	expect(IsDateString('2021-01-01')).toEqual(true)
+})
+
+test('IsDateString', () => {
+	expect(IsDateString('2021-01-0')).toEqual(false)
+})
+
+test('IsDateString', () => {
+	expect(IsDateString('Denn-Ja-Pe')).toEqual(false)
 })

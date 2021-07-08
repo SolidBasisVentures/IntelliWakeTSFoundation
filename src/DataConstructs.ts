@@ -1,5 +1,5 @@
 import {ReplaceAll} from './Functions'
-import {MomentFromString} from './Moment'
+import {IsDateString, MomentFromString} from './Moment'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -146,7 +146,7 @@ export const DataToCSVExport = function(filename: string, csvData: any, blankZer
 			row
 				.map((item: any) =>
 					(blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
-					typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item ?? '').toString()
+						typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item ?? '').toString()
 				)
 				.join(',')
 		)
@@ -223,12 +223,16 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			} else if (propsToRemove[key] === result[key]) {
 				delete result[key]
 			} else {
-				let pTRM = MomentFromString(propsToRemove[key] as any)
-				if (!!pTRM) {
-					let rM = MomentFromString(result[key] as any)
-					if (!!rM) {
-						if (pTRM.isSame(rM)) {
-							delete result[key]
+				if (IsDateString(propsToRemove[key])) {
+					let pTRM = MomentFromString(propsToRemove[key] as any)
+					if (!!pTRM) {
+						if (IsDateString(result[key])) {
+							let rM = MomentFromString(result[key] as any)
+							if (!!rM) {
+								if (pTRM.isSame(rM)) {
+									delete result[key]
+								}
+							}
 						}
 					}
 				}

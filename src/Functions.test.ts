@@ -83,7 +83,7 @@ test('ReplaceAll', () => {
 })
 
 test('CleanNumber NaN', () => {
-	expect(CleanNumber('$')).toBe(NaN)
+	expect(CleanNumber('$', undefined, true)).toBe(NaN)
 })
 
 test('CleanNumber $', () => {
