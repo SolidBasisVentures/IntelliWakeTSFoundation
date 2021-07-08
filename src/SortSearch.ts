@@ -1,4 +1,4 @@
-import { CleanNumber } from "./Functions"
+import {CleanNumber} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -224,7 +224,7 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
 }
 
 /**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
  * @example
  * [
@@ -243,16 +243,27 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
 	]
  */
 export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number | null => {
-	if (beforeValue === afterValue) return null
+	const verboseConsole = false //!!emptyTo
+	
+	if (beforeValue === afterValue) {
+		if (verboseConsole) console.log('Sames', beforeValue, afterValue)
+		return null
+	}
 	
 	const isEmpty = (val: any) => val === null || val === undefined || val === ''
 	
 	if (!!emptyTo) {
 		if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
-			return emptyTo === 'Top' ? 1 : -1
+			if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
+			
+			if (typeof afterValue === 'boolean') return emptyTo === 'Top' ? 1 : -1
+			return emptyTo === 'Top' ? -1 : 1
 		}
 		if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
-			return emptyTo === 'Top' ? -1 : 1
+			if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
+			
+			if (typeof beforeValue === 'boolean') return emptyTo === 'Top' ? -1 : 1
+			return emptyTo === 'Top' ? 1 : -1
 		}
 	}
 	
@@ -264,8 +275,12 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 	const afterNumber = CleanNumber(afterValue, undefined, true)
 	
 	if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
+		if (verboseConsole) console.log('Numbers', beforeValue, beforeNumber, afterValue, afterNumber)
+		
 		return beforeNumber - afterNumber
 	}
+	
+	if (verboseConsole) console.log('Strings', beforeValue, afterValue, ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'}))
 	
 	return ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
 }

@@ -2516,7 +2516,7 @@ var SortCompare = function (beforeValue, afterValue, emptyTo) {
     return (_a = SortCompareNull(beforeValue, afterValue, emptyTo)) !== null && _a !== void 0 ? _a : 0;
 };
 /**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
  * @example
  * [
@@ -2536,15 +2536,20 @@ var SortCompare = function (beforeValue, afterValue, emptyTo) {
  */
 var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     if (emptyTo === void 0) { emptyTo = null; }
-    if (beforeValue === afterValue)
+    if (beforeValue === afterValue) {
         return null;
+    }
     var isEmpty = function (val) { return val === null || val === undefined || val === ''; };
     if (!!emptyTo) {
         if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
-            return emptyTo === 'Top' ? 1 : -1;
+            if (typeof afterValue === 'boolean')
+                return emptyTo === 'Top' ? 1 : -1;
+            return emptyTo === 'Top' ? -1 : 1;
         }
         if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
-            return emptyTo === 'Top' ? -1 : 1;
+            if (typeof beforeValue === 'boolean')
+                return emptyTo === 'Top' ? -1 : 1;
+            return emptyTo === 'Top' ? 1 : -1;
         }
     }
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {

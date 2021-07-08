@@ -33,6 +33,13 @@ const testObject = {
 console.log(ObjectContainsSearchTerms(testObject, ['Quick', 'One', 'bird', 'first']))
 console.log(ObjectContainsSearchTerms(testObject, ['klak', 'Quick', 'One', 'bird', 'first']))
 
+console.log([
+	{id: 1, name: 'AAA'},
+	{id: null, name: 'ZZZ'},
+	{id: null, name: 'CCC'},
+	{id: 4, name: 'BBB'}
+].sort((a, b) => SortCompareNull(a.id, b.id, 'Top') ?? SortCompare(a.name, b.name)))
+
 
 // console.log(MomentID())
 //
