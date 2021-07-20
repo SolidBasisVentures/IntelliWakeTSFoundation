@@ -108,12 +108,29 @@ export declare const MomentDisplayTime: (value: TAnyDateValue) => string | null;
  */
 export declare const MomentDurationShortText: (start: TAnyDateValue, end?: TAnyDateValue) => string;
 /**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ */
+export declare const MomentDurationLongText: (start: TAnyDateValue, end?: TAnyDateValue, trimSeconds?: boolean) => string;
+/**
  * Displays a simplified duration format from seconds.
  *
  * @example
  * MomentDurationShortText((30 * 60) + 20) // result: 30m 20s
  */
 export declare const DurationShortText: (seconds: number) => string;
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+export declare const DurationLongText: (seconds: number, trimSeconds?: boolean) => string;
 /**
  * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
  *
