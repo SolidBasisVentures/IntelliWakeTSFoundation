@@ -1588,10 +1588,10 @@ var DurationLongText = function (seconds, trimSeconds) {
         }
     }
     else {
-        if (duration.minutes()) {
+        if (duration.minutes() || (!text && trimSeconds)) {
             text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
         }
-        if (!trimSeconds && duration.seconds()) {
+        if (!text || (!trimSeconds && duration.seconds())) {
             text += " " + ToDigits(duration.seconds(), 0) + " " + AddS('Second', duration.seconds());
         }
     }
