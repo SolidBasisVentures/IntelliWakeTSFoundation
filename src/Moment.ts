@@ -353,7 +353,9 @@ export const DurationLongText = (seconds: number, trimSeconds = false): string =
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)} ${AddS('Year', duration.years())}`
 		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
-		text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
+		if (duration.days()) {
+			text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
+		}
 	} else if (duration.months()) {
 		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
 		
@@ -362,7 +364,9 @@ export const DurationLongText = (seconds: number, trimSeconds = false): string =
 		}
 	} else if (duration.days()) {
 		text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
-		text += ` ${ToDigits(duration.hours(), 0)} ${AddS('Hour', duration.hours())}`
+		if (duration.hours()) {
+			text += ` ${ToDigits(duration.hours(), 0)} ${AddS('Hour', duration.hours())}`
+		}
 		if (duration.minutes()) {
 			text += ` ${ToDigits(duration.minutes(), 0)} ${AddS('Minute', duration.minutes())}`
 		}
@@ -466,7 +470,7 @@ export const MomentWeekDays = (startDate: TAnyDateValue, endDate?: TAnyDateValue
 	while (start.isoWeekday() >= 5) {
 		start.add(1, 'day')
 	}
-
+	
 	while (end.isoWeekday() > 5) {
 		end.subtract(1, 'day')
 	}

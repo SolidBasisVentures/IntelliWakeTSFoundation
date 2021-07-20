@@ -151,6 +151,10 @@ test('MomentDurationLongText 30m 20s', () => {
 	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-01-01 13:30:20')).toBe('30 Minutes 20 Seconds')
 })
 
+test('MomentDurationLongText 2d', () => {
+	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-01-03 13:00:00')).toBe('2 Days')
+})
+
 test('MomentDurationLongText 20s', () => {
 	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-01-01 13:00:20')).toBe('20 Seconds')
 })
