@@ -1497,6 +1497,20 @@ var MomentDisplayTime = function (value) {
  */
 var MomentDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()) / 1000); };
 /**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ */
+var MomentDurationLongText = function (start, end, trimSeconds) {
+    var _a, _b;
+    if (trimSeconds === void 0) { trimSeconds = false; }
+    return DurationLongText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()) / 1000, trimSeconds);
+};
+/**
  * Displays a simplified duration format from seconds.
  *
  * @example
@@ -1535,6 +1549,50 @@ var DurationShortText = function (seconds) {
         }
         if (duration.seconds()) {
             text += " " + ToDigits(duration.seconds(), 0) + "s";
+        }
+    }
+    return text.trim();
+};
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+var DurationLongText = function (seconds, trimSeconds) {
+    if (trimSeconds === void 0) { trimSeconds = false; }
+    var duration = moment$1.duration(seconds * 1000);
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + " " + AddS('Year', duration.years());
+        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
+        text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
+        if (duration.days()) {
+            text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+        }
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+        text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+    }
+    else {
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+        if (!trimSeconds && duration.seconds()) {
+            text += " " + ToDigits(duration.seconds(), 0) + " " + AddS('Second', duration.seconds());
         }
     }
     return text.trim();
@@ -2843,6 +2901,7 @@ exports.DeepEqual = DeepEqual;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DisplayTZItem = DisplayTZItem;
+exports.DurationLongText = DurationLongText;
 exports.DurationShortText = DurationShortText;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
@@ -2892,6 +2951,7 @@ exports.MomentDisplayDayDateDoW = MomentDisplayDayDateDoW;
 exports.MomentDisplayDayDateTime = MomentDisplayDayDateTime;
 exports.MomentDisplayDayDateTimeDoW = MomentDisplayDayDateTimeDoW;
 exports.MomentDisplayTime = MomentDisplayTime;
+exports.MomentDurationLongText = MomentDurationLongText;
 exports.MomentDurationShortText = MomentDurationShortText;
 exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
 exports.MomentFormatString = MomentFormatString;
