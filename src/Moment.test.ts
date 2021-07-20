@@ -7,7 +7,7 @@ import {
 	MomentDisplayDayDateDoW,
 	MomentDisplayDayDateTime,
 	MomentDisplayDayDateTimeDoW,
-	MomentDisplayTime,
+	MomentDisplayTime, MomentDurationLongText,
 	MomentDurationShortText,
 	MomentDurationShortTextAligned,
 	MomentFormatString,
@@ -145,6 +145,18 @@ test('MomentDurationShortText 30m 20s', () => {
 
 test('MomentDurationShortText 2M 10D', () => {
 	expect(MomentDurationShortText('2020-01-01 13:00:00', '2020-03-12 13:30:20')).toBe('2M 10D')
+})
+
+test('MomentDurationLongText 30m 20s', () => {
+	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-01-01 13:30:20')).toBe('30 Minutes 20 Seconds')
+})
+
+test('MomentDurationLongText 30m 20s trimSeconds', () => {
+	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-01-01 13:30:20', true)).toBe('30 Minutes')
+})
+
+test('MomentDurationLongText 2M 10D', () => {
+	expect(MomentDurationLongText('2020-01-01 13:00:00', '2020-03-12 13:30:20')).toBe('2 Months 10 Days')
 })
 
 test('MomentDurationShortTextAligned 2D  1h 30m 20s', () => {

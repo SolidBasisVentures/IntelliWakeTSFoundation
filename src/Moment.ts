@@ -1,3 +1,5 @@
+import {AddS} from './Functions'
+
 const moment = require('moment-timezone')
 
 import {utc, ISO_8601, Moment} from 'moment-timezone'
@@ -282,6 +284,18 @@ export const MomentDurationShortText = (start: TAnyDateValue, end?: TAnyDateValu
 	DurationShortText((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()) / 1000)
 
 /**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ */
+export const MomentDurationLongText = (start: TAnyDateValue, end?: TAnyDateValue, trimSeconds = false): string =>
+	DurationLongText((MomentFromString(end) ?? moment()).diff(MomentFromString(start) ?? moment()) / 1000, trimSeconds)
+
+/**
  * Displays a simplified duration format from seconds.
  *
  * @example
@@ -319,6 +333,50 @@ export const DurationShortText = (seconds: number): string => {
 		}
 		if (duration.seconds()) {
 			text += ` ${ToDigits(duration.seconds(), 0)}s`
+		}
+	}
+	
+	return text.trim()
+}
+
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+export const DurationLongText = (seconds: number, trimSeconds = false): string => {
+	const duration = moment.duration(seconds * 1000)
+	
+	let text = ''
+	
+	if (duration.years()) {
+		text += ` ${ToDigits(duration.years(), 0)} ${AddS('Year', duration.years())}`
+		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
+		text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
+	} else if (duration.months()) {
+		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
+		
+		if (duration.days()) {
+			text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
+		}
+	} else if (duration.days()) {
+		text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
+		text += ` ${ToDigits(duration.hours(), 0)} ${AddS('Hour', duration.hours())}`
+		if (duration.minutes()) {
+			text += ` ${ToDigits(duration.minutes(), 0)} ${AddS('Minute', duration.minutes())}`
+		}
+	} else if (duration.hours()) {
+		text += ` ${ToDigits(duration.hours(), 0)} ${AddS('Hour', duration.hours())}`
+		if (duration.minutes()) {
+			text += ` ${ToDigits(duration.minutes(), 0)} ${AddS('Minute', duration.minutes())}`
+		}
+	} else {
+		if (duration.minutes()) {
+			text += ` ${ToDigits(duration.minutes(), 0)} ${AddS('Minute', duration.minutes())}`
+		}
+		if (!trimSeconds && duration.seconds()) {
+			text += ` ${ToDigits(duration.seconds(), 0)} ${AddS('Second', duration.seconds())}`
 		}
 	}
 	
