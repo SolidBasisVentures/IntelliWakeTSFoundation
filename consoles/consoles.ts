@@ -1,6 +1,7 @@
 // const moment = require('moment-timezone')
 
 import {ObjectContainsSearchTerms, SortCompare, SortCompareNull} from '../src/SortSearch'
+import {RemoveDupPropertiesByIDArray} from '../src/DataConstructs'
 
 require('source-map-support').install()
 
@@ -103,3 +104,13 @@ console.log([
 // })
 //
 // console.log(RandomString(12))
+
+console.log(RemoveDupPropertiesByIDArray({
+	1: {
+		name: 'john doe',
+		age: 24
+	}
+}, [
+	{id: 1, user: 'john smith', age: 24},
+	{id: 2, user: 'sally jones', age: 32}
+]))

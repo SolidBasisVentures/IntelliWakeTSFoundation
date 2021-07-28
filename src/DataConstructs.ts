@@ -308,7 +308,7 @@ export const RemoveDupPropertiesByIDArray = <T>(original: IIDChanges<T>, propsTo
 	
 	for (const key in original) {
 		if (original.hasOwnProperty(key)) {
-			const propsToRemove = propsToRemoveArray.find((propsToRemove) => propsToRemove.id === key)
+			const propsToRemove = propsToRemoveArray.find((propsToRemove) => propsToRemove.id == key)
 			
 			if (!!propsToRemove) {
 				const subResult = RemoveDupProperties(result[key], propsToRemove)
