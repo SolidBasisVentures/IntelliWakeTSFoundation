@@ -1943,7 +1943,7 @@ var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
     var result = __assign({}, original);
     var _loop_1 = function (key) {
         if (original.hasOwnProperty(key)) {
-            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id === key; });
+            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id == key; });
             if (!!propsToRemove) {
                 var subResult = RemoveDupProperties(result[key], propsToRemove);
                 if (Object.keys(subResult).length === 0) {
@@ -2554,29 +2554,7 @@ var SortColumns = function (arrayTable, sortColumn) {
                 : SortColumnResult((_d = a[sortColumn.secondarySort]) !== null && _d !== void 0 ? _d : null, (_e = b[sortColumn.secondarySort]) !== null && _e !== void 0 ? _e : null, sortColumn.secondaryAscending, sortColumn.secondaryEmptyToBottom));
     });
 };
-/**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
- *
- * @example
- * [
-        {id: 1, name: 'AAA', prioritized: false},
-        {id: 2, name: 'ZZZ', prioritized: false},
-        {id: 3, name: 'CCC', prioritized: true},
-        {id: 4, name: 'BBB', prioritized: false}
-    ]
- .sort((a, b) =>
-        SortCompare(a.name, b.name)) = [
-        { id: 1, name: 'AAA', prioritized: false },
-        { id: 4, name: 'BBB', prioritized: false },
-        { id: 3, name: 'CCC', prioritized: true },
-        { id: 2, name: 'ZZZ', prioritized: false }
-    ]
- */
-var SortCompare = function (beforeValue, afterValue, emptyTo) {
-    var _a;
-    if (emptyTo === void 0) { emptyTo = null; }
-    return (_a = SortCompareNull(beforeValue, afterValue, emptyTo)) !== null && _a !== void 0 ? _a : 0;
-};
+var isEmpty = function (val) { return val === null || val === undefined || val === ''; };
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
@@ -2601,7 +2579,6 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     if (beforeValue === afterValue) {
         return null;
     }
-    var isEmpty = function (val) { return val === null || val === undefined || val === ''; };
     if (!!emptyTo) {
         if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
             if (typeof afterValue === 'boolean')
@@ -2623,6 +2600,83 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
         return beforeNumber - afterNumber;
     }
     return ((beforeValue !== null && beforeValue !== void 0 ? beforeValue : '').toString()).localeCompare((afterValue !== null && afterValue !== void 0 ? afterValue : '').toString(), undefined, { sensitivity: 'base' });
+};
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+        {id: 1, name: 'AAA', prioritized: false},
+        {id: 2, name: 'ZZZ', prioritized: false},
+        {id: 3, name: 'CCC', prioritized: true},
+        {id: 4, name: 'BBB', prioritized: false}
+    ]
+ .sort((a, b) =>
+        SortCompare(a.name, b.name)) = [
+        { id: 1, name: 'AAA', prioritized: false },
+        { id: 4, name: 'BBB', prioritized: false },
+        { id: 3, name: 'CCC', prioritized: true },
+        { id: 2, name: 'ZZZ', prioritized: false }
+    ]
+ */
+var SortCompare = function (beforeValue, afterValue, emptyTo) {
+    var _a;
+    if (emptyTo === void 0) { emptyTo = null; }
+    return (_a = SortCompareNull(beforeValue, afterValue, emptyTo)) !== null && _a !== void 0 ? _a : 0;
+};
+/**
+ * Returns the sort value comparing the before and after as it relates to the order of the array.
+ *
+ * @example
+ * [
+        {id: 1, name: 'One'},
+        {id: 2, name: 'Two'},
+        {id: 3, name: 'Three'},
+        {id: 4, name: 'Four'},
+        {id: 5, name: 'Five'}
+    ]
+ .sort((a, b) =>
+        SortPerArray(a.id, b.id, [4, 5, 3, 2, 1])) = [
+        {id: 4, name: 'Four'},
+        {id: 5, name: 'Five'},
+        {id: 3, name: 'Three'},
+        {id: 2, name: 'Two'},
+        {id: 1, name: 'One'}
+]
+ */
+var SortPerArray = function (beforeValue, afterValue, order, emptyTo) {
+    if (emptyTo === void 0) { emptyTo = 'Top'; }
+    if (order.indexOf(beforeValue) < 0) {
+        if (order.indexOf(afterValue) < 0) {
+            return SortCompare(beforeValue, afterValue);
+        }
+        else {
+            return emptyTo === 'Top' ? -1 : 1;
+        }
+    }
+    else {
+        if (order.indexOf(afterValue) < 0) {
+            return emptyTo === 'Top' ? 1 : -1;
+        }
+    }
+    if (isEmpty(beforeValue)) {
+        if (isEmpty(afterValue)) {
+            return 0;
+        }
+        else {
+            return emptyTo === 'Top' ? -1 : 1;
+        }
+    }
+    else {
+        if (isEmpty(afterValue)) {
+            return emptyTo === 'Top' ? 1 : -1;
+        }
+        else {
+            if (beforeValue === afterValue)
+                return 0;
+            return order.indexOf(beforeValue) - order.indexOf(afterValue);
+        }
+    }
 };
 var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? 'Bottom' : undefined); };
 // {
@@ -2990,6 +3044,7 @@ exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.SortCompare = SortCompare;
 exports.SortCompareNull = SortCompareNull;
+exports.SortPerArray = SortPerArray;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;

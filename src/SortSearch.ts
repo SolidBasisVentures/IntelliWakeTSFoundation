@@ -201,27 +201,7 @@ export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] =>
 	)
 }
 
-/**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
- *
- * @example
- * [
-		{id: 1, name: 'AAA', prioritized: false},
-		{id: 2, name: 'ZZZ', prioritized: false},
-		{id: 3, name: 'CCC', prioritized: true},
-		{id: 4, name: 'BBB', prioritized: false}
-	]
- .sort((a, b) =>
- 		SortCompare(a.name, b.name)) = [
-		{ id: 1, name: 'AAA', prioritized: false },
-		{ id: 4, name: 'BBB', prioritized: false },
-		{ id: 3, name: 'CCC', prioritized: true },
-		{ id: 2, name: 'ZZZ', prioritized: false }
-	]
- */
-export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number => {
-	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
-}
+const isEmpty = (val: any) => val === null || val === undefined || val === ''
 
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
@@ -249,8 +229,6 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 		if (verboseConsole) console.log('Sames', beforeValue, afterValue)
 		return null
 	}
-	
-	const isEmpty = (val: any) => val === null || val === undefined || val === ''
 	
 	if (!!emptyTo) {
 		if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
@@ -283,6 +261,78 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 	if (verboseConsole) console.log('Strings', beforeValue, afterValue, ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'}))
 	
 	return ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false}
+	]
+ .sort((a, b) =>
+ 		SortCompare(a.name, b.name)) = [
+		{ id: 1, name: 'AAA', prioritized: false },
+		{ id: 4, name: 'BBB', prioritized: false },
+		{ id: 3, name: 'CCC', prioritized: true },
+		{ id: 2, name: 'ZZZ', prioritized: false }
+	]
+ */
+export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number => {
+	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
+}
+
+/**
+ * Returns the sort value comparing the before and after as it relates to the order of the array.
+ *
+ * @example
+ * [
+		{id: 1, name: 'One'},
+		{id: 2, name: 'Two'},
+		{id: 3, name: 'Three'},
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'}
+	]
+ .sort((a, b) =>
+ 		SortPerArray(a.id, b.id, [4, 5, 3, 2, 1])) = [
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'},
+		{id: 3, name: 'Three'},
+		{id: 2, name: 'Two'},
+ 		{id: 1, name: 'One'}
+]
+ */
+export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number => {
+	if (order.indexOf(beforeValue) < 0) {
+		if (order.indexOf(afterValue) < 0) {
+			return SortCompare(beforeValue, afterValue)
+		} else {
+			return emptyTo === 'Top' ? -1 : 1
+		}
+	} else {
+		if (order.indexOf(afterValue) < 0) {
+			return emptyTo === 'Top' ? 1 : -1
+		}
+	}
+	
+	if (isEmpty(beforeValue)) {
+		if (isEmpty(afterValue)) {
+			return 0
+		} else {
+			return emptyTo === 'Top' ? -1 : 1
+		}
+	} else {
+		if (isEmpty(afterValue)) {
+			return emptyTo === 'Top' ? 1 : -1
+		} else {
+			if (beforeValue === afterValue) return 0
+			
+			return order.indexOf(beforeValue) - order.indexOf(afterValue)
+		}
+	}
 }
 
 const SortColumnResult = (

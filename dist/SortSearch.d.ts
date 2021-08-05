@@ -104,25 +104,6 @@ export declare const SortColumnUpdate: (columnToSort: string, sortColumn: ISortC
  */
 export declare const SortColumns: <T>(arrayTable: T[], sortColumn: ISortColumn) => T[];
 /**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
- *
- * @example
- * [
-        {id: 1, name: 'AAA', prioritized: false},
-        {id: 2, name: 'ZZZ', prioritized: false},
-        {id: 3, name: 'CCC', prioritized: true},
-        {id: 4, name: 'BBB', prioritized: false}
-    ]
- .sort((a, b) =>
-        SortCompare(a.name, b.name)) = [
-        { id: 1, name: 'AAA', prioritized: false },
-        { id: 4, name: 'BBB', prioritized: false },
-        { id: 3, name: 'CCC', prioritized: true },
-        { id: 2, name: 'ZZZ', prioritized: false }
-    ]
- */
-export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number;
-/**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
  * @example
@@ -142,6 +123,46 @@ export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: 
     ]
  */
 export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number | null;
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ *
+ * @example
+ * [
+        {id: 1, name: 'AAA', prioritized: false},
+        {id: 2, name: 'ZZZ', prioritized: false},
+        {id: 3, name: 'CCC', prioritized: true},
+        {id: 4, name: 'BBB', prioritized: false}
+    ]
+ .sort((a, b) =>
+        SortCompare(a.name, b.name)) = [
+        { id: 1, name: 'AAA', prioritized: false },
+        { id: 4, name: 'BBB', prioritized: false },
+        { id: 3, name: 'CCC', prioritized: true },
+        { id: 2, name: 'ZZZ', prioritized: false }
+    ]
+ */
+export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number;
+/**
+ * Returns the sort value comparing the before and after as it relates to the order of the array.
+ *
+ * @example
+ * [
+        {id: 1, name: 'One'},
+        {id: 2, name: 'Two'},
+        {id: 3, name: 'Three'},
+        {id: 4, name: 'Four'},
+        {id: 5, name: 'Five'}
+    ]
+ .sort((a, b) =>
+        SortPerArray(a.id, b.id, [4, 5, 3, 2, 1])) = [
+        {id: 4, name: 'Four'},
+        {id: 5, name: 'Five'},
+        {id: 3, name: 'Three'},
+        {id: 2, name: 'Two'},
+        {id: 1, name: 'One'}
+]
+ */
+export declare const SortPerArray: <T>(beforeValue: T, afterValue: T, order: T[], emptyTo?: 'Top' | 'Bottom') => number;
 /**
  * Converts each word of a string to an array element for searching.
  *

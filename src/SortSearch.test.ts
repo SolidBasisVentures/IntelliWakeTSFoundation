@@ -1,4 +1,4 @@
-import {SortCompare, SortCompareNull} from './SortSearch'
+import {SortCompare, SortCompareNull, SortPerArray} from './SortSearch'
 
 test('SortCompare', () => {
 	expect([
@@ -67,5 +67,27 @@ test('SortCompare Empty ID Top', () => {
 		{ id: null, name: 'ZZZ'},
 		{ id: 1, name: 'AAA'},
 		{ id: 4, name: 'BBB'}
+	]);
+})
+
+test('Sort Array', () => {
+	expect([
+		{id: 1, name: 'One'},
+		{id: 2, name: 'Two'},
+		{id: 3, name: 'Three'},
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'},
+		{id: null, name: 'Empty'},
+		{id: 7, name: 'Seven'},
+		{id: 6, name: 'Six'}
+	].sort((a, b) => SortPerArray(a.id, b.id, [4, 5, 3, 2, 1], 'Bottom'))).toEqual([
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'},
+		{id: 3, name: 'Three'},
+		{id: 2, name: 'Two'},
+		{id: 1, name: 'One'},
+		{id: null, name: 'Empty'},
+		{id: 6, name: 'Six'},
+		{id: 7, name: 'Seven'}
 	]);
 })
