@@ -1,42 +1,21 @@
-import {AddS, CleanNumber, DeepEqual, IsOn, JSONParse, OmitProperty, ReplaceAll, RoundTo} from './Functions'
+import {AddS, CleanNumber, DeepEqual, IsOn, JSONParse, OmitProperty, ReplaceAll, RoundTo, ToArray} from './Functions'
 
-test('IsOn 1', () => {
+test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
-})
-
-test('IsOn null', () => {
 	expect(IsOn(null)).toBe(false)
-})
-
-test('IsOn active', () => {
 	expect(IsOn('active')).toBe(true)
 })
 
-test('RoundTo 10.15, 1', () => {
+test('RoundTo', () => {
 	expect(RoundTo(10.15, 1)).toBe(10.2)
-})
-
-test('RoundTo 10.14, 1', () => {
 	expect(RoundTo(10.14, 1)).toBe(10.1)
-})
-
-test('RoundTo 10.15, 0', () => {
 	expect(RoundTo(10.15, 0)).toBe(10)
-})
-
-test('RoundTo 10.5, 0', () => {
 	expect(RoundTo(10.5, 0)).toBe(11)
 })
 
-test('AddS 0 True', () => {
+test('AddS', () => {
 	expect(AddS('Row', 0)).toBe('Rows')
-})
-
-test('AddS 1 False', () => {
 	expect(AddS('Row', 1)).toBe('Row')
-})
-
-test('AddS 2 True', () => {
 	expect(AddS('Row', 2)).toBe('Rows')
 })
 
@@ -60,51 +39,20 @@ const item = {
 
 test('Deep Equal', () => {
 	expect(DeepEqual(item, {...item})).toBe(true)
-})
-
-test('Deep Equal - Fail Property', () => {
 	expect(DeepEqual(item, {...item, val1: false})).toBe(false)
-})
-
-test('Deep Equal - Fail Object', () => {
 	expect(DeepEqual(item, {...item, val4: {...item.val4, valA: 2}})).toBe(false)
-})
-
-test('Deep Equal - Fail Array', () => {
 	expect(DeepEqual(item, {...item, val5: ['Two', 'One']})).toBe(false)
-})
-
-test('Deep Equal - Fail Array Size', () => {
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
-})
-
-test('ReplaceAll', () => {
 	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
 })
 
-test('CleanNumber NaN', () => {
+test('CleanNumber', () => {
 	expect(CleanNumber('$', undefined, true)).toBe(NaN)
-})
-
-test('CleanNumber $', () => {
 	expect(CleanNumber('$100')).toBe(100)
-})
-
-test('CleanNumber ,', () => {
 	expect(CleanNumber('1,000')).toBe(1000)
-})
-
-test('CleanNumber %', () => {
 	expect(CleanNumber('50%')).toBe(50)
-})
-
-test('CleanNumber(1.234)', () => {
 	expect(CleanNumber(1.234)).toBe(1.234)
-})
-test('CleanNumber(1.234, 0)', () => {
 	expect(CleanNumber(1.234, 0)).toBe(1)
-})
-test('CleanNumber(1.234, 1)', () => {
 	expect(CleanNumber(1.234, 1)).toBe(1.2)
 })
 
@@ -125,16 +73,17 @@ test('Omits', () => {
 	}, 'id',  'is_active')).toEqual({name: 'My Name'})
 })
 
-test('JSONParse valid', () => {
+test('JSONParse', () => {
 	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
-})
-
-test('JSONParse empty', () => {
 	expect(JSONParse(undefined)).toEqual(null)
+	expect(JSONParse('Test')).toEqual(null)
 })
 
-test('JSONParse string', () => {
-	expect(JSONParse('Test')).toEqual(null)
+test('ToArray', () => {
+	expect(ToArray(null)).toEqual([])
+	expect(ToArray(1)).toEqual([1])
+	expect(ToArray([1])).toEqual([1])
+	expect(ToArray([1, 2, 3])).toEqual([1, 2, 3])
 })
 
 

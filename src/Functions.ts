@@ -479,6 +479,18 @@ export const filterAsync = async <T>(
 	return returnArray
 }
 
+/**
+ * Converts a single value or array of values to an array of values
+ *
+ * @example
+ * ToArray([1, 2, 3]) = [1, 2, 3]
+ * ToArray(1) = [1]
+ *
+ * @param value
+ * @constructor
+ */
+export const ToArray = <T>(value: T | T[]): T[] => !value ? [] : Array.isArray(value) ? value : [value]
+
 export const DeepEqual = (object1: any, object2: any): boolean => {
 	if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2) return false
 	
