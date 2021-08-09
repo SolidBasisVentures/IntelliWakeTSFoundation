@@ -236,5 +236,16 @@ export declare const everyAsync: <T>(array: T[], predicate: (t: T) => Promise<bo
  * @param predicate
  */
 export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<boolean>) => Promise<T[]>;
+/**
+ * Converts a single value or array of values to an array of values
+ *
+ * @example
+ * ToArray([1, 2, 3]) = [1, 2, 3]
+ * ToArray(1) = [1]
+ *
+ * @param value
+ * @constructor
+ */
+export declare const ToArray: <T>(value: T | T[]) => T[];
 export declare const DeepEqual: (object1: any, object2: any) => boolean;
 export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;

@@ -576,7 +576,7 @@ var RoundTo = function (num, decimalPlaces) {
     return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
 };
 var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
-var JSONStringToObject = function (val) { return JSONParse(val.toString().substr(5)); };
+var JSONStringToObject = function (val) { return (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))); };
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
  * @param text
@@ -722,6 +722,17 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
         }
     });
 }); };
+/**
+ * Converts a single value or array of values to an array of values
+ *
+ * @example
+ * ToArray([1, 2, 3]) = [1, 2, 3]
+ * ToArray(1) = [1]
+ *
+ * @param value
+ * @constructor
+ */
+var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
 var DeepEqual = function (object1, object2) {
     var _a, _b;
     if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
@@ -3051,6 +3062,7 @@ exports.StringToByteArray = StringToByteArray;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
 exports.TimeZoneOlsons = TimeZoneOlsons;
+exports.ToArray = ToArray;
 exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;
 exports.ToCurrencyBlank = ToCurrencyBlank;

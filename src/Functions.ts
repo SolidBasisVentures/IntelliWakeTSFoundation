@@ -371,7 +371,7 @@ export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
-export const JSONStringToObject = <T = any>(val: string): T => JSONParse(val.toString().substr(5)) as T
+export const JSONStringToObject = <T = any>(val: string): T => (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))) as T
 
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1

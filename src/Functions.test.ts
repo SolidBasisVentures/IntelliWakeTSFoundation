@@ -1,4 +1,15 @@
-import {AddS, CleanNumber, DeepEqual, IsOn, JSONParse, OmitProperty, ReplaceAll, RoundTo, ToArray} from './Functions'
+import {
+	AddS,
+	CleanNumber,
+	DeepEqual,
+	IsOn,
+	JSONParse, JSONStringToObject,
+	ObjectToJSONString,
+	OmitProperty,
+	ReplaceAll,
+	RoundTo,
+	ToArray
+} from './Functions'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
@@ -77,6 +88,15 @@ test('JSONParse', () => {
 	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
 	expect(JSONParse(undefined)).toEqual(null)
 	expect(JSONParse('Test')).toEqual(null)
+})
+
+test('JSONString', () => {
+	expect(ObjectToJSONString({"id": 1})).toEqual('json:{"id":1}')
+	expect(ObjectToJSONString(null)).toEqual('json:null')
+	expect(ObjectToJSONString(undefined)).toEqual('json:undefined')
+	expect(JSONStringToObject(ObjectToJSONString({"id": 1}))).toEqual({"id": 1})
+	expect(JSONStringToObject(ObjectToJSONString(null))).toEqual(null)
+	expect(JSONStringToObject(ObjectToJSONString(undefined))).toEqual(undefined)
 })
 
 test('ToArray', () => {
