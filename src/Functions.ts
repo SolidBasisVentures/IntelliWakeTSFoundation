@@ -1,3 +1,15 @@
+export const nowDateTime = () => new Date().toISOString()
+
+export const YYYYMMDDHHmmss = (ts?: number): string => {
+	const dateObject = !ts ? new Date() : new Date(ts)
+	return `${dateObject.getFullYear()}${dateObject.getMonth().toString().padStart(2, '0')}${dateObject.getDate().toString().padStart(2, '0')}${dateObject.getHours().toString().padStart(2, '0')}${dateObject.getMinutes().toString().padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`
+}
+
+export const YYYY_MM_DD_HH_mm_ss = (ts?: number): string => {
+	const dateObject = !ts ? new Date() : new Date(ts)
+	return `${dateObject.getFullYear()}-${dateObject.getMonth().toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')}_${dateObject.getHours().toString().padStart(2, '0')}-${dateObject.getMinutes().toString().padStart(2, '0')}-${dateObject.getSeconds().toString().padStart(2, '0')}`
+}
+
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *

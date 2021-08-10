@@ -233,6 +233,15 @@ var consoleLogTable = function (arrayData, tableDef) {
     }
 };
 
+var nowDateTime = function () { return new Date().toISOString(); };
+var YYYYMMDDHHmmss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return "" + dateObject.getFullYear() + dateObject.getMonth().toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var YYYY_MM_DD_HH_mm_ss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "-" + dateObject.getMonth().toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
+};
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *
@@ -2611,6 +2620,8 @@ exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
+exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
+exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
 exports.ab2str = ab2str;
 exports.consoleLogTable = consoleLogTable;
 exports.everyAsync = everyAsync;
@@ -2622,5 +2633,6 @@ exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
 exports.isAB = isAB;
+exports.nowDateTime = nowDateTime;
 exports.someAsync = someAsync;
 exports.str2ab = str2ab;
