@@ -1471,12 +1471,11 @@ var ExecuteFunctions = function (expression) {
     ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
     var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
     ICS.VEVENT_Text = function (event) {
-        var _a;
         var event_text = '';
         event_text += 'BEGIN:VEVENT\n';
-        event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED;' + DateICS(event.dateTimeCreated) + '\n';
-        event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n';
+        // event_text += 'CLASS:PUBLIC\n'
+        // event_text += 'CREATED;' + DateICS(event.dateTimeCreated) + '\n'
+        event_text += 'DESCRIPTION: ' + EscapeText(event.description) + '\n';
         event_text += 'DTSTART;' + DateICS(event.dateTimeStart) + '\n';
         if (!!event.durationMinutes) {
             event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
@@ -1484,11 +1483,11 @@ var ExecuteFunctions = function (expression) {
         else if (!!event.dateTimeEnd) {
             event_text += 'DTEND;' + DateICS(event.dateTimeEnd) + '\n';
         }
-        event_text += 'DTSTAMP;' + DateICS() + '\n';
-        if (!!event.organizerName && !!event.organizerEmail) {
-            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
-        }
-        event_text += 'LAST-MODIFIED;' + DateICS((_a = event.dateTimeModified) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
+        // event_text += 'DTSTAMP;' + DateICS() + '\n'
+        // if (!!event.organizerName && !!event.organizerEmail) {
+        // 	event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
+        // }
+        // event_text += 'LAST-MODIFIED;' + DateICS(event.dateTimeModified ?? new Date().toISOString()) + '\n'
         if (!!event.location) {
             if (!!event.location_altrep) {
                 event_text += "LOCATION;ALTREP=\"" + EscapeText(event.location_altrep) + "\":" + EscapeText(event.location) + '\n';
@@ -1500,11 +1499,11 @@ var ExecuteFunctions = function (expression) {
         if (!!event.priority) {
             event_text += "PRIORITY:" + event.priority + "\n";
         }
-        event_text += 'SEQUENCE:0\n';
+        event_text += 'SEQUENCE:3\n';
         //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
         event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n';
-        event_text += 'TRANSP:OPAQUE\n';
-        event_text += 'UID:' + event.UID + '\n';
+        // event_text += 'TRANSP:OPAQUE\n'
+        // event_text += 'UID:' + event.UID + '\n'
         if (event.alarmTriggerMinutes !== undefined) {
             event_text += 'BEGIN:VALARM\n';
             event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
