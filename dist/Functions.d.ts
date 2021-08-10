@@ -1,4 +1,6 @@
 export declare const nowDateTime: () => string;
+export declare const DateParse: (date: string | null | undefined) => number | null;
+export declare const DateISO: (date: string | null | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (ts?: number | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (ts?: number | undefined) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (ts?: number | undefined) => string;

@@ -247,6 +247,12 @@ var DateParse = function (date) {
         return null;
     }
 };
+var DateISO = function (date) {
+    var parsed = DateParse(date);
+    if (!parsed)
+        return null;
+    return new Date(parsed).toISOString();
+};
 var YYYYMMDDHHmmss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
     return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
@@ -1447,10 +1453,10 @@ var ExecuteFunctions = function (expression) {
     var ICSDateFormat = function (date, timezone) {
         if (!date)
             return '';
-        var dateTS = DateParse(date);
-        if (!dateTS)
+        var dateISO = DateISO((timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ' ' + (date !== null && date !== void 0 ? date : ''));
+        if (!dateISO)
             return '';
-        return "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + YYYYMMDDHHmmss(dateTS); //YYYYMMDDTHHmmss
+        return "" + dateISO; //YYYYMMDDTHHmmss
     };
     var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
     ICS.VEVENT_Text = function (event) {
@@ -2561,6 +2567,7 @@ exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DateISO = DateISO;
 exports.DateParse = DateParse;
 exports.DeepEqual = DeepEqual;
 exports.DisplayNameFromFL = DisplayNameFromFL;
