@@ -1,4 +1,4 @@
-import {DateParse, ReplaceAll} from './Functions'
+import {DateParseTS, ReplaceAll} from './Functions'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -222,9 +222,9 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			} else if (propsToRemove[key] === result[key]) {
 				delete result[key]
 			} else {
-					let pTRM = DateParse(propsToRemove[key] as any)
+					let pTRM = DateParseTS(propsToRemove[key] as any)
 					if (!!pTRM) {
-							let rM = DateParse(result[key] as any)
+							let rM = DateParseTS(result[key] as any)
 							if (!!rM) {
 								if (pTRM === rM) {
 									delete result[key]

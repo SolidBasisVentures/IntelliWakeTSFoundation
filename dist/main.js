@@ -234,13 +234,18 @@ var consoleLogTable = function (arrayData, tableDef) {
 };
 
 var nowDateTime = function () { return new Date().toISOString(); };
-var DateParse = function (date) {
+var DateParseTS = function (date) {
     if (!date)
-        return null;
+        return Date.parse(new Date().toString());
     try {
-        var result = Date.parse(date);
-        if (isNaN(result))
-            return null;
+        var result = Date.parse(date.toString());
+        if (isNaN(result)) {
+            var check = new Date(date);
+            if (!check) {
+                return null;
+            }
+            return Date.parse(check.toString());
+        }
         return result;
     }
     catch (_a) {
@@ -248,10 +253,24 @@ var DateParse = function (date) {
     }
 };
 var DateISO = function (date) {
-    var parsed = DateParse(date);
+    var parsed = DateParseTS(date);
     if (!parsed)
         return null;
     return new Date(parsed).toISOString();
+};
+var DateICS = function (date) {
+    var dateISO = DateISO(date);
+    if (!dateISO)
+        return null;
+    var dateICS = dateISO;
+    var decimal = dateICS.indexOf('.');
+    var zed = dateICS.indexOf('Z');
+    if (decimal > 0 && zed > decimal) {
+        dateICS = dateICS.substring(0, decimal) + dateICS.substring(zed);
+    }
+    dateICS = ReplaceAll('-', '', dateICS);
+    dateICS = ReplaceAll(':', '', dateICS);
+    return dateICS;
 };
 var YYYYMMDDHHmmss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
@@ -1006,9 +1025,9 @@ var RemoveDupProperties = function (original, propsToRemove) {
                 delete result[key];
             }
             else {
-                var pTRM = DateParse(propsToRemove[key]);
+                var pTRM = DateParseTS(propsToRemove[key]);
                 if (!!pTRM) {
-                    var rM = DateParse(result[key]);
+                    var rM = DateParseTS(result[key]);
                     if (!!rM) {
                         if (pTRM === rM) {
                             delete result[key];
@@ -1450,34 +1469,26 @@ var ExecuteFunctions = function (expression) {
     };
     ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n';
     ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
-    var ICSDateFormat = function (date, timezone) {
-        if (!date)
-            return '';
-        var dateISO = DateISO((timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ' ' + (date !== null && date !== void 0 ? date : ''));
-        if (!dateISO)
-            return '';
-        return "" + dateISO; //YYYYMMDDTHHmmss
-    };
     var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
     ICS.VEVENT_Text = function (event) {
-        var _a, _b;
+        var _a;
         var event_text = '';
         event_text += 'BEGIN:VEVENT\n';
         event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
+        event_text += 'CREATED;' + DateICS(event.dateTimeCreated) + '\n';
         event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n';
-        event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
+        event_text += 'DTSTART;' + DateICS(event.dateTimeStart) + '\n';
         if (!!event.durationMinutes) {
             event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
         }
         else if (!!event.dateTimeEnd) {
-            event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
+            event_text += 'DTEND;' + DateICS(event.dateTimeEnd) + '\n';
         }
-        event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n';
+        event_text += 'DTSTAMP;' + DateICS() + '\n';
         if (!!event.organizerName && !!event.organizerEmail) {
             event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
         }
-        event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
+        event_text += 'LAST-MODIFIED;' + DateICS((_a = event.dateTimeModified) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
         if (!!event.location) {
             if (!!event.location_altrep) {
                 event_text += "LOCATION;ALTREP=\"" + EscapeText(event.location_altrep) + "\":" + EscapeText(event.location) + '\n';
@@ -2567,8 +2578,9 @@ exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DateICS = DateICS;
 exports.DateISO = DateISO;
-exports.DateParse = DateParse;
+exports.DateParseTS = DateParseTS;
 exports.DeepEqual = DeepEqual;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;

@@ -1,12 +1,20 @@
 export const nowDateTime = () => new Date().toISOString()
 
-export const DateParse = (date: string | null | undefined): number | null => {
-	if (!date) return null
+export const DateParseTS = (date?: number | string | null): number | null => {
+	if (!date) return Date.parse(new Date().toString())
 	
 	try {
-		const result = Date.parse(date)
+		const result: any = Date.parse(date.toString())
 		
-		if (isNaN(result)) return null
+		if (isNaN(result)) {
+			const check = new Date(date)
+			
+			if (!check) {
+				return null
+			}
+			
+			return Date.parse(check.toString())
+		}
 		
 		return result
 	} catch {
@@ -14,12 +22,32 @@ export const DateParse = (date: string | null | undefined): number | null => {
 	}
 }
 
-export const DateISO = (date: string | null | undefined): string | null => {
-	const parsed = DateParse(date)
+export const DateISO = (date?: number | string | null): string | null => {
+	const parsed = DateParseTS(date)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
+}
+
+export const DateICS = (date?: string | null): string | null => {
+	const dateISO = DateISO(date)
+	
+	if (!dateISO) return null
+	
+	let dateICS = dateISO
+	
+	let decimal = dateICS.indexOf('.')
+	let zed = dateICS.indexOf('Z')
+	
+	if (decimal > 0 && zed > decimal) {
+		dateICS = dateICS.substring(0, decimal) + dateICS.substring(zed)
+	}
+	
+	dateICS = ReplaceAll('-', '', dateICS)
+	dateICS = ReplaceAll(':', '', dateICS)
+	
+	return dateICS
 }
 
 export const YYYYMMDDHHmmss = (ts?: number): string => {
