@@ -236,19 +236,19 @@ var consoleLogTable = function (arrayData, tableDef) {
 var nowDateTime = function () { return new Date().toISOString(); };
 var YYYYMMDDHHmmss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
-    return "" + dateObject.getFullYear() + dateObject.getMonth().toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
+    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYY_MM_DD_HH_mm_ss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "-" + dateObject.getMonth().toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYYsMMsDDsHHcmmcss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + dateObject.getMonth().toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYYsMMsDD = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + dateObject.getMonth().toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
 };
 var HHcmmcss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
