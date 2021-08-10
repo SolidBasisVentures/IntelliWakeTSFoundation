@@ -1,4 +1,4 @@
-import {ReplaceAll} from './Functions'
+import {ReplaceAll, YYYYMMDDHHmmss} from './Functions'
 
 export namespace ICS {
 	export interface IEvent {
@@ -35,18 +35,7 @@ export namespace ICS {
 		
 		if (!dateTS) return ''
 		
-		const dateObject = new Date(dateTS)
-		
-			let dateString = `TZID=${timezone ?? 'America/New_York'}:` //YYYYMMDDTHHmmss
-			
-		dateString += dateObject.getFullYear()
-		dateString += dateObject.getMonth().toString().padStart(2, '0')
-		dateString += dateObject.getDate().toString().padStart(2, '0')
-		dateString += dateObject.getHours().toString().padStart(2, '0')
-		dateString += dateObject.getMinutes().toString().padStart(2, '0')
-		dateString += dateObject.getSeconds().toString().padStart(2, '0')
-		
-		return dateString
+		return `TZID=${timezone ?? 'America/New_York'}:${YYYYMMDDHHmmss(dateTS)}` //YYYYMMDDTHHmmss
 	}
 	
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))

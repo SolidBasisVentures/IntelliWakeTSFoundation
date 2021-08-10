@@ -1437,15 +1437,7 @@ var ExecuteFunctions = function (expression) {
         var dateTS = Date.parse(date);
         if (!dateTS)
             return '';
-        var dateObject = new Date(dateTS);
-        var dateString = "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":"; //YYYYMMDDTHHmmss
-        dateString += dateObject.getFullYear();
-        dateString += dateObject.getMonth().toString().padStart(2, '0');
-        dateString += dateObject.getDate().toString().padStart(2, '0');
-        dateString += dateObject.getHours().toString().padStart(2, '0');
-        dateString += dateObject.getMinutes().toString().padStart(2, '0');
-        dateString += dateObject.getSeconds().toString().padStart(2, '0');
-        return dateString;
+        return "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + YYYYMMDDHHmmss(dateTS); //YYYYMMDDTHHmmss
     };
     var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
     ICS.VEVENT_Text = function (event) {
