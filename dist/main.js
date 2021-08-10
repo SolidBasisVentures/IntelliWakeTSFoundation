@@ -242,6 +242,18 @@ var YYYY_MM_DD_HH_mm_ss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
     return dateObject.getFullYear() + "-" + dateObject.getMonth().toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
 };
+var YYYYsMMsDDsHHcmmcss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "/" + dateObject.getMonth().toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var YYYYsMMsDD = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "/" + dateObject.getMonth().toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
+};
+var HHcmmcss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+};
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *
@@ -2559,6 +2571,7 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
@@ -2622,6 +2635,8 @@ exports.Trunc = Trunc;
 exports.UCWords = UCWords;
 exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
 exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
+exports.YYYYsMMsDD = YYYYsMMsDD;
+exports.YYYYsMMsDDsHHcmmcss = YYYYsMMsDDsHHcmmcss;
 exports.ab2str = ab2str;
 exports.consoleLogTable = consoleLogTable;
 exports.everyAsync = everyAsync;

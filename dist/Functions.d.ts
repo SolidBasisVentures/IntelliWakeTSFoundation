@@ -1,6 +1,9 @@
 export declare const nowDateTime: () => string;
 export declare const YYYYMMDDHHmmss: (ts?: number | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (ts?: number | undefined) => string;
+export declare const YYYYsMMsDDsHHcmmcss: (ts?: number | undefined) => string;
+export declare const YYYYsMMsDD: (ts?: number | undefined) => string;
+export declare const HHcmmcss: (ts?: number | undefined) => string;
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *
