@@ -6,8 +6,6 @@
  */
 import {CleanNumber, ReplaceAll, RoundTo} from './Functions'
 
-const moment = require('moment-timezone')
-
 export const ToSnakeCase = (str: string): string => {
 	if (str === 'ID') return 'id'
 
@@ -526,9 +524,7 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 		result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
 	}
 	
-	const tsm = moment()
-	
-	const ts = tsm.valueOf().toString()
+	const ts = Date.now().toString()
 	
 	if (length > ts.length * 0.5) {
 		const offset = RoundTo((length - ts.length) / 2, 0)

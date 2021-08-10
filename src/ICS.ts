@@ -1,4 +1,3 @@
-import {MomentFromString} from './Moment'
 import {ReplaceAll} from './Functions'
 
 export namespace ICS {
@@ -29,7 +28,26 @@ export namespace ICS {
 	
 	export const VCALENDARClose_Text = 'END:VCALENDAR\n'
 	
-	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => !date ? '' : `TZID=${timezone ?? 'America/New_York'}:${MomentFromString(date)?.format('YYYYMMDDTHHmmss') ?? ''}`
+	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => {
+		if (!date) return ''
+		
+		const dateTS = Date.parse(date)
+		
+		if (!dateTS) return ''
+		
+		const dateObject = new Date(dateTS)
+		
+			let dateString = `TZID=${timezone ?? 'America/New_York'}:` //YYYYMMDDTHHmmss
+			
+		dateString += dateObject.getFullYear()
+		dateString += dateObject.getMonth().toString().padStart(2, '0')
+		dateString += dateObject.getDate().toString().padStart(2, '0')
+		dateString += dateObject.getHours().toString().padStart(2, '0')
+		dateString += dateObject.getMinutes().toString().padStart(2, '0')
+		dateString += dateObject.getSeconds().toString().padStart(2, '0')
+		
+		return dateString
+	}
 	
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))
 	

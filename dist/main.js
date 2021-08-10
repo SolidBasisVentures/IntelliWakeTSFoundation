@@ -2,8 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var momentTimezone = require('moment-timezone');
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -797,13 +795,692 @@ function OmitProperty(obj) {
     return ret;
 }
 
+var initialChanges = {};
+/**
+ * Applies a value to a name on a change object, and removes the value if it matches what was in the original
+ *
+ * @param value
+ * @param name
+ * @param setChanges
+ * @param original
+ * @constructor
+ */
+var ChangeValueChanges = function (value, name, setChanges, original) {
+    if (!!setChanges && !!name) {
+        setChanges(function (prevState) {
+            var nextState = __assign({}, prevState);
+            if (!!original && original[name] === value) {
+                delete nextState[name];
+            }
+            else {
+                nextState[name] = value;
+            }
+            return nextState;
+        });
+    }
+};
+/**
+ * Adds a change to the IChange object.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ *
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+var AddChange = function (name, value, changes) {
+    var _a;
+    return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
+};
+/**
+ * Returns the final state of an object with changes applied.
+ *
+ * @example
+ * const employee = {id: 1, name: 'Bob'}
+ * const [changes, setChanges] = useState({} as IChanges)
+ * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
+ *
+ * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
+ */
+var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
+var initialIDChanges = {};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
+ *
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+var AddIDChange = function (id, name, value, idChanges) {
+    var _a, _b;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
+};
+var AddIDChanges = function (id, changes, idChanges) {
+    var _a;
+    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
+};
+/**
+ * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
+ *
+ * @example
+ * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
+ * const [idChanges, setIDChanges] = useState({} as IIDChanges)
+ *
+ * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
+ * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
+ *
+ * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
+ */
+var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
+/**
+ * Converts Data to CSV. Creates a download link and triggers
+ * click event on it to download the file.
+ */
+var DataToCSVExport = function (filename, csvData, blankZeros) {
+    if (blankZeros === void 0) { blankZeros = true; }
+    var csvString = csvData
+        .map(function (row) {
+        return row
+            .map(function (item) {
+            return (blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
+                typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
+        })
+            .join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+/**
+ * Converts Data to CSV without quotes. Creates a download link and triggers
+ * click event on it to download the file.
+ */
+var DataToCSVExportNoQuotes = function (filename, csvData) {
+    var csvString = csvData
+        .map(function (row) {
+        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
+    })
+        .join('\n');
+    var pom = document.createElement('a');
+    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    pom.href = URL.createObjectURL(blob);
+    pom.setAttribute('download', filename);
+    pom.click();
+};
+/**
+ * Checks if a string is a valid JSON structure
+ */
+var IsJSON = function (json) {
+    if (!json)
+        return false;
+    if (typeof json !== 'string')
+        return false;
+    try {
+        var result = JSON.parse(json);
+        var type = Object.prototype.toString.call(result);
+        return type === '[object Object]' || type === '[object Array]';
+    }
+    catch (err) {
+        return false;
+    }
+};
+/**
+ * Removes properties from an object having the same value.
+ *
+ * @example
+ * let data = {
+ *   name: 'john doe',
+ *   age: 24,
+ * }
+ *
+ * let data2 = {
+ *   name: 'john smith',
+ *   age: 24,
+ * }
+ *
+ * // returns {name: 'john doe}
+ * RemoveDupProperties(data, data2)
+ */
+var RemoveDupProperties = function (original, propsToRemove) {
+    var _a, _b;
+    var result = __assign({}, original);
+    for (var key in propsToRemove) {
+        if (propsToRemove.hasOwnProperty(key)) {
+            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
+                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
+                    delete result[key];
+                }
+            }
+            else if (propsToRemove[key] === result[key]) {
+                delete result[key];
+            }
+            else {
+                var pTRM = Date.parse(propsToRemove[key]);
+                if (!!pTRM) {
+                    var rM = Date.parse(result[key]);
+                    if (!!rM) {
+                        if (pTRM === rM) {
+                            delete result[key];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return result;
+};
+/**
+ * Removes properties from an object having the same value by ID.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = {
+ *   1: {
+ *     name: 'john smith',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByID(data, data2)
+ */
+var RemoveDupPropertiesByID = function (original, propsToRemove) {
+    var result = __assign({}, original);
+    for (var key in propsToRemove) {
+        if (propsToRemove.hasOwnProperty(key)) {
+            if (result.hasOwnProperty(key)) {
+                var subResult = RemoveDupProperties(result[key], propsToRemove[key]);
+                if (Object.keys(subResult).length === 0) {
+                    delete result[key];
+                }
+                else {
+                    result[key] = subResult;
+                }
+            }
+        }
+    }
+    return result;
+};
+/**
+ * Removes properties from an object having the same value by an array of objects.
+ *
+ * @example
+ * let data = {
+ *   1: {
+ *     name: 'john doe',
+ *     age: 24,
+ *   }
+ * }
+ *
+ * let data2 = [
+ *   {id: '1', user: 'john smith', age: 24},
+ *   {id: '2', user: 'sally jones', age: 32}
+ * ]
+ *
+ * // returns {1: {name: 'john doe}}
+ * RemoveDupPropertiesByIDArray(data, data2)
+ */
+var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
+    var result = __assign({}, original);
+    var _loop_1 = function (key) {
+        if (original.hasOwnProperty(key)) {
+            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id == key; });
+            if (!!propsToRemove) {
+                var subResult = RemoveDupProperties(result[key], propsToRemove);
+                if (Object.keys(subResult).length === 0) {
+                    delete result[key];
+                }
+                else {
+                    result[key] = subResult;
+                }
+            }
+        }
+    };
+    for (var key in original) {
+        _loop_1(key);
+    }
+    return result;
+};
+/**
+ * Returns the difference of two objects.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {id: 2, user: 'john doe', age: 23}
+ *
+ * // returns {id: 1, age: 24}
+ * ObjectDiffs(data, data2)
+ *
+ * // returns {age: 24}
+ * ObjectDiffs(data, data2, 'id')
+ */
+var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key)) {
+            if (compare[key] !== comparedTo[key]) {
+                results[key] = compare[key];
+            }
+        }
+    }
+    return results;
+};
+/**
+ * Returns a reduces object to other keys.
+ *
+ * @example
+ * let data = {id: 1, user: 'john doe', age: 24}
+ * let data2 = {user: 'john doe'}
+ *
+ * // returns {user: '', age: ''}
+ * ReduceObjectToOtherKeys(data, data2)
+ *
+ * // returns {user: ''}
+ * ReduceObjectToOtherKeys(data, data2, ['age'])
+ */
+var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
+    if (excludeKeys === void 0) { excludeKeys = []; }
+    var results = {};
+    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
+        var key = _a[_i];
+        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
+            results[key] = main[key];
+        }
+    }
+    return results;
+};
+
+var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
+var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
+/**
+ * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
+ *
+ * @example
+ * // returns "Hello, Bob"
+ * EvaluateString("Hello, [Name]!", {Name: "Bob"})
+ *
+ * // returns "1 + SomeValue = 3"
+ * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
+ */
+var EvaluateString = function (expression, variables) {
+    var _a, _b, _c;
+    var returnValue = expression;
+    if (!!variables) {
+        for (var _i = 0, _d = Object.keys(variables); _i < _d.length; _i++) {
+            var key = _d[_i];
+            returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
+        }
+    }
+    var innerSet = FindInnerSetLocations(returnValue, '[', ']');
+    while (!!innerSet) {
+        var beforeValue = (_a = returnValue.substring(0, innerSet[0])) !== null && _a !== void 0 ? _a : '';
+        var replaceValue = (_b = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _b !== void 0 ? _b : '';
+        var afterValue = (_c = returnValue.substring(innerSet[1] + 1)) !== null && _c !== void 0 ? _c : '';
+        returnValue = "" + beforeValue + replaceValue + afterValue;
+        innerSet = FindInnerSetLocations(returnValue, '[', ']');
+    }
+    returnValue = ExecuteFunctions(returnValue);
+    return returnValue;
+};
+/**
+ * Accepts a string, processes variables against the entire string, and returns a boolean if the condition is true or false.
+ *
+ * @example
+ *
+ * // returns false
+ * EvaluateCondition("1 = SomeValue", {SomeValue: 2})
+ *
+ * // returns true
+ * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
+ */
+var EvaluateCondition = function (expression, variables) {
+    return IsOn(EvaluateString("[" + expression + "]", variables));
+};
+var FindInnerSetLocations = function (stringItem, setStart, setEnd) {
+    if (!!stringItem) {
+        var len = stringItem.length;
+        var openingLocation = null;
+        for (var i = 0; i < len; i++) {
+            if (stringItem.substr(i, 1) === setStart) {
+                openingLocation = i;
+            }
+            else if (openingLocation !== null && stringItem.substr(i, 1) === setEnd) {
+                return [openingLocation, i];
+            }
+        }
+    }
+    return null;
+};
+var ProcessPMDAS = function (expression) {
+    // console.log(expression);
+    var returnValue = ExecuteFunctions(expression);
+    returnValue = ReplaceAll(' ', '', returnValue);
+    var preOperators = __spreadArrays(EvaluatorOperators, ['(']);
+    var postOperators = __spreadArrays(EvaluatorOperators, [')']);
+    var innerSet = FindInnerSetLocations(returnValue, '(', ')');
+    while (!!innerSet) {
+        var newExpression = returnValue.substr(0, innerSet[0]);
+        if (newExpression.length > 0 &&
+            preOperators.indexOf(newExpression.substr(-1, 1)) === -1 &&
+            preOperators.indexOf(newExpression.substr(-2, 2)) === -1) {
+            newExpression = newExpression.concat('*');
+        }
+        newExpression = newExpression.concat(ProcessPMDAS(returnValue.substr(innerSet[0] + 1, innerSet[1] - innerSet[0] - 1)));
+        var lastSegment = returnValue.substr(innerSet[1] + 1, returnValue.length - innerSet[1]);
+        if (lastSegment.length > 0 &&
+            postOperators.indexOf(lastSegment.substr(0, 1)) === -1 &&
+            postOperators.indexOf(lastSegment.substr(0, 2)) === -1) {
+            newExpression = newExpression.concat('*');
+        }
+        returnValue = newExpression.concat(lastSegment);
+        innerSet = FindInnerSetLocations(returnValue, '(', ')');
+    }
+    for (var _i = 0, EvaluatorOperators_1 = EvaluatorOperators; _i < EvaluatorOperators_1.length; _i++) {
+        var operator = EvaluatorOperators_1[_i];
+        var processOperator = operator;
+        var nextOperator = operator;
+        var items = returnValue.split(operator);
+        if (items.length > 1) {
+            if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
+                processOperator = items[0].substr(-1);
+                items[0] = items[0].substr(0, items[0].length - 1);
+                items[1] = '-' + items[1];
+            }
+            var result = ProcessPMDAS(items[0]);
+            for (var itempos = 1; itempos < items.length; itempos++) {
+                nextOperator = operator;
+                if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
+                    nextOperator = items[itempos].substr(-1);
+                    items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
+                    items[itempos + 1] = '-' + items[itempos + 1];
+                }
+                var itemposValue = ProcessPMDAS(items[itempos]);
+                var floatResult = parseFloat(result);
+                var floatItemPosValue = parseFloat(itemposValue);
+                var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
+                switch (processOperator) {
+                    case '^':
+                        if (bothNumeric) {
+                            result = Math.pow(floatResult, floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '*':
+                        if (bothNumeric) {
+                            result = (floatResult * floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '/':
+                        if (bothNumeric) {
+                            if (floatItemPosValue === 0) {
+                                result = '0';
+                            }
+                            else {
+                                result = (floatResult / floatItemPosValue).toString();
+                            }
+                        }
+                        break;
+                    case '+':
+                        if (bothNumeric) {
+                            result = (floatResult + floatItemPosValue).toString();
+                        }
+                        else {
+                            result = itemposValue;
+                        }
+                        break;
+                    case '-':
+                        if (bothNumeric) {
+                            result = (floatResult - floatItemPosValue).toString();
+                        }
+                        else {
+                            result = "-" + itemposValue;
+                        }
+                        break;
+                    case '<=':
+                        if (bothNumeric) {
+                            result = floatResult <= floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result <= itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '>=':
+                        if (bothNumeric) {
+                            result = floatResult >= floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result >= itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '<':
+                        if (bothNumeric) {
+                            result = floatResult < floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result < itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '>':
+                        if (bothNumeric) {
+                            result = floatResult > floatItemPosValue ? '1' : '0';
+                        }
+                        else {
+                            result = result > itemposValue ? '1' : '0';
+                        }
+                        break;
+                    case '=':
+                        result = result === itemposValue ? '1' : '0';
+                        break;
+                    case '!=':
+                        result = result !== itemposValue ? '1' : '0';
+                        break;
+                    case '||':
+                        result = result || itemposValue;
+                        break;
+                    case '&&':
+                        result = result && itemposValue;
+                        break;
+                    default:
+                        result = itemposValue;
+                }
+                processOperator = nextOperator;
+            }
+            // result = ExecuteFunctions(result);
+            return result;
+        }
+    }
+    // returnValue = ExecuteFunctions(returnValue);
+    return returnValue;
+};
+var FindFunction = function (expression, startPosition) {
+    if (!expression)
+        return null;
+    for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
+        var evaluatorFunction = EvaluatorFunctions_1[_i];
+        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
+        if (pos >= 0) {
+            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
+            var parens = FindInnerSetLocations(postFunctionName, '(', ')');
+            if (!!parens) {
+                var argumentText = postFunctionName.substr(1, parens[1] - 1);
+                return {
+                    expression: expression,
+                    pos: pos,
+                    pre: expression.substr(0, pos).trim(),
+                    post: postFunctionName.substr(parens[1] + 1).trim(),
+                    function: evaluatorFunction,
+                    argumentText: argumentText,
+                    arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
+                };
+            }
+        }
+    }
+    return null;
+};
+var ExecuteFunction = function (foundFunction) {
+    var _a, _b;
+    var arg1 = parseFloat(EvaluateString("[" + ((_a = foundFunction.arguments[0]) !== null && _a !== void 0 ? _a : '0') + "]"));
+    var arg2 = parseFloat(EvaluateString("[" + ((_b = foundFunction.arguments[1]) !== null && _b !== void 0 ? _b : '0') + "]"));
+    switch (foundFunction.function) {
+        case 'abs':
+            if (!isNaN(arg1)) {
+                return Math.abs(arg1).toString();
+            }
+            break;
+        case 'pow':
+            if (!isNaN(arg1) && !isNaN(arg2)) {
+                return Math.pow(arg1, arg2).toString();
+            }
+            break;
+        case 'int':
+            if (!isNaN(arg1)) {
+                return parseInt(foundFunction.arguments[0]).toString();
+            }
+            break;
+        case 'round':
+            if (!isNaN(arg1) && !isNaN(arg2)) {
+                var factor = Math.pow(10, arg2);
+                var tempNumber = arg1 * factor;
+                var roundedTempNumber = Math.round(tempNumber);
+                return (roundedTempNumber / factor).toString();
+            }
+            break;
+        case 'includes':
+            var index = 1;
+            var arrayValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[index] !== undefined) {
+                arrayValues.push(foundFunction.arguments[index]);
+                index++;
+            }
+            return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0';
+        case 'includesinarray':
+            var key = 1;
+            var arrValues = [];
+            // get array values from the 2nd argument and so on...
+            while (foundFunction.arguments[key] !== undefined) {
+                arrValues.push(foundFunction.arguments[key]);
+                key++;
+            }
+            return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0';
+    }
+    return '';
+};
+var ExecuteFunctions = function (expression) {
+    var updatedExpression = expression;
+    var foundFunction = FindFunction(updatedExpression, 0);
+    while (!!foundFunction) {
+        updatedExpression = foundFunction.pre + ExecuteFunction(foundFunction) + foundFunction.post;
+        foundFunction = FindFunction(updatedExpression, 0);
+    }
+    return updatedExpression;
+};
+
+(function (ICS) {
+    ICS.Header = function (filenameNoExtension) {
+        if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
+        return ({
+            'Content-Type': 'text/Calendar',
+            'Content-Disposition': "inline; filename=" + filenameNoExtension + ".ics"
+        });
+    };
+    ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n';
+    ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
+    var ICSDateFormat = function (date, timezone) {
+        if (!date)
+            return '';
+        var dateTS = Date.parse(date);
+        if (!dateTS)
+            return '';
+        var dateObject = new Date(dateTS);
+        var dateString = "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":"; //YYYYMMDDTHHmmss
+        dateString += dateObject.getFullYear();
+        dateString += dateObject.getMonth().toString().padStart(2, '0');
+        dateString += dateObject.getDate().toString().padStart(2, '0');
+        dateString += dateObject.getHours().toString().padStart(2, '0');
+        dateString += dateObject.getMinutes().toString().padStart(2, '0');
+        dateString += dateObject.getSeconds().toString().padStart(2, '0');
+        return dateString;
+    };
+    var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
+    ICS.VEVENT_Text = function (event) {
+        var _a, _b;
+        var event_text = '';
+        event_text += 'BEGIN:VEVENT\n';
+        event_text += 'CLASS:PUBLIC\n';
+        event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
+        event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n';
+        event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
+        if (!!event.durationMinutes) {
+            event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
+        }
+        else if (!!event.dateTimeEnd) {
+            event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
+        }
+        event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n';
+        if (!!event.organizerName && !!event.organizerEmail) {
+            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
+        }
+        event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
+        if (!!event.location) {
+            if (!!event.location_altrep) {
+                event_text += "LOCATION;ALTREP=\"" + EscapeText(event.location_altrep) + "\":" + EscapeText(event.location) + '\n';
+            }
+            else {
+                event_text += 'LOCATION:' + EscapeText(event.location) + '\n';
+            }
+        }
+        if (!!event.priority) {
+            event_text += "PRIORITY:" + event.priority + "\n";
+        }
+        event_text += 'SEQUENCE:0\n';
+        //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
+        event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n';
+        event_text += 'TRANSP:OPAQUE\n';
+        event_text += 'UID:' + event.UID + '\n';
+        if (event.alarmTriggerMinutes !== undefined) {
+            event_text += 'BEGIN:VALARM\n';
+            event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
+            event_text += 'ACTION:DISPLAY\n';
+            event_text += 'DESCRIPTION:Reminder\n';
+            event_text += 'END:VALARM\n';
+        }
+        event_text += 'END:VEVENT\n';
+        return event_text;
+    };
+    ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
+})(exports.ICS || (exports.ICS = {}));
+
 /**
  * Converts a string to snake_case.
  *
  * @example
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
-var moment = require('moment-timezone');
 var ToSnakeCase = function (str) {
     if (str === 'ID')
         return 'id';
@@ -1259,1119 +1936,13 @@ var RandomString = function (length, validChars) {
     for (var i = 0; i < length; i++) {
         result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
     }
-    var tsm = moment();
-    var ts = tsm.valueOf().toString();
+    var ts = Date.now().toString();
     if (length > ts.length * 0.5) {
         var offset = RoundTo((length - ts.length) / 2, 0);
         return result.substr(0, offset) + ts + result.substr(offset + ts.length);
     }
     return result;
 };
-
-var moment$1 = require('moment-timezone');
-var MOMENT_FORMAT_DATE = 'YYYY-MM-DD';
-var MOMENT_FORMAT_TIME_SECONDS = 'HH:mm:ss';
-var MOMENT_FORMAT_TIME_NO_SECONDS = 'HH:mm';
-var MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE + ' ' + MOMENT_FORMAT_TIME_SECONDS;
-var MOMENT_FORMAT_DATE_DISPLAY = "MMM D, YYYY";
-var MOMENT_FORMAT_DATE_DISPLAY_DOW = "dd, " + MOMENT_FORMAT_DATE_DISPLAY;
-var MOMENT_FORMAT_TIME_DISPLAY = 'h:mm a';
-var MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var MOMENT_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
-var MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + MOMENT_FORMAT_DATE_DISPLAY_LONG;
-var MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + MOMENT_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_TRIES = ['YYYY-MM-DD', 'M-D-YYYY', 'MM-DD-YYYY', momentTimezone.ISO_8601, 'YYYYMMDD'];
-var TIME_FORMAT_TRIES = [
-    momentTimezone.ISO_8601,
-    'YYYY-MM-DD HH:mm:ss',
-    'YYYY-MM-DD HH:mm',
-    'HH:mm:ss',
-    'HH:mm',
-    'D-M-YYYY HH:mm:ss',
-    'D-M-YYYY HH:mm',
-    'DD-MM-YYYY HH:mm:ss',
-    'DD-MM-YYYY HH:mm'
-];
-(function (EDateAndOrTime) {
-    EDateAndOrTime[EDateAndOrTime["DATE"] = 0] = "DATE";
-    EDateAndOrTime[EDateAndOrTime["TIME"] = 1] = "TIME";
-    EDateAndOrTime[EDateAndOrTime["DATETIME"] = 2] = "DATETIME";
-})(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
-var StringHasTimeData = function (value) { return value.includes(':'); };
-var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
-var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
-var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
-var FormatIsTime = function (format) {
-    return [MOMENT_FORMAT_TIME_SECONDS, MOMENT_FORMAT_TIME_NO_SECONDS, MOMENT_FORMAT_TIME_DISPLAY].includes(format);
-};
-var FormatIsDate = function (format) {
-    return [MOMENT_FORMAT_DATE, MOMENT_FORMAT_DATE_DISPLAY, MOMENT_FORMAT_DATE_DISPLAY_DOW].includes(format);
-};
-var FormatIsDateTime = function (format) {
-    return [MOMENT_FORMAT_DATE_TIME, MOMENT_FORMAT_DATE_TIME_DISPLAY, MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW].includes(format);
-};
-/**
- * Returns the current time zone.
- */
-var MomentCurrentTimeZone = function () { return moment$1.tz().format('z'); };
-/**
- * Returns the current olson time zone.
- */
-var MomentCurrentTimeZoneOlson = function () { return moment$1.tz.guess(); };
-/**
- * Returns a list of olson time zone items, sorted by hour diff from UTC
- *
- * Defaults to 'US'
- */
-var TimeZoneOlsons = function (forCountry) {
-    if (forCountry === void 0) { forCountry = 'US'; }
-    return moment$1.tz.zonesForCountry(forCountry)
-        .map(function (tzItem) { return ({
-        zone: moment$1.tz(tzItem).zoneAbbr(),
-        olson: tzItem,
-        hours: moment$1.tz(tzItem).format('Z')
-    }); })
-        .sort(function (a, b) { return (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)); });
-};
-/**
- * Display timezone and olson
- */
-var DisplayTZItem = function (tzItem) {
-    return !tzItem || !tzItem.olson ? '' : !tzItem.zone ? tzItem.olson : tzItem.zone + ": " + tzItem.olson;
-};
-/**
- * Current time in ISO string format
- */
-var NowISOString = function () { return new Date().toISOString(); };
-var IsDateString = function (value) {
-    if (!value || typeof value !== 'string')
-        return false;
-    // if (!DATE_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length) && !TIME_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length)) {
-    // 	return false
-    // }
-    if (!StringHasDateData(value))
-        return false;
-    return !!MomentFromString(value);
-};
-/**
- * Returns the Moment object from a given value. If the given value is invalid,
- * it returns null.
- *
- *
- * @example
- * // returns Moment<2020-10-02T00:00:00Z>
- * MomentFromString('2020-10-02')
- */
-var MomentFromString = function (value) {
-    if (!value) {
-        return null;
-    }
-    var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
-    if (typeof value !== 'string') {
-        var momentObject = moment$1(value);
-        if (momentObject.isValid()) {
-            return momentObject.utc().tz(MomentCurrentTimeZone());
-        }
-    }
-    else {
-        var momentObject = StringHasTimeZoneData(value) ? moment$1(value, formatTries, true) : momentTimezone.utc(value, formatTries, true);
-        if (momentObject.isValid()) {
-            return momentObject;
-        }
-    }
-    return null;
-};
-/**
- * Does the same thing as MomentFromString() but instead returns a string based on the format specified.
- *
- * @example
- * // returns "Oct 2, 2020"
- * MomentFromString('2020-10-02', 'll')
- */
-var MomentFormatString = function (value, format) {
-    var _a, _b, _c, _d;
-    if (!value)
-        return null;
-    if (typeof value == 'string') {
-        if (FormatIsTime(format) && !StringHasTimeData(value)) {
-            return null;
-        }
-        if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value))
-            return null;
-        var moment_1 = (_b = (_a = MomentFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null;
-        if (!moment_1)
-            return null;
-        if (format === MOMENT_FORMAT_TIME_SECONDS || format === MOMENT_FORMAT_TIME_NO_SECONDS) {
-            if (!StringHasTimeData(moment_1))
-                return null;
-            return moment_1.substr(format.length * -1, format.length);
-        }
-        if (format === MOMENT_FORMAT_DATE) {
-            if (!StringHasDateData(moment_1))
-                return null;
-            return moment_1.substr(0, format.length);
-        }
-        if (format === MOMENT_FORMAT_DATE_TIME) {
-            if (!StringHasDateData(moment_1) || !StringHasTimeData(moment_1))
-                return null;
-        }
-        return moment_1;
-    }
-    return (_d = (_c = MomentFromString(value)) === null || _c === void 0 ? void 0 : _c.format(format)) !== null && _d !== void 0 ? _d : null;
-};
-/**
- * Returns the moment time string in the format of "HH:mm:ss".
- */
-var MomentTimeString = function (value) {
-    return MomentFormatString(value, MOMENT_FORMAT_TIME_SECONDS);
-};
-/**
- * Returns the moment date string in the format of "YYYY-MM-DD".
- */
-var MomentDateString = function (value) { return MomentFormatString(value, MOMENT_FORMAT_DATE); };
-/**
- * Returns the moment date string in the format of "YYYY-MM-DD HH:mm:ss".
- */
-var MomentDateTimeString = function (value) {
-    return MomentFormatString(value, MOMENT_FORMAT_DATE_TIME);
-};
-/**
- * Returns display day date time format.
- */
-var MomentDisplayDayDateTime = function (value, showLong) {
-    if (showLong === void 0) { showLong = false; }
-    var momentObject = MomentFromString(value);
-    if (!momentObject) {
-        return null;
-    }
-    if (!!MomentTimeString(value)) {
-        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY);
-    }
-    else {
-        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY);
-    }
-};
-/**
- * Returns display day date format.
- */
-var MomentDisplayDayDate = function (value, showLong) {
-    if (showLong === void 0) { showLong = false; }
-    var momentObject = MomentFromString(value);
-    if (!momentObject) {
-        return null;
-    }
-    return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_LONG : MOMENT_FORMAT_DATE_DISPLAY);
-};
-/**
- * Returns display day date time format with day of week.
- */
-var MomentDisplayDayDateTimeDoW = function (value, showLong) {
-    if (showLong === void 0) { showLong = false; }
-    var momentObject = MomentFromString(value);
-    if (!momentObject) {
-        return null;
-    }
-    if (!!MomentTimeString(value)) {
-        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW);
-    }
-    else {
-        return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW);
-    }
-};
-/**
- * Returns display day date format with day of week.
- */
-var MomentDisplayDayDateDoW = function (value, showLong) {
-    if (showLong === void 0) { showLong = false; }
-    var momentObject = MomentFromString(value);
-    if (!momentObject) {
-        return null;
-    }
-    return momentObject.format(showLong ? MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG : MOMENT_FORMAT_DATE_DISPLAY_DOW);
-};
-/**
- * Returns the time with 12-hour clock format.
- */
-var MomentDisplayTime = function (value) {
-    return MomentFormatString(value, MOMENT_FORMAT_TIME_DISPLAY);
-};
-/**
- * Displays difference between two times in a simplified duration format.
- *
- * If the second parameter is empty, the current date/time is used.
- *
- * @example
- * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
- * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
- */
-var MomentDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()) / 1000); };
-/**
- * Displays difference between two times in a simplified duration format.
- *
- * If the second parameter is empty, the current date/time is used.
- *
- * @example
- * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
- * MomentDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
- */
-var MomentDurationLongText = function (start, end, trimSeconds) {
-    var _a, _b;
-    if (trimSeconds === void 0) { trimSeconds = false; }
-    return DurationLongText(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()) / 1000, trimSeconds);
-};
-/**
- * Displays a simplified duration format from seconds.
- *
- * @example
- * MomentDurationShortText((30 * 60) + 20) // result: 30m 20s
- */
-var DurationShortText = function (seconds) {
-    var duration = moment$1.duration(seconds * 1000);
-    var text = '';
-    if (duration.years()) {
-        text += " " + ToDigits(duration.years(), 0) + "Y";
-        text += " " + ToDigits(duration.months(), 0) + "M";
-        text += " " + ToDigits(duration.days(), 0) + "D";
-    }
-    else if (duration.months()) {
-        text += " " + ToDigits(duration.months(), 0) + "M";
-        if (duration.days()) {
-            text += " " + ToDigits(duration.days(), 0) + "D";
-        }
-    }
-    else if (duration.days()) {
-        text += " " + ToDigits(duration.days(), 0) + "D";
-        text += " " + ToDigits(duration.hours(), 0) + "h";
-        if (duration.minutes()) {
-            text += " " + ToDigits(duration.minutes(), 0) + "m";
-        }
-    }
-    else if (duration.hours()) {
-        text += " " + ToDigits(duration.hours(), 0) + "h";
-        if (duration.minutes()) {
-            text += " " + ToDigits(duration.minutes(), 0) + "m";
-        }
-    }
-    else {
-        if (duration.minutes()) {
-            text += " " + ToDigits(duration.minutes(), 0) + "m";
-        }
-        if (duration.seconds()) {
-            text += " " + ToDigits(duration.seconds(), 0) + "s";
-        }
-    }
-    return text.trim();
-};
-/**
- * Displays a simplified duration format from seconds.
- *
- * @example
- * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
- */
-var DurationLongText = function (seconds, trimSeconds) {
-    if (trimSeconds === void 0) { trimSeconds = false; }
-    var duration = moment$1.duration(seconds * 1000);
-    var text = '';
-    if (duration.years()) {
-        text += " " + ToDigits(duration.years(), 0) + " " + AddS('Year', duration.years());
-        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
-        if (duration.days()) {
-            text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
-        }
-    }
-    else if (duration.months()) {
-        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
-        if (duration.days()) {
-            text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
-        }
-    }
-    else if (duration.days()) {
-        text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
-        if (duration.hours()) {
-            text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
-        }
-        if (duration.minutes()) {
-            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
-        }
-    }
-    else if (duration.hours()) {
-        text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
-        if (duration.minutes()) {
-            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
-        }
-    }
-    else {
-        if (duration.minutes() || (!text && trimSeconds)) {
-            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
-        }
-        if (!text || (!trimSeconds && duration.seconds())) {
-            text += " " + ToDigits(duration.seconds(), 0) + " " + AddS('Second', duration.seconds());
-        }
-    }
-    return text.trim();
-};
-/**
- * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
- *
- * If the second parameter is empty, the current date/time is used.
- 
- * @example
- * MomentDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
- */
-var MomentDurationShortTextAligned = function (start, end) {
-    var _a, _b;
-    var duration = moment$1.duration(((_a = MomentFromString(end)) !== null && _a !== void 0 ? _a : moment$1()).diff((_b = MomentFromString(start)) !== null && _b !== void 0 ? _b : moment$1()));
-    var text = '';
-    if (duration.years()) {
-        text += " " + ToDigits(duration.years(), 0) + "Y";
-        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
-        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
-        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
-        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    else if (duration.months()) {
-        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
-        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
-        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
-        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    else if (duration.days()) {
-        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
-        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
-        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    else if (duration.hours()) {
-        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
-        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    else if (duration.minutes()) {
-        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    else if (duration.seconds()) {
-        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
-    }
-    return text.trim();
-};
-var MomentStringToDateLocale = function (value) { var _a; return (_a = MomentFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
-var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; return (_c = MomentDateTimeString(((_a = MomentDateString(valueDate)) !== null && _a !== void 0 ? _a : '') + " " + ((_b = MomentTimeString(valueTime)) !== null && _b !== void 0 ? _b : ''))) !== null && _c !== void 0 ? _c : ''; };
-var MomentID = function (value, offsetHours) {
-    if (value === void 0) { value = null; }
-    if (offsetHours === void 0) { offsetHours = 5; }
-    return MomentFormatString(value !== null && value !== void 0 ? value : moment$1().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
-};
-var IANAZoneAbbr = function (ianaValue) { return moment$1.tz(ianaValue).format('z'); };
-var MomentAddWeekDays = function (weekDays, value) {
-    var _a;
-    var newMoment = ((_a = MomentFromString(value)) !== null && _a !== void 0 ? _a : moment$1()).startOf('day');
-    while (newMoment.isoWeekday() >= 5) {
-        newMoment.add(1, 'day');
-    }
-    newMoment.add(Math.floor(weekDays / 5), 'weeks');
-    var days = weekDays % 5;
-    if ((newMoment.isoWeekday() + days) >= 6)
-        days += 2;
-    newMoment.add(days, 'days');
-    return newMoment;
-};
-var MomentWeekDays = function (startDate, endDate) {
-    var _a, _b;
-    var start = (_a = MomentFromString(startDate)) !== null && _a !== void 0 ? _a : MomentFromString(moment$1().subtract(5, 'hours'));
-    var end = (_b = MomentFromString(endDate)) !== null && _b !== void 0 ? _b : MomentFromString(moment$1().subtract(5, 'hours'));
-    if (!start || !end)
-        return 0;
-    while (start.isoWeekday() >= 5) {
-        start.add(1, 'day');
-    }
-    while (end.isoWeekday() > 5) {
-        end.subtract(1, 'day');
-    }
-    var weeks = end.startOf('day').diff(start.startOf('day'), 'weeks');
-    var weekDays = weeks * 5;
-    var checkDate = start.add(weeks, 'weeks');
-    while (checkDate.isBefore(end, 'day')) {
-        checkDate.add(1, 'day');
-        if (checkDate.isoWeekday() <= 5) {
-            weekDays++;
-        }
-    }
-    return weekDays;
-};
-
-var initialChanges = {};
-/**
- * Applies a value to a name on a change object, and removes the value if it matches what was in the original
- *
- * @param value
- * @param name
- * @param setChanges
- * @param original
- * @constructor
- */
-var ChangeValueChanges = function (value, name, setChanges, original) {
-    if (!!setChanges && !!name) {
-        setChanges(function (prevState) {
-            var nextState = __assign({}, prevState);
-            if (!!original && original[name] === value) {
-                delete nextState[name];
-            }
-            else {
-                nextState[name] = value;
-            }
-            return nextState;
-        });
-    }
-};
-/**
- * Adds a change to the IChange object.
- *
- * @example
- * const employee = {id: 1, name: 'Bob'}
- * const [changes, setChanges] = useState({} as IChanges)
- *
- * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
- *
- * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
- */
-var AddChange = function (name, value, changes) {
-    var _a;
-    return (__assign(__assign({}, changes), (_a = {}, _a[name] = value, _a)));
-};
-/**
- * Returns the final state of an object with changes applied.
- *
- * @example
- * const employee = {id: 1, name: 'Bob'}
- * const [changes, setChanges] = useState({} as IChanges)
- * setChanges(prevState => AddChange('name', 'John', prevState)) // result: {name: 'John'}
- *
- * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
- */
-var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
-var initialIDChanges = {};
-/**
- * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
- *
- * @example
- * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
- * const [idChanges, setIDChanges] = useState({} as IIDChanges)
- *
- * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name', 'Bobby'}}
- *
- * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name', 'Johnny'}, 2: {'name', 'Johnny'}}
- *
- * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
- */
-var AddIDChange = function (id, name, value, idChanges) {
-    var _a, _b;
-    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), (_b = {}, _b[name] = value, _b)), _a)));
-};
-var AddIDChanges = function (id, changes, idChanges) {
-    var _a;
-    return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
-};
-/**
- * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
- *
- * @example
- * const employees = [{id: 1, name: 'Bob'}, {id: 2, name: 'John'}]
- * const [idChanges, setIDChanges] = useState({} as IIDChanges)
- *
- * setIDChanges(prevState => AddIDChange(1, 'name', 'Bobby', prevState)) // result: {1: {'name': 'Bobby'}}
- * setIDChanges(prevState => AddIDChange(2, 'name', 'Johnny', prevState)) // result: {1: {'name': 'Bobby'}, 2: {'name': 'Johnny'}}
- *
- * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
- */
-var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
-/**
- * Converts Data to CSV. Creates a download link and triggers
- * click event on it to download the file.
- */
-var DataToCSVExport = function (filename, csvData, blankZeros) {
-    if (blankZeros === void 0) { blankZeros = true; }
-    var csvString = csvData
-        .map(function (row) {
-        return row
-            .map(function (item) {
-            return (blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
-                typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
-        })
-            .join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-/**
- * Converts Data to CSV without quotes. Creates a download link and triggers
- * click event on it to download the file.
- */
-var DataToCSVExportNoQuotes = function (filename, csvData) {
-    var csvString = csvData
-        .map(function (row) {
-        return row.map(function (item) { return (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item !== null && item !== void 0 ? item : ''); }).join(',');
-    })
-        .join('\n');
-    var pom = document.createElement('a');
-    var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    pom.href = URL.createObjectURL(blob);
-    pom.setAttribute('download', filename);
-    pom.click();
-};
-/**
- * Checks if a string is a valid JSON structure
- */
-var IsJSON = function (json) {
-    if (!json)
-        return false;
-    if (typeof json !== 'string')
-        return false;
-    try {
-        var result = JSON.parse(json);
-        var type = Object.prototype.toString.call(result);
-        return type === '[object Object]' || type === '[object Array]';
-    }
-    catch (err) {
-        return false;
-    }
-};
-/**
- * Removes properties from an object having the same value.
- *
- * @example
- * let data = {
- *   name: 'john doe',
- *   age: 24,
- * }
- *
- * let data2 = {
- *   name: 'john smith',
- *   age: 24,
- * }
- *
- * // returns {name: 'john doe}
- * RemoveDupProperties(data, data2)
- */
-var RemoveDupProperties = function (original, propsToRemove) {
-    var _a, _b;
-    var result = __assign({}, original);
-    for (var key in propsToRemove) {
-        if (propsToRemove.hasOwnProperty(key)) {
-            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
-                    delete result[key];
-                }
-            }
-            else if (propsToRemove[key] === result[key]) {
-                delete result[key];
-            }
-            else {
-                if (IsDateString(propsToRemove[key])) {
-                    var pTRM = MomentFromString(propsToRemove[key]);
-                    if (!!pTRM) {
-                        if (IsDateString(result[key])) {
-                            var rM = MomentFromString(result[key]);
-                            if (!!rM) {
-                                if (pTRM.isSame(rM)) {
-                                    delete result[key];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return result;
-};
-/**
- * Removes properties from an object having the same value by ID.
- *
- * @example
- * let data = {
- *   1: {
- *     name: 'john doe',
- *     age: 24,
- *   }
- * }
- *
- * let data2 = {
- *   1: {
- *     name: 'john smith',
- *     age: 24,
- *   }
- * }
- *
- * // returns {1: {name: 'john doe}}
- * RemoveDupPropertiesByID(data, data2)
- */
-var RemoveDupPropertiesByID = function (original, propsToRemove) {
-    var result = __assign({}, original);
-    for (var key in propsToRemove) {
-        if (propsToRemove.hasOwnProperty(key)) {
-            if (result.hasOwnProperty(key)) {
-                var subResult = RemoveDupProperties(result[key], propsToRemove[key]);
-                if (Object.keys(subResult).length === 0) {
-                    delete result[key];
-                }
-                else {
-                    result[key] = subResult;
-                }
-            }
-        }
-    }
-    return result;
-};
-/**
- * Removes properties from an object having the same value by an array of objects.
- *
- * @example
- * let data = {
- *   1: {
- *     name: 'john doe',
- *     age: 24,
- *   }
- * }
- *
- * let data2 = [
- *   {id: '1', user: 'john smith', age: 24},
- *   {id: '2', user: 'sally jones', age: 32}
- * ]
- *
- * // returns {1: {name: 'john doe}}
- * RemoveDupPropertiesByIDArray(data, data2)
- */
-var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
-    var result = __assign({}, original);
-    var _loop_1 = function (key) {
-        if (original.hasOwnProperty(key)) {
-            var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id == key; });
-            if (!!propsToRemove) {
-                var subResult = RemoveDupProperties(result[key], propsToRemove);
-                if (Object.keys(subResult).length === 0) {
-                    delete result[key];
-                }
-                else {
-                    result[key] = subResult;
-                }
-            }
-        }
-    };
-    for (var key in original) {
-        _loop_1(key);
-    }
-    return result;
-};
-/**
- * Returns the difference of two objects.
- *
- * @example
- * let data = {id: 1, user: 'john doe', age: 24}
- * let data2 = {id: 2, user: 'john doe', age: 23}
- *
- * // returns {id: 1, age: 24}
- * ObjectDiffs(data, data2)
- *
- * // returns {age: 24}
- * ObjectDiffs(data, data2, 'id')
- */
-var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key)) {
-            if (compare[key] !== comparedTo[key]) {
-                results[key] = compare[key];
-            }
-        }
-    }
-    return results;
-};
-/**
- * Returns a reduces object to other keys.
- *
- * @example
- * let data = {id: 1, user: 'john doe', age: 24}
- * let data2 = {user: 'john doe'}
- *
- * // returns {user: '', age: ''}
- * ReduceObjectToOtherKeys(data, data2)
- *
- * // returns {user: ''}
- * ReduceObjectToOtherKeys(data, data2, ['age'])
- */
-var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
-    if (excludeKeys === void 0) { excludeKeys = []; }
-    var results = {};
-    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
-            results[key] = main[key];
-        }
-    }
-    return results;
-};
-
-var EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^'];
-var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray'];
-/**
- * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
- *
- * @example
- * // returns "Hello, Bob"
- * EvaluateString("Hello, [Name]!", {Name: "Bob"})
- *
- * // returns "1 + SomeValue = 3"
- * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
- */
-var EvaluateString = function (expression, variables) {
-    var _a, _b, _c;
-    var returnValue = expression;
-    if (!!variables) {
-        for (var _i = 0, _d = Object.keys(variables); _i < _d.length; _i++) {
-            var key = _d[_i];
-            returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
-        }
-    }
-    var innerSet = FindInnerSetLocations(returnValue, '[', ']');
-    while (!!innerSet) {
-        var beforeValue = (_a = returnValue.substring(0, innerSet[0])) !== null && _a !== void 0 ? _a : '';
-        var replaceValue = (_b = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _b !== void 0 ? _b : '';
-        var afterValue = (_c = returnValue.substring(innerSet[1] + 1)) !== null && _c !== void 0 ? _c : '';
-        returnValue = "" + beforeValue + replaceValue + afterValue;
-        innerSet = FindInnerSetLocations(returnValue, '[', ']');
-    }
-    returnValue = ExecuteFunctions(returnValue);
-    return returnValue;
-};
-/**
- * Accepts a string, processes variables against the entire string, and returns a boolean if the condition is true or false.
- *
- * @example
- *
- * // returns false
- * EvaluateCondition("1 = SomeValue", {SomeValue: 2})
- *
- * // returns true
- * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
- */
-var EvaluateCondition = function (expression, variables) {
-    return IsOn(EvaluateString("[" + expression + "]", variables));
-};
-var FindInnerSetLocations = function (stringItem, setStart, setEnd) {
-    if (!!stringItem) {
-        var len = stringItem.length;
-        var openingLocation = null;
-        for (var i = 0; i < len; i++) {
-            if (stringItem.substr(i, 1) === setStart) {
-                openingLocation = i;
-            }
-            else if (openingLocation !== null && stringItem.substr(i, 1) === setEnd) {
-                return [openingLocation, i];
-            }
-        }
-    }
-    return null;
-};
-var ProcessPMDAS = function (expression) {
-    // console.log(expression);
-    var returnValue = ExecuteFunctions(expression);
-    returnValue = ReplaceAll(' ', '', returnValue);
-    var preOperators = __spreadArrays(EvaluatorOperators, ['(']);
-    var postOperators = __spreadArrays(EvaluatorOperators, [')']);
-    var innerSet = FindInnerSetLocations(returnValue, '(', ')');
-    while (!!innerSet) {
-        var newExpression = returnValue.substr(0, innerSet[0]);
-        if (newExpression.length > 0 &&
-            preOperators.indexOf(newExpression.substr(-1, 1)) === -1 &&
-            preOperators.indexOf(newExpression.substr(-2, 2)) === -1) {
-            newExpression = newExpression.concat('*');
-        }
-        newExpression = newExpression.concat(ProcessPMDAS(returnValue.substr(innerSet[0] + 1, innerSet[1] - innerSet[0] - 1)));
-        var lastSegment = returnValue.substr(innerSet[1] + 1, returnValue.length - innerSet[1]);
-        if (lastSegment.length > 0 &&
-            postOperators.indexOf(lastSegment.substr(0, 1)) === -1 &&
-            postOperators.indexOf(lastSegment.substr(0, 2)) === -1) {
-            newExpression = newExpression.concat('*');
-        }
-        returnValue = newExpression.concat(lastSegment);
-        innerSet = FindInnerSetLocations(returnValue, '(', ')');
-    }
-    for (var _i = 0, EvaluatorOperators_1 = EvaluatorOperators; _i < EvaluatorOperators_1.length; _i++) {
-        var operator = EvaluatorOperators_1[_i];
-        var processOperator = operator;
-        var nextOperator = operator;
-        var items = returnValue.split(operator);
-        if (items.length > 1) {
-            if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
-                processOperator = items[0].substr(-1);
-                items[0] = items[0].substr(0, items[0].length - 1);
-                items[1] = '-' + items[1];
-            }
-            var result = ProcessPMDAS(items[0]);
-            for (var itempos = 1; itempos < items.length; itempos++) {
-                nextOperator = operator;
-                if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
-                    nextOperator = items[itempos].substr(-1);
-                    items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
-                    items[itempos + 1] = '-' + items[itempos + 1];
-                }
-                var itemposValue = ProcessPMDAS(items[itempos]);
-                var floatResult = parseFloat(result);
-                var floatItemPosValue = parseFloat(itemposValue);
-                var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
-                switch (processOperator) {
-                    case '^':
-                        if (bothNumeric) {
-                            result = Math.pow(floatResult, floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '*':
-                        if (bothNumeric) {
-                            result = (floatResult * floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '/':
-                        if (bothNumeric) {
-                            if (floatItemPosValue === 0) {
-                                result = '0';
-                            }
-                            else {
-                                result = (floatResult / floatItemPosValue).toString();
-                            }
-                        }
-                        break;
-                    case '+':
-                        if (bothNumeric) {
-                            result = (floatResult + floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '-':
-                        if (bothNumeric) {
-                            result = (floatResult - floatItemPosValue).toString();
-                        }
-                        else {
-                            result = "-" + itemposValue;
-                        }
-                        break;
-                    case '<=':
-                        if (bothNumeric) {
-                            result = floatResult <= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result <= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>=':
-                        if (bothNumeric) {
-                            result = floatResult >= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result >= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '<':
-                        if (bothNumeric) {
-                            result = floatResult < floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result < itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>':
-                        if (bothNumeric) {
-                            result = floatResult > floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result > itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '=':
-                        result = result === itemposValue ? '1' : '0';
-                        break;
-                    case '!=':
-                        result = result !== itemposValue ? '1' : '0';
-                        break;
-                    case '||':
-                        result = result || itemposValue;
-                        break;
-                    case '&&':
-                        result = result && itemposValue;
-                        break;
-                    default:
-                        result = itemposValue;
-                }
-                processOperator = nextOperator;
-            }
-            // result = ExecuteFunctions(result);
-            return result;
-        }
-    }
-    // returnValue = ExecuteFunctions(returnValue);
-    return returnValue;
-};
-var FindFunction = function (expression, startPosition) {
-    if (!expression)
-        return null;
-    for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
-        var evaluatorFunction = EvaluatorFunctions_1[_i];
-        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
-        if (pos >= 0) {
-            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
-            var parens = FindInnerSetLocations(postFunctionName, '(', ')');
-            if (!!parens) {
-                var argumentText = postFunctionName.substr(1, parens[1] - 1);
-                return {
-                    expression: expression,
-                    pos: pos,
-                    pre: expression.substr(0, pos).trim(),
-                    post: postFunctionName.substr(parens[1] + 1).trim(),
-                    function: evaluatorFunction,
-                    argumentText: argumentText,
-                    arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
-                };
-            }
-        }
-    }
-    return null;
-};
-var ExecuteFunction = function (foundFunction) {
-    var _a, _b;
-    var arg1 = parseFloat(EvaluateString("[" + ((_a = foundFunction.arguments[0]) !== null && _a !== void 0 ? _a : '0') + "]"));
-    var arg2 = parseFloat(EvaluateString("[" + ((_b = foundFunction.arguments[1]) !== null && _b !== void 0 ? _b : '0') + "]"));
-    switch (foundFunction.function) {
-        case 'abs':
-            if (!isNaN(arg1)) {
-                return Math.abs(arg1).toString();
-            }
-            break;
-        case 'pow':
-            if (!isNaN(arg1) && !isNaN(arg2)) {
-                return Math.pow(arg1, arg2).toString();
-            }
-            break;
-        case 'int':
-            if (!isNaN(arg1)) {
-                return parseInt(foundFunction.arguments[0]).toString();
-            }
-            break;
-        case 'round':
-            if (!isNaN(arg1) && !isNaN(arg2)) {
-                var factor = Math.pow(10, arg2);
-                var tempNumber = arg1 * factor;
-                var roundedTempNumber = Math.round(tempNumber);
-                return (roundedTempNumber / factor).toString();
-            }
-            break;
-        case 'includes':
-            var index = 1;
-            var arrayValues = [];
-            // get array values from the 2nd argument and so on...
-            while (foundFunction.arguments[index] !== undefined) {
-                arrayValues.push(foundFunction.arguments[index]);
-                index++;
-            }
-            return arrayValues.join(',').includes(foundFunction.arguments[0]) ? '1' : '0';
-        case 'includesinarray':
-            var key = 1;
-            var arrValues = [];
-            // get array values from the 2nd argument and so on...
-            while (foundFunction.arguments[key] !== undefined) {
-                arrValues.push(foundFunction.arguments[key]);
-                key++;
-            }
-            return arrValues.includes(foundFunction.arguments[0]) ? '1' : '0';
-    }
-    return '';
-};
-var ExecuteFunctions = function (expression) {
-    var updatedExpression = expression;
-    var foundFunction = FindFunction(updatedExpression, 0);
-    while (!!foundFunction) {
-        updatedExpression = foundFunction.pre + ExecuteFunction(foundFunction) + foundFunction.post;
-        foundFunction = FindFunction(updatedExpression, 0);
-    }
-    return updatedExpression;
-};
-
-(function (ICS) {
-    ICS.Header = function (filenameNoExtension) {
-        if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
-        return ({
-            'Content-Type': 'text/Calendar',
-            'Content-Disposition': "inline; filename=" + filenameNoExtension + ".ics"
-        });
-    };
-    ICS.VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n';
-    ICS.VCALENDARClose_Text = 'END:VCALENDAR\n';
-    var ICSDateFormat = function (date, timezone) { var _a, _b; return !date ? '' : "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + ((_b = (_a = MomentFromString(date)) === null || _a === void 0 ? void 0 : _a.format('YYYYMMDDTHHmmss')) !== null && _b !== void 0 ? _b : ''); };
-    var EscapeText = function (text) { return ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text)))))); };
-    ICS.VEVENT_Text = function (event) {
-        var _a, _b;
-        var event_text = '';
-        event_text += 'BEGIN:VEVENT\n';
-        event_text += 'CLASS:PUBLIC\n';
-        event_text += 'CREATED;' + ICSDateFormat((_a = event.dateTimeCreated) !== null && _a !== void 0 ? _a : new Date().toISOString()) + '\n';
-        event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n';
-        event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n';
-        if (!!event.durationMinutes) {
-            event_text += 'DURATION:PT' + event.durationMinutes + 'M\n';
-        }
-        else if (!!event.dateTimeEnd) {
-            event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n';
-        }
-        event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n';
-        if (!!event.organizerName && !!event.organizerEmail) {
-            event_text += "ORGANIZER;CN=" + event.organizerName + ":MAILTO:" + event.organizerEmail + "\n";
-        }
-        event_text += 'LAST-MODIFIED;' + ICSDateFormat((_b = event.dateTimeModified) !== null && _b !== void 0 ? _b : new Date().toISOString()) + '\n';
-        if (!!event.location) {
-            if (!!event.location_altrep) {
-                event_text += "LOCATION;ALTREP=\"" + EscapeText(event.location_altrep) + "\":" + EscapeText(event.location) + '\n';
-            }
-            else {
-                event_text += 'LOCATION:' + EscapeText(event.location) + '\n';
-            }
-        }
-        if (!!event.priority) {
-            event_text += "PRIORITY:" + event.priority + "\n";
-        }
-        event_text += 'SEQUENCE:0\n';
-        //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
-        event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n';
-        event_text += 'TRANSP:OPAQUE\n';
-        event_text += 'UID:' + event.UID + '\n';
-        if (event.alarmTriggerMinutes !== undefined) {
-            event_text += 'BEGIN:VALARM\n';
-            event_text += "TRIGGER:-PT" + event.alarmTriggerMinutes + "M\n";
-            event_text += 'ACTION:DISPLAY\n';
-            event_text += 'DESCRIPTION:Reminder\n';
-            event_text += 'END:VALARM\n';
-        }
-        event_text += 'END:VEVENT\n';
-        return event_text;
-    };
-    ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
-})(exports.ICS || (exports.ICS = {}));
 
 (function (Stages) {
     Stages["Local"] = "local";
@@ -2955,7 +2526,6 @@ exports.AddressCopy = AddressCopy;
 exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
-exports.AnyDateValueIsObject = AnyDateValueIsObject;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.ChangeValueChanges = ChangeValueChanges;
@@ -2965,13 +2535,9 @@ exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
-exports.DateAndTimeToDateTime = DateAndTimeToDateTime;
 exports.DeepEqual = DeepEqual;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
-exports.DisplayTZItem = DisplayTZItem;
-exports.DurationLongText = DurationLongText;
-exports.DurationShortText = DurationShortText;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormUrlEncoded = FormUrlEncoded;
@@ -2985,8 +2551,6 @@ exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HTMLToText = HTMLToText;
-exports.IANAZoneAbbr = IANAZoneAbbr;
-exports.IsDateString = IsDateString;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
@@ -2997,39 +2561,6 @@ exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.JSONStringToObject = JSONStringToObject;
 exports.LeftPad = LeftPad;
-exports.MOMENT_FORMAT_DATE = MOMENT_FORMAT_DATE;
-exports.MOMENT_FORMAT_DATE_DISPLAY = MOMENT_FORMAT_DATE_DISPLAY;
-exports.MOMENT_FORMAT_DATE_DISPLAY_DOW = MOMENT_FORMAT_DATE_DISPLAY_DOW;
-exports.MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_DISPLAY_DOW_LONG;
-exports.MOMENT_FORMAT_DATE_DISPLAY_LONG = MOMENT_FORMAT_DATE_DISPLAY_LONG;
-exports.MOMENT_FORMAT_DATE_TIME = MOMENT_FORMAT_DATE_TIME;
-exports.MOMENT_FORMAT_DATE_TIME_DISPLAY = MOMENT_FORMAT_DATE_TIME_DISPLAY;
-exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW = MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW;
-exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = MOMENT_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
-exports.MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG = MOMENT_FORMAT_DATE_TIME_DISPLAY_LONG;
-exports.MOMENT_FORMAT_TIME_DISPLAY = MOMENT_FORMAT_TIME_DISPLAY;
-exports.MOMENT_FORMAT_TIME_NO_SECONDS = MOMENT_FORMAT_TIME_NO_SECONDS;
-exports.MOMENT_FORMAT_TIME_SECONDS = MOMENT_FORMAT_TIME_SECONDS;
-exports.MomentAddWeekDays = MomentAddWeekDays;
-exports.MomentCurrentTimeZone = MomentCurrentTimeZone;
-exports.MomentCurrentTimeZoneOlson = MomentCurrentTimeZoneOlson;
-exports.MomentDateString = MomentDateString;
-exports.MomentDateTimeString = MomentDateTimeString;
-exports.MomentDisplayDayDate = MomentDisplayDayDate;
-exports.MomentDisplayDayDateDoW = MomentDisplayDayDateDoW;
-exports.MomentDisplayDayDateTime = MomentDisplayDayDateTime;
-exports.MomentDisplayDayDateTimeDoW = MomentDisplayDayDateTimeDoW;
-exports.MomentDisplayTime = MomentDisplayTime;
-exports.MomentDurationLongText = MomentDurationLongText;
-exports.MomentDurationShortText = MomentDurationShortText;
-exports.MomentDurationShortTextAligned = MomentDurationShortTextAligned;
-exports.MomentFormatString = MomentFormatString;
-exports.MomentFromString = MomentFromString;
-exports.MomentID = MomentID;
-exports.MomentStringToDateLocale = MomentStringToDateLocale;
-exports.MomentTimeString = MomentTimeString;
-exports.MomentWeekDays = MomentWeekDays;
-exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
@@ -3061,7 +2592,6 @@ exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
-exports.TimeZoneOlsons = TimeZoneOlsons;
 exports.ToArray = ToArray;
 exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;

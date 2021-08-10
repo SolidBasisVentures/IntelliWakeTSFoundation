@@ -1,5 +1,3 @@
-// const moment = require('moment-timezone')
-
 import {ObjectContainsSearchTerms, SortCompare, SortCompareNull} from '../src/SortSearch'
 import {RemoveDupPropertiesByIDArray} from '../src/DataConstructs'
 
