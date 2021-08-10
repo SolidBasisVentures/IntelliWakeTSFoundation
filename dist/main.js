@@ -234,6 +234,19 @@ var consoleLogTable = function (arrayData, tableDef) {
 };
 
 var nowDateTime = function () { return new Date().toISOString(); };
+var DateParse = function (date) {
+    if (!date)
+        return null;
+    try {
+        var result = Date.parse(date);
+        if (isNaN(result))
+            return null;
+        return result;
+    }
+    catch (_a) {
+        return null;
+    }
+};
 var YYYYMMDDHHmmss = function (ts) {
     var dateObject = !ts ? new Date() : new Date(ts);
     return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
@@ -987,9 +1000,9 @@ var RemoveDupProperties = function (original, propsToRemove) {
                 delete result[key];
             }
             else {
-                var pTRM = Date.parse(propsToRemove[key]);
+                var pTRM = DateParse(propsToRemove[key]);
                 if (!!pTRM) {
-                    var rM = Date.parse(result[key]);
+                    var rM = DateParse(result[key]);
                     if (!!rM) {
                         if (pTRM === rM) {
                             delete result[key];
@@ -1434,7 +1447,7 @@ var ExecuteFunctions = function (expression) {
     var ICSDateFormat = function (date, timezone) {
         if (!date)
             return '';
-        var dateTS = Date.parse(date);
+        var dateTS = DateParse(date);
         if (!dateTS)
             return '';
         return "TZID=" + (timezone !== null && timezone !== void 0 ? timezone : 'America/New_York') + ":" + YYYYMMDDHHmmss(dateTS); //YYYYMMDDTHHmmss
@@ -2548,6 +2561,7 @@ exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DateParse = DateParse;
 exports.DeepEqual = DeepEqual;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;

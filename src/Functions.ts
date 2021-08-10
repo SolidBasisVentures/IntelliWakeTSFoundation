@@ -1,5 +1,27 @@
 export const nowDateTime = () => new Date().toISOString()
 
+export const DateParse = (date: string | null | undefined): number | null => {
+	if (!date) return null
+	
+	try {
+		const result = Date.parse(date)
+		
+		if (isNaN(result)) return null
+		
+		return result
+	} catch {
+		return null
+	}
+}
+
+export const DateISO = (date: string | null | undefined): string | null => {
+	const parsed = DateParse(date)
+	
+	if (!parsed) return null
+	
+	return new Date(parsed).toISOString()
+}
+
 export const YYYYMMDDHHmmss = (ts?: number): string => {
 	const dateObject = !ts ? new Date() : new Date(ts)
 	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1).toString().padStart(2, '0')}${dateObject.getDate().toString().padStart(2, '0')}${dateObject.getHours().toString().padStart(2, '0')}${dateObject.getMinutes().toString().padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`

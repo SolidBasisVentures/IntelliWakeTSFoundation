@@ -1,4 +1,4 @@
-import {ReplaceAll, YYYYMMDDHHmmss} from './Functions'
+import {DateISO, ReplaceAll} from './Functions'
 
 export namespace ICS {
 	export interface IEvent {
@@ -31,11 +31,11 @@ export namespace ICS {
 	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => {
 		if (!date) return ''
 		
-		const dateTS = Date.parse(date)
+		const dateISO = DateISO((timezone ?? 'America/New_York') + ' ' + (date ?? ''))
 		
-		if (!dateTS) return ''
+		if (!dateISO) return ''
 		
-		return `TZID=${timezone ?? 'America/New_York'}:${YYYYMMDDHHmmss(dateTS)}` //YYYYMMDDTHHmmss
+		return `${dateISO}` //YYYYMMDDTHHmmss
 	}
 	
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))
