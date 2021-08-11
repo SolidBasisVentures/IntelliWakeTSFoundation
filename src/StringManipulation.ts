@@ -98,7 +98,7 @@ export const CleanScripts = function(subject: string): string {
  * TextToHTML('<p>john doe</p>')
  */
 export const TextToHTML = function(subject: string): string {
-	let str = subject.replace(/(<([^>]+)>)/gi, '')
+	let str = CleanScripts(subject).replace(/(<([^>]+)>)/gi, '')
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
 }
