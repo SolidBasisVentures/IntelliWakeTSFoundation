@@ -1,5 +1,6 @@
 export * from './ConsoleLogTable'
 export * from './DataConstructs'
+export * from './DateManager'
 export * from './Evaluator'
 export * from './Functions'
 export * from './ICS'

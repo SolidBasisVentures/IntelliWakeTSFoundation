@@ -1,4 +1,5 @@
-import {DateParseTS, ReplaceAll} from './Functions'
+import {ReplaceAll} from './Functions'
+import {DateParseTS} from './DateManager'
 
 /**
  * IChanges provides a structure for tracking changes for an object.

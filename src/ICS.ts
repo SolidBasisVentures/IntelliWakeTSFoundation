@@ -1,4 +1,5 @@
-import {DateICS, ReplaceAll} from './Functions'
+import {ReplaceAll} from './Functions'
+import {DateICS} from './DateManager'
 
 export namespace ICS {
 	export interface IEvent {
