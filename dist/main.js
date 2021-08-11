@@ -880,7 +880,7 @@ var CleanScripts = function (subject) {
  * TextToHTML('<p>john doe</p>')
  */
 var TextToHTML = function (subject) {
-    var str = subject.replace(/(<([^>]+)>)/gi, '');
+    var str = CleanScripts(subject).replace(/(<([^>]+)>)/gi, '');
     // noinspection RegExpUnnecessaryNonCapturingGroup
     return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
 };

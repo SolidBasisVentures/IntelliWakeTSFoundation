@@ -19,8 +19,10 @@ export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLA
 
 export const nowDateTime = () => new Date().toISOString()
 
-export const DateParseTS = (date?: number | string | null): number | null => {
+export const DateParseTS = (date?: any): number | null => {
 	if (!date) return Date.parse(new Date().toString())
+	
+	if (typeof date === 'object') return date.valueOf() ?? null
 	
 	try {
 		const result: any = Date.parse(date.toString())
@@ -28,11 +30,11 @@ export const DateParseTS = (date?: number | string | null): number | null => {
 		if (isNaN(result)) {
 			const check = new Date(date)
 			
-			if (!check) {
+			if (!check || !isFinite(check as any)) {
 				return null
 			}
 			
-			return Date.parse(check.toString())
+			return check.valueOf()
 		}
 		
 		return result
@@ -40,20 +42,39 @@ export const DateParseTS = (date?: number | string | null): number | null => {
 		return null
 	}
 }
-export const DateISO = (date?: number | string | null): string | null => {
+export const DateISO = (date?: any): string | null => {
 	const parsed = DateParseTS(date)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date?: number | string | null): Date | null => {
+
+export const DateObject = (date?: any): Date | null => {
 	const parsed = DateParseTS(date)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed)
 }
+
+export const DateTSAdd = (date: any, value: number, increment: string): number | null => {
+	let dateTS = DateParseTS(date)
+	
+	if (!dateTS) return null
+	
+	switch (increment) {
+		case 'days':
+		case 'day':
+			dateTS += (value * (24 * 60 * 60 * 1000))
+			break
+	}
+	
+	return dateTS
+}
+
+export const DateISOAdd = (date: any, value: number, increment: string): string | null => DateISO(DateTSAdd(date, value, increment))
+export const DateObjectAdd = (date: any, value: number, increment: string): Date | null => DateObject(DateTSAdd(date, value, increment))
 
 export const DateICS = (date?: string | null): string | null => {
 	const dateISO = DateISO(date)
