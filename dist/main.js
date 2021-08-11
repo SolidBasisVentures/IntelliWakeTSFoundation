@@ -233,65 +233,6 @@ var consoleLogTable = function (arrayData, tableDef) {
     }
 };
 
-var nowDateTime = function () { return new Date().toISOString(); };
-var DateParseTS = function (date) {
-    if (!date)
-        return Date.parse(new Date().toString());
-    try {
-        var result = Date.parse(date.toString());
-        if (isNaN(result)) {
-            var check = new Date(date);
-            if (!check) {
-                return null;
-            }
-            return Date.parse(check.toString());
-        }
-        return result;
-    }
-    catch (_a) {
-        return null;
-    }
-};
-var DateISO = function (date) {
-    var parsed = DateParseTS(date);
-    if (!parsed)
-        return null;
-    return new Date(parsed).toISOString();
-};
-var DateICS = function (date) {
-    var dateISO = DateISO(date);
-    if (!dateISO)
-        return null;
-    var dateICS = dateISO;
-    var decimal = dateICS.indexOf('.');
-    var zed = dateICS.indexOf('Z');
-    if (decimal > 0 && zed > decimal) {
-        dateICS = dateICS.substring(0, decimal) + dateICS.substring(zed);
-    }
-    dateICS = ReplaceAll('-', '', dateICS);
-    dateICS = ReplaceAll(':', '', dateICS);
-    return dateICS;
-};
-var YYYYMMDDHHmmss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYY_MM_DD_HH_mm_ss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYYsMMsDDsHHcmmcss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYYsMMsDD = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
-};
-var HHcmmcss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
-};
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *
@@ -853,6 +794,723 @@ function OmitProperty(obj) {
     }
     return ret;
 }
+
+/**
+ * Converts a string to snake_case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user_token"
+ */
+var ToSnakeCase = function (str) {
+    if (str === 'ID')
+        return 'id';
+    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
+    return (calcStr[0].toLowerCase() +
+        calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
+};
+/**
+ * Converts a string to kebab-case.
+ *
+ * @example
+ * ToSnakeCase('UserToken')  // returns "user-token"
+ */
+var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
+/**
+ * Converts a string to camelCase.
+ *
+ * @example
+ * ToCamelCase('user_token') //  returns "userToken
+ */
+var ToCamelCase = function (str) {
+    if (str === 'id')
+        return 'ID';
+    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
+    return ReplaceAll('_', '', ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
+        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
+    })));
+};
+var ToUpperCaseWords = function (str) {
+    var _a, _b, _c;
+    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
+    if (result.endsWith(' Id')) {
+        return result.substr(0, result.length - 1) + 'D';
+    }
+    return result;
+};
+/**
+ * Converts a string to PascalCase.
+ *
+ * @example
+ * ToPascalCase('user_token') //  returns "UserToken
+ */
+var ToPascalCase = function (str) {
+    var calcStr = ToCamelCase(str);
+    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
+};
+/**
+ * Replaces links to an anchor tag.
+ *
+ * @example
+ * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
+ * ReplaceLinks('https://www.google.com')
+ */
+var ReplaceLinks = function (subject) {
+    // noinspection RegExpUnnecessaryNonCapturingGroup
+    var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    // noinspection HtmlUnknownTarget
+    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
+    // noinspection RegExpRedundantEscape
+    return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
+};
+/**
+ * Removes script tags.
+ *
+ * @example
+ * // returns "blank"
+ * CleanScripts('<script>console.log(1)</script>blank')
+ */
+var CleanScripts = function (subject) {
+    return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
+};
+/**
+ * Removes any given HTML tag and retains what's inside of the tag.
+ *
+ * @example
+ * // returns "john doe"
+ * TextToHTML('<p>john doe</p>')
+ */
+var TextToHTML = function (subject) {
+    var str = subject.replace(/(<([^>]+)>)/gi, '');
+    // noinspection RegExpUnnecessaryNonCapturingGroup
+    return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+};
+/**
+ * Strips scripts and other tags from HTML
+ *
+ * @param subject
+ * HTMLToText('<p>john doe</p>') // returns john doe
+ */
+var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
+var LeftPad = function (subject, length, padString) {
+    var str = subject;
+    while (str.length < length)
+        str = padString + str;
+    return str;
+};
+var RightPad = function (subject, length, padString) {
+    var str = subject;
+    while (str.length < length)
+        str = str + padString;
+    return str;
+};
+/**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
+var ToCurrency = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
+var ToPercent = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('')
+ */
+var ToCurrencyBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ *
+ * // returns ''
+ * ToCurrencyBlank('-')
+ */
+var ToCurrencyDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+            minimumFractionDigits: decimals
+        }));
+};
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns ''
+ * ToPercent('')
+ */
+var ToPercentBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ *
+ * // returns '-'
+ * ToPercent('')
+ */
+var ToPercentDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    }) + '%');
+};
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
+var ToDigits = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
+var ToDigitsBlank = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
+var ToDigitsDash = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+    });
+};
+var DigitsNth = function (value) {
+    var result = ToDigits(value);
+    if (!result)
+        return null;
+    switch (result.substr(-2)) {
+        case '11':
+        case '12':
+        case '13':
+            result += 'th';
+            break;
+        default:
+            switch (result.substr(-1)) {
+                case '1':
+                    result += 'st';
+                    break;
+                case '2':
+                    result += 'nd';
+                    break;
+                case '3':
+                    result += 'rd';
+                    break;
+                default:
+                    result += 'th';
+                    break;
+            }
+    }
+    return result;
+};
+/**
+ * Converts a string to an array.
+ *
+ * @example
+ * // returns ['john doe']
+ * ToStringArray('john doe')
+ */
+var ToStringArray = function (value) {
+    if (!value) {
+        return [];
+    }
+    if (typeof value === 'string') {
+        return [value];
+    }
+    else {
+        return value;
+    }
+};
+/**
+ * Returns a formatted phone number with parenthesis.
+ *
+ * @example
+ * // returns (555) 555-1234
+ * FormatPhoneNumber('5555551234')
+ */
+var FormatPhoneNumber = function (phone, forceNumeric) {
+    if (forceNumeric === void 0) { forceNumeric = false; }
+    //Filter only numbers from the input
+    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
+    //Check if the input is of correct
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        //Remove the matched extension code
+        //Change this to format for any country code.
+        var intlCode = match[1] ? '+1 ' : '';
+        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
+    }
+    return phone;
+};
+/**
+ * Returns a formatted phone number with dots.
+ *
+ * @example
+ * // returns 555.555.1234
+ * FormatPhoneNumberDots('5555551234')
+ */
+var FormatPhoneNumberDots = function (phone, forceNumeric) {
+    if (forceNumeric === void 0) { forceNumeric = false; }
+    //Filter only numbers from the input
+    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
+    //Check if the input is of correct
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        //Remove the matched extension code
+        //Change this to format for any country code.
+        var intlCode = match[1] ? '+1 ' : '';
+        return [intlCode, match[2], '.', match[3], '.', match[4]].join('');
+    }
+    return phone;
+};
+/**
+ * Formats a zip code by adding a hyphen in a 9 digit code.
+ *
+ * @example
+ * // returns "12345-6789"
+ * FormatZip('123456789')
+ */
+var FormatZip = function (zip) {
+    //Filter only numbers from the input
+    var cleaned = ('' + zip).replace(/\D/g, '');
+    // check if the input is a 9 digit code
+    if (cleaned.length === 9) {
+        cleaned = cleaned.replace(/(\d{5})/, '$1-');
+    }
+    return cleaned;
+};
+/**
+ * Adds "http" on urls that don't have it.
+ *
+ * @example
+ * // returns "http://www.google.com"
+ * FormatExternalURL('www.google.com')
+ */
+var FormatExternalURL = function (url) {
+    if (!!url) {
+        if (!url.startsWith('http')) {
+            return 'http://' + url;
+        }
+        return url;
+    }
+    return '';
+};
+/**
+ * Returns formatted full name.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
+ */
+var DisplayNameFromFL = function (first, last, middle, suffix) {
+    var returnName = '';
+    if (!!last) {
+        returnName += last;
+        if (!!first) {
+            returnName += ', ' + first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else if (!!middle) {
+            returnName += ', ' + middle;
+        }
+    }
+    else {
+        if (!!first) {
+            returnName += first;
+            if (!!middle) {
+                returnName += ' ' + middle;
+            }
+        }
+        else {
+            if (!!middle) {
+                returnName += middle;
+            }
+        }
+    }
+    if (!!suffix) {
+        if (!!returnName) {
+            returnName += ', ';
+        }
+        returnName += suffix;
+    }
+    return returnName;
+};
+/**
+ * Returns formatted name from an object.
+ *
+ * @example
+ * // returns 'Doe, John Smith, Jr.'
+ * DisplayNameFromObject({
+ *   first_name: 'John',
+ *   last_name: 'Doe',
+ *   middle_name: 'Smith',
+ *   suffix_name: 'Jr.',
+ * })
+ */
+var DisplayNameFromObject = function (object, prefix) {
+    if (!object)
+        return '';
+    var actualPrefix = !!prefix ? "_" + prefix : '';
+    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
+};
+/**
+ * Converts the first character of each word of a string to uppercase.
+ *
+ * @example
+ * // return This Is Awesome
+ * UCWords('This is awesome')
+ */
+var UCWords = function (str) {
+    if (!str) {
+        return str;
+    }
+    var strVal = '';
+    var strItems = str.toLowerCase().split(' ');
+    for (var chr = 0; chr < strItems.length; chr++) {
+        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
+    }
+    return strVal.trim();
+};
+/**
+ * Generates a random string with a given length and valid characters.
+ *
+ * @example
+ * // returns '32112'
+ * RandomString(5, '12345')
+ */
+var RandomString = function (length, validChars) {
+    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
+    var validCharLength = validChars.length - 1;
+    var result = '';
+    for (var i = 0; i < length; i++) {
+        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
+    }
+    var ts = Date.now().toString();
+    if (length > ts.length * 0.5) {
+        var offset = RoundTo((length - ts.length) / 2, 0);
+        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
+    }
+    return result;
+};
+
+var DATE_FORMAT_DATE = 'YYYY-MM-DD';
+var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
+var DATE_FORMAT_TIME_NO_SECONDS = 'HH:mm';
+var DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE + ' ' + DATE_FORMAT_TIME_SECONDS;
+var DATE_FORMAT_DATE_DISPLAY = "MMM D, YYYY";
+var DATE_FORMAT_DATE_DISPLAY_DOW = "dd, " + DATE_FORMAT_DATE_DISPLAY;
+var DATE_FORMAT_TIME_DISPLAY = 'h:mm a';
+var DATE_FORMAT_DATE_TIME_DISPLAY = DATE_FORMAT_DATE_DISPLAY + ", " + DATE_FORMAT_TIME_DISPLAY;
+var DATE_FORMAT_DATE_TIME_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW + ", " + DATE_FORMAT_TIME_DISPLAY;
+var DATE_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
+var DATE_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + DATE_FORMAT_DATE_DISPLAY_LONG;
+var DATE_FORMAT_DATE_TIME_DISPLAY_LONG = DATE_FORMAT_DATE_DISPLAY_LONG + ", " + DATE_FORMAT_TIME_DISPLAY;
+var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + DATE_FORMAT_TIME_DISPLAY;
+var nowDateTime = function () { return new Date().toISOString(); };
+var DateParseTS = function (date) {
+    if (!date)
+        return Date.parse(new Date().toString());
+    try {
+        var result = Date.parse(date.toString());
+        if (isNaN(result)) {
+            var check = new Date(date);
+            if (!check) {
+                return null;
+            }
+            return Date.parse(check.toString());
+        }
+        return result;
+    }
+    catch (_a) {
+        return null;
+    }
+};
+var DateISO = function (date) {
+    var parsed = DateParseTS(date);
+    if (!parsed)
+        return null;
+    return new Date(parsed).toISOString();
+};
+var DateObject = function (date) {
+    var parsed = DateParseTS(date);
+    if (!parsed)
+        return null;
+    return new Date(parsed);
+};
+var DateICS = function (date) {
+    var dateISO = DateISO(date);
+    if (!dateISO)
+        return null;
+    var dateICS = dateISO;
+    var decimal = dateICS.indexOf('.');
+    var zed = dateICS.indexOf('Z');
+    if (decimal > 0 && zed > decimal) {
+        dateICS = dateICS.substring(0, decimal) + dateICS.substring(zed);
+    }
+    dateICS = ReplaceAll('-', '', dateICS);
+    dateICS = ReplaceAll(':', '', dateICS);
+    return dateICS;
+};
+var DateFormat = function (date, format) {
+    var dateObject = DateObject(date);
+    if (!dateObject || dateObject.valueOf() === 0)
+        return null;
+    var applyCommand = function (command) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        switch (command) {
+            case 'YYYY':
+                return dateObject.getFullYear().toString();
+            case 'YY':
+                return dateObject.getFullYear().toString().substr(2);
+            case 'Q':
+                return (Math.ceil((dateObject.getMonth() + 1) / 3)).toString();
+            case 'Qo':
+                return (_a = DigitsNth((Math.ceil((dateObject.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
+            case 'MMMM':
+                return (_b = MonthNames[dateObject.getMonth() + 1]) !== null && _b !== void 0 ? _b : '';
+            case 'MMM':
+                return ((_c = MonthNames[dateObject.getMonth() + 1]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
+            case 'MM':
+                return (dateObject.getMonth() + 1).toString().padStart(2, '0');
+            case 'Mo':
+                return (_d = DigitsNth(dateObject.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
+            case 'M':
+                return (dateObject.getMonth() + 1).toString();
+            /**
+             * Week of Year	w	1 2 ... 52 53
+             * wo	1st 2nd ... 52nd 53rd
+             * ww	01 02 ... 52 53
+             * Week of Year (ISO)	W	1 2 ... 52 53
+             * Wo	1st 2nd ... 52nd 53rd
+             * WW	01 02 ... 52 53
+             */
+            /**
+             * Day of Year	DDD	1 2 ... 364 365
+             * DDDo	1st 2nd ... 364th 365th
+             * DDDD	001 002 ... 364 365
+             */
+            case 'DD':
+                return dateObject.getDate().toString().padStart(2, '0');
+            case 'Do':
+                return (_e = DigitsNth(dateObject.getDate())) !== null && _e !== void 0 ? _e : '';
+            case 'D':
+                return dateObject.getDate().toString();
+            case 'd':
+                return dateObject.getDay().toString();
+            case 'do':
+                return (_f = DigitsNth(dateObject.getDay())) !== null && _f !== void 0 ? _f : '';
+            case 'dd':
+                return ((_g = WeekDays[dateObject.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
+            case 'ddd':
+                return ((_h = WeekDays[dateObject.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
+            case 'dddd':
+                return ((_j = WeekDays[dateObject.getDay()]) !== null && _j !== void 0 ? _j : '');
+            case 'HH':
+                return dateObject.getHours().toString().padStart(2, '0');
+            case 'H':
+                return dateObject.getHours().toString();
+            case 'hh':
+                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString().padStart(2, '0');
+            case 'h':
+                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString();
+            case 'mm':
+                return dateObject.getMinutes().toString().padStart(2, '0');
+            case 'm':
+                return dateObject.getMinutes().toString();
+            case 'ss':
+                return dateObject.getSeconds().toString().padStart(2, '0');
+            case 's':
+                return dateObject.getSeconds().toString();
+            case 'A':
+                return dateObject.getHours() > 12 ? 'PM' : 'AM';
+            case 'a':
+                return dateObject.getHours() > 12 ? 'pm' : 'am';
+            default:
+                return command;
+        }
+    };
+    var formatArray = format.split('');
+    var result = '';
+    var previousChar = '';
+    var command = '';
+    var inEscape = false;
+    var patterns = ['Mo', 'Qo', 'Do', 'do'];
+    var _loop_1 = function (formatChar) {
+        if (inEscape) {
+            if (formatChar === ']') {
+                inEscape = false;
+            }
+            else {
+                result += formatChar;
+            }
+        }
+        else if (formatChar === '[') {
+            result += applyCommand(command);
+            command = '';
+            previousChar = '';
+            inEscape = true;
+        }
+        else {
+            if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
+                patterns.some(function (pattern) { return pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1); }))) {
+                command += formatChar;
+            }
+            else {
+                result += applyCommand(command);
+                command = formatChar;
+            }
+            previousChar = formatChar;
+        }
+    };
+    for (var _i = 0, formatArray_1 = formatArray; _i < formatArray_1.length; _i++) {
+        var formatChar = formatArray_1[_i];
+        _loop_1(formatChar);
+    }
+    result += applyCommand(command);
+    return result;
+};
+var YYYYMMDDHHmmss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var YYYY_MM_DD_HH_mm_ss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var YYYYsMMsDDsHHcmmcss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var YYYYsMMsDD = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
+};
+var HHcmmcss = function (ts) {
+    var dateObject = !ts ? new Date() : new Date(ts);
+    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+};
+var MonthNames = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December'
+};
+var WeekDays = {
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday'
+};
 
 var initialChanges = {};
 /**
@@ -1517,475 +2175,6 @@ var ExecuteFunctions = function (expression) {
     ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
 })(exports.ICS || (exports.ICS = {}));
 
-/**
- * Converts a string to snake_case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user_token"
- */
-var ToSnakeCase = function (str) {
-    if (str === 'ID')
-        return 'id';
-    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
-    return (calcStr[0].toLowerCase() +
-        calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
-};
-/**
- * Converts a string to kebab-case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user-token"
- */
-var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
-/**
- * Converts a string to camelCase.
- *
- * @example
- * ToCamelCase('user_token') //  returns "userToken
- */
-var ToCamelCase = function (str) {
-    if (str === 'id')
-        return 'ID';
-    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
-    return ReplaceAll('_', '', ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
-        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
-    })));
-};
-var ToUpperCaseWords = function (str) {
-    var _a, _b, _c;
-    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
-    if (result.endsWith(' Id')) {
-        return result.substr(0, result.length - 1) + 'D';
-    }
-    return result;
-};
-/**
- * Converts a string to PascalCase.
- *
- * @example
- * ToPascalCase('user_token') //  returns "UserToken
- */
-var ToPascalCase = function (str) {
-    var calcStr = ToCamelCase(str);
-    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
-};
-/**
- * Replaces links to an anchor tag.
- *
- * @example
- * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
- * ReplaceLinks('https://www.google.com')
- */
-var ReplaceLinks = function (subject) {
-    // noinspection RegExpUnnecessaryNonCapturingGroup
-    var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
-    // noinspection HtmlUnknownTarget
-    var target = "<a href='$1' target='_blank'>$1</a>";
-    // noinspection RegExpRedundantEscape
-    return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
-};
-/**
- * Removes script tags.
- *
- * @example
- * // returns "blank"
- * CleanScripts('<script>console.log(1)</script>blank')
- */
-var CleanScripts = function (subject) {
-    return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
-};
-/**
- * Removes any given HTML tag and retains what's inside of the tag.
- *
- * @example
- * // returns "john doe"
- * TextToHTML('<p>john doe</p>')
- */
-var TextToHTML = function (subject) {
-    var str = subject.replace(/(<([^>]+)>)/gi, '');
-    // noinspection RegExpUnnecessaryNonCapturingGroup
-    return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
-};
-/**
- * Strips scripts and other tags from HTML
- *
- * @param subject
- * HTMLToText('<p>john doe</p>') // returns john doe
- */
-var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
-var LeftPad = function (subject, length, padString) {
-    var str = subject;
-    while (str.length < length)
-        str = padString + str;
-    return str;
-};
-var RightPad = function (subject, length, padString) {
-    var str = subject;
-    while (str.length < length)
-        str = str + padString;
-    return str;
-};
-/**
- * Returns the given number with a dollar sign.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- */
-var ToCurrency = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Converts the given number to a percentage with a percent sign.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- */
-var ToPercent = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- *
- * // returns ''
- * ToCurrencyBlank('')
- */
-var ToCurrencyBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns dash.
- *
- * @example
- * // returns $100.00
- * ToCurrency(100)
- *
- * // returns ''
- * ToCurrencyBlank('-')
- */
-var ToCurrencyDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return ('$' +
-        CleanNumber(value).toLocaleString(undefined, {
-            maximumFractionDigits: decimals,
-            minimumFractionDigits: decimals
-        }));
-};
-/**
- * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
- * returns empty string.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- *
- * // returns ''
- * ToPercent('')
- */
-var ToPercentBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Converts the given number to a percentage with a percent sign if not empty or 0. Otherwise,
- * returns dash.
- *
- * @example
- * // returns 50%
- * ToPercent(0.5)
- *
- * // returns '-'
- * ToPercent('')
- */
-var ToPercentDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 2; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    }) + '%');
-};
-/**
- * Returns the given number with decimal places.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- */
-var ToDigits = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Returns the given number with decimal places if not empty or 0. Otherwise,
- * returns empty string.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- *
- * // returns ''
- * ToDigits('')
- */
-var ToDigitsBlank = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '';
-    }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Returns the given number with decimal places if not empty or 0. Otherwise,
- * returns dash.
- *
- * @example
- * // return 10.00
- * ToDigits(10)
- *
- * // returns '-'
- * ToDigits('')
- */
-var ToDigitsDash = function (value, decimals) {
-    if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
-        return '-';
-    }
-    return CleanNumber(value).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
-    });
-};
-/**
- * Converts a string to an array.
- *
- * @example
- * // returns ['john doe']
- * ToStringArray('john doe')
- */
-var ToStringArray = function (value) {
-    if (!value) {
-        return [];
-    }
-    if (typeof value === 'string') {
-        return [value];
-    }
-    else {
-        return value;
-    }
-};
-/**
- * Returns a formatted phone number with parenthesis.
- *
- * @example
- * // returns (555) 555-1234
- * FormatPhoneNumber('5555551234')
- */
-var FormatPhoneNumber = function (phone, forceNumeric) {
-    if (forceNumeric === void 0) { forceNumeric = false; }
-    //Filter only numbers from the input
-    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
-    //Check if the input is of correct
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-        //Remove the matched extension code
-        //Change this to format for any country code.
-        var intlCode = match[1] ? '+1 ' : '';
-        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
-    }
-    return phone;
-};
-/**
- * Returns a formatted phone number with dots.
- *
- * @example
- * // returns 555.555.1234
- * FormatPhoneNumberDots('5555551234')
- */
-var FormatPhoneNumberDots = function (phone, forceNumeric) {
-    if (forceNumeric === void 0) { forceNumeric = false; }
-    //Filter only numbers from the input
-    var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
-    //Check if the input is of correct
-    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-        //Remove the matched extension code
-        //Change this to format for any country code.
-        var intlCode = match[1] ? '+1 ' : '';
-        return [intlCode, match[2], '.', match[3], '.', match[4]].join('');
-    }
-    return phone;
-};
-/**
- * Formats a zip code by adding a hyphen in a 9 digit code.
- *
- * @example
- * // returns "12345-6789"
- * FormatZip('123456789')
- */
-var FormatZip = function (zip) {
-    //Filter only numbers from the input
-    var cleaned = ('' + zip).replace(/\D/g, '');
-    // check if the input is a 9 digit code
-    if (cleaned.length === 9) {
-        cleaned = cleaned.replace(/(\d{5})/, '$1-');
-    }
-    return cleaned;
-};
-/**
- * Adds "http" on urls that don't have it.
- *
- * @example
- * // returns "http://www.google.com"
- * FormatExternalURL('www.google.com')
- */
-var FormatExternalURL = function (url) {
-    if (!!url) {
-        if (!url.startsWith('http')) {
-            return 'http://' + url;
-        }
-        return url;
-    }
-    return '';
-};
-/**
- * Returns formatted full name.
- *
- * @example
- * // returns 'Doe, John Smith, Jr.'
- * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
- */
-var DisplayNameFromFL = function (first, last, middle, suffix) {
-    var returnName = '';
-    if (!!last) {
-        returnName += last;
-        if (!!first) {
-            returnName += ', ' + first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else if (!!middle) {
-            returnName += ', ' + middle;
-        }
-    }
-    else {
-        if (!!first) {
-            returnName += first;
-            if (!!middle) {
-                returnName += ' ' + middle;
-            }
-        }
-        else {
-            if (!!middle) {
-                returnName += middle;
-            }
-        }
-    }
-    if (!!suffix) {
-        if (!!returnName) {
-            returnName += ', ';
-        }
-        returnName += suffix;
-    }
-    return returnName;
-};
-/**
- * Returns formatted name from an object.
- *
- * @example
- * // returns 'Doe, John Smith, Jr.'
- * DisplayNameFromObject({
- *   first_name: 'John',
- *   last_name: 'Doe',
- *   middle_name: 'Smith',
- *   suffix_name: 'Jr.',
- * })
- */
-var DisplayNameFromObject = function (object, prefix) {
-    if (!object)
-        return '';
-    var actualPrefix = !!prefix ? "_" + prefix : '';
-    return DisplayNameFromFL(object[actualPrefix + 'first_name'], object[actualPrefix + 'last_name'], object[actualPrefix + 'middle_name'], object[actualPrefix + 'suffix_name']);
-};
-/**
- * Converts the first character of each word of a string to uppercase.
- *
- * @example
- * // return This Is Awesome
- * UCWords('This is awesome')
- */
-var UCWords = function (str) {
-    if (!str) {
-        return str;
-    }
-    var strVal = '';
-    var strItems = str.toLowerCase().split(' ');
-    for (var chr = 0; chr < strItems.length; chr++) {
-        strVal += strItems[chr].substring(0, 1).toUpperCase() + strItems[chr].substring(1, strItems[chr].length) + ' ';
-    }
-    return strVal.trim();
-};
-/**
- * Generates a random string with a given length and valid characters.
- *
- * @example
- * // returns '32112'
- * RandomString(5, '12345')
- */
-var RandomString = function (length, validChars) {
-    if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
-    var validCharLength = validChars.length - 1;
-    var result = '';
-    for (var i = 0; i < length; i++) {
-        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
-    }
-    var ts = Date.now().toString();
-    if (length > ts.length * 0.5) {
-        var offset = RoundTo((length - ts.length) / 2, 0);
-        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
-    }
-    return result;
-};
-
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -2575,12 +2764,28 @@ exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
 exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
+exports.DATE_FORMAT_DATE = DATE_FORMAT_DATE;
+exports.DATE_FORMAT_DATE_DISPLAY = DATE_FORMAT_DATE_DISPLAY;
+exports.DATE_FORMAT_DATE_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW;
+exports.DATE_FORMAT_DATE_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG;
+exports.DATE_FORMAT_DATE_DISPLAY_LONG = DATE_FORMAT_DATE_DISPLAY_LONG;
+exports.DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE_TIME;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY = DATE_FORMAT_DATE_TIME_DISPLAY;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW = DATE_FORMAT_DATE_TIME_DISPLAY_DOW;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_LONG;
+exports.DATE_FORMAT_TIME_DISPLAY = DATE_FORMAT_TIME_DISPLAY;
+exports.DATE_FORMAT_TIME_NO_SECONDS = DATE_FORMAT_TIME_NO_SECONDS;
+exports.DATE_FORMAT_TIME_SECONDS = DATE_FORMAT_TIME_SECONDS;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DateFormat = DateFormat;
 exports.DateICS = DateICS;
 exports.DateISO = DateISO;
+exports.DateObject = DateObject;
 exports.DateParseTS = DateParseTS;
 exports.DeepEqual = DeepEqual;
+exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.EvaluateCondition = EvaluateCondition;
@@ -2607,6 +2812,7 @@ exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.JSONStringToObject = JSONStringToObject;
 exports.LeftPad = LeftPad;
+exports.MonthNames = MonthNames;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
@@ -2657,6 +2863,7 @@ exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
+exports.WeekDays = WeekDays;
 exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
 exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
 exports.YYYYsMMsDD = YYYYsMMsDD;

@@ -25,7 +25,7 @@ const tsString = DateParseTS(isoLongDateString)
 console.log(DateISO(tsString))
 console.log(tsString)
 
-const alternate = 'Mo Do Q'
+const alternate = 'Mo [is Month] Do [is Day] [Q]Q'
 console.log(alternate, '-----', DateFormat(isoLongDateString, alternate))
 console.log(DATE_FORMAT_DATE, '-----', DateFormat(isoLongDateString, DATE_FORMAT_DATE))
 console.log(DATE_FORMAT_TIME_SECONDS, '-----', DateFormat(isoLongDateString, DATE_FORMAT_TIME_SECONDS))

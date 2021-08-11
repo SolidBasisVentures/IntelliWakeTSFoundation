@@ -80,12 +80,6 @@ export const DateFormat = (date: number | string | null, format: string): string
 	
 	if (!dateObject || dateObject.valueOf() === 0) return null
 	
-	const formatArray = format.split('')
-	let result = ''
-	
-	let previousChar = ''
-	let command = ''
-	
 	const applyCommand = (command: string): string => {
 		switch (command) {
 			case 'YYYY':
@@ -160,19 +154,37 @@ export const DateFormat = (date: number | string | null, format: string): string
 		}
 	}
 	
+	const formatArray = format.split('')
+	let result = ''
+	
+	let previousChar = ''
+	let command = ''
+	let inEscape = false
+	
 	const patterns = ['Mo', 'Qo', 'Do', 'do']
 	
 	for (const formatChar of formatArray) {
-		if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
-			patterns.some(pattern => pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1)))) {
-			command += formatChar
-		} else {
+		if (inEscape) {
+			if (formatChar === ']') {
+				inEscape = false
+			} else {
+				result += formatChar
+			}
+		} else if (formatChar === '[') {
 			result += applyCommand(command)
-			
-			command = formatChar
+			command = ''
+			previousChar = ''
+			inEscape = true
+		} else {
+			if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
+				patterns.some(pattern => pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1)))) {
+				command += formatChar
+			} else {
+				result += applyCommand(command)
+				command = formatChar
+			}
+			previousChar = formatChar
 		}
-		
-		previousChar = formatChar
 	}
 	
 	result += applyCommand(command)
@@ -223,5 +235,5 @@ export const WeekDays = {
 	3: 'Wednesday',
 	4: 'Thursday',
 	5: 'Friday',
-	6: 'Saturday',
+	6: 'Saturday'
 }
