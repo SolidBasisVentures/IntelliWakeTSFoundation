@@ -81,7 +81,7 @@ const FormatIsDateTime = (format: string) =>
 /**
  * Returns the current time zone.
  */
-export const DayjsCurrentTimeZone = (): string => dayjs.utc().format('z')
+export const DayjsCurrentTimeZone = (): string => dayjs().tz().format('z')
 
 /**
  * Returns the current olson time zone.
@@ -297,7 +297,7 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
 	if (typeof value !== 'string') {
 		const dayjsObject = dayjs(value)
 		if (dayjsObject.isValid()) {
-			return dayjsObject.utc().tz(DayjsCurrentTimeZone())
+			return dayjsObject // .utc().tz(DayjsCurrentTimeZone())
 		}
 	} else {
 		// const dayjsObject = StringHasTimeZoneData(value) ? dayjs(value.substr(0, 23), formatTries, true) : dayjs(value.substr(0, 23), formatTries, true).utc() // , formatTries, true
@@ -327,7 +327,7 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
  * // returns "Oct 2, 2020"
  * DayjsFromString('2020-10-02', 'll')
  */
-export const DayjsFormatString = (value: TAnyDateValue, format: string): string | null => {
+export const DayjsFormatString = (value: TAnyDateValue, format: string, inUTC: boolean): string | null => {
 	if (!value) return null
 	
 	if (typeof value == 'string') {
@@ -337,7 +337,7 @@ export const DayjsFormatString = (value: TAnyDateValue, format: string): string 
 		
 		if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value)) return null
 		
-		let dayjsObject = DayjsFromString(value)?.format(format) ?? null
+		let dayjsObject = (inUTC ? DayjsFromString(value) : DayjsFromString(value)?.tz(DayjsCurrentTimeZoneOlson()))?.format(format) ?? null
 		
 		if (!dayjsObject) return null
 		
@@ -360,34 +360,34 @@ export const DayjsFormatString = (value: TAnyDateValue, format: string): string 
 		return dayjsObject
 	}
 	
-	return DayjsFromString(value)?.format(format) ?? null
+	return (inUTC ? DayjsFromString(value) : DayjsFromString(value)?.tz(DayjsCurrentTimeZoneOlson()))?.format(format) ?? null
 }
 
 /**
  * Returns the dayjs time string in the format of "HH:mm:ss".
  */
 export const DayjsTimeString = (value: TAnyDateValue): string | null =>
-	DayjsFormatString(value, DAYJS_FORMAT_TIME_SECONDS)
+	DayjsFormatString(value, DAYJS_FORMAT_TIME_SECONDS, true)
 
 /**
  * Returns the dayjs date string in the format of "YYYY-MM-DD".
  */
-export const DayjsDateString = (value: TAnyDateValue): string | null => DayjsFormatString(value, DAYJS_FORMAT_DATE)
+export const DayjsDateString = (value: TAnyDateValue): string | null => DayjsFormatString(value, DAYJS_FORMAT_DATE, true)
 
 /**
  * Returns the dayjs date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
 export const DayjsDateTimeString = (value: TAnyDateValue): string | null =>
-	DayjsFormatString(value, DAYJS_FORMAT_DATE_TIME)
+	DayjsFormatString(value, DAYJS_FORMAT_DATE_TIME, true)
 
 /**
  * Returns display day date time format.
  */
 export const DayjsDisplayDayDateTime = (value: TAnyDateValue, showLong = false): string | null => {
 	if (!!DayjsTimeString(value)) {
-		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY)
+		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY, false)
 	} else {
-		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY)
+		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY, false)
 	}
 }
 
@@ -395,7 +395,7 @@ export const DayjsDisplayDayDateTime = (value: TAnyDateValue, showLong = false):
  * Returns display day date format.
  */
 export const DayjsDisplayDayDate = (value: TAnyDateValue, showLong = false): string | null =>
-	DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY)
+	DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY, false)
 
 /**
  * Returns display day date time format with day of week.
@@ -404,9 +404,9 @@ export const DayjsDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = fals
 	if (!!DayjsTimeString(value)) {
 		return DayjsFormatString(value,
 			showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW
-		)
+			, false)
 	} else {
-		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW)
+		return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW, false)
 	}
 }
 
@@ -414,13 +414,13 @@ export const DayjsDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = fals
  * Returns display day date format with day of week.
  */
 export const DayjsDisplayDayDateDoW = (value: TAnyDateValue, showLong = false): string | null =>
-	DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW)
+	DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW, false)
 
 /**
  * Returns the time with 12-hour clock format.
  */
 export const DayjsDisplayTime = (value: TAnyDateValue): string | null =>
-	DayjsFormatString(value, DAYJS_FORMAT_TIME_DISPLAY)
+	DayjsFormatString(value, DAYJS_FORMAT_TIME_DISPLAY, true)
 
 /**
  * Displays difference between two times in a simplified duration format.
@@ -583,13 +583,13 @@ export const DayjsDurationShortTextAligned = (start: TAnyDateValue, end?: TAnyDa
 	return text.trim()
 }
 
-export const DayjsStringToDateLocale = (value: TAnyDateValue): string => DayjsFormatString(value, 'MM/DD/YYYY') ?? ''
+export const DayjsStringToDateLocale = (value: TAnyDateValue): string => DayjsFormatString(value, 'MM/DD/YYYY', false) ?? ''
 
 export const DateAndTimeToDateTime = (valueDate: TAnyDateValue, valueTime: string | null): string =>
 	DayjsDateTimeString(`${DayjsDateString(valueDate) ?? ''} ${DayjsTimeString(valueTime) ?? ''}`) ?? ''
 
 export const DayjsID = (value: TAnyDateValue = null, offsetHours = 5): string | null =>
-	DayjsFormatString(value ?? dayjs().subtract(offsetHours, 'hours'), `YYYY-MM-DD_HH-mm-ss`)
+	DayjsFormatString(value ?? dayjs().subtract(offsetHours, 'hours'), `YYYY-MM-DD_HH-mm-ss`, false)
 
 export const IANAZoneAbbr = (ianaValue: string) => dayjs.tz(ianaValue).format('z')
 

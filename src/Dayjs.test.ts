@@ -16,17 +16,20 @@ import {
 	DayjsTimeString
 } from './Dayjs'
 
+// process.env.TZ = 'UTC'
+process.env.TZ = 'Europe/Amsterdam'
+
 // Timezone
 test('Timezone UTC', () => {
-	expect(DayjsCurrentTimeZone()).toBe('EDT') // TODO: UTC
+	expect(DayjsCurrentTimeZone()).toBe('UTC')
 })
 
 test('DayjsFromString', () => {
 	expect(DayjsFromString('2020-01-01')?.format('ll')).toBe('Jan 1, 2020')
 })
 
-test('DayjsFormatString', () => {
-	expect(DayjsFormatString('2020-01-01', 'll')).toBe('Jan 1, 2020')
+test('DayjsFormatString UTC', () => {
+	expect(DayjsFormatString('2020-01-01', 'll', true)).toBe('Jan 1, 2020')
 })
 
 // Time Tests
