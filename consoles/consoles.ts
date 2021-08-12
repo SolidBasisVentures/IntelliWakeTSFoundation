@@ -1,22 +1,4 @@
-import {
-	DATE_FORMAT_DATE,
-	DATE_FORMAT_DATE_DISPLAY,
-	DATE_FORMAT_DATE_DISPLAY_DOW,
-	DATE_FORMAT_DATE_DISPLAY_DOW_LONG,
-	DATE_FORMAT_DATE_DISPLAY_LONG,
-	DATE_FORMAT_DATE_TIME,
-	DATE_FORMAT_DATE_TIME_DISPLAY,
-	DATE_FORMAT_DATE_TIME_DISPLAY_DOW,
-	DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG,
-	DATE_FORMAT_DATE_TIME_DISPLAY_LONG,
-	DATE_FORMAT_TIME_DISPLAY,
-	DATE_FORMAT_TIME_NO_SECONDS,
-	DATE_FORMAT_TIME_SECONDS,
-	DateFormat,
-	DateISO, DateObject,
-	DateParseTS,
-    DateISOAdd
-} from '../src/DateManager'
+import {DateObject, DateParseTS} from '../src/DateManager'
 
 require('source-map-support').install()
 
@@ -29,7 +11,17 @@ console.log(dateTS)
 console.log(dateObject)
 
 console.log(dateString)
-console.log(DateISOAdd(dateString, 1, 'days'))
+// console.log(DateISOAdd(dateString, 1, 'days'))
+// console.log(DateISOAdd(dateString, -1, 'weeks'))
+// console.log(DateISOAdd(dateString, 1, 'year'))
+// console.log(DateISOAdd(dateString, -2, 'years'))
+//
+// for (let i = 0; i < 26; i++)
+// 	console.log(i, DateISOAdd(dateString, i, 'month'))
+//
+// for (let i = 0; i > -26; i--)
+// 	console.log(i, DateISOAdd(dateString, i, 'month'))
+
 
 
 // console.log(DateISO(dateTS))

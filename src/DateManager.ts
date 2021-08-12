@@ -58,23 +58,71 @@ export const DateObject = (date?: any): Date | null => {
 	return new Date(parsed)
 }
 
-export const DateTSAdd = (date: any, value: number, increment: string): number | null => {
-	let dateTS = DateParseTS(date)
-	
-	if (!dateTS) return null
-	
-	switch (increment) {
-		case 'days':
-		case 'day':
-			dateTS += (value * (24 * 60 * 60 * 1000))
-			break
-	}
-	
-	return dateTS
-}
-
-export const DateISOAdd = (date: any, value: number, increment: string): string | null => DateISO(DateTSAdd(date, value, increment))
-export const DateObjectAdd = (date: any, value: number, increment: string): Date | null => DateObject(DateTSAdd(date, value, increment))
+// export const DateTSAdd = (date: any, value: number, increment: string): number | null => {
+// 	let dateTS = DateParseTS(date)
+//
+// 	if (!dateTS) return null
+//
+// 	switch (increment) {
+// 		case 'seconds':
+// 		case 'second':
+// 			dateTS += (value * 1000)
+// 			break
+// 		case 'minutes':
+// 		case 'minute':
+// 			dateTS += (value * 60 * 1000)
+// 			break
+// 		case 'hours':
+// 		case 'hour':
+// 			dateTS += (value * 60 * 60 * 1000)
+// 			break
+// 		case 'days':
+// 		case 'day':
+// 			dateTS += (value * 24 * 60 * 60 * 1000)
+// 			break
+// 		case 'weeks':
+// 		case 'week':
+// 			dateTS += (value * 7 * 24 * 60 * 60 * 1000)
+// 			break
+// 		case 'months':
+// 		case 'month': {
+// 			let dateObject = DateObject(dateTS)
+// 			if (!dateObject) return null
+// 			// let years = Math.floor(value / 12)
+// 			// let months = value % 12
+// 			//
+// 			// if ((dateObject.getMonth() + 1 + months) >= 12) {
+// 			// 	years++
+// 			// 	months -= 12
+// 			// } else if ((dateObject.getMonth() + 1 - months) < 0) {
+// 			// 	years--
+// 			// 	months += 12
+// 			// }
+// 			//
+// 			// dateObject.setFullYear(dateObject.getFullYear() + years)
+// 			// dateObject.setMonth(dateObject.getMonth() + months)
+//
+// 			const dateDay = dateObject.getDate()
+// 			dateObject.setMonth(dateObject.getMonth() + value)
+// 			dateObject.setDate(dateDay)
+// 			dateTS = DateParseTS(dateObject)
+// 		}
+// 			break
+// 		case 'years':
+// 		case 'year': {
+// 			let dateObject = DateObject(dateTS)
+// 			if (!dateObject) return null
+// 			dateObject.setFullYear(dateObject.getFullYear() + value)
+// 			dateTS = DateParseTS(dateObject)
+// 		}
+// 			break
+// 	}
+//
+// 	return dateTS
+// }
+//
+// export const DateISOAdd = (date: any, value: number, increment: string): string | null => DateISO(DateTSAdd(date, value, increment))
+// export const DateObjectAdd = (date: any, value: number, increment: string): Date | null => DateObject(DateTSAdd(date, value, increment))
 
 export const DateICS = (date?: string | null): string | null => {
 	const dateISO = DateISO(date)
