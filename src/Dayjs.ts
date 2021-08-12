@@ -1,5 +1,5 @@
 import {Dayjs, OptionType} from 'dayjs'
-import * as dayjs from 'dayjs'
+import * as dayjs_ from 'dayjs'
 import * as duration from 'dayjs/plugin/duration'
 import * as isoWeek from 'dayjs/plugin/isoWeek'
 import * as utc from 'dayjs/plugin/utc'
@@ -9,6 +9,8 @@ import * as LocalizedFormat from 'dayjs/plugin/LocalizedFormat'
 import * as customParseFormat from 'dayjs/plugin/customParseFormat'
 import {ToDigits} from './StringManipulation'
 import {AddS, ReplaceAll} from './Functions'
+
+const dayjs = dayjs_
 
 dayjs.extend(duration)
 dayjs.extend(isoWeek)
@@ -45,15 +47,18 @@ const DATE_FORMAT_TRIES: OptionType = [
 const TIME_FORMAT_TRIES: OptionType = [
 	'YYYY-MM-DD HH:mm:ss',
 	'YYYY-MM-DD HH:mm',
+	'YYYY-MM-DD HH:mm:ss.S',
+	'YYYY-MM-DD HH:mm:ss.SS',
+	'YYYY-MM-DD HH:mm:ss.SSS',
+	'YYYY-MM-DD HH:mm:ss.SZ',
+	'YYYY-MM-DD HH:mm:ss.SSZ',
+	'YYYY-MM-DD HH:mm:ss.SSSZ',
 	'HH:mm:ss',
 	'HH:mm',
 	'D-M-YYYY HH:mm:ss',
 	'D-M-YYYY HH:mm',
 	'DD-MM-YYYY HH:mm:ss',
-	'DD-MM-YYYY HH:mm',
-	'YYYY-MM-DD HH:mm:ss.S',
-	'YYYY-MM-DD HH:mm:ss.SS',
-	'YYYY-MM-DD HH:mm:ss.SSS'
+	'DD-MM-YYYY HH:mm'
 ]
 
 export enum EDateAndOrTime {
@@ -67,7 +72,7 @@ export type TAnyDateValue = string | Dayjs | Date | null | undefined
 const StringHasTimeData = (value: string): boolean => value.includes(':')
 const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
 const StringHasTimeZoneData = (value: string): boolean =>
-	value.includes('T') // || value.includes('+') || value.substr(15).includes('-')
+	value.includes('T') || value.substr(15).includes('+') || value.substr(15).includes('-')
 
 export const AnyDateValueIsObject = (value: TAnyDateValue) => (!value ? false : typeof value !== 'string')
 
@@ -301,11 +306,15 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
 		}
 	} else {
 		// const dayjsObject = StringHasTimeZoneData(value) ? dayjs(value.substr(0, 23), formatTries, true) : dayjs(value.substr(0, 23), formatTries, true).utc() // , formatTries, true
-		let dayjsObject: Dayjs
 		const hasTZData = StringHasTimeZoneData(value)
+
+		let dayjsObject: Dayjs = hasTZData ? dayjs(value) : dayjs.utc(value)
+		if (dayjsObject.isValid()) {
+			return dayjsObject
+		}
 		
 		for (const formatTry of formatTries) {
-			dayjsObject = hasTZData ? dayjs(value.substr(0, 23), formatTry, true) : dayjs.utc(value.substr(0, 23), formatTry, true)
+			dayjsObject = hasTZData ? dayjs(value, formatTry, true) : dayjs.utc(value, formatTry, true)
 			if (dayjsObject.isValid()) {
 				return dayjsObject
 			}

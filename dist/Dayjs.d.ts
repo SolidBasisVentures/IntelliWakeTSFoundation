@@ -64,7 +64,7 @@ export declare const DayjsFromString: (value: TAnyDateValue) => Dayjs | null;
  * // returns "Oct 2, 2020"
  * DayjsFromString('2020-10-02', 'll')
  */
-export declare const DayjsFormatString: (value: TAnyDateValue, format: string) => string | null;
+export declare const DayjsFormatString: (value: TAnyDateValue, format: string, inUTC: boolean) => string | null;
 /**
  * Returns the dayjs time string in the format of "HH:mm:ss".
  */

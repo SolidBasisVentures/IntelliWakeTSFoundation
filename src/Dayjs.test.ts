@@ -17,7 +17,8 @@ import {
 } from './Dayjs'
 
 // process.env.TZ = 'UTC'
-process.env.TZ = 'Europe/Amsterdam'
+// process.env.TZ = 'Europe/Amsterdam'
+// process.env.TZ = 'GMT'
 
 // Timezone
 test('Timezone UTC', () => {
@@ -178,12 +179,12 @@ test('DayjsDurationLongText 2M 10D', () => {
 	expect(DayjsDurationLongText('2020-01-01 13:00:00', '2020-03-11 13:30:20')).toBe('2 Months 10 Days')
 })
 
-test('DayjsDisplayDayDateTime TZ EST', () => {
-	expect(DayjsDisplayDayDateTime('2020-12-31 21:15:29.078-05')).toBe('Dec 31, 2020, 9:15 pm')
+test('DayjsDisplayDayDateTime TZ UTC', () => {
+	expect(DayjsDisplayDayDateTime('2020-12-31 21:15:29.078+00')).toBe('Dec 31, 2020, 9:15 pm') // was -05
 })
 
-test('DayjsDisplayDayDateTime TZ UTC', () => {
-	expect(DayjsDisplayDayDateTime('2021-01-01 02:15:29.078+00')).toBe('Dec 31, 2020, 9:15 pm')
+test('DayjsDisplayDayDateTime TZ EST', () => {
+	expect(DayjsDisplayDayDateTime('2020-12-31 16:15:29.078-05')).toBe('Dec 31, 2020, 9:15 pm') // was +00
 })
 
 test('IsDateString', () => {

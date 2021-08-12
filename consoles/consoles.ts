@@ -3,7 +3,8 @@ import {DayjsCurrentTimeZone, DayjsCurrentTimeZoneOlson, DayjsDisplayDayDateTime
 require('source-map-support').install()
 
 // process.env.TZ = 'UTC'
-process.env.TZ = 'Europe/Amsterdam'
+// process.env.TZ = 'Europe/Amsterdam'
+process.env.TZ = 'GMT'
 
 console.log('Test', DayjsCurrentTimeZone())
 console.log('Test', DayjsCurrentTimeZoneOlson())

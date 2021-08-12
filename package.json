@@ -1,6 +1,6 @@
 {
   "name": "@solidbasisventures/intelliwaketsfoundation",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "description": "NPM package for IntelliWake TypeScript Foundation Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -8,7 +8,7 @@
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
     "YarnInstall": "yarn install",
     "YarnUpgrade": "yarn upgrade",
-    "Test": "jest",
+    "Test": "TZ=GMT jest",
     "TSNode": "ts-node --script-mode consoles/consoles.ts",
     "TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts"
   },

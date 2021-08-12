@@ -2,19 +2,43 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var dayjs = require('dayjs');
+var dayjs_ = require('dayjs');
 var duration = require('dayjs/plugin/duration');
 var isoWeek = require('dayjs/plugin/isoWeek');
 var utc = require('dayjs/plugin/utc');
 var timezone = require('dayjs/plugin/timezone');
+var AdvancedFormat = require('dayjs/plugin/AdvancedFormat');
+var LocalizedFormat = require('dayjs/plugin/LocalizedFormat');
+var customParseFormat = require('dayjs/plugin/customParseFormat');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () {
+                        return e[k];
+                    }
+                });
+            }
+        });
+    }
+    n['default'] = e;
+    return Object.freeze(n);
+}
 
-var dayjs__default = /*#__PURE__*/_interopDefaultLegacy(dayjs);
-var duration__default = /*#__PURE__*/_interopDefaultLegacy(duration);
-var isoWeek__default = /*#__PURE__*/_interopDefaultLegacy(isoWeek);
-var utc__default = /*#__PURE__*/_interopDefaultLegacy(utc);
-var timezone__default = /*#__PURE__*/_interopDefaultLegacy(timezone);
+var dayjs___namespace = /*#__PURE__*/_interopNamespace(dayjs_);
+var duration__namespace = /*#__PURE__*/_interopNamespace(duration);
+var isoWeek__namespace = /*#__PURE__*/_interopNamespace(isoWeek);
+var utc__namespace = /*#__PURE__*/_interopNamespace(utc);
+var timezone__namespace = /*#__PURE__*/_interopNamespace(timezone);
+var AdvancedFormat__namespace = /*#__PURE__*/_interopNamespace(AdvancedFormat);
+var LocalizedFormat__namespace = /*#__PURE__*/_interopNamespace(LocalizedFormat);
+var customParseFormat__namespace = /*#__PURE__*/_interopNamespace(customParseFormat);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1306,10 +1330,15 @@ var RandomString = function (length, validChars) {
     return result;
 };
 
-dayjs__default['default'].extend(duration__default['default']);
-dayjs__default['default'].extend(isoWeek__default['default']);
-dayjs__default['default'].extend(utc__default['default']);
-dayjs__default['default'].extend(timezone__default['default']);
+var dayjs = dayjs___namespace;
+dayjs.extend(duration__namespace);
+dayjs.extend(isoWeek__namespace);
+dayjs.extend(utc__namespace);
+dayjs.extend(timezone__namespace);
+dayjs.extend(AdvancedFormat__namespace);
+dayjs.extend(LocalizedFormat__namespace);
+dayjs.extend(customParseFormat__namespace);
+dayjs.tz.setDefault("UTC");
 var DAYJS_FORMAT_DATE = 'YYYY-MM-DD';
 var DAYJS_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var DAYJS_FORMAT_TIME_NO_SECONDS = 'HH:mm';
@@ -1332,6 +1361,12 @@ var DATE_FORMAT_TRIES = [
 var TIME_FORMAT_TRIES = [
     'YYYY-MM-DD HH:mm:ss',
     'YYYY-MM-DD HH:mm',
+    'YYYY-MM-DD HH:mm:ss.S',
+    'YYYY-MM-DD HH:mm:ss.SS',
+    'YYYY-MM-DD HH:mm:ss.SSS',
+    'YYYY-MM-DD HH:mm:ss.SZ',
+    'YYYY-MM-DD HH:mm:ss.SSZ',
+    'YYYY-MM-DD HH:mm:ss.SSSZ',
     'HH:mm:ss',
     'HH:mm',
     'D-M-YYYY HH:mm:ss',
@@ -1347,7 +1382,7 @@ var TIME_FORMAT_TRIES = [
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
 var StringHasTimeZoneData = function (value) {
-    return value.includes('T') || value.includes('+') || value.substr(15).includes('-');
+    return value.includes('T') || value.substr(15).includes('+') || value.substr(15).includes('-');
 };
 var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
 var FormatIsTime = function (format) {
@@ -1362,11 +1397,11 @@ var FormatIsDateTime = function (format) {
 /**
  * Returns the current time zone.
  */
-var DayjsCurrentTimeZone = function () { return dayjs__default['default']().tz().format('z'); };
+var DayjsCurrentTimeZone = function () { return dayjs().tz().format('z'); };
 /**
  * Returns the current olson time zone.
  */
-var DayjsCurrentTimeZoneOlson = function () { return dayjs__default['default'].tz.guess(); };
+var DayjsCurrentTimeZoneOlson = function () { return dayjs.tz.guess(); };
 /**
  * Returns a list of olson time zone items, sorted by hour diff from UTC
  *
@@ -1375,149 +1410,149 @@ var DayjsCurrentTimeZoneOlson = function () { return dayjs__default['default'].t
 var TimeZoneOlsons = function () {
     return [
         {
-            "zone": "EDT",
-            "olson": "America/Detroit",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Detroit',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Indianapolis",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Indianapolis',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Marengo",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Marengo',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Petersburg",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Petersburg',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Vevay",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Vevay',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Vincennes",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Vincennes',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Indiana/Winamac",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Indiana/Winamac',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Kentucky/Louisville",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Kentucky/Louisville',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/Kentucky/Monticello",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/Kentucky/Monticello',
+            'hours': '-04:00'
         },
         {
-            "zone": "EDT",
-            "olson": "America/New_York",
-            "hours": "-04:00"
+            'zone': 'EDT',
+            'olson': 'America/New_York',
+            'hours': '-04:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/Chicago",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/Chicago',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/Indiana/Knox",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/Indiana/Knox',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/Indiana/Tell_City",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/Indiana/Tell_City',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/Menominee",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/Menominee',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/North_Dakota/Beulah",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/North_Dakota/Beulah',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/North_Dakota/Center",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/North_Dakota/Center',
+            'hours': '-05:00'
         },
         {
-            "zone": "CDT",
-            "olson": "America/North_Dakota/New_Salem",
-            "hours": "-05:00"
+            'zone': 'CDT',
+            'olson': 'America/North_Dakota/New_Salem',
+            'hours': '-05:00'
         },
         {
-            "zone": "MDT",
-            "olson": "America/Boise",
-            "hours": "-06:00"
+            'zone': 'MDT',
+            'olson': 'America/Boise',
+            'hours': '-06:00'
         },
         {
-            "zone": "MDT",
-            "olson": "America/Denver",
-            "hours": "-06:00"
+            'zone': 'MDT',
+            'olson': 'America/Denver',
+            'hours': '-06:00'
         },
         {
-            "zone": "PDT",
-            "olson": "America/Los_Angeles",
-            "hours": "-07:00"
+            'zone': 'PDT',
+            'olson': 'America/Los_Angeles',
+            'hours': '-07:00'
         },
         {
-            "zone": "MST",
-            "olson": "America/Phoenix",
-            "hours": "-07:00"
+            'zone': 'MST',
+            'olson': 'America/Phoenix',
+            'hours': '-07:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Anchorage",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Anchorage',
+            'hours': '-08:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Juneau",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Juneau',
+            'hours': '-08:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Metlakatla",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Metlakatla',
+            'hours': '-08:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Nome",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Nome',
+            'hours': '-08:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Sitka",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Sitka',
+            'hours': '-08:00'
         },
         {
-            "zone": "AKDT",
-            "olson": "America/Yakutat",
-            "hours": "-08:00"
+            'zone': 'AKDT',
+            'olson': 'America/Yakutat',
+            'hours': '-08:00'
         },
         {
-            "zone": "HDT",
-            "olson": "America/Adak",
-            "hours": "-09:00"
+            'zone': 'HDT',
+            'olson': 'America/Adak',
+            'hours': '-09:00'
         },
         {
-            "zone": "HST",
-            "olson": "Pacific/Honolulu",
-            "hours": "-10:00"
+            'zone': 'HST',
+            'olson': 'Pacific/Honolulu',
+            'hours': '-10:00'
         }
     ];
 };
@@ -1563,16 +1598,29 @@ var DayjsFromString = function (value) {
     }
     var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
     if (typeof value !== 'string') {
-        var dayjsObject = dayjs__default['default'](value);
+        var dayjsObject = dayjs(value);
         if (dayjsObject.isValid()) {
-            return dayjsObject.utc().tz(DayjsCurrentTimeZone());
+            return dayjsObject; // .utc().tz(DayjsCurrentTimeZone())
         }
     }
     else {
-        var dayjsObject = StringHasTimeZoneData(value) ? dayjs__default['default'](value, formatTries, true) : dayjs__default['default'].utc(value); // , formatTries, true
+        // const dayjsObject = StringHasTimeZoneData(value) ? dayjs(value.substr(0, 23), formatTries, true) : dayjs(value.substr(0, 23), formatTries, true).utc() // , formatTries, true
+        var hasTZData = StringHasTimeZoneData(value);
+        var dayjsObject = hasTZData ? dayjs(value) : dayjs.utc(value);
         if (dayjsObject.isValid()) {
             return dayjsObject;
         }
+        for (var _i = 0, formatTries_1 = formatTries; _i < formatTries_1.length; _i++) {
+            var formatTry = formatTries_1[_i];
+            dayjsObject = hasTZData ? dayjs(value, formatTry, true) : dayjs.utc(value, formatTry, true);
+            if (dayjsObject.isValid()) {
+                return dayjsObject;
+            }
+        }
+        // dayjsObject = StringHasTimeZoneData(value) ? dayjs(value, formatTries, true) : dayjs(value, formatTries, true)
+        // if (dayjsObject.isValid()) {
+        // 	return dayjsObject
+        // }
     }
     return null;
 };
@@ -1583,8 +1631,8 @@ var DayjsFromString = function (value) {
  * // returns "Oct 2, 2020"
  * DayjsFromString('2020-10-02', 'll')
  */
-var DayjsFormatString = function (value, format) {
-    var _a, _b, _c, _d;
+var DayjsFormatString = function (value, format, inUTC) {
+    var _a, _b, _c, _d, _e, _f;
     if (!value)
         return null;
     if (typeof value == 'string') {
@@ -1593,57 +1641,53 @@ var DayjsFormatString = function (value, format) {
         }
         if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value))
             return null;
-        var dayjs_1 = (_b = (_a = DayjsFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null;
-        if (!dayjs_1)
+        var dayjsObject = (_c = (_b = (inUTC ? DayjsFromString(value) : (_a = DayjsFromString(value)) === null || _a === void 0 ? void 0 : _a.tz(DayjsCurrentTimeZoneOlson()))) === null || _b === void 0 ? void 0 : _b.format(format)) !== null && _c !== void 0 ? _c : null;
+        if (!dayjsObject)
             return null;
         if (format === DAYJS_FORMAT_TIME_SECONDS || format === DAYJS_FORMAT_TIME_NO_SECONDS) {
-            if (!StringHasTimeData(dayjs_1))
+            if (!StringHasTimeData(dayjsObject))
                 return null;
-            return dayjs_1.substr(format.length * -1, format.length);
+            return dayjsObject.substr(format.length * -1, format.length);
         }
         if (format === DAYJS_FORMAT_DATE) {
-            if (!StringHasDateData(dayjs_1))
+            if (!StringHasDateData(dayjsObject))
                 return null;
-            return dayjs_1.substr(0, format.length);
+            return dayjsObject.substr(0, format.length);
         }
         if (format === DAYJS_FORMAT_DATE_TIME) {
-            if (!StringHasDateData(dayjs_1) || !StringHasTimeData(dayjs_1))
+            if (!StringHasDateData(dayjsObject) || !StringHasTimeData(dayjsObject))
                 return null;
         }
-        return dayjs_1;
+        return dayjsObject;
     }
-    return (_d = (_c = DayjsFromString(value)) === null || _c === void 0 ? void 0 : _c.format(format)) !== null && _d !== void 0 ? _d : null;
+    return (_f = (_e = (inUTC ? DayjsFromString(value) : (_d = DayjsFromString(value)) === null || _d === void 0 ? void 0 : _d.tz(DayjsCurrentTimeZoneOlson()))) === null || _e === void 0 ? void 0 : _e.format(format)) !== null && _f !== void 0 ? _f : null;
 };
 /**
  * Returns the dayjs time string in the format of "HH:mm:ss".
  */
 var DayjsTimeString = function (value) {
-    return DayjsFormatString(value, DAYJS_FORMAT_TIME_SECONDS);
+    return DayjsFormatString(value, DAYJS_FORMAT_TIME_SECONDS, true);
 };
 /**
  * Returns the dayjs date string in the format of "YYYY-MM-DD".
  */
-var DayjsDateString = function (value) { return DayjsFormatString(value, DAYJS_FORMAT_DATE); };
+var DayjsDateString = function (value) { return DayjsFormatString(value, DAYJS_FORMAT_DATE, true); };
 /**
  * Returns the dayjs date string in the format of "YYYY-MM-DD HH:mm:ss".
  */
 var DayjsDateTimeString = function (value) {
-    return DayjsFormatString(value, DAYJS_FORMAT_DATE_TIME);
+    return DayjsFormatString(value, DAYJS_FORMAT_DATE_TIME, true);
 };
 /**
  * Returns display day date time format.
  */
 var DayjsDisplayDayDateTime = function (value, showLong) {
     if (showLong === void 0) { showLong = false; }
-    var dayjsObject = DayjsFromString(value);
-    if (!dayjsObject) {
-        return null;
-    }
     if (!!DayjsTimeString(value)) {
-        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY);
+        return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY, false);
     }
     else {
-        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY);
+        return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY, false);
     }
 };
 /**
@@ -1651,26 +1695,18 @@ var DayjsDisplayDayDateTime = function (value, showLong) {
  */
 var DayjsDisplayDayDate = function (value, showLong) {
     if (showLong === void 0) { showLong = false; }
-    var dayjsObject = DayjsFromString(value);
-    if (!dayjsObject) {
-        return null;
-    }
-    return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY);
+    return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY, false);
 };
 /**
  * Returns display day date time format with day of week.
  */
 var DayjsDisplayDayDateTimeDoW = function (value, showLong) {
     if (showLong === void 0) { showLong = false; }
-    var dayjsObject = DayjsFromString(value);
-    if (!dayjsObject) {
-        return null;
-    }
     if (!!DayjsTimeString(value)) {
-        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW);
+        return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW, false);
     }
     else {
-        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW);
+        return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW, false);
     }
 };
 /**
@@ -1678,17 +1714,13 @@ var DayjsDisplayDayDateTimeDoW = function (value, showLong) {
  */
 var DayjsDisplayDayDateDoW = function (value, showLong) {
     if (showLong === void 0) { showLong = false; }
-    var dayjsObject = DayjsFromString(value);
-    if (!dayjsObject) {
-        return null;
-    }
-    return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW);
+    return DayjsFormatString(value, showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW, false);
 };
 /**
  * Returns the time with 12-hour clock format.
  */
 var DayjsDisplayTime = function (value) {
-    return DayjsFormatString(value, DAYJS_FORMAT_TIME_DISPLAY);
+    return DayjsFormatString(value, DAYJS_FORMAT_TIME_DISPLAY, true);
 };
 /**
  * Displays difference between two times in a simplified duration format.
@@ -1699,7 +1731,7 @@ var DayjsDisplayTime = function (value) {
  * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
  */
-var DayjsDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()) / 1000); };
+var DayjsDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs()) / 1000); };
 /**
  * Displays difference between two times in a simplified duration format.
  *
@@ -1712,7 +1744,7 @@ var DayjsDurationShortText = function (start, end) { var _a, _b; return Duration
 var DayjsDurationLongText = function (start, end, trimSeconds) {
     var _a, _b;
     if (trimSeconds === void 0) { trimSeconds = false; }
-    return DurationLongText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()) / 1000, trimSeconds);
+    return DurationLongText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs()) / 1000, trimSeconds);
 };
 /**
  * Displays a simplified duration format from seconds.
@@ -1721,7 +1753,7 @@ var DayjsDurationLongText = function (start, end, trimSeconds) {
  * DayjsDurationShortText((30 * 60) + 20) // result: 30m 20s
  */
 var DurationShortText = function (seconds) {
-    var duration = dayjs__default['default'].duration(seconds * 1000);
+    var duration = dayjs.duration(seconds * 1000);
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + "Y";
@@ -1765,7 +1797,7 @@ var DurationShortText = function (seconds) {
  */
 var DurationLongText = function (seconds, trimSeconds) {
     if (trimSeconds === void 0) { trimSeconds = false; }
-    var duration = dayjs__default['default'].duration(seconds * 1000);
+    var duration = dayjs.duration(seconds * 1000);
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + " " + AddS('Year', duration.years());
@@ -1815,7 +1847,7 @@ var DurationLongText = function (seconds, trimSeconds) {
  */
 var DayjsDurationShortTextAligned = function (start, end) {
     var _a, _b;
-    var duration = dayjs__default['default'].duration(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()));
+    var duration = dayjs.duration(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs()));
     var text = '';
     if (duration.years()) {
         text += " " + ToDigits(duration.years(), 0) + "Y";
@@ -1852,17 +1884,17 @@ var DayjsDurationShortTextAligned = function (start, end) {
     }
     return text.trim();
 };
-var DayjsStringToDateLocale = function (value) { var _a; return (_a = DayjsFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
+var DayjsStringToDateLocale = function (value) { var _a; return (_a = DayjsFormatString(value, 'MM/DD/YYYY', false)) !== null && _a !== void 0 ? _a : ''; };
 var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; return (_c = DayjsDateTimeString(((_a = DayjsDateString(valueDate)) !== null && _a !== void 0 ? _a : '') + " " + ((_b = DayjsTimeString(valueTime)) !== null && _b !== void 0 ? _b : ''))) !== null && _c !== void 0 ? _c : ''; };
 var DayjsID = function (value, offsetHours) {
     if (value === void 0) { value = null; }
     if (offsetHours === void 0) { offsetHours = 5; }
-    return DayjsFormatString(value !== null && value !== void 0 ? value : dayjs__default['default']().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
+    return DayjsFormatString(value !== null && value !== void 0 ? value : dayjs().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss", false);
 };
-var IANAZoneAbbr = function (ianaValue) { return dayjs__default['default'].tz(ianaValue).format('z'); };
+var IANAZoneAbbr = function (ianaValue) { return dayjs.tz(ianaValue).format('z'); };
 var DayjsAddWeekDays = function (weekDays, value) {
     var _a;
-    var newDayjs = ((_a = DayjsFromString(value)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).startOf('day');
+    var newDayjs = ((_a = DayjsFromString(value)) !== null && _a !== void 0 ? _a : dayjs()).startOf('day');
     while (newDayjs.isoWeekday() >= 5) {
         newDayjs.add(1, 'day');
     }
@@ -1875,8 +1907,8 @@ var DayjsAddWeekDays = function (weekDays, value) {
 };
 var DayjsWeekDays = function (startDate, endDate) {
     var _a, _b;
-    var start = (_a = DayjsFromString(startDate)) !== null && _a !== void 0 ? _a : DayjsFromString(dayjs__default['default']().subtract(5, 'hours'));
-    var end = (_b = DayjsFromString(endDate)) !== null && _b !== void 0 ? _b : DayjsFromString(dayjs__default['default']().subtract(5, 'hours'));
+    var start = (_a = DayjsFromString(startDate)) !== null && _a !== void 0 ? _a : DayjsFromString(dayjs().subtract(5, 'hours'));
+    var end = (_b = DayjsFromString(endDate)) !== null && _b !== void 0 ? _b : DayjsFromString(dayjs().subtract(5, 'hours'));
     if (!start || !end)
         return 0;
     while (start.isoWeekday() >= 5) {
@@ -1897,10 +1929,10 @@ var DayjsWeekDays = function (startDate, endDate) {
     return weekDays;
 };
 var DateICS = function (date) {
-    var dayJS = DayjsFromString(date);
-    if (!dayJS || !dayJS.isValid())
+    var dayJSObject = DayjsFromString(date);
+    if (!dayJSObject || !dayJSObject.isValid())
         return null;
-    var dateICS = dayJS.toISOString();
+    var dateICS = dayJSObject.toISOString();
     var decimal = dateICS.indexOf('.');
     var zed = dateICS.indexOf('Z');
     if (decimal > 0 && zed > decimal) {
