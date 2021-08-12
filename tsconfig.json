@@ -21,6 +21,7 @@
         "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+//      "esModuleInterop": true,
         "allowSyntheticDefaultImports": true
     },
     "include": [

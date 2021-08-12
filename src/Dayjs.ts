@@ -1,8 +1,10 @@
-import dayjs, {Dayjs, OptionType} from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
+import {Dayjs, OptionType} from 'dayjs'
+import * as dayjs from 'dayjs'
+import * as duration from 'dayjs/plugin/duration'
+import * as isoWeek from 'dayjs/plugin/isoWeek'
+import * as utc from 'dayjs/plugin/utc'
+import * as timezone from 'dayjs/plugin/timezone'
+import * as AdvancedFormat from 'dayjs/plugin/AdvancedFormat'
 import {ToDigits} from './StringManipulation'
 import {AddS, ReplaceAll} from './Functions'
 
@@ -10,6 +12,7 @@ dayjs.extend(duration)
 dayjs.extend(isoWeek)
 dayjs.extend(utc)
 dayjs.extend(timezone)
+dayjs.extend(AdvancedFormat)
 
 export const DAYJS_FORMAT_DATE = 'YYYY-MM-DD'
 export const DAYJS_FORMAT_TIME_SECONDS = 'HH:mm:ss'
@@ -69,7 +72,7 @@ const FormatIsDateTime = (format: string) =>
 /**
  * Returns the current time zone.
  */
-export const DayjsCurrentTimeZone = (): string => dayjs().tz().format('z')
+export const DayjsCurrentTimeZone = (): string => dayjs.tz.guess()
 
 /**
  * Returns the current olson time zone.
@@ -90,158 +93,158 @@ export interface ITZItem {
 export const TimeZoneOlsons = (): ITZItem[] =>
 	[
 		{
-			"zone": "EDT",
-			"olson": "America/Detroit",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Detroit',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Indianapolis",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Indianapolis',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Marengo",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Marengo',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Petersburg",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Petersburg',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Vevay",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Vevay',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Vincennes",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Vincennes',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Indiana/Winamac",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Indiana/Winamac',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Kentucky/Louisville",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Kentucky/Louisville',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/Kentucky/Monticello",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/Kentucky/Monticello',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "EDT",
-			"olson": "America/New_York",
-			"hours": "-04:00"
+			'zone': 'EDT',
+			'olson': 'America/New_York',
+			'hours': '-04:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/Chicago",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/Chicago',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/Indiana/Knox",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/Indiana/Knox',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/Indiana/Tell_City",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/Indiana/Tell_City',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/Menominee",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/Menominee',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/North_Dakota/Beulah",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/North_Dakota/Beulah',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/North_Dakota/Center",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/North_Dakota/Center',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "CDT",
-			"olson": "America/North_Dakota/New_Salem",
-			"hours": "-05:00"
+			'zone': 'CDT',
+			'olson': 'America/North_Dakota/New_Salem',
+			'hours': '-05:00'
 		},
 		{
-			"zone": "MDT",
-			"olson": "America/Boise",
-			"hours": "-06:00"
+			'zone': 'MDT',
+			'olson': 'America/Boise',
+			'hours': '-06:00'
 		},
 		{
-			"zone": "MDT",
-			"olson": "America/Denver",
-			"hours": "-06:00"
+			'zone': 'MDT',
+			'olson': 'America/Denver',
+			'hours': '-06:00'
 		},
 		{
-			"zone": "PDT",
-			"olson": "America/Los_Angeles",
-			"hours": "-07:00"
+			'zone': 'PDT',
+			'olson': 'America/Los_Angeles',
+			'hours': '-07:00'
 		},
 		{
-			"zone": "MST",
-			"olson": "America/Phoenix",
-			"hours": "-07:00"
+			'zone': 'MST',
+			'olson': 'America/Phoenix',
+			'hours': '-07:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Anchorage",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Anchorage',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Juneau",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Juneau',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Metlakatla",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Metlakatla',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Nome",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Nome',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Sitka",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Sitka',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "AKDT",
-			"olson": "America/Yakutat",
-			"hours": "-08:00"
+			'zone': 'AKDT',
+			'olson': 'America/Yakutat',
+			'hours': '-08:00'
 		},
 		{
-			"zone": "HDT",
-			"olson": "America/Adak",
-			"hours": "-09:00"
+			'zone': 'HDT',
+			'olson': 'America/Adak',
+			'hours': '-09:00'
 		},
 		{
-			"zone": "HST",
-			"olson": "Pacific/Honolulu",
-			"hours": "-10:00"
+			'zone': 'HST',
+			'olson': 'Pacific/Honolulu',
+			'hours': '-10:00'
 		}
 	]
-	// (dayjs.tz.zonesForCountry(forCountry) as string[])
-	// 	.map(tzItem => ({
-	// 		zone: dayjs.tz(tzItem).zoneAbbr(),
-	// 		olson: tzItem,
-	// 		hours: dayjs.tz(tzItem).format('Z')
-	// 	}))
-	// 	.sort((a, b) => (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)))
+// (dayjs.tz.zonesForCountry(forCountry) as string[])
+// 	.map(tzItem => ({
+// 		zone: dayjs.tz(tzItem).zoneAbbr(),
+// 		olson: tzItem,
+// 		hours: dayjs.tz(tzItem).format('Z')
+// 	}))
+// 	.sort((a, b) => (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)))
 
 /**
  * Display timezone and olson
@@ -256,13 +259,13 @@ export const NowISOString = (): string => new Date().toISOString()
 
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
-
+	
 	// if (!DATE_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length) && !TIME_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length)) {
 	// 	return false
 	// }
-
+	
 	if (!StringHasDateData(value)) return false
-
+	
 	return !!DayjsFromString(value)
 }
 
@@ -279,9 +282,9 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
 	if (!value) {
 		return null
 	}
-
+	
 	const formatTries: OptionType = [...DATE_FORMAT_TRIES, ...TIME_FORMAT_TRIES]
-
+	
 	if (typeof value !== 'string') {
 		const dayjsObject = dayjs(value)
 		if (dayjsObject.isValid()) {
@@ -293,7 +296,7 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
 			return dayjsObject
 		}
 	}
-
+	
 	return null
 }
 
@@ -306,37 +309,37 @@ export const DayjsFromString = (value: TAnyDateValue): Dayjs | null => {
  */
 export const DayjsFormatString = (value: TAnyDateValue, format: string): string | null => {
 	if (!value) return null
-
+	
 	if (typeof value == 'string') {
 		if (FormatIsTime(format) && !StringHasTimeData(value)) {
 			return null
 		}
-
+		
 		if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value)) return null
-
+		
 		let dayjs = DayjsFromString(value)?.format(format) ?? null
-
+		
 		if (!dayjs) return null
-
+		
 		if (format === DAYJS_FORMAT_TIME_SECONDS || format === DAYJS_FORMAT_TIME_NO_SECONDS) {
 			if (!StringHasTimeData(dayjs)) return null
-
+			
 			return dayjs.substr(format.length * -1, format.length)
 		}
-
+		
 		if (format === DAYJS_FORMAT_DATE) {
 			if (!StringHasDateData(dayjs)) return null
-
+			
 			return dayjs.substr(0, format.length)
 		}
-
+		
 		if (format === DAYJS_FORMAT_DATE_TIME) {
 			if (!StringHasDateData(dayjs) || !StringHasTimeData(dayjs)) return null
 		}
-
+		
 		return dayjs
 	}
-
+	
 	return DayjsFromString(value)?.format(format) ?? null
 }
 
@@ -362,11 +365,11 @@ export const DayjsDateTimeString = (value: TAnyDateValue): string | null =>
  */
 export const DayjsDisplayDayDateTime = (value: TAnyDateValue, showLong = false): string | null => {
 	const dayjsObject = DayjsFromString(value)
-
+	
 	if (!dayjsObject) {
 		return null
 	}
-
+	
 	if (!!DayjsTimeString(value)) {
 		return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY)
 	} else {
@@ -379,11 +382,11 @@ export const DayjsDisplayDayDateTime = (value: TAnyDateValue, showLong = false):
  */
 export const DayjsDisplayDayDate = (value: TAnyDateValue, showLong = false): string | null => {
 	const dayjsObject = DayjsFromString(value)
-
+	
 	if (!dayjsObject) {
 		return null
 	}
-
+	
 	return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY)
 }
 
@@ -392,11 +395,11 @@ export const DayjsDisplayDayDate = (value: TAnyDateValue, showLong = false): str
  */
 export const DayjsDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = false): string | null => {
 	const dayjsObject = DayjsFromString(value)
-
+	
 	if (!dayjsObject) {
 		return null
 	}
-
+	
 	if (!!DayjsTimeString(value)) {
 		return dayjsObject.format(
 			showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW
@@ -411,11 +414,11 @@ export const DayjsDisplayDayDateTimeDoW = (value: TAnyDateValue, showLong = fals
  */
 export const DayjsDisplayDayDateDoW = (value: TAnyDateValue, showLong = false): string | null => {
 	const dayjsObject = DayjsFromString(value)
-
+	
 	if (!dayjsObject) {
 		return null
 	}
-
+	
 	return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW)
 }
 
@@ -457,16 +460,16 @@ export const DayjsDurationLongText = (start: TAnyDateValue, end?: TAnyDateValue,
  */
 export const DurationShortText = (seconds: number): string => {
 	const duration = dayjs.duration(seconds * 1000)
-
+	
 	let text = ''
-
+	
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)}Y`
 		text += ` ${ToDigits(duration.months(), 0)}M`
 		text += ` ${ToDigits(duration.days(), 0)}D`
 	} else if (duration.months()) {
 		text += ` ${ToDigits(duration.months(), 0)}M`
-
+		
 		if (duration.days()) {
 			text += ` ${ToDigits(duration.days(), 0)}D`
 		}
@@ -489,7 +492,7 @@ export const DurationShortText = (seconds: number): string => {
 			text += ` ${ToDigits(duration.seconds(), 0)}s`
 		}
 	}
-
+	
 	return text.trim()
 }
 
@@ -501,9 +504,9 @@ export const DurationShortText = (seconds: number): string => {
  */
 export const DurationLongText = (seconds: number, trimSeconds = false): string => {
 	const duration = dayjs.duration(seconds * 1000)
-
+	
 	let text = ''
-
+	
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)} ${AddS('Year', duration.years())}`
 		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
@@ -512,7 +515,7 @@ export const DurationLongText = (seconds: number, trimSeconds = false): string =
 		}
 	} else if (duration.months()) {
 		text += ` ${ToDigits(duration.months(), 0)} ${AddS('Month', duration.months())}`
-
+		
 		if (duration.days()) {
 			text += ` ${ToDigits(duration.days(), 0)} ${AddS('Day', duration.days())}`
 		}
@@ -537,7 +540,7 @@ export const DurationLongText = (seconds: number, trimSeconds = false): string =
 			text += ` ${ToDigits(duration.seconds(), 0)} ${AddS('Second', duration.seconds())}`
 		}
 	}
-
+	
 	return text.trim()
 }
 
@@ -551,9 +554,9 @@ export const DurationLongText = (seconds: number, trimSeconds = false): string =
  */
 export const DayjsDurationShortTextAligned = (start: TAnyDateValue, end?: TAnyDateValue): string => {
 	const duration = dayjs.duration((DayjsFromString(end) ?? dayjs()).diff(DayjsFromString(start) ?? dayjs()))
-
+	
 	let text = ''
-
+	
 	if (duration.years()) {
 		text += ` ${ToDigits(duration.years(), 0)}Y`
 		text += ` ${ToDigits(duration.months(), 0).padStart(2)}M`
@@ -582,7 +585,7 @@ export const DayjsDurationShortTextAligned = (start: TAnyDateValue, end?: TAnyDa
 	} else if (duration.seconds()) {
 		text += ` ${ToDigits(duration.seconds(), 0).padStart(2)}s`
 	}
-
+	
 	return text.trim()
 }
 
@@ -598,49 +601,49 @@ export const IANAZoneAbbr = (ianaValue: string) => dayjs.tz(ianaValue).format('z
 
 export const DayjsAddWeekDays = (weekDays: number, value?: TAnyDateValue): Dayjs => {
 	let newDayjs = (DayjsFromString(value) ?? dayjs()).startOf('day')
-
+	
 	while (newDayjs.isoWeekday() >= 5) {
 		newDayjs.add(1, 'day')
 	}
-
+	
 	newDayjs.add(Math.floor(weekDays / 5), 'weeks')
-
+	
 	let days = weekDays % 5
-
+	
 	if (newDayjs.isoWeekday() + days >= 6) days += 2
-
+	
 	newDayjs.add(days, 'days')
-
+	
 	return newDayjs
 }
 
 export const DayjsWeekDays = (startDate: TAnyDateValue, endDate?: TAnyDateValue): number => {
 	let start = DayjsFromString(startDate) ?? DayjsFromString(dayjs().subtract(5, 'hours'))
 	let end = DayjsFromString(endDate) ?? DayjsFromString(dayjs().subtract(5, 'hours'))
-
+	
 	if (!start || !end) return 0
-
+	
 	while (start.isoWeekday() >= 5) {
 		start.add(1, 'day')
 	}
-
+	
 	while (end.isoWeekday() > 5) {
 		end.subtract(1, 'day')
 	}
-
+	
 	const weeks = end.startOf('day').diff(start.startOf('day'), 'weeks')
-
+	
 	let weekDays = weeks * 5
-
+	
 	let checkDate = start.add(weeks, 'weeks')
-
+	
 	while (checkDate.isBefore(end, 'day')) {
 		checkDate.add(1, 'day')
 		if (checkDate.isoWeekday() <= 5) {
 			weekDays++
 		}
 	}
-
+	
 	return weekDays
 }
 
