@@ -1,4 +1,4 @@
-import {Dayjs, OptionType} from 'dayjs'
+import {Dayjs, DayjsTimezone, OptionType} from 'dayjs'
 import * as dayjs_ from 'dayjs'
 import * as duration from 'dayjs/plugin/duration'
 import * as isoWeek from 'dayjs/plugin/isoWeek'
@@ -87,6 +87,8 @@ const FormatIsDateTime = (format: string) =>
  * Returns the current time zone.
  */
 export const DayjsCurrentTimeZone = (): string => dayjs().tz().format('z')
+
+export const DayjsTZ: DayjsTimezone = dayjs.tz
 
 /**
  * Returns the current olson time zone.

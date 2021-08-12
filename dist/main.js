@@ -1398,6 +1398,7 @@ var FormatIsDateTime = function (format) {
  * Returns the current time zone.
  */
 var DayjsCurrentTimeZone = function () { return dayjs().tz().format('z'); };
+var DayjsTZ = dayjs.tz;
 /**
  * Returns the current olson time zone.
  */
@@ -3231,6 +3232,7 @@ exports.DayjsFormatString = DayjsFormatString;
 exports.DayjsFromString = DayjsFromString;
 exports.DayjsID = DayjsID;
 exports.DayjsStringToDateLocale = DayjsStringToDateLocale;
+exports.DayjsTZ = DayjsTZ;
 exports.DayjsTimeString = DayjsTimeString;
 exports.DayjsWeekDays = DayjsWeekDays;
 exports.DeepEqual = DeepEqual;

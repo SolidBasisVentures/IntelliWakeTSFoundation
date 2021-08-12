@@ -1,4 +1,4 @@
-import { Dayjs } from 'dayjs';
+import { Dayjs, DayjsTimezone } from 'dayjs';
 export declare const DAYJS_FORMAT_DATE = "YYYY-MM-DD";
 export declare const DAYJS_FORMAT_TIME_SECONDS = "HH:mm:ss";
 export declare const DAYJS_FORMAT_TIME_NO_SECONDS = "HH:mm";
@@ -23,6 +23,7 @@ export declare const AnyDateValueIsObject: (value: TAnyDateValue) => boolean;
  * Returns the current time zone.
  */
 export declare const DayjsCurrentTimeZone: () => string;
+export declare const DayjsTZ: DayjsTimezone;
 /**
  * Returns the current olson time zone.
  */
