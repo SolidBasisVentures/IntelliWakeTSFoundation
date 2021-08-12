@@ -1,5 +1,5 @@
 import {ReplaceAll} from './Functions'
-import {DateICS} from './DateManager'
+import {DateICS} from './Dayjs'
 
 export namespace ICS {
 	export interface IEvent {

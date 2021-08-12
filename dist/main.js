@@ -2,6 +2,20 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var dayjs = require('dayjs');
+var duration = require('dayjs/plugin/duration');
+var isoWeek = require('dayjs/plugin/isoWeek');
+var utc = require('dayjs/plugin/utc');
+var timezone = require('dayjs/plugin/timezone');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var dayjs__default = /*#__PURE__*/_interopDefaultLegacy(dayjs);
+var duration__default = /*#__PURE__*/_interopDefaultLegacy(duration);
+var isoWeek__default = /*#__PURE__*/_interopDefaultLegacy(isoWeek);
+var utc__default = /*#__PURE__*/_interopDefaultLegacy(utc);
+var timezone__default = /*#__PURE__*/_interopDefaultLegacy(timezone);
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -1292,55 +1306,601 @@ var RandomString = function (length, validChars) {
     return result;
 };
 
-var DATE_FORMAT_DATE = 'YYYY-MM-DD';
-var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
-var DATE_FORMAT_TIME_NO_SECONDS = 'HH:mm';
-var DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE + ' ' + DATE_FORMAT_TIME_SECONDS;
-var DATE_FORMAT_DATE_DISPLAY = "MMM D, YYYY";
-var DATE_FORMAT_DATE_DISPLAY_DOW = "dd, " + DATE_FORMAT_DATE_DISPLAY;
-var DATE_FORMAT_TIME_DISPLAY = 'h:mm a';
-var DATE_FORMAT_DATE_TIME_DISPLAY = DATE_FORMAT_DATE_DISPLAY + ", " + DATE_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_DATE_TIME_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW + ", " + DATE_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
-var DATE_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + DATE_FORMAT_DATE_DISPLAY_LONG;
-var DATE_FORMAT_DATE_TIME_DISPLAY_LONG = DATE_FORMAT_DATE_DISPLAY_LONG + ", " + DATE_FORMAT_TIME_DISPLAY;
-var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + DATE_FORMAT_TIME_DISPLAY;
-var nowDateTime = function () { return new Date().toISOString(); };
-var DateParseTS = function (date) {
-    if (!date)
-        return Date.parse(new Date().toString());
-    try {
-        var result = Date.parse(date.toString());
-        if (isNaN(result)) {
-            var check = new Date(date);
-            if (!check) {
-                return null;
-            }
-            return Date.parse(check.toString());
+dayjs__default['default'].extend(duration__default['default']);
+dayjs__default['default'].extend(isoWeek__default['default']);
+dayjs__default['default'].extend(utc__default['default']);
+dayjs__default['default'].extend(timezone__default['default']);
+var DAYJS_FORMAT_DATE = 'YYYY-MM-DD';
+var DAYJS_FORMAT_TIME_SECONDS = 'HH:mm:ss';
+var DAYJS_FORMAT_TIME_NO_SECONDS = 'HH:mm';
+var DAYJS_FORMAT_DATE_TIME = DAYJS_FORMAT_DATE + ' ' + DAYJS_FORMAT_TIME_SECONDS;
+var DAYJS_FORMAT_DATE_DISPLAY = "MMM D, YYYY";
+var DAYJS_FORMAT_DATE_DISPLAY_DOW = "dd, " + DAYJS_FORMAT_DATE_DISPLAY;
+var DAYJS_FORMAT_TIME_DISPLAY = 'h:mm a';
+var DAYJS_FORMAT_DATE_TIME_DISPLAY = DAYJS_FORMAT_DATE_DISPLAY + ", " + DAYJS_FORMAT_TIME_DISPLAY;
+var DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW = DAYJS_FORMAT_DATE_DISPLAY_DOW + ", " + DAYJS_FORMAT_TIME_DISPLAY;
+var DAYJS_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
+var DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG = "dddd, " + DAYJS_FORMAT_DATE_DISPLAY_LONG;
+var DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG = DAYJS_FORMAT_DATE_DISPLAY_LONG + ", " + DAYJS_FORMAT_TIME_DISPLAY;
+var DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG + ", " + DAYJS_FORMAT_TIME_DISPLAY;
+var DATE_FORMAT_TRIES = [
+    'YYYY-MM-DD',
+    'M-D-YYYY',
+    'MM-DD-YYYY',
+    'YYYYMMDD'
+];
+var TIME_FORMAT_TRIES = [
+    'YYYY-MM-DD HH:mm:ss',
+    'YYYY-MM-DD HH:mm',
+    'HH:mm:ss',
+    'HH:mm',
+    'D-M-YYYY HH:mm:ss',
+    'D-M-YYYY HH:mm',
+    'DD-MM-YYYY HH:mm:ss',
+    'DD-MM-YYYY HH:mm'
+];
+(function (EDateAndOrTime) {
+    EDateAndOrTime[EDateAndOrTime["DATE"] = 0] = "DATE";
+    EDateAndOrTime[EDateAndOrTime["TIME"] = 1] = "TIME";
+    EDateAndOrTime[EDateAndOrTime["DATETIME"] = 2] = "DATETIME";
+})(exports.EDateAndOrTime || (exports.EDateAndOrTime = {}));
+var StringHasTimeData = function (value) { return value.includes(':'); };
+var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
+var StringHasTimeZoneData = function (value) {
+    return value.includes('T') || value.includes('+') || value.substr(15).includes('-');
+};
+var AnyDateValueIsObject = function (value) { return (!value ? false : typeof value !== 'string'); };
+var FormatIsTime = function (format) {
+    return [DAYJS_FORMAT_TIME_SECONDS, DAYJS_FORMAT_TIME_NO_SECONDS, DAYJS_FORMAT_TIME_DISPLAY].includes(format);
+};
+var FormatIsDate = function (format) {
+    return [DAYJS_FORMAT_DATE, DAYJS_FORMAT_DATE_DISPLAY, DAYJS_FORMAT_DATE_DISPLAY_DOW].includes(format);
+};
+var FormatIsDateTime = function (format) {
+    return [DAYJS_FORMAT_DATE_TIME, DAYJS_FORMAT_DATE_TIME_DISPLAY, DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW].includes(format);
+};
+/**
+ * Returns the current time zone.
+ */
+var DayjsCurrentTimeZone = function () { return dayjs__default['default']().tz().format('z'); };
+/**
+ * Returns the current olson time zone.
+ */
+var DayjsCurrentTimeZoneOlson = function () { return dayjs__default['default'].tz.guess(); };
+/**
+ * Returns a list of olson time zone items, sorted by hour diff from UTC
+ *
+ * Defaults to 'US'
+ */
+var TimeZoneOlsons = function () {
+    return [
+        {
+            "zone": "EDT",
+            "olson": "America/Detroit",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Indianapolis",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Marengo",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Petersburg",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Vevay",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Vincennes",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Indiana/Winamac",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Kentucky/Louisville",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/Kentucky/Monticello",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "EDT",
+            "olson": "America/New_York",
+            "hours": "-04:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/Chicago",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/Indiana/Knox",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/Indiana/Tell_City",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/Menominee",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/North_Dakota/Beulah",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/North_Dakota/Center",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "CDT",
+            "olson": "America/North_Dakota/New_Salem",
+            "hours": "-05:00"
+        },
+        {
+            "zone": "MDT",
+            "olson": "America/Boise",
+            "hours": "-06:00"
+        },
+        {
+            "zone": "MDT",
+            "olson": "America/Denver",
+            "hours": "-06:00"
+        },
+        {
+            "zone": "PDT",
+            "olson": "America/Los_Angeles",
+            "hours": "-07:00"
+        },
+        {
+            "zone": "MST",
+            "olson": "America/Phoenix",
+            "hours": "-07:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Anchorage",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Juneau",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Metlakatla",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Nome",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Sitka",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "AKDT",
+            "olson": "America/Yakutat",
+            "hours": "-08:00"
+        },
+        {
+            "zone": "HDT",
+            "olson": "America/Adak",
+            "hours": "-09:00"
+        },
+        {
+            "zone": "HST",
+            "olson": "Pacific/Honolulu",
+            "hours": "-10:00"
         }
-        return result;
-    }
-    catch (_a) {
+    ];
+};
+// (dayjs.tz.zonesForCountry(forCountry) as string[])
+// 	.map(tzItem => ({
+// 		zone: dayjs.tz(tzItem).zoneAbbr(),
+// 		olson: tzItem,
+// 		hours: dayjs.tz(tzItem).format('Z')
+// 	}))
+// 	.sort((a, b) => (a.hours !== b.hours ? a.hours.localeCompare(b.hours) : a.olson.localeCompare(b.olson)))
+/**
+ * Display timezone and olson
+ */
+var DisplayTZItem = function (tzItem) {
+    return !tzItem || !tzItem.olson ? '' : !tzItem.zone ? tzItem.olson : tzItem.zone + ": " + tzItem.olson;
+};
+/**
+ * Current time in ISO string format
+ */
+var NowISOString = function () { return new Date().toISOString(); };
+var IsDateString = function (value) {
+    if (!value || typeof value !== 'string')
+        return false;
+    // if (!DATE_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length) && !TIME_FORMAT_TRIES.some(DFT => DFT.toString().length === value.length)) {
+    // 	return false
+    // }
+    if (!StringHasDateData(value))
+        return false;
+    return !!DayjsFromString(value);
+};
+/**
+ * Returns the Dayjs object from a given value. If the given value is invalid,
+ * it returns null.
+ *
+ *
+ * @example
+ * // returns Dayjs<2020-10-02T00:00:00Z>
+ * DayjsFromString('2020-10-02')
+ */
+var DayjsFromString = function (value) {
+    if (!value) {
         return null;
+    }
+    var formatTries = __spreadArrays(DATE_FORMAT_TRIES, TIME_FORMAT_TRIES);
+    if (typeof value !== 'string') {
+        var dayjsObject = dayjs__default['default'](value);
+        if (dayjsObject.isValid()) {
+            return dayjsObject.utc().tz(DayjsCurrentTimeZone());
+        }
+    }
+    else {
+        var dayjsObject = StringHasTimeZoneData(value) ? dayjs__default['default'](value, formatTries, true) : dayjs__default['default'].utc(value); // , formatTries, true
+        if (dayjsObject.isValid()) {
+            return dayjsObject;
+        }
+    }
+    return null;
+};
+/**
+ * Does the same thing as DayjsFromString() but instead returns a string based on the format specified.
+ *
+ * @example
+ * // returns "Oct 2, 2020"
+ * DayjsFromString('2020-10-02', 'll')
+ */
+var DayjsFormatString = function (value, format) {
+    var _a, _b, _c, _d;
+    if (!value)
+        return null;
+    if (typeof value == 'string') {
+        if (FormatIsTime(format) && !StringHasTimeData(value)) {
+            return null;
+        }
+        if ((FormatIsDateTime(format) || FormatIsDate(format)) && !StringHasDateData(value))
+            return null;
+        var dayjs_1 = (_b = (_a = DayjsFromString(value)) === null || _a === void 0 ? void 0 : _a.format(format)) !== null && _b !== void 0 ? _b : null;
+        if (!dayjs_1)
+            return null;
+        if (format === DAYJS_FORMAT_TIME_SECONDS || format === DAYJS_FORMAT_TIME_NO_SECONDS) {
+            if (!StringHasTimeData(dayjs_1))
+                return null;
+            return dayjs_1.substr(format.length * -1, format.length);
+        }
+        if (format === DAYJS_FORMAT_DATE) {
+            if (!StringHasDateData(dayjs_1))
+                return null;
+            return dayjs_1.substr(0, format.length);
+        }
+        if (format === DAYJS_FORMAT_DATE_TIME) {
+            if (!StringHasDateData(dayjs_1) || !StringHasTimeData(dayjs_1))
+                return null;
+        }
+        return dayjs_1;
+    }
+    return (_d = (_c = DayjsFromString(value)) === null || _c === void 0 ? void 0 : _c.format(format)) !== null && _d !== void 0 ? _d : null;
+};
+/**
+ * Returns the dayjs time string in the format of "HH:mm:ss".
+ */
+var DayjsTimeString = function (value) {
+    return DayjsFormatString(value, DAYJS_FORMAT_TIME_SECONDS);
+};
+/**
+ * Returns the dayjs date string in the format of "YYYY-MM-DD".
+ */
+var DayjsDateString = function (value) { return DayjsFormatString(value, DAYJS_FORMAT_DATE); };
+/**
+ * Returns the dayjs date string in the format of "YYYY-MM-DD HH:mm:ss".
+ */
+var DayjsDateTimeString = function (value) {
+    return DayjsFormatString(value, DAYJS_FORMAT_DATE_TIME);
+};
+/**
+ * Returns display day date time format.
+ */
+var DayjsDisplayDayDateTime = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
+    var dayjsObject = DayjsFromString(value);
+    if (!dayjsObject) {
+        return null;
+    }
+    if (!!DayjsTimeString(value)) {
+        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY);
+    }
+    else {
+        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY);
     }
 };
-var DateISO = function (date) {
-    var parsed = DateParseTS(date);
-    if (!parsed)
+/**
+ * Returns display day date format.
+ */
+var DayjsDisplayDayDate = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
+    var dayjsObject = DayjsFromString(value);
+    if (!dayjsObject) {
         return null;
-    return new Date(parsed).toISOString();
+    }
+    return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_LONG : DAYJS_FORMAT_DATE_DISPLAY);
 };
-var DateObject = function (date) {
-    var parsed = DateParseTS(date);
-    if (!parsed)
+/**
+ * Returns display day date time format with day of week.
+ */
+var DayjsDisplayDayDateTimeDoW = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
+    var dayjsObject = DayjsFromString(value);
+    if (!dayjsObject) {
         return null;
-    return new Date(parsed);
+    }
+    if (!!DayjsTimeString(value)) {
+        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW);
+    }
+    else {
+        return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW);
+    }
+};
+/**
+ * Returns display day date format with day of week.
+ */
+var DayjsDisplayDayDateDoW = function (value, showLong) {
+    if (showLong === void 0) { showLong = false; }
+    var dayjsObject = DayjsFromString(value);
+    if (!dayjsObject) {
+        return null;
+    }
+    return dayjsObject.format(showLong ? DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG : DAYJS_FORMAT_DATE_DISPLAY_DOW);
+};
+/**
+ * Returns the time with 12-hour clock format.
+ */
+var DayjsDisplayTime = function (value) {
+    return DayjsFormatString(value, DAYJS_FORMAT_TIME_DISPLAY);
+};
+/**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30m 20s
+ */
+var DayjsDurationShortText = function (start, end) { var _a, _b; return DurationShortText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()) / 1000); };
+/**
+ * Displays difference between two times in a simplified duration format.
+ *
+ * If the second parameter is empty, the current date/time is used.
+ *
+ * @example
+ * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ * DayjsDurationShortText('2020-01-01 13:00:00', '2020-01-01 13:30:20') // result: 30 Minutes 20 Seconds
+ */
+var DayjsDurationLongText = function (start, end, trimSeconds) {
+    var _a, _b;
+    if (trimSeconds === void 0) { trimSeconds = false; }
+    return DurationLongText(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()) / 1000, trimSeconds);
+};
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * DayjsDurationShortText((30 * 60) + 20) // result: 30m 20s
+ */
+var DurationShortText = function (seconds) {
+    var duration = dayjs__default['default'].duration(seconds * 1000);
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + "Y";
+        text += " " + ToDigits(duration.months(), 0) + "M";
+        text += " " + ToDigits(duration.days(), 0) + "D";
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0) + "M";
+        if (duration.days()) {
+            text += " " + ToDigits(duration.days(), 0) + "D";
+        }
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0) + "D";
+        text += " " + ToDigits(duration.hours(), 0) + "h";
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0) + "h";
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+    }
+    else {
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + "m";
+        }
+        if (duration.seconds()) {
+            text += " " + ToDigits(duration.seconds(), 0) + "s";
+        }
+    }
+    return text.trim();
+};
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * DayjsDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+var DurationLongText = function (seconds, trimSeconds) {
+    if (trimSeconds === void 0) { trimSeconds = false; }
+    var duration = dayjs__default['default'].duration(seconds * 1000);
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + " " + AddS('Year', duration.years());
+        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
+        if (duration.days()) {
+            text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+        }
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0) + " " + AddS('Month', duration.months());
+        if (duration.days()) {
+            text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+        }
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0) + " " + AddS('Day', duration.days());
+        if (duration.hours()) {
+            text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
+        }
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0) + " " + AddS('Hour', duration.hours());
+        if (duration.minutes()) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+    }
+    else {
+        if (duration.minutes() || (!text && trimSeconds)) {
+            text += " " + ToDigits(duration.minutes(), 0) + " " + AddS('Minute', duration.minutes());
+        }
+        if (!text || (!trimSeconds && duration.seconds())) {
+            text += " " + ToDigits(duration.seconds(), 0) + " " + AddS('Second', duration.seconds());
+        }
+    }
+    return text.trim();
+};
+/**
+ * Displays difference between two times in a simplified duration format.  The format will always show down to the second, and will always align in columns vertically (e.g. padding so that the length of '12' is the same as ' 2')
+ *
+ * If the second parameter is empty, the current date/time is used.
+ 
+ * @example
+ * DayjsDurationShortTextAligned('2020-01-01 13:00:00', '2020-01-03 14:30:20') // result: 2D  1h 30m 20s
+ */
+var DayjsDurationShortTextAligned = function (start, end) {
+    var _a, _b;
+    var duration = dayjs__default['default'].duration(((_a = DayjsFromString(end)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).diff((_b = DayjsFromString(start)) !== null && _b !== void 0 ? _b : dayjs__default['default']()));
+    var text = '';
+    if (duration.years()) {
+        text += " " + ToDigits(duration.years(), 0) + "Y";
+        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.months()) {
+        text += " " + ToDigits(duration.months(), 0).padStart(2) + "M";
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.days()) {
+        text += " " + ToDigits(duration.days(), 0).padStart(2) + "D";
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.hours()) {
+        text += " " + ToDigits(duration.hours(), 0).padStart(2) + "h";
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.minutes()) {
+        text += " " + ToDigits(duration.minutes(), 0).padStart(2) + "m";
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    else if (duration.seconds()) {
+        text += " " + ToDigits(duration.seconds(), 0).padStart(2) + "s";
+    }
+    return text.trim();
+};
+var DayjsStringToDateLocale = function (value) { var _a; return (_a = DayjsFormatString(value, 'MM/DD/YYYY')) !== null && _a !== void 0 ? _a : ''; };
+var DateAndTimeToDateTime = function (valueDate, valueTime) { var _a, _b, _c; return (_c = DayjsDateTimeString(((_a = DayjsDateString(valueDate)) !== null && _a !== void 0 ? _a : '') + " " + ((_b = DayjsTimeString(valueTime)) !== null && _b !== void 0 ? _b : ''))) !== null && _c !== void 0 ? _c : ''; };
+var DayjsID = function (value, offsetHours) {
+    if (value === void 0) { value = null; }
+    if (offsetHours === void 0) { offsetHours = 5; }
+    return DayjsFormatString(value !== null && value !== void 0 ? value : dayjs__default['default']().subtract(offsetHours, 'hours'), "YYYY-MM-DD_HH-mm-ss");
+};
+var IANAZoneAbbr = function (ianaValue) { return dayjs__default['default'].tz(ianaValue).format('z'); };
+var DayjsAddWeekDays = function (weekDays, value) {
+    var _a;
+    var newDayjs = ((_a = DayjsFromString(value)) !== null && _a !== void 0 ? _a : dayjs__default['default']()).startOf('day');
+    while (newDayjs.isoWeekday() >= 5) {
+        newDayjs.add(1, 'day');
+    }
+    newDayjs.add(Math.floor(weekDays / 5), 'weeks');
+    var days = weekDays % 5;
+    if (newDayjs.isoWeekday() + days >= 6)
+        days += 2;
+    newDayjs.add(days, 'days');
+    return newDayjs;
+};
+var DayjsWeekDays = function (startDate, endDate) {
+    var _a, _b;
+    var start = (_a = DayjsFromString(startDate)) !== null && _a !== void 0 ? _a : DayjsFromString(dayjs__default['default']().subtract(5, 'hours'));
+    var end = (_b = DayjsFromString(endDate)) !== null && _b !== void 0 ? _b : DayjsFromString(dayjs__default['default']().subtract(5, 'hours'));
+    if (!start || !end)
+        return 0;
+    while (start.isoWeekday() >= 5) {
+        start.add(1, 'day');
+    }
+    while (end.isoWeekday() > 5) {
+        end.subtract(1, 'day');
+    }
+    var weeks = end.startOf('day').diff(start.startOf('day'), 'weeks');
+    var weekDays = weeks * 5;
+    var checkDate = start.add(weeks, 'weeks');
+    while (checkDate.isBefore(end, 'day')) {
+        checkDate.add(1, 'day');
+        if (checkDate.isoWeekday() <= 5) {
+            weekDays++;
+        }
+    }
+    return weekDays;
 };
 var DateICS = function (date) {
-    var dateISO = DateISO(date);
-    if (!dateISO)
+    var dayJS = DayjsFromString(date);
+    if (!dayJS || !dayJS.isValid())
         return null;
-    var dateICS = dateISO;
+    var dateICS = dayJS.toISOString();
     var decimal = dateICS.indexOf('.');
     var zed = dateICS.indexOf('Z');
     if (decimal > 0 && zed > decimal) {
@@ -1349,167 +1909,6 @@ var DateICS = function (date) {
     dateICS = ReplaceAll('-', '', dateICS);
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
-};
-var DateFormat = function (date, format) {
-    var dateObject = DateObject(date);
-    if (!dateObject || dateObject.valueOf() === 0)
-        return null;
-    var applyCommand = function (command) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-        switch (command) {
-            case 'YYYY':
-                return dateObject.getFullYear().toString();
-            case 'YY':
-                return dateObject.getFullYear().toString().substr(2);
-            case 'Q':
-                return (Math.ceil((dateObject.getMonth() + 1) / 3)).toString();
-            case 'Qo':
-                return (_a = DigitsNth((Math.ceil((dateObject.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
-            case 'MMMM':
-                return (_b = MonthNames[dateObject.getMonth() + 1]) !== null && _b !== void 0 ? _b : '';
-            case 'MMM':
-                return ((_c = MonthNames[dateObject.getMonth() + 1]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
-            case 'MM':
-                return (dateObject.getMonth() + 1).toString().padStart(2, '0');
-            case 'Mo':
-                return (_d = DigitsNth(dateObject.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
-            case 'M':
-                return (dateObject.getMonth() + 1).toString();
-            /**
-             * Week of Year	w	1 2 ... 52 53
-             * wo	1st 2nd ... 52nd 53rd
-             * ww	01 02 ... 52 53
-             * Week of Year (ISO)	W	1 2 ... 52 53
-             * Wo	1st 2nd ... 52nd 53rd
-             * WW	01 02 ... 52 53
-             */
-            /**
-             * Day of Year	DDD	1 2 ... 364 365
-             * DDDo	1st 2nd ... 364th 365th
-             * DDDD	001 002 ... 364 365
-             */
-            case 'DD':
-                return dateObject.getDate().toString().padStart(2, '0');
-            case 'Do':
-                return (_e = DigitsNth(dateObject.getDate())) !== null && _e !== void 0 ? _e : '';
-            case 'D':
-                return dateObject.getDate().toString();
-            case 'd':
-                return dateObject.getDay().toString();
-            case 'do':
-                return (_f = DigitsNth(dateObject.getDay())) !== null && _f !== void 0 ? _f : '';
-            case 'dd':
-                return ((_g = WeekDays[dateObject.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
-            case 'ddd':
-                return ((_h = WeekDays[dateObject.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
-            case 'dddd':
-                return ((_j = WeekDays[dateObject.getDay()]) !== null && _j !== void 0 ? _j : '');
-            case 'HH':
-                return dateObject.getHours().toString().padStart(2, '0');
-            case 'H':
-                return dateObject.getHours().toString();
-            case 'hh':
-                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString().padStart(2, '0');
-            case 'h':
-                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString();
-            case 'mm':
-                return dateObject.getMinutes().toString().padStart(2, '0');
-            case 'm':
-                return dateObject.getMinutes().toString();
-            case 'ss':
-                return dateObject.getSeconds().toString().padStart(2, '0');
-            case 's':
-                return dateObject.getSeconds().toString();
-            case 'A':
-                return dateObject.getHours() > 12 ? 'PM' : 'AM';
-            case 'a':
-                return dateObject.getHours() > 12 ? 'pm' : 'am';
-            default:
-                return command;
-        }
-    };
-    var formatArray = format.split('');
-    var result = '';
-    var previousChar = '';
-    var command = '';
-    var inEscape = false;
-    var patterns = ['Mo', 'Qo', 'Do', 'do'];
-    var _loop_1 = function (formatChar) {
-        if (inEscape) {
-            if (formatChar === ']') {
-                inEscape = false;
-            }
-            else {
-                result += formatChar;
-            }
-        }
-        else if (formatChar === '[') {
-            result += applyCommand(command);
-            command = '';
-            previousChar = '';
-            inEscape = true;
-        }
-        else {
-            if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
-                patterns.some(function (pattern) { return pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1); }))) {
-                command += formatChar;
-            }
-            else {
-                result += applyCommand(command);
-                command = formatChar;
-            }
-            previousChar = formatChar;
-        }
-    };
-    for (var _i = 0, formatArray_1 = formatArray; _i < formatArray_1.length; _i++) {
-        var formatChar = formatArray_1[_i];
-        _loop_1(formatChar);
-    }
-    result += applyCommand(command);
-    return result;
-};
-var YYYYMMDDHHmmss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYY_MM_DD_HH_mm_ss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYYsMMsDDsHHcmmcss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var YYYYsMMsDD = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
-};
-var HHcmmcss = function (ts) {
-    var dateObject = !ts ? new Date() : new Date(ts);
-    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
-};
-var MonthNames = {
-    1: 'January',
-    2: 'February',
-    3: 'March',
-    4: 'April',
-    5: 'May',
-    6: 'June',
-    7: 'July',
-    8: 'August',
-    9: 'September',
-    10: 'October',
-    11: 'November',
-    12: 'December'
-};
-var WeekDays = {
-    0: 'Sunday',
-    1: 'Monday',
-    2: 'Tuesday',
-    3: 'Wednesday',
-    4: 'Thursday',
-    5: 'Friday',
-    6: 'Saturday'
 };
 
 var initialChanges = {};
@@ -1683,9 +2082,9 @@ var RemoveDupProperties = function (original, propsToRemove) {
                 delete result[key];
             }
             else {
-                var pTRM = DateParseTS(propsToRemove[key]);
+                var pTRM = DayjsFormatString(propsToRemove[key], 'YYYY-MM-DD HH:mm:ss');
                 if (!!pTRM) {
-                    var rM = DateParseTS(result[key]);
+                    var rM = DayjsFormatString(result[key], 'YYYY-MM-DD HH:mm:ss');
                     if (!!rM) {
                         if (pTRM === rM) {
                             delete result[key];
@@ -2757,6 +3156,7 @@ exports.AddressCopy = AddressCopy;
 exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
+exports.AnyDateValueIsObject = AnyDateValueIsObject;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.ChangeValueChanges = ChangeValueChanges;
@@ -2764,30 +3164,49 @@ exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
 exports.CleanScripts = CleanScripts;
 exports.ConsoleColor = ConsoleColor;
-exports.DATE_FORMAT_DATE = DATE_FORMAT_DATE;
-exports.DATE_FORMAT_DATE_DISPLAY = DATE_FORMAT_DATE_DISPLAY;
-exports.DATE_FORMAT_DATE_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW;
-exports.DATE_FORMAT_DATE_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG;
-exports.DATE_FORMAT_DATE_DISPLAY_LONG = DATE_FORMAT_DATE_DISPLAY_LONG;
-exports.DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE_TIME;
-exports.DATE_FORMAT_DATE_TIME_DISPLAY = DATE_FORMAT_DATE_TIME_DISPLAY;
-exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW = DATE_FORMAT_DATE_TIME_DISPLAY_DOW;
-exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
-exports.DATE_FORMAT_DATE_TIME_DISPLAY_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_LONG;
-exports.DATE_FORMAT_TIME_DISPLAY = DATE_FORMAT_TIME_DISPLAY;
-exports.DATE_FORMAT_TIME_NO_SECONDS = DATE_FORMAT_TIME_NO_SECONDS;
-exports.DATE_FORMAT_TIME_SECONDS = DATE_FORMAT_TIME_SECONDS;
+exports.DAYJS_FORMAT_DATE = DAYJS_FORMAT_DATE;
+exports.DAYJS_FORMAT_DATE_DISPLAY = DAYJS_FORMAT_DATE_DISPLAY;
+exports.DAYJS_FORMAT_DATE_DISPLAY_DOW = DAYJS_FORMAT_DATE_DISPLAY_DOW;
+exports.DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG = DAYJS_FORMAT_DATE_DISPLAY_DOW_LONG;
+exports.DAYJS_FORMAT_DATE_DISPLAY_LONG = DAYJS_FORMAT_DATE_DISPLAY_LONG;
+exports.DAYJS_FORMAT_DATE_TIME = DAYJS_FORMAT_DATE_TIME;
+exports.DAYJS_FORMAT_DATE_TIME_DISPLAY = DAYJS_FORMAT_DATE_TIME_DISPLAY;
+exports.DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW = DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW;
+exports.DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DAYJS_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
+exports.DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG = DAYJS_FORMAT_DATE_TIME_DISPLAY_LONG;
+exports.DAYJS_FORMAT_TIME_DISPLAY = DAYJS_FORMAT_TIME_DISPLAY;
+exports.DAYJS_FORMAT_TIME_NO_SECONDS = DAYJS_FORMAT_TIME_NO_SECONDS;
+exports.DAYJS_FORMAT_TIME_SECONDS = DAYJS_FORMAT_TIME_SECONDS;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
-exports.DateFormat = DateFormat;
+exports.DateAndTimeToDateTime = DateAndTimeToDateTime;
 exports.DateICS = DateICS;
-exports.DateISO = DateISO;
-exports.DateObject = DateObject;
-exports.DateParseTS = DateParseTS;
+exports.DayjsAddWeekDays = DayjsAddWeekDays;
+exports.DayjsCurrentTimeZone = DayjsCurrentTimeZone;
+exports.DayjsCurrentTimeZoneOlson = DayjsCurrentTimeZoneOlson;
+exports.DayjsDateString = DayjsDateString;
+exports.DayjsDateTimeString = DayjsDateTimeString;
+exports.DayjsDisplayDayDate = DayjsDisplayDayDate;
+exports.DayjsDisplayDayDateDoW = DayjsDisplayDayDateDoW;
+exports.DayjsDisplayDayDateTime = DayjsDisplayDayDateTime;
+exports.DayjsDisplayDayDateTimeDoW = DayjsDisplayDayDateTimeDoW;
+exports.DayjsDisplayTime = DayjsDisplayTime;
+exports.DayjsDurationLongText = DayjsDurationLongText;
+exports.DayjsDurationShortText = DayjsDurationShortText;
+exports.DayjsDurationShortTextAligned = DayjsDurationShortTextAligned;
+exports.DayjsFormatString = DayjsFormatString;
+exports.DayjsFromString = DayjsFromString;
+exports.DayjsID = DayjsID;
+exports.DayjsStringToDateLocale = DayjsStringToDateLocale;
+exports.DayjsTimeString = DayjsTimeString;
+exports.DayjsWeekDays = DayjsWeekDays;
 exports.DeepEqual = DeepEqual;
 exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
+exports.DisplayTZItem = DisplayTZItem;
+exports.DurationLongText = DurationLongText;
+exports.DurationShortText = DurationShortText;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormUrlEncoded = FormUrlEncoded;
@@ -2800,8 +3219,9 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
-exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
+exports.IANAZoneAbbr = IANAZoneAbbr;
+exports.IsDateString = IsDateString;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
@@ -2812,7 +3232,7 @@ exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.JSONStringToObject = JSONStringToObject;
 exports.LeftPad = LeftPad;
-exports.MonthNames = MonthNames;
+exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
 exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
@@ -2844,6 +3264,7 @@ exports.StringContainsSearchTerms = StringContainsSearchTerms;
 exports.StringToByteArray = StringToByteArray;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
+exports.TimeZoneOlsons = TimeZoneOlsons;
 exports.ToArray = ToArray;
 exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;
@@ -2863,11 +3284,6 @@ exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
-exports.WeekDays = WeekDays;
-exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
-exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
-exports.YYYYsMMsDD = YYYYsMMsDD;
-exports.YYYYsMMsDDsHHcmmcss = YYYYsMMsDDsHHcmmcss;
 exports.ab2str = ab2str;
 exports.consoleLogTable = consoleLogTable;
 exports.everyAsync = everyAsync;
@@ -2879,6 +3295,5 @@ exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
 exports.isAB = isAB;
-exports.nowDateTime = nowDateTime;
 exports.someAsync = someAsync;
 exports.str2ab = str2ab;
