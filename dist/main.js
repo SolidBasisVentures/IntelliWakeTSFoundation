@@ -7,8 +7,8 @@ var duration = require('dayjs/plugin/duration');
 var isoWeek = require('dayjs/plugin/isoWeek');
 var utc = require('dayjs/plugin/utc');
 var timezone = require('dayjs/plugin/timezone');
-var AdvancedFormat = require('dayjs/plugin/AdvancedFormat');
-var LocalizedFormat = require('dayjs/plugin/LocalizedFormat');
+var advancedFormat = require('dayjs/plugin/advancedFormat');
+var localizedFormat = require('dayjs/plugin/localizedFormat');
 var customParseFormat = require('dayjs/plugin/customParseFormat');
 
 function _interopNamespace(e) {
@@ -36,8 +36,8 @@ var duration__namespace = /*#__PURE__*/_interopNamespace(duration);
 var isoWeek__namespace = /*#__PURE__*/_interopNamespace(isoWeek);
 var utc__namespace = /*#__PURE__*/_interopNamespace(utc);
 var timezone__namespace = /*#__PURE__*/_interopNamespace(timezone);
-var AdvancedFormat__namespace = /*#__PURE__*/_interopNamespace(AdvancedFormat);
-var LocalizedFormat__namespace = /*#__PURE__*/_interopNamespace(LocalizedFormat);
+var advancedFormat__namespace = /*#__PURE__*/_interopNamespace(advancedFormat);
+var localizedFormat__namespace = /*#__PURE__*/_interopNamespace(localizedFormat);
 var customParseFormat__namespace = /*#__PURE__*/_interopNamespace(customParseFormat);
 
 /*! *****************************************************************************
@@ -1335,8 +1335,8 @@ dayjs.extend(duration__namespace);
 dayjs.extend(isoWeek__namespace);
 dayjs.extend(utc__namespace);
 dayjs.extend(timezone__namespace);
-dayjs.extend(AdvancedFormat__namespace);
-dayjs.extend(LocalizedFormat__namespace);
+dayjs.extend(advancedFormat__namespace);
+dayjs.extend(localizedFormat__namespace);
 dayjs.extend(customParseFormat__namespace);
 dayjs.tz.setDefault("UTC");
 var DAYJS_FORMAT_DATE = 'YYYY-MM-DD';
@@ -1573,6 +1573,7 @@ var DisplayTZItem = function (tzItem) {
  * Current time in ISO string format
  */
 var NowISOString = function () { return new Date().toISOString(); };
+var nowDateTime = function () { return new Date().toISOString(); };
 var IsDateString = function (value) {
     if (!value || typeof value !== 'string')
         return false;
@@ -3327,5 +3328,6 @@ exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
 exports.isAB = isAB;
+exports.nowDateTime = nowDateTime;
 exports.someAsync = someAsync;
 exports.str2ab = str2ab;

@@ -46,6 +46,7 @@ export declare const DisplayTZItem: (tzItem: ITZItem | undefined | null) => stri
  * Current time in ISO string format
  */
 export declare const NowISOString: () => string;
+export declare const nowDateTime: () => string;
 export declare const IsDateString: (value: any) => boolean;
 /**
  * Returns the Dayjs object from a given value. If the given value is invalid,

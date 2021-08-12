@@ -14,5 +14,5 @@ export default {
 		}
 	],
 	plugins: [typescript({objectHashIgnoreUnknownHack: false})],
-	external: ['dayjs', 'dayjs/plugin/duration', 'dayjs/plugin/isoWeek', 'dayjs/plugin/utc', 'dayjs/plugin/timezone', 'dayjs/plugin/AdvancedFormat', 'dayjs/plugin/LocalizedFormat', 'dayjs/plugin/customParseFormat']
+	external: ['dayjs', 'dayjs/plugin/duration', 'dayjs/plugin/isoWeek', 'dayjs/plugin/utc', 'dayjs/plugin/timezone', 'dayjs/plugin/advancedFormat', 'dayjs/plugin/localizedFormat', 'dayjs/plugin/customParseFormat']
 }

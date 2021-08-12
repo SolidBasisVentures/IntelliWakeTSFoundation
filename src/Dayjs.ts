@@ -4,8 +4,8 @@ import * as duration from 'dayjs/plugin/duration'
 import * as isoWeek from 'dayjs/plugin/isoWeek'
 import * as utc from 'dayjs/plugin/utc'
 import * as timezone from 'dayjs/plugin/timezone'
-import * as AdvancedFormat from 'dayjs/plugin/AdvancedFormat'
-import * as LocalizedFormat from 'dayjs/plugin/LocalizedFormat'
+import * as advancedFormat from 'dayjs/plugin/advancedFormat'
+import * as localizedFormat from 'dayjs/plugin/localizedFormat'
 import * as customParseFormat from 'dayjs/plugin/customParseFormat'
 import {ToDigits} from './StringManipulation'
 import {AddS, ReplaceAll} from './Functions'
@@ -16,8 +16,8 @@ dayjs.extend(duration)
 dayjs.extend(isoWeek)
 dayjs.extend(utc)
 dayjs.extend(timezone)
-dayjs.extend(AdvancedFormat)
-dayjs.extend(LocalizedFormat)
+dayjs.extend(advancedFormat)
+dayjs.extend(localizedFormat)
 dayjs.extend(customParseFormat)
 
 dayjs.tz.setDefault("UTC")
@@ -270,6 +270,7 @@ export const DisplayTZItem = (tzItem: ITZItem | undefined | null): string =>
  * Current time in ISO string format
  */
 export const NowISOString = (): string => new Date().toISOString()
+export const nowDateTime = (): string => new Date().toISOString()
 
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
