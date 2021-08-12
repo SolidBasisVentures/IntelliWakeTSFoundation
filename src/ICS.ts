@@ -1,5 +1,5 @@
+import {MomentFromString} from './Moment'
 import {ReplaceAll} from './Functions'
-import {DateICS} from './Dayjs'
 
 export namespace ICS {
 	export interface IEvent {
@@ -29,27 +29,29 @@ export namespace ICS {
 	
 	export const VCALENDARClose_Text = 'END:VCALENDAR\n'
 	
+	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => !date ? '' : `TZID=${timezone ?? 'America/New_York'}:${MomentFromString(date)?.format('YYYYMMDDTHHmmss') ?? ''}`
+	
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))
 	
 	export const VEVENT_Text = (event: IEvent): string => {
 		let event_text = ''
 		
 		event_text += 'BEGIN:VEVENT\n'
-		// event_text += 'CLASS:PUBLIC\n'
-		// event_text += 'CREATED;' + DateICS(event.dateTimeCreated) + '\n'
+		event_text += 'CLASS:PUBLIC\n'
+		event_text += 'CREATED;' + ICSDateFormat(event.dateTimeCreated ?? new Date().toISOString()) + '\n'
 		
-		event_text += 'DESCRIPTION: ' + EscapeText(event.description) + '\n'
-		event_text += 'DTSTART;' + DateICS(event.dateTimeStart) + '\n'
+		event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n'
+		event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n'
 		if (!!event.durationMinutes) {
 			event_text += 'DURATION:PT' + event.durationMinutes + 'M\n'
 		} else if (!!event.dateTimeEnd) {
-			event_text += 'DTEND;' + DateICS(event.dateTimeEnd) + '\n'
+			event_text += 'DTEND;' + ICSDateFormat(event.dateTimeEnd) + '\n'
 		}
-		// event_text += 'DTSTAMP;' + DateICS() + '\n'
-		// if (!!event.organizerName && !!event.organizerEmail) {
-		// 	event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
-		// }
-		// event_text += 'LAST-MODIFIED;' + DateICS(event.dateTimeModified ?? new Date().toISOString()) + '\n'
+		event_text += 'DTSTAMP;' + ICSDateFormat(new Date().toISOString()) + '\n'
+		if (!!event.organizerName && !!event.organizerEmail) {
+			event_text += `ORGANIZER;CN=${event.organizerName}:MAILTO:${event.organizerEmail}\n`
+		}
+		event_text += 'LAST-MODIFIED;' + ICSDateFormat(event.dateTimeModified ?? new Date().toISOString()) + '\n'
 		if (!!event.location) {
 			if (!!event.location_altrep) {
 				event_text += `LOCATION;ALTREP="${EscapeText(event.location_altrep)}":` + EscapeText(event.location) + '\n'
@@ -60,11 +62,11 @@ export namespace ICS {
 		if (!!event.priority) {
 			event_text += `PRIORITY:${event.priority}\n`
 		}
-		event_text += 'SEQUENCE:3\n'
+		event_text += 'SEQUENCE:0\n'
 //		event += "SUMMARY;LANGUAGE=en-us:" + subject + "\n"
 		event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n'
-		// event_text += 'TRANSP:OPAQUE\n'
-		// event_text += 'UID:' + event.UID + '\n'
+		event_text += 'TRANSP:OPAQUE\n'
+		event_text += 'UID:' + event.UID + '\n'
 		
 		if (event.alarmTriggerMinutes !== undefined) {
 			event_text += 'BEGIN:VALARM\n'

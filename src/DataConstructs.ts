@@ -1,5 +1,5 @@
 import {ReplaceAll} from './Functions'
-import {DayjsFormatString} from './Dayjs'
+import {IsDateString, MomentFromString} from './Moment'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -223,13 +223,17 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			} else if (propsToRemove[key] === result[key]) {
 				delete result[key]
 			} else {
-					let pTRM = DayjsFormatString(propsToRemove[key] as any, 'YYYY-MM-DD HH:mm:ss', true)
+				if (IsDateString(propsToRemove[key])) {
+					let pTRM = MomentFromString(propsToRemove[key] as any)
 					if (!!pTRM) {
-							let rM = DayjsFormatString(result[key] as any, 'YYYY-MM-DD HH:mm:ss', true)
+						if (IsDateString(result[key])) {
+							let rM = MomentFromString(result[key] as any)
 							if (!!rM) {
-								if (pTRM === rM) {
+								if (pTRM.isSame(rM)) {
 									delete result[key]
 								}
+							}
+						}
 					}
 				}
 			}

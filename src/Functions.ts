@@ -1,5 +1,3 @@
-
-
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
  *
