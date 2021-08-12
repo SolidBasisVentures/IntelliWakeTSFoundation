@@ -1,6 +1,6 @@
 {
   "name": "@solidbasisventures/intelliwaketsfoundation",
-  "version": "3.0.5",
+  "version": "3.0.7",
   "description": "NPM package for IntelliWake TypeScript Foundation Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -23,6 +23,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/jest": "^26.0.15",
     "@types/node": "^14.0.5",
     "babel-core": "^6.26.3",

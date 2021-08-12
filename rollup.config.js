@@ -1,5 +1,6 @@
 import pkg from './package.json'
 import typescript from 'rollup-plugin-typescript2'
+import nodeResolve from '@rollup/plugin-node-resolve'
 
 export default {
     input: [
@@ -13,6 +14,6 @@ export default {
 	        // format: 'esm'
         }
     ],
-    plugins: [typescript({ objectHashIgnoreUnknownHack: false })],
+    plugins: [typescript({ objectHashIgnoreUnknownHack: false }), nodeResolve()],
     external: []
 }
