@@ -20,8 +20,6 @@ dayjs.extend(advancedFormat)
 dayjs.extend(localizedFormat)
 dayjs.extend(customParseFormat)
 
-dayjs.tz.setDefault("UTC")
-
 export const DAYJS_FORMAT_DATE = 'YYYY-MM-DD'
 export const DAYJS_FORMAT_TIME_SECONDS = 'HH:mm:ss'
 export const DAYJS_FORMAT_TIME_NO_SECONDS = 'HH:mm'
