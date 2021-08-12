@@ -223,7 +223,9 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			} else if (propsToRemove[key] === result[key]) {
 				delete result[key]
 			} else {
+				console.log('Here')
 					let pTRM = DayjsFormatString(propsToRemove[key] as any, 'YYYY-MM-DD HH:mm:ss')
+				console.log('There')
 					if (!!pTRM) {
 							let rM = DayjsFormatString(result[key] as any, 'YYYY-MM-DD HH:mm:ss')
 							if (!!rM) {
