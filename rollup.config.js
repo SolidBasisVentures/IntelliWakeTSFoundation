@@ -14,5 +14,5 @@ export default {
         }
     ],
     plugins: [typescript({ objectHashIgnoreUnknownHack: false })],
-    external: []
+    external: ['moment-timezone']
 }
