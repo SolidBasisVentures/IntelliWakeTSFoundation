@@ -1,26 +1,26 @@
-export declare const ToSnakeCase: (str: string) => string;
+export declare const ToSnakeCase: (str: string | undefined | null) => string;
 /**
  * Converts a string to kebab-case.
  *
  * @example
  * ToSnakeCase('UserToken')  // returns "user-token"
  */
-export declare const ToKebabCase: (str: string) => string;
+export declare const ToKebabCase: (str: string | undefined | null) => string;
 /**
  * Converts a string to camelCase.
  *
  * @example
  * ToCamelCase('user_token') //  returns "userToken
  */
-export declare const ToCamelCase: (str: string) => string;
-export declare const ToUpperCaseWords: (str: string) => string;
+export declare const ToCamelCase: (str: string | undefined | null) => string;
+export declare const ToUpperCaseWords: (str: string | undefined | null) => string;
 /**
  * Converts a string to PascalCase.
  *
  * @example
  * ToPascalCase('user_token') //  returns "UserToken
  */
-export declare const ToPascalCase: (str: string) => string;
+export declare const ToPascalCase: (str: string | undefined | null) => string;
 /**
  * Replaces links to an anchor tag.
  *
@@ -28,7 +28,7 @@ export declare const ToPascalCase: (str: string) => string;
  * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
  * ReplaceLinks('https://www.google.com')
  */
-export declare const ReplaceLinks: (subject: string) => string;
+export declare const ReplaceLinks: (subject: string | undefined | null) => string;
 /**
  * Removes script tags.
  *
@@ -36,7 +36,7 @@ export declare const ReplaceLinks: (subject: string) => string;
  * // returns "blank"
  * CleanScripts('<script>console.log(1)</script>blank')
  */
-export declare const CleanScripts: (subject: string) => string;
+export declare const CleanScripts: (subject: string | undefined | null) => string;
 /**
  * Removes any given HTML tag and retains what's inside of the tag.
  *
@@ -44,16 +44,16 @@ export declare const CleanScripts: (subject: string) => string;
  * // returns "john doe"
  * TextToHTML('<p>john doe</p>')
  */
-export declare const TextToHTML: (subject: string) => string;
+export declare const TextToHTML: (subject: string | undefined | null) => string;
 /**
  * Strips scripts and other tags from HTML
  *
  * @param subject
  * HTMLToText('<p>john doe</p>') // returns john doe
  */
-export declare const HTMLToText: (subject: string) => string;
-export declare const LeftPad: (subject: string, length: number, padString: string) => string;
-export declare const RightPad: (subject: string, length: number, padString: string) => string;
+export declare const HTMLToText: (subject: string | undefined | null) => string;
+export declare const LeftPad: (subject: string | undefined | null, length: number, padString: string) => string;
+export declare const RightPad: (subject: string | undefined | null, length: number, padString: string) => string;
 /**
  * Returns the given number with a dollar sign.
  *

@@ -8,7 +8,9 @@ import {CleanNumber, ReplaceAll, RoundTo} from './Functions'
 
 const moment = require('moment-timezone')
 
-export const ToSnakeCase = (str: string): string => {
+export const ToSnakeCase = (str: string | undefined | null): string => {
+	if (!str) return ''
+	
 	if (str === 'ID') return 'id'
 
 	let calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'))
@@ -25,7 +27,7 @@ export const ToSnakeCase = (str: string): string => {
  * @example
  * ToSnakeCase('UserToken')  // returns "user-token"
  */
-export const ToKebabCase = (str: string): string => ReplaceAll('_', '-', ToSnakeCase(str))
+export const ToKebabCase = (str: string | undefined | null): string => ReplaceAll('_', '-', ToSnakeCase(str))
 
 /**
  * Converts a string to camelCase.
@@ -33,7 +35,9 @@ export const ToKebabCase = (str: string): string => ReplaceAll('_', '-', ToSnake
  * @example
  * ToCamelCase('user_token') //  returns "userToken
  */
-export const ToCamelCase = (str: string): string => {
+export const ToCamelCase = (str: string | undefined | null): string => {
+	if (!str) return ''
+	
 	if (str === 'id') return 'ID'
 
 	let calcStr = ToSnakeCase(str).replace('_id', 'ID')
@@ -43,7 +47,7 @@ export const ToCamelCase = (str: string): string => {
 	})))
 }
 
-export const ToUpperCaseWords = (str: string): string => {
+export const ToUpperCaseWords = (str: string | undefined | null): string => {
 	let result = UCWords(ReplaceAll('_', ' ', ToSnakeCase(str) ?? '') ?? '') ?? ''
 
 	if (result.endsWith(' Id')) {
@@ -59,7 +63,7 @@ export const ToUpperCaseWords = (str: string): string => {
  * @example
  * ToPascalCase('user_token') //  returns "UserToken
  */
-export const ToPascalCase = (str: string): string => {
+export const ToPascalCase = (str: string | undefined | null): string => {
 	let calcStr = ToCamelCase(str)
 
 	return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1)
@@ -72,7 +76,9 @@ export const ToPascalCase = (str: string): string => {
  * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
  * ReplaceLinks('https://www.google.com')
  */
-export const ReplaceLinks = function (subject: string): string {
+export const ReplaceLinks = function (subject: string | undefined | null): string {
+	if (!subject) return ''
+	
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
@@ -88,7 +94,9 @@ export const ReplaceLinks = function (subject: string): string {
  * // returns "blank"
  * CleanScripts('<script>console.log(1)</script>blank')
  */
-export const CleanScripts = function (subject: string): string {
+export const CleanScripts = function (subject: string | undefined | null): string {
+	if (!subject) return ''
+	
 	return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
 
@@ -99,7 +107,9 @@ export const CleanScripts = function (subject: string): string {
  * // returns "john doe"
  * TextToHTML('<p>john doe</p>')
  */
-export const TextToHTML = function (subject: string): string {
+export const TextToHTML = function (subject: string | undefined | null): string {
+	if (!subject) return ''
+	
 	let str = subject.replace(/(<([^>]+)>)/gi, '')
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
@@ -111,17 +121,17 @@ export const TextToHTML = function (subject: string): string {
  * @param subject
  * HTMLToText('<p>john doe</p>') // returns john doe
  */
-export const HTMLToText = (subject: string): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
+export const HTMLToText = (subject: string | undefined | null): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
 
-export const LeftPad = (subject: string, length: number, padString: string): string => {
-	let str = subject
+export const LeftPad = (subject: string | undefined | null, length: number, padString: string): string => {
+	let str = subject ?? ''
 
 	while (str.length < length) str = padString + str
 
 	return str
 }
-export const RightPad = (subject: string, length: number, padString: string): string => {
-	let str = subject
+export const RightPad = (subject: string | undefined | null, length: number, padString: string): string => {
+	let str = subject ?? ''
 
 	while (str.length < length) str = str + padString
 

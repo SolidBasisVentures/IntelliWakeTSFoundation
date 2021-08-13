@@ -805,6 +805,8 @@ function OmitProperty(obj) {
  */
 var moment = require('moment-timezone');
 var ToSnakeCase = function (str) {
+    if (!str)
+        return '';
     if (str === 'ID')
         return 'id';
     var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
@@ -825,6 +827,8 @@ var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str))
  * ToCamelCase('user_token') //  returns "userToken
  */
 var ToCamelCase = function (str) {
+    if (!str)
+        return '';
     if (str === 'id')
         return 'ID';
     var calcStr = ToSnakeCase(str).replace('_id', 'ID');
@@ -858,6 +862,8 @@ var ToPascalCase = function (str) {
  * ReplaceLinks('https://www.google.com')
  */
 var ReplaceLinks = function (subject) {
+    if (!subject)
+        return '';
     // noinspection RegExpUnnecessaryNonCapturingGroup
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
@@ -873,6 +879,8 @@ var ReplaceLinks = function (subject) {
  * CleanScripts('<script>console.log(1)</script>blank')
  */
 var CleanScripts = function (subject) {
+    if (!subject)
+        return '';
     return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '');
 };
 /**
@@ -883,6 +891,8 @@ var CleanScripts = function (subject) {
  * TextToHTML('<p>john doe</p>')
  */
 var TextToHTML = function (subject) {
+    if (!subject)
+        return '';
     var str = subject.replace(/(<([^>]+)>)/gi, '');
     // noinspection RegExpUnnecessaryNonCapturingGroup
     return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
@@ -895,13 +905,13 @@ var TextToHTML = function (subject) {
  */
 var HTMLToText = function (subject) { return CleanScripts(subject).replace(/<[^>]*>/g, ''); };
 var LeftPad = function (subject, length, padString) {
-    var str = subject;
+    var str = subject !== null && subject !== void 0 ? subject : '';
     while (str.length < length)
         str = padString + str;
     return str;
 };
 var RightPad = function (subject, length, padString) {
-    var str = subject;
+    var str = subject !== null && subject !== void 0 ? subject : '';
     while (str.length < length)
         str = str + padString;
     return str;
