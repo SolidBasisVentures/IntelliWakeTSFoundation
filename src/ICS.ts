@@ -1,5 +1,5 @@
-import {MomentFromString} from './Moment'
 import {ReplaceAll} from './Functions'
+import {DateParseTS, YYYYMMDDHHmmss} from './DateManager'
 
 export namespace ICS {
 	export interface IEvent {
@@ -29,7 +29,7 @@ export namespace ICS {
 	
 	export const VCALENDARClose_Text = 'END:VCALENDAR\n'
 	
-	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => !date ? '' : `TZID=${timezone ?? 'America/New_York'}:${MomentFromString(date)?.format('YYYYMMDDTHHmmss') ?? ''}`
+	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => !date ? '' : `TZID=${timezone ?? 'America/New_York'}:${YYYYMMDDHHmmss(DateParseTS(date)) ?? ''}`
 	
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))
 	

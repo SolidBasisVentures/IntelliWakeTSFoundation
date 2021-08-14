@@ -6,8 +6,6 @@
  */
 import {CleanNumber, ReplaceAll, RoundTo} from './Functions'
 
-const moment = require('moment-timezone')
-
 export const ToSnakeCase = (str: string | undefined | null): string => {
 	if (!str) return ''
 	
@@ -325,6 +323,38 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
 	})
 }
 
+export const DigitsNth = (value: any): string | null => {
+	let result = ToDigits(value)
+	
+	if (!result) return null
+	
+	switch (result.substr(-2)) {
+		case '11':
+		case '12':
+		case '13':
+			result += 'th'
+			break
+		default:
+			switch
+				(result.substr(-1)) {
+				case '1':
+					result += 'st'
+					break
+				case '2':
+					result += 'nd'
+					break
+				case '3':
+					result += 'rd'
+					break
+				default:
+					result += 'th'
+					break
+			}
+	}
+	
+	return result
+}
+
 /**
  * Converts a string to an array.
  *
@@ -536,9 +566,7 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 		result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
 	}
 	
-	const tsm = moment()
-	
-	const ts = tsm.valueOf().toString()
+	const ts = new Date().valueOf().toString()
 	
 	if (length > ts.length * 0.5) {
 		const offset = RoundTo((length - ts.length) / 2, 0)

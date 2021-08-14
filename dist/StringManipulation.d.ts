@@ -148,6 +148,7 @@ export declare const ToDigitsBlank: (value: any, decimals?: number) => string;
  * ToDigits('')
  */
 export declare const ToDigitsDash: (value: any, decimals?: number) => string;
+export declare const DigitsNth: (value: any) => string | null;
 /**
  * Converts a string to an array.
  *

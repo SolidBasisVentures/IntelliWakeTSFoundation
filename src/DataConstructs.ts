@@ -1,5 +1,5 @@
 import {ReplaceAll} from './Functions'
-import {IsDateString, MomentFromString} from './Moment'
+import {DATE_FORMAT_DATE, DateFormat, IsDateString} from './DateManager'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -224,12 +224,12 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 				delete result[key]
 			} else {
 				if (IsDateString(propsToRemove[key])) {
-					let pTRM = MomentFromString(propsToRemove[key] as any)
+					let pTRM = DateFormat(propsToRemove[key] as any, DATE_FORMAT_DATE)
 					if (!!pTRM) {
 						if (IsDateString(result[key])) {
-							let rM = MomentFromString(result[key] as any)
+							let rM = DateFormat(result[key] as any, DATE_FORMAT_DATE)
 							if (!!rM) {
-								if (pTRM.isSame(rM)) {
+								if (pTRM === rM) {
 									delete result[key]
 								}
 							}
