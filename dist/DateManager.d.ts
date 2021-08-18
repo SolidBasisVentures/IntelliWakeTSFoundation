@@ -52,3 +52,17 @@ export declare const WeekDays: {
     5: string;
     6: string;
 };
+export declare const TSYearsEstimate: (ts: number) => number;
+export declare const TSMonthsEstimate: (ts: number, withinYear?: boolean | undefined) => number;
+export declare const TSWeeks: (ts: number) => number;
+export declare const TSDays: (ts: number, withinMonth?: boolean | undefined) => number;
+export declare const TSHours: (ts: number, withinDay?: boolean | undefined) => number;
+export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) => number;
+export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+export declare const DurationLongDescription: (seconds: number, trimSeconds?: boolean) => string;

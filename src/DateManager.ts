@@ -1,5 +1,5 @@
-import {ReplaceAll} from './Functions'
-import {DigitsNth} from './StringManipulation'
+import {AddS, ReplaceAll} from './Functions'
+import {DigitsNth, ToDigits} from './StringManipulation'
 
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
 export const DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss'
@@ -257,4 +257,60 @@ export const WeekDays = {
 	4: 'Thursday',
 	5: 'Friday',
 	6: 'Saturday'
+}
+
+export const TSYearsEstimate = (ts: number): number => Math.floor(ts / 365 / 24 / 60 / 60 / 1000)
+export const TSMonthsEstimate = (ts: number, withinYear?: boolean): number => Math.floor((ts - (withinYear ? (TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000) : 0)) / 30 / 24 / 60 / 60 / 1000)
+export const TSWeeks = (ts: number): number => Math.floor(ts / 7 / 24 / 60 / 60 / 1000)
+export const TSDays = (ts: number, withinMonth?: boolean): number => Math.floor((ts - (withinMonth ? (TSMonthsEstimate(ts) * 30 * 24 * 60 * 60 * 1000) : 0)) / 24 / 60 / 60 / 1000)
+export const TSHours = (ts: number, withinDay?: boolean): number => Math.floor((ts - (withinDay ? (TSDays(ts) * 24 * 60 * 60 * 1000) : 0)) / 60 / 60 / 1000)
+export const TSMinutes = (ts: number, withinHour?: boolean): number => Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000)
+export const TSSeconds = (ts: number, withinMinute?: boolean): number => Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000)
+
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+export const DurationLongDescription = (seconds: number, trimSeconds = false): string => {
+	const durationTS = seconds * 1000
+	
+	let text = ''
+	
+	if (TSYearsEstimate(durationTS)) {
+		text += ` ${ToDigits(TSYearsEstimate(durationTS), 0)} ${AddS('Year', TSYearsEstimate(durationTS))}`
+		text += ` ${ToDigits(TSMonthsEstimate(durationTS, true), 0)} ${AddS('Month', TSMonthsEstimate(durationTS, true))}`
+		if (TSDays(durationTS, true)) {
+			text += ` ${ToDigits(TSDays(durationTS, true), 0)} ${AddS('Day', TSDays(durationTS, true))}`
+		}
+	} else if (TSMonthsEstimate(durationTS, true)) {
+		text += ` ${ToDigits(TSMonthsEstimate(durationTS, true), 0)} ${AddS('Month', TSMonthsEstimate(durationTS, true))}`
+		
+		if (TSDays(durationTS, true)) {
+			text += ` ${ToDigits(TSDays(durationTS, true), 0)} ${AddS('Day', TSDays(durationTS, true))}`
+		}
+	} else if (TSDays(durationTS, true)) {
+		text += ` ${ToDigits(TSDays(durationTS, true), 0)} ${AddS('Day', TSDays(durationTS, true))}`
+		if (TSHours(durationTS, true)) {
+			text += ` ${ToDigits(TSHours(durationTS, true), 0)} ${AddS('Hour', TSHours(durationTS, true))}`
+		}
+		if (TSMinutes(durationTS, true)) {
+			text += ` ${ToDigits(TSMinutes(durationTS, true), 0)} ${AddS('Minute', TSMinutes(durationTS, true))}`
+		}
+	} else if (TSHours(durationTS, true)) {
+		text += ` ${ToDigits(TSHours(durationTS, true), 0)} ${AddS('Hour', TSHours(durationTS, true))}`
+		if (TSMinutes(durationTS, true)) {
+			text += ` ${ToDigits(TSMinutes(durationTS, true), 0)} ${AddS('Minute', TSMinutes(durationTS, true))}`
+		}
+	} else {
+		if (TSMinutes(durationTS, true) || (!text && trimSeconds)) {
+			text += ` ${ToDigits(TSMinutes(durationTS, true), 0)} ${AddS('Minute', TSMinutes(durationTS, true))}`
+		}
+		if (!text || (!trimSeconds && TSSeconds(durationTS, true))) {
+			text += ` ${ToDigits(TSSeconds(durationTS, true), 0)} ${AddS('Second', TSSeconds(durationTS, true))}`
+		}
+	}
+	
+	return text.trim()
 }

@@ -1534,6 +1534,61 @@ var WeekDays = {
     5: 'Friday',
     6: 'Saturday'
 };
+var TSYearsEstimate = function (ts) { return Math.floor(ts / 365 / 24 / 60 / 60 / 1000); };
+var TSMonthsEstimate = function (ts, withinYear) { return Math.floor((ts - (withinYear ? (TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000) : 0)) / 30 / 24 / 60 / 60 / 1000); };
+var TSWeeks = function (ts) { return Math.floor(ts / 7 / 24 / 60 / 60 / 1000); };
+var TSDays = function (ts, withinMonth) { return Math.floor((ts - (withinMonth ? (TSMonthsEstimate(ts) * 30 * 24 * 60 * 60 * 1000) : 0)) / 24 / 60 / 60 / 1000); };
+var TSHours = function (ts, withinDay) { return Math.floor((ts - (withinDay ? (TSDays(ts) * 24 * 60 * 60 * 1000) : 0)) / 60 / 60 / 1000); };
+var TSMinutes = function (ts, withinHour) { return Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000); };
+var TSSeconds = function (ts, withinMinute) { return Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000); };
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+var DurationLongDescription = function (seconds, trimSeconds) {
+    if (trimSeconds === void 0) { trimSeconds = false; }
+    var durationTS = seconds * 1000;
+    var text = '';
+    if (TSYearsEstimate(durationTS)) {
+        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + " " + AddS('Year', TSYearsEstimate(durationTS));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS('Month', TSMonthsEstimate(durationTS, true));
+        if (TSDays(durationTS, true)) {
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+        }
+    }
+    else if (TSMonthsEstimate(durationTS, true)) {
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS('Month', TSMonthsEstimate(durationTS, true));
+        if (TSDays(durationTS, true)) {
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+        }
+    }
+    else if (TSDays(durationTS, true)) {
+        text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+        if (TSHours(durationTS, true)) {
+            text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS('Hour', TSHours(durationTS, true));
+        }
+        if (TSMinutes(durationTS, true)) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+        }
+    }
+    else if (TSHours(durationTS, true)) {
+        text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS('Hour', TSHours(durationTS, true));
+        if (TSMinutes(durationTS, true)) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+        }
+    }
+    else {
+        if (TSMinutes(durationTS, true) || (!text && trimSeconds)) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+        }
+        if (!text || (!trimSeconds && TSSeconds(durationTS, true))) {
+            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + " " + AddS('Second', TSSeconds(durationTS, true));
+        }
+    }
+    return text.trim();
+};
 
 var initialChanges = {};
 /**
@@ -2817,6 +2872,7 @@ exports.DeepEqual = DeepEqual;
 exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
+exports.DurationLongDescription = DurationLongDescription;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FormUrlEncoded = FormUrlEncoded;
@@ -2876,6 +2932,13 @@ exports.StringHasDateData = StringHasDateData;
 exports.StringHasTimeData = StringHasTimeData;
 exports.StringHasTimeZoneData = StringHasTimeZoneData;
 exports.StringToByteArray = StringToByteArray;
+exports.TSDays = TSDays;
+exports.TSHours = TSHours;
+exports.TSMinutes = TSMinutes;
+exports.TSMonthsEstimate = TSMonthsEstimate;
+exports.TSSeconds = TSSeconds;
+exports.TSWeeks = TSWeeks;
+exports.TSYearsEstimate = TSYearsEstimate;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
 exports.ToArray = ToArray;
