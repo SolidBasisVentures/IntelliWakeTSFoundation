@@ -1,8 +1,8 @@
-import {DurationLongText} from '../src/DateManager'
+import {DurationLongDescription} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DurationLongText((60) + 23))
+console.log(DurationLongDescription((60) + 23))
 
 // const changes = {item_one: null, item_two: 2}
 //
