@@ -1,4 +1,4 @@
-import {ReplaceAll} from './Functions'
+import {CleanNumberNull, ReplaceAll} from './Functions'
 import {DATE_FORMAT_DATE, DateFormat, IsDateString} from './DateManager'
 
 /**
@@ -223,6 +223,14 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			} else if (propsToRemove[key] === result[key]) {
 				delete result[key]
 			} else {
+				const firstNumber = CleanNumberNull(propsToRemove[key])
+				if (firstNumber !== null) {
+					const secondNumber = CleanNumberNull(result[key])
+					if (secondNumber !== null && firstNumber === secondNumber) {
+						delete result[key]
+					}
+				}
+				
 				if (IsDateString(propsToRemove[key])) {
 					let pTRM = DateFormat(propsToRemove[key] as any, DATE_FORMAT_DATE)
 					if (!!pTRM) {

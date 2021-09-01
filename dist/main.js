@@ -1761,6 +1761,13 @@ var RemoveDupProperties = function (original, propsToRemove) {
                 delete result[key];
             }
             else {
+                var firstNumber = CleanNumberNull(propsToRemove[key]);
+                if (firstNumber !== null) {
+                    var secondNumber = CleanNumberNull(result[key]);
+                    if (secondNumber !== null && firstNumber === secondNumber) {
+                        delete result[key];
+                    }
+                }
                 if (IsDateString(propsToRemove[key])) {
                     var pTRM = DateFormat(propsToRemove[key], DATE_FORMAT_DATE);
                     if (!!pTRM) {
