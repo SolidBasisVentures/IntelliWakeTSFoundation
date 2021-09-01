@@ -32,7 +32,7 @@ export const ChangeValueChanges = <T>(
 		setChanges(prevState => {
 			let nextState = {...prevState}
 			
-			if (!!original && original[name] === value) {
+			if (!!original && IsEqual(original[name], value)) {
 				delete nextState[name]
 			} else {
 				nextState[name] = value
@@ -194,6 +194,40 @@ export const IsJSON = (json: any): boolean => {
 	}
 }
 
+export const IsEqual = (val1: any, val2: any): boolean => {
+	if (val1 === val2) return true
+	
+		if (typeof val1 === 'object' || typeof val2 === 'object') {
+			if ((!val1 && !val2) || JSON.stringify(val1 ?? {}) !== JSON.stringify(val2 ?? {})) {
+				return true
+			}
+		} else if (val1 === val2) {
+			return true
+		} else {
+			const firstNumber = CleanNumberNull(val1)
+			if (firstNumber !== null) {
+				const secondNumber = CleanNumberNull(val2)
+				if (secondNumber !== null && firstNumber === secondNumber) {
+					return true
+				}
+			}
+			
+			if (IsDateString(val1)) {
+				let pTRM = DateFormat(val1, DATE_FORMAT_DATE)
+				if (!!pTRM) {
+					if (IsDateString(val2)) {
+						let rM = DateFormat(val2 as any, DATE_FORMAT_DATE)
+						if (!!rM && pTRM === rM) {
+								return true
+						}
+					}
+				}
+			}
+		}
+	
+	return false
+}
+
 /**
  * Removes properties from an object having the same value.
  *
@@ -216,34 +250,8 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 	
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
-			if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-				if ((!propsToRemove[key] && !result[key]) || JSON.stringify(propsToRemove[key] ?? {}) !== JSON.stringify(result[key] ?? {})) {
-					delete result[key]
-				}
-			} else if (propsToRemove[key] === result[key]) {
+			if (IsEqual(propsToRemove[key], result[key])) {
 				delete result[key]
-			} else {
-				const firstNumber = CleanNumberNull(propsToRemove[key])
-				if (firstNumber !== null) {
-					const secondNumber = CleanNumberNull(result[key])
-					if (secondNumber !== null && firstNumber === secondNumber) {
-						delete result[key]
-					}
-				}
-				
-				if (IsDateString(propsToRemove[key])) {
-					let pTRM = DateFormat(propsToRemove[key] as any, DATE_FORMAT_DATE)
-					if (!!pTRM) {
-						if (IsDateString(result[key])) {
-							let rM = DateFormat(result[key] as any, DATE_FORMAT_DATE)
-							if (!!rM) {
-								if (pTRM === rM) {
-									delete result[key]
-								}
-							}
-						}
-					}
-				}
 			}
 		}
 	}

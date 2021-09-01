@@ -103,6 +103,7 @@ export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) =
  * Checks if a string is a valid JSON structure
  */
 export declare const IsJSON: (json: any) => boolean;
+export declare const IsEqual: (val1: any, val2: any) => boolean;
 /**
  * Removes properties from an object having the same value.
  *

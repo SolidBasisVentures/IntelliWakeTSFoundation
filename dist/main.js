@@ -1604,7 +1604,7 @@ var ChangeValueChanges = function (value, name, setChanges, original) {
     if (!!setChanges && !!name) {
         setChanges(function (prevState) {
             var nextState = __assign({}, prevState);
-            if (!!original && original[name] === value) {
+            if (!!original && IsEqual(original[name], value)) {
                 delete nextState[name];
             }
             else {
@@ -1730,6 +1730,39 @@ var IsJSON = function (json) {
         return false;
     }
 };
+var IsEqual = function (val1, val2) {
+    if (val1 === val2)
+        return true;
+    if (typeof val1 === 'object' || typeof val2 === 'object') {
+        if ((!val1 && !val2) || JSON.stringify(val1 !== null && val1 !== void 0 ? val1 : {}) !== JSON.stringify(val2 !== null && val2 !== void 0 ? val2 : {})) {
+            return true;
+        }
+    }
+    else if (val1 === val2) {
+        return true;
+    }
+    else {
+        var firstNumber = CleanNumberNull(val1);
+        if (firstNumber !== null) {
+            var secondNumber = CleanNumberNull(val2);
+            if (secondNumber !== null && firstNumber === secondNumber) {
+                return true;
+            }
+        }
+        if (IsDateString(val1)) {
+            var pTRM = DateFormat(val1, DATE_FORMAT_DATE);
+            if (!!pTRM) {
+                if (IsDateString(val2)) {
+                    var rM = DateFormat(val2, DATE_FORMAT_DATE);
+                    if (!!rM && pTRM === rM) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+};
 /**
  * Removes properties from an object having the same value.
  *
@@ -1748,39 +1781,11 @@ var IsJSON = function (json) {
  * RemoveDupProperties(data, data2)
  */
 var RemoveDupProperties = function (original, propsToRemove) {
-    var _a, _b;
     var result = __assign({}, original);
     for (var key in propsToRemove) {
         if (propsToRemove.hasOwnProperty(key)) {
-            if (typeof propsToRemove[key] === 'object' || typeof result[key] === 'object') {
-                if ((!propsToRemove[key] && !result[key]) || JSON.stringify((_a = propsToRemove[key]) !== null && _a !== void 0 ? _a : {}) !== JSON.stringify((_b = result[key]) !== null && _b !== void 0 ? _b : {})) {
-                    delete result[key];
-                }
-            }
-            else if (propsToRemove[key] === result[key]) {
+            if (IsEqual(propsToRemove[key], result[key])) {
                 delete result[key];
-            }
-            else {
-                var firstNumber = CleanNumberNull(propsToRemove[key]);
-                if (firstNumber !== null) {
-                    var secondNumber = CleanNumberNull(result[key]);
-                    if (secondNumber !== null && firstNumber === secondNumber) {
-                        delete result[key];
-                    }
-                }
-                if (IsDateString(propsToRemove[key])) {
-                    var pTRM = DateFormat(propsToRemove[key], DATE_FORMAT_DATE);
-                    if (!!pTRM) {
-                        if (IsDateString(result[key])) {
-                            var rM = DateFormat(result[key], DATE_FORMAT_DATE);
-                            if (!!rM) {
-                                if (pTRM === rM) {
-                                    delete result[key];
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -2895,6 +2900,7 @@ exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IsDateString = IsDateString;
+exports.IsEqual = IsEqual;
 exports.IsJSON = IsJSON;
 exports.IsOn = IsOn;
 exports.IsStage = IsStage;
