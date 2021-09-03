@@ -15,7 +15,7 @@
  */
 export const ReplaceAll = function(find: string, replace: string, subject: string): string {
 	// eslint-disable-next-line no-useless-escape
-	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
+	return (subject ?? '').replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
 }
 
 /**
