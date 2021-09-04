@@ -1673,6 +1673,7 @@ var AddIDChanges = function (id, changes, idChanges) {
  *
  * @param change
  * @param prevState
+ * @param initial
  * @constructor
  */
 var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
@@ -1697,6 +1698,7 @@ var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
  * @constructor
  * @param original
  * @param changes
+ * @param initial
  */
 var CombineArrayWithIDOrUUIDChanges = function (original, changes, initial) {
     return changes.reduce(function (result, change) { return ChangeArrayByIDOrUUID(result, change, initial); }, original);
@@ -2573,6 +2575,18 @@ var SortCompare = function (beforeValue, afterValue, emptyTo) {
     return (_a = SortCompareNull(beforeValue, afterValue, emptyTo)) !== null && _a !== void 0 ? _a : 0;
 };
 /**
+ * Sorts the provided array with a "sort_order" column and re-defines the increments
+ *
+ * @param items
+ * @param sortIncrement
+ * @constructor
+ */
+var ReSortOrder = function (items, sortIncrement) {
+    if (sortIncrement === void 0) { sortIncrement = 10; }
+    var newSort = 0;
+    return items.sort(function (a, b) { return SortCompare(a.sort_order, b.sort_order); }).map(function (item) { return (__assign(__assign({}, item), { sort_order: newSort += sortIncrement })); }, []);
+};
+/**
  * Returns the sort value comparing the before and after as it relates to the order of the array.
  *
  * @example
@@ -2962,6 +2976,7 @@ exports.ObjectWithChanges = ObjectWithChanges;
 exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.RandomString = RandomString;
+exports.ReSortOrder = ReSortOrder;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;
 exports.RemoveDupProperties = RemoveDupProperties;
 exports.RemoveDupPropertiesByID = RemoveDupPropertiesByID;

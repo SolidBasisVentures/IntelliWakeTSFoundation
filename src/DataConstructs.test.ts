@@ -7,6 +7,7 @@ import {
 	ObjectWithChanges,
 	RemoveDupPropertiesByIDArray
 } from './DataConstructs'
+import {ReSortOrder} from './SortSearch'
 
 test('Data Contructs', () => {
 	expect(AddChange('name', 'Bob', {})).toEqual({name: 'Bob'})
@@ -55,4 +56,21 @@ test('Data Contructs', () => {
 		}
 	] as any[], [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}] as any[], {}))
 		.toEqual([{id: 1, name: 'Bobby', age: 35}, {id: 2, name: 'Sally', age: 25}, {uuid: 'abcd', age: 42}])
+	
+	expect(ReSortOrder([
+			{id: 1, sort_order: 20},
+			{id: 2, sort_order: 50},
+			{id: 3, sort_order: 44},
+			{id: 4, sort_order: 10},
+			{id: 5, sort_order: 30}
+		]
+		))
+		.toEqual([
+			{id: 4, sort_order: 10},
+			{id: 1, sort_order: 20},
+			{id: 5, sort_order: 30},
+			{id: 3, sort_order: 40},
+			{id: 2, sort_order: 50}
+		])
+	
 })

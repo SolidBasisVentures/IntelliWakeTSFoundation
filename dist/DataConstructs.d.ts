@@ -87,6 +87,7 @@ export declare const AddIDChanges: <T>(id: number, changes: Partial<T>, idChange
  *
  * @param change
  * @param prevState
+ * @param initial
  * @constructor
  */
 export declare const ChangeArrayByIDOrUUID: <T extends {
@@ -106,6 +107,7 @@ export declare const ChangeArrayByIDOrUUID: <T extends {
  * @constructor
  * @param original
  * @param changes
+ * @param initial
  */
 export declare const CombineArrayWithIDOrUUIDChanges: <T extends {
     [key: string]: any;

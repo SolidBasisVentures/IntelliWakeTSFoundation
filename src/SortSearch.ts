@@ -286,6 +286,20 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
 }
 
 /**
+ * Sorts the provided array with a "sort_order" column and re-defines the increments
+ *
+ * @param items
+ * @param sortIncrement
+ * @constructor
+ */
+export const ReSortOrder = <T extends {[key: string]: any, sort_order: number}>(items: T[], sortIncrement = 10): T[] => {
+	let newSort = 0
+	
+	return items.sort((a, b) => SortCompare(a.sort_order, b.sort_order)).map(item => ({...item, sort_order: newSort += sortIncrement}), [])
+}
+
+
+/**
  * Returns the sort value comparing the before and after as it relates to the order of the array.
  *
  * @example
