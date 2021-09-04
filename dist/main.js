@@ -1675,7 +1675,7 @@ var AddIDChanges = function (id, changes, idChanges) {
  * @param prevState
  * @constructor
  */
-var ChangeArrayByIDOrUUID = function (prevState, change) {
+var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
     var _a;
     var newState = __spreadArrays(prevState);
     var idx = newState.findIndex(function (nS) { return (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid); });
@@ -1683,7 +1683,7 @@ var ChangeArrayByIDOrUUID = function (prevState, change) {
         newState[idx] = __assign(__assign({}, newState[idx]), change);
         return newState;
     }
-    return __spreadArrays(newState, [__assign(__assign({}, change), { uuid: (_a = change.uuid) !== null && _a !== void 0 ? _a : GenerateUUID() })]);
+    return __spreadArrays(newState, [__assign(__assign(__assign({}, initial), change), { uuid: (_a = change.uuid) !== null && _a !== void 0 ? _a : GenerateUUID() })]);
 };
 /**
  * Combines original value arrays with changed values, and produces a new set, in order
@@ -1698,8 +1698,8 @@ var ChangeArrayByIDOrUUID = function (prevState, change) {
  * @param original
  * @param changes
  */
-var CombineArrayWithIDOrUUIDChanges = function (original, changes) {
-    return changes.reduce(function (result, change) { return ChangeArrayByIDOrUUID(result, change); }, original);
+var CombineArrayWithIDOrUUIDChanges = function (original, changes, initial) {
+    return changes.reduce(function (result, change) { return ChangeArrayByIDOrUUID(result, change, initial); }, original);
 };
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.

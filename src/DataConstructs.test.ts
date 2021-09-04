@@ -32,12 +32,27 @@ test('Data Contructs', () => {
 		}
 	})
 	
-	expect(ChangeArrayByIDOrUUID([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}] as any[], {id: 1, name: 'Bobby'}))
+	expect(ChangeArrayByIDOrUUID([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}] as any[], {
+		id: 1,
+		name: 'Bobby'
+	}, {}))
 		.toEqual([{id: 1, name: 'Bobby', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
 	
-	expect(ChangeArrayByIDOrUUID([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}] as any[], {uuid: 'abcd', age: 42}))
+	expect(ChangeArrayByIDOrUUID([
+		{id: 1, name: 'Bob', age: 35}, {
+			uuid: 'abcd',
+			name: 'John',
+			age: 40
+		}
+	] as any[], {uuid: 'abcd', age: 42}, {}))
 		.toEqual([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 42}])
 	
-	expect(CombineArrayWithIDOrUUIDChanges([{id: 1, name: 'Bob', age: 35}, {id: 2, name: 'Sally', age: 25}] as any[], [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}] as any[]))
+	expect(CombineArrayWithIDOrUUIDChanges([
+		{id: 1, name: 'Bob', age: 35}, {
+			id: 2,
+			name: 'Sally',
+			age: 25
+		}
+	] as any[], [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}] as any[], {}))
 		.toEqual([{id: 1, name: 'Bobby', age: 35}, {id: 2, name: 'Sally', age: 25}, {uuid: 'abcd', age: 42}])
 })

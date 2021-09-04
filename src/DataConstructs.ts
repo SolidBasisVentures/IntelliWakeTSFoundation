@@ -133,9 +133,10 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
  *
  * @param change
  * @param prevState
+ * @param initial
  * @constructor
  */
-export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number, uuid?: string}>(prevState: T[], change: T): T[] => {
+export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number, uuid?: string}>(prevState: T[], change: Partial<T>, initial: T): T[] => {
 	let newState = [...prevState]
 	
 	let idx = newState.findIndex(nS => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid))
@@ -145,7 +146,7 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
 		return newState
 	}
 	
-	return [...newState, {...change, uuid: change.uuid ?? GenerateUUID()}]
+	return [...newState, {...initial, ...change, uuid: change.uuid ?? GenerateUUID()}]
 }
 
 /**
@@ -160,9 +161,10 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
  * @constructor
  * @param original
  * @param changes
+ * @param initial
  */
-export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, id?: number, uuid?: string}>(original: T[], changes: T[]): T[] =>
-	changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change), original)
+export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, id?: number, uuid?: string}>(original: T[], changes: Partial<T>[], initial: T): T[] =>
+	changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change, initial), original)
 
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.

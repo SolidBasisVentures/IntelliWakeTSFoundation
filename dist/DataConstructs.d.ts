@@ -93,7 +93,7 @@ export declare const ChangeArrayByIDOrUUID: <T extends {
     [key: string]: any;
     id?: number | undefined;
     uuid?: string | undefined;
-}>(prevState: T[], change: T) => T[];
+}>(prevState: T[], change: Partial<T>, initial: T) => T[];
 /**
  * Combines original value arrays with changed values, and produces a new set, in order
  *
@@ -111,7 +111,7 @@ export declare const CombineArrayWithIDOrUUIDChanges: <T extends {
     [key: string]: any;
     id?: number | undefined;
     uuid?: string | undefined;
-}>(original: T[], changes: T[]) => T[];
+}>(original: T[], changes: Partial<T>[], initial: T) => T[];
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
