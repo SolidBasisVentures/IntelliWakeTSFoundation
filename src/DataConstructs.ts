@@ -1,4 +1,4 @@
-import {CleanNumberNull, ReplaceAll} from './Functions'
+import {CleanNumberNull, GenerateUUID, ReplaceAll} from './Functions'
 import {DATE_FORMAT_DATE, DateFormat, IsDateString} from './DateManager'
 
 /**
@@ -123,7 +123,7 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
 })
 
 /**
- * Runs the set change to UPDATE (not add or delete) an element on an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
+ * Returns a new state for an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
  *
  * const [data, setData] = useState([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
  *
@@ -142,10 +142,27 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
 	
 	if (idx >= 0) {
 		newState[idx] = {...newState[idx], ...change}
+		return newState
 	}
 	
-	return newState
+	return [...newState, {...change, uuid: change.uuid ?? GenerateUUID()}]
 }
+
+/**
+ * Combines original value arrays with changed values, and produces a new set, in order
+ *
+ * const original = [{id: 1, name: 'Bob', age: 35}, {id: 2, name: 'Sally', age: 25}]
+ * const changes = [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}]
+ *
+ * CombineArrayWithIDOrUUIDChanges(original, changes) = [{id: 1, name: 'Bobby', age: 35}, {id: 2, name: 'Sally', age: 25}, {uuid: 'abcd', age: 42}]
+ *
+ *
+ * @constructor
+ * @param original
+ * @param changes
+ */
+export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, id?: number, uuid?: string}>(original: T[], changes: T[]): T[] =>
+	changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change), original)
 
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.

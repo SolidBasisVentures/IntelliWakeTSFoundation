@@ -77,6 +77,42 @@ export declare const initialIDChanges: {};
 export declare const AddIDChange: <T>(id: number, name: keyof T, value: any, idChanges: IIDChanges<T>) => IIDChanges<T>;
 export declare const AddIDChanges: <T>(id: number, changes: Partial<T>, idChanges: IIDChanges<T>) => IIDChanges<T>;
 /**
+ * Returns a new state for an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
+ *
+ * const [data, setData] = useState([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
+ *
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {id: 1, name: 'Bobby'}))
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {uuid: 'abcd', age: 42}))
+ *
+ *
+ * @param change
+ * @param prevState
+ * @constructor
+ */
+export declare const ChangeArrayByIDOrUUID: <T extends {
+    [key: string]: any;
+    id?: number | undefined;
+    uuid?: string | undefined;
+}>(prevState: T[], change: T) => T[];
+/**
+ * Combines original value arrays with changed values, and produces a new set, in order
+ *
+ * const original = [{id: 1, name: 'Bob', age: 35}, {id: 2, name: 'Sally', age: 25}]
+ * const changes = [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}]
+ *
+ * CombineArrayWithIDOrUUIDChanges(original, changes) = [{id: 1, name: 'Bobby', age: 35}, {id: 2, name: 'Sally', age: 25}, {uuid: 'abcd', age: 42}]
+ *
+ *
+ * @constructor
+ * @param original
+ * @param changes
+ */
+export declare const CombineArrayWithIDOrUUIDChanges: <T extends {
+    [key: string]: any;
+    id?: number | undefined;
+    uuid?: string | undefined;
+}>(original: T[], changes: T[]) => T[];
+/**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
  * @example
