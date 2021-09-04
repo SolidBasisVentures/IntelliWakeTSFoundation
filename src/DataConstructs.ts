@@ -123,6 +123,31 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
 })
 
 /**
+ * Runs the set change to UPDATE (not add or delete) an element on an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
+ *
+ * const [data, setData] = useState([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
+ *
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {id: 1, name: 'Bobby'}))
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {uuid: 'abcd', age: 42}))
+ *
+ *
+ * @param change
+ * @param prevState
+ * @constructor
+ */
+export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number, uuid?: string}>(prevState: T[], change: T): T[] => {
+	let newState = [...prevState]
+	
+	let idx = newState.findIndex(nS => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid))
+	
+	if (idx >= 0) {
+		newState[idx] = {...newState[idx], ...change}
+	}
+	
+	return newState
+}
+
+/**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
  * @example

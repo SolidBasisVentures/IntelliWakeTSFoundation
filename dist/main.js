@@ -249,7 +249,7 @@ var consoleLogTable = function (arrayData, tableDef) {
  */
 var ReplaceAll = function (find, replace, subject) {
     // eslint-disable-next-line no-useless-escape
-    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
+    return (subject !== null && subject !== void 0 ? subject : '').replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
 };
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
@@ -1663,6 +1663,27 @@ var AddIDChanges = function (id, changes, idChanges) {
     return (__assign(__assign({}, idChanges), (_a = {}, _a[id] = __assign(__assign({}, idChanges[id]), changes), _a)));
 };
 /**
+ * Runs the set change to UPDATE (not add or delete) an element on an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
+ *
+ * const [data, setData] = useState([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
+ *
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {id: 1, name: 'Bobby'}))
+ * setData(prevState => ChangeArrayByIDOrUUID(prevState, {uuid: 'abcd', age: 42}))
+ *
+ *
+ * @param change
+ * @param prevState
+ * @constructor
+ */
+var ChangeArrayByIDOrUUID = function (prevState, change) {
+    var newState = __spreadArrays(prevState);
+    var idx = newState.findIndex(function (nS) { return (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid); });
+    if (idx >= 0) {
+        newState[idx] = __assign(__assign({}, newState[idx]), change);
+    }
+    return newState;
+};
+/**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
  * @example
@@ -2855,6 +2876,7 @@ exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
+exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
