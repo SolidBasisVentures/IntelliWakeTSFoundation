@@ -146,7 +146,11 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
 		return newState
 	}
 	
-	return [...newState, {...initial, ...change, uuid: change.uuid ?? GenerateUUID()}]
+	let newVal = {...initial, ...change, uuid: change.uuid ?? GenerateUUID()}
+	
+	if (!newVal.id && !newVal.uuid) newVal.uuid = GenerateUUID()
+	
+	return [...newState, {...newVal}]
 }
 
 /**

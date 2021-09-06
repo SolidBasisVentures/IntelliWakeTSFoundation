@@ -143,6 +143,17 @@ export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyT
  */
 export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number;
 /**
+ * Sorts the provided array with a "sort_order" column and re-defines the increments
+ *
+ * @param items
+ * @param sortIncrement
+ * @constructor
+ */
+export declare const ReSortOrder: <T extends {
+    [key: string]: any;
+    sort_order: number;
+}>(items: T[], sortIncrement?: number) => T[];
+/**
  * Returns the sort value comparing the before and after as it relates to the order of the array.
  *
  * @example
