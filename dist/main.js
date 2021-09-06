@@ -1677,14 +1677,16 @@ var AddIDChanges = function (id, changes, idChanges) {
  * @constructor
  */
 var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
-    var _a;
     var newState = __spreadArrays(prevState);
     var idx = newState.findIndex(function (nS) { return (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid); });
     if (idx >= 0) {
         newState[idx] = __assign(__assign({}, newState[idx]), change);
         return newState;
     }
-    return __spreadArrays(newState, [__assign(__assign(__assign({}, initial), change), { uuid: (_a = change.uuid) !== null && _a !== void 0 ? _a : GenerateUUID() })]);
+    var newVal = __assign(__assign({}, initial), change);
+    if (!newVal.id && !newVal.uuid)
+        newVal.uuid = GenerateUUID();
+    return __spreadArrays(newState, [__assign({}, newVal)]);
 };
 /**
  * Combines original value arrays with changed values, and produces a new set, in order
