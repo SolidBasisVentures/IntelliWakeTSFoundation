@@ -3,7 +3,7 @@ import {
 	AddIDChange,
 	ArrayWithIDChanges,
 	ChangeArrayByIDOrUUID,
-	CombineArrayWithIDOrUUIDChanges,
+	CombineArrayWithIDOrUUIDChanges, IsEqual,
 	ObjectWithChanges,
 	RemoveDupPropertiesByIDArray
 } from './DataConstructs'
@@ -32,6 +32,10 @@ test('Data Contructs', () => {
 			name: 'john doe'
 		}
 	})
+	
+	expect(IsEqual(undefined, undefined)).toBe(true)
+	expect(IsEqual(null, null)).toBe(true)
+	expect(IsEqual(null, undefined)).toBe(false)
 	
 	expect(ChangeArrayByIDOrUUID([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}] as any[], {
 		id: 1,

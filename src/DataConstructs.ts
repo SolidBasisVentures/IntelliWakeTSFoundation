@@ -245,33 +245,39 @@ export const IsJSON = (json: any): boolean => {
 export const IsEqual = (val1: any, val2: any): boolean => {
 	if (val1 === val2) return true
 	
-		if (typeof val1 === 'object' || typeof val2 === 'object') {
-			if ((!val1 && !val2) || JSON.stringify(val1 ?? {}) !== JSON.stringify(val2 ?? {})) {
+	if (val1 === null) return val2 === null
+	if (val2 === null) return false
+	
+	if (val1 === undefined) return val2 === undefined
+	if (val2 === undefined) return false
+	
+	if (typeof val1 === 'object' || typeof val2 === 'object') {
+		if ((!val1 && !val2) || JSON.stringify(val1 ?? {}) !== JSON.stringify(val2 ?? {})) {
+			return true
+		}
+	} else if (val1 === val2) {
+		return true
+	} else {
+		const firstNumber = CleanNumberNull(val1)
+		if (firstNumber !== null) {
+			const secondNumber = CleanNumberNull(val2)
+			if (secondNumber !== null && firstNumber === secondNumber) {
 				return true
 			}
-		} else if (val1 === val2) {
-			return true
-		} else {
-			const firstNumber = CleanNumberNull(val1)
-			if (firstNumber !== null) {
-				const secondNumber = CleanNumberNull(val2)
-				if (secondNumber !== null && firstNumber === secondNumber) {
-					return true
-				}
-			}
-			
-			if (IsDateString(val1)) {
-				let pTRM = DateFormat(val1, DATE_FORMAT_DATE)
-				if (!!pTRM) {
-					if (IsDateString(val2)) {
-						let rM = DateFormat(val2 as any, DATE_FORMAT_DATE)
-						if (!!rM && pTRM === rM) {
-								return true
-						}
+		}
+		
+		if (IsDateString(val1)) {
+			let pTRM = DateFormat(val1, DATE_FORMAT_DATE)
+			if (!!pTRM) {
+				if (IsDateString(val2)) {
+					let rM = DateFormat(val2 as any, DATE_FORMAT_DATE)
+					if (!!rM && pTRM === rM) {
+						return true
 					}
 				}
 			}
 		}
+	}
 	
 	return false
 }
