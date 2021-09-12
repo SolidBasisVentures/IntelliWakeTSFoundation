@@ -1209,7 +1209,7 @@ var FormatSSN = function (ssn) {
 var FormatPhoneNumber = function (phone) {
     if (!phone)
         return '';
-    var cleanPhone = ReplaceAll(['(', ')', '-'], '', phone);
+    var cleanPhone = ReplaceAll(['(', ')', '-', ' '], '', phone);
     var processPhone = cleanPhone.substr(0, 10);
     var appendPhone = cleanPhone.substr(10);
     var val = '';
@@ -1217,16 +1217,16 @@ var FormatPhoneNumber = function (phone) {
     var middle = processPhone.substring(3, 6);
     var last = processPhone.substring(6, 10);
     if (processPhone.length > 6) {
-        val = areaCode + "-" + middle + "-" + last;
+        val = "(" + areaCode + ") " + middle + "-" + last;
     }
     else if (processPhone.length > 3) {
-        val = areaCode + "-" + middle;
+        val = "(" + areaCode + ") " + middle;
     }
     else if (processPhone.length > 0) {
-        val = "" + areaCode;
+        val = "(" + areaCode + ")";
     }
     // enforce max length
-    return val + appendPhone;
+    return val + (!!appendPhone ? ' ' + appendPhone : '');
 };
 /**
  * Returns a formatted phone number with parenthesis.

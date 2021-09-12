@@ -12,7 +12,7 @@
  * // returns "john-doe-bob"
  * ReplaceAll(' ', '-', 'john doe bob')
  */
-export declare const ReplaceAll: (find: string, replace: string, subject: string) => string;
+export declare const ReplaceAll: (find: string | string[], replace: string, subject: string | null | undefined) => string;
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *

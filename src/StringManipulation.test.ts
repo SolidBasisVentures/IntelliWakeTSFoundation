@@ -181,7 +181,7 @@ test('FormatPhoneNumber ', () => {
 })
 
 test('FormatPhoneNumber invalid', () => {
-	expect(FormatPhoneNumber('555555123')).toStrictEqual('555555123')
+	expect(FormatPhoneNumber('555555123')).toStrictEqual('(555) 555-123')
 })
 
 test('FormatPhoneNumberDots ', () => {
@@ -263,4 +263,13 @@ test('IsJSON string', () => {
 
 test('IsJSON number', () => {
 	expect(IsJSON(1)).toEqual(false)
+})
+
+test('Phone Number', () => {
+	expect(FormatPhoneNumber('12')).toEqual('(12)')
+	expect(FormatPhoneNumber('123')).toEqual('(123)')
+	expect(FormatPhoneNumber('123123')).toEqual('(123) 123')
+	expect(FormatPhoneNumber('123-123')).toEqual('(123) 123')
+	expect(FormatPhoneNumber('1231231234')).toEqual('(123) 123-1234')
+	expect(FormatPhoneNumber('1231231234x333')).toEqual('(123) 123-1234 x333')
 })

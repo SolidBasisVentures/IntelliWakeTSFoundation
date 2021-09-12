@@ -454,11 +454,12 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
 	if (!phone) return ''
 	
-	const cleanPhone = ReplaceAll(['(', ')', '-'], '', phone)
+	const cleanPhone = ReplaceAll(['(', ')', '-', ' '], '', phone)
 	
 	let processPhone = cleanPhone.substr(0, 10)
 	
 	let appendPhone = cleanPhone.substr(10)
+	
 	
 	let val = ''
 	
@@ -467,15 +468,15 @@ export const FormatPhoneNumber = (phone: string | null | undefined): string => {
 	const last = processPhone.substring(6, 10)
 	
 	if (processPhone.length > 6) {
-		val = `${areaCode}-${middle}-${last}`
+		val = `(${areaCode}) ${middle}-${last}`
 	} else if (processPhone.length > 3) {
-		val = `${areaCode}-${middle}`
+		val = `(${areaCode}) ${middle}`
 	} else if (processPhone.length > 0) {
-		val = `${areaCode}`
+		val = `(${areaCode})`
 	}
 	
 	// enforce max length
-	return val + appendPhone
+	return val + (!!appendPhone ? ' ' + appendPhone : '')
 }
 
 /**
