@@ -11,7 +11,7 @@ import {
 	TextToHTML, ToCamelCase,
 	ToCurrency,
 	ToCurrencyBlank,
-	ToCurrencyDash,
+	ToCurrencyDash, ToCurrencyMax,
 	ToDigits,
 	ToDigitsBlank,
 	ToDigitsDash, ToKebabCase, ToPascalCase,
@@ -156,16 +156,17 @@ let symbolFunctions = [
 for (const symbolFunction of symbolFunctions) {
 	test(symbolFunction.name, () => {
 		expect(symbolFunction.method(symbolFunction.value)).toBe(symbolFunction.expected)
-	})
-
-	test(symbolFunction.name + ' empty', () => {
 		expect(symbolFunction.method('')).toBe(symbolFunction.empty)
-	})
-
-	test(symbolFunction.name + ' with decimal', () => {
 		expect(symbolFunction.method(symbolFunction.value, 1)).toBe(symbolFunction.decimal)
 	})
 }
+
+test('CurrencyMax', () => {
+	expect(ToCurrencyMax(1234)).toBe('$1,234')
+	expect(ToCurrencyMax(1234.5)).toBe('$1,234.5')
+	expect(ToCurrencyMax(1234.56)).toBe('$1,234.56')
+	expect(ToCurrencyMax(1234.567)).toBe('$1,234.57')
+})
 
 test('ToStringArray', () => {
 	expect(ToStringArray('john doe')).toStrictEqual(['john doe'])
@@ -263,4 +264,3 @@ test('IsJSON string', () => {
 test('IsJSON number', () => {
 	expect(IsJSON(1)).toEqual(false)
 })
-

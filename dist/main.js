@@ -929,6 +929,20 @@ var ToCurrency = function (value, decimals) {
         }));
 };
 /**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
+var ToCurrencyMax = function (value, decimals) {
+    if (decimals === void 0) { decimals = 2; }
+    return ('$' +
+        CleanNumber(value).toLocaleString(undefined, {
+            maximumFractionDigits: decimals
+        }));
+};
+/**
  * Converts the given number to a percentage with a percent sign.
  *
  * @example
@@ -1776,6 +1790,14 @@ var IsJSON = function (json) {
 var IsEqual = function (val1, val2) {
     if (val1 === val2)
         return true;
+    if (val1 === null)
+        return val2 === null;
+    if (val2 === null)
+        return false;
+    if (val1 === undefined)
+        return val2 === undefined;
+    if (val2 === undefined)
+        return false;
     if (typeof val1 === 'object' || typeof val2 === 'object') {
         if ((!val1 && !val2) || JSON.stringify(val1 !== null && val1 !== void 0 ? val1 : {}) !== JSON.stringify(val2 !== null && val2 !== void 0 ? val2 : {})) {
             return true;
@@ -3017,6 +3039,7 @@ exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;
 exports.ToCurrencyBlank = ToCurrencyBlank;
 exports.ToCurrencyDash = ToCurrencyDash;
+exports.ToCurrencyMax = ToCurrencyMax;
 exports.ToDigits = ToDigits;
 exports.ToDigitsBlank = ToDigitsBlank;
 exports.ToDigitsDash = ToDigitsDash;

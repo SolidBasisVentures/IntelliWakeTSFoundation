@@ -154,6 +154,22 @@ export const ToCurrency = (value: any, decimals: number = 2): string => {
 }
 
 /**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
+export const ToCurrencyMax = (value: any, decimals: number = 2): string => {
+	return (
+		'$' +
+		CleanNumber(value).toLocaleString(undefined, {
+			maximumFractionDigits: decimals
+		})
+	)
+}
+
+/**
  * Converts the given number to a percentage with a percent sign.
  *
  * @example
