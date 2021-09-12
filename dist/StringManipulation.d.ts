@@ -182,6 +182,14 @@ export declare const DigitsNth: (value: any) => string | null;
  */
 export declare const ToStringArray: (value: string | string[]) => string[];
 /**
+ * Returns a formatted ssn with dashes.
+ *
+ * @example
+ * // returns 123-12-1234
+ * FormatSSN('123121234')
+ */
+export declare const FormatSSN: (ssn: string | null | undefined) => string;
+/**
  * Returns a formatted phone number with parenthesis.
  *
  * @example
