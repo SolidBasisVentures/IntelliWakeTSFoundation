@@ -13,9 +13,18 @@
  * // returns "john-doe-bob"
  * ReplaceAll(' ', '-', 'john doe bob')
  */
-export const ReplaceAll = function(find: string, replace: string, subject: string): string {
+export const ReplaceAll = function(find: string | string[], replace: string, subject: string | null | undefined): string {
+	if (!subject) return ''
+	
+	if (Array.isArray(find)) {
+		let result = subject
+		for (const findItem of find) {
+			result = ReplaceAll(findItem, replace, result)
+		}
+		return result
+	}
 	// eslint-disable-next-line no-useless-escape
-	return (subject ?? '').replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
+	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
 }
 
 /**

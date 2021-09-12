@@ -248,8 +248,18 @@ var consoleLogTable = function (arrayData, tableDef) {
  * ReplaceAll(' ', '-', 'john doe bob')
  */
 var ReplaceAll = function (find, replace, subject) {
+    if (!subject)
+        return '';
+    if (Array.isArray(find)) {
+        var result = subject;
+        for (var _i = 0, find_1 = find; _i < find_1.length; _i++) {
+            var findItem = find_1[_i];
+            result = ReplaceAll(findItem, replace, result);
+        }
+        return result;
+    }
     // eslint-disable-next-line no-useless-escape
-    return (subject !== null && subject !== void 0 ? subject : '').replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
+    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
 };
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
@@ -864,7 +874,7 @@ var ReplaceLinks = function (subject) {
     // noinspection RegExpUnnecessaryNonCapturingGroup
     var str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />');
     // noinspection HtmlUnknownTarget
-    var target = "<a href='$1' target='_blank'>$1</a>";
+    var target = '<a href=\'$1\' target=\'_blank\'>$1</a>';
     // noinspection RegExpRedundantEscape
     return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target);
 };
@@ -1190,13 +1200,42 @@ var FormatSSN = function (ssn) {
     return val.substring(0, 11);
 };
 /**
+ * Returns a formatted ssn with dashes.
+ *
+ * @example
+ * // returns 123-12-1234
+ * FormatSSN('123121234')
+ */
+var FormatPhoneNumber = function (phone) {
+    if (!phone)
+        return '';
+    var cleanPhone = ReplaceAll(['(', ')', '-'], '', phone);
+    var processPhone = cleanPhone.substr(0, 10);
+    var appendPhone = cleanPhone.substr(10);
+    var val = '';
+    var areaCode = processPhone.substring(0, 3);
+    var middle = processPhone.substring(3, 6);
+    var last = processPhone.substring(6, 10);
+    if (processPhone.length > 6) {
+        val = areaCode + "-" + middle + "-" + last;
+    }
+    else if (processPhone.length > 3) {
+        val = areaCode + "-" + middle;
+    }
+    else if (processPhone.length > 0) {
+        val = "" + areaCode;
+    }
+    // enforce max length
+    return val + appendPhone;
+};
+/**
  * Returns a formatted phone number with parenthesis.
  *
  * @example
  * // returns (555) 555-1234
  * FormatPhoneNumber('5555551234')
  */
-var FormatPhoneNumber = function (phone, forceNumeric) {
+var FormatPhoneNumberOld = function (phone, forceNumeric) {
     if (forceNumeric === void 0) { forceNumeric = false; }
     //Filter only numbers from the input
     var cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone;
@@ -3017,6 +3056,7 @@ exports.FormUrlEncoded = FormUrlEncoded;
 exports.FormatExternalURL = FormatExternalURL;
 exports.FormatPhoneNumber = FormatPhoneNumber;
 exports.FormatPhoneNumberDots = FormatPhoneNumberDots;
+exports.FormatPhoneNumberOld = FormatPhoneNumberOld;
 exports.FormatSSN = FormatSSN;
 exports.FormatZip = FormatZip;
 exports.GenerateUUID = GenerateUUID;

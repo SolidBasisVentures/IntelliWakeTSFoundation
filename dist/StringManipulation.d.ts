@@ -190,13 +190,21 @@ export declare const ToStringArray: (value: string | string[]) => string[];
  */
 export declare const FormatSSN: (ssn: string | null | undefined) => string;
 /**
+ * Returns a formatted ssn with dashes.
+ *
+ * @example
+ * // returns 123-12-1234
+ * FormatSSN('123121234')
+ */
+export declare const FormatPhoneNumber: (phone: string | null | undefined) => string;
+/**
  * Returns a formatted phone number with parenthesis.
  *
  * @example
  * // returns (555) 555-1234
  * FormatPhoneNumber('5555551234')
  */
-export declare const FormatPhoneNumber: (phone: string, forceNumeric?: boolean) => string;
+export declare const FormatPhoneNumberOld: (phone: string, forceNumeric?: boolean) => string;
 /**
  * Returns a formatted phone number with dots.
  *
