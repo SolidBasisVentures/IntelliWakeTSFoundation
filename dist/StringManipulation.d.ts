@@ -63,6 +63,14 @@ export declare const RightPad: (subject: string | undefined | null, length: numb
  */
 export declare const ToCurrency: (value: any, decimals?: number) => string;
 /**
+ * Returns the given number with a dollar sign.
+ *
+ * @example
+ * // returns $100.00
+ * ToCurrency(100)
+ */
+export declare const ToCurrencyMax: (value: any, decimals?: number) => string;
+/**
  * Converts the given number to a percentage with a percent sign.
  *
  * @example
@@ -70,6 +78,14 @@ export declare const ToCurrency: (value: any, decimals?: number) => string;
  * ToPercent(0.5)
  */
 export declare const ToPercent: (value: any, decimals?: number) => string;
+/**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
+export declare const ToPercentMax: (value: any, decimals?: number) => string;
 /**
  * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
  *
@@ -124,6 +140,14 @@ export declare const ToPercentDash: (value: any, decimals?: number) => string;
  * ToDigits(10)
  */
 export declare const ToDigits: (value: any, decimals?: number) => string;
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
+export declare const ToDigitsMax: (value: any, decimals?: number) => string;
 /**
  * Returns the given number with decimal places if not empty or 0. Otherwise,
  * returns empty string.

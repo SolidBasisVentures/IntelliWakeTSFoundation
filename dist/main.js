@@ -957,6 +957,19 @@ var ToPercent = function (value, decimals) {
     }) + '%');
 };
 /**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
+var ToPercentMax = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return ((CleanNumber(value) * 100).toLocaleString(undefined, {
+        maximumFractionDigits: decimals
+    }) + '%');
+};
+/**
  * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
  *
  * @example
@@ -1052,6 +1065,19 @@ var ToDigits = function (value, decimals) {
     return CleanNumber(value).toLocaleString(undefined, {
         maximumFractionDigits: decimals,
         minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
+var ToDigitsMax = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals
     });
 };
 /**
@@ -3043,12 +3069,14 @@ exports.ToCurrencyMax = ToCurrencyMax;
 exports.ToDigits = ToDigits;
 exports.ToDigitsBlank = ToDigitsBlank;
 exports.ToDigitsDash = ToDigitsDash;
+exports.ToDigitsMax = ToDigitsMax;
 exports.ToID = ToID;
 exports.ToKebabCase = ToKebabCase;
 exports.ToPascalCase = ToPascalCase;
 exports.ToPercent = ToPercent;
 exports.ToPercentBlank = ToPercentBlank;
 exports.ToPercentDash = ToPercentDash;
+exports.ToPercentMax = ToPercentMax;
 exports.ToSnakeCase = ToSnakeCase;
 exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;

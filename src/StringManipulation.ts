@@ -186,6 +186,21 @@ export const ToPercent = (value: any, decimals: number = 0): string => {
 }
 
 /**
+ * Converts the given number to a percentage with a percent sign.
+ *
+ * @example
+ * // returns 50%
+ * ToPercent(0.5)
+ */
+export const ToPercentMax = (value: any, decimals: number = 0): string => {
+	return (
+		(CleanNumber(value) * 100).toLocaleString(undefined, {
+			maximumFractionDigits: decimals
+		}) + '%'
+	)
+}
+
+/**
  * Returns the given number with a dollar sign if not empty or 0. Otherwise, returns empty string.
  *
  * @example
@@ -292,6 +307,19 @@ export const ToDigits = function (value: any, decimals: number = 0): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
+	})
+}
+
+/**
+ * Returns the given number with decimal places.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ */
+export const ToDigitsMax = function (value: any, decimals: number = 0): string {
+	return CleanNumber(value).toLocaleString(undefined, {
+		maximumFractionDigits: decimals
 	})
 }
 
