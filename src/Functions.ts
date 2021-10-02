@@ -501,6 +501,9 @@ export const filterAsync = async <T>(
 export const ToArray = <T>(value: T | T[]): T[] => !value ? [] : Array.isArray(value) ? value : [value]
 
 export const DeepEqual = (object1: any, object2: any): boolean => {
+	if (object1 === undefined && object2 === undefined) return true
+	if (object1 === null && object2 === null) return true
+	
 	if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2) return false
 	
 	if (Array.isArray(object1)) {
