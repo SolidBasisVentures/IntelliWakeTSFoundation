@@ -743,6 +743,10 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
 var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
 var DeepEqual = function (object1, object2) {
     var _a, _b;
+    if (object1 === undefined && object2 === undefined)
+        return true;
+    if (object1 === null && object2 === null)
+        return true;
     if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
         return false;
     if (Array.isArray(object1)) {
@@ -1884,6 +1888,25 @@ var IsEqual = function (val1, val2) {
         return val2 === undefined;
     if (val2 === undefined)
         return false;
+    if (Array.isArray(val1)) {
+        if (Array.isArray(val2)) {
+            if (val1.length !== val2.length) {
+                return false;
+            }
+            for (var i = 0; i < val1.length; i++) {
+                if (!IsEqual(val1[i], val2[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else if (Array.isArray(val2)) {
+        return false;
+    }
     if (typeof val1 === 'object' || typeof val2 === 'object') {
         if ((!val1 && !val2) || JSON.stringify(val1 !== null && val1 !== void 0 ? val1 : {}) !== JSON.stringify(val2 !== null && val2 !== void 0 ? val2 : {})) {
             return true;

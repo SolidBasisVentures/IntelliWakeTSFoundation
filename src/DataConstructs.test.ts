@@ -36,6 +36,11 @@ test('Data Contructs', () => {
 	expect(IsEqual(undefined, undefined)).toBe(true)
 	expect(IsEqual(null, null)).toBe(true)
 	expect(IsEqual(null, undefined)).toBe(false)
+	expect(IsEqual([1], 2)).toBe(false)
+	expect(IsEqual(1, [2])).toBe(false)
+	expect(IsEqual([1], [2])).toBe(false)
+	expect(IsEqual([1], [])).toBe(false)
+	expect(IsEqual([1], [1])).toBe(true)
 	
 	expect(ChangeArrayByIDOrUUID([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}] as any[], {
 		id: 1,

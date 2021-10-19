@@ -251,6 +251,24 @@ export const IsEqual = (val1: any, val2: any): boolean => {
 	if (val1 === undefined) return val2 === undefined
 	if (val2 === undefined) return false
 	
+	if (Array.isArray(val1)) {
+		if (Array.isArray(val2)) {
+			if (val1.length !== val2.length) {
+				return false
+			}
+			for (let i = 0; i < val1.length; i++) {
+				if (!IsEqual(val1[i], val2[i])) {
+					return false
+				}
+			}
+			return true
+		} else {
+			return false
+		}
+	} else if (Array.isArray(val2)) {
+		return false
+	}
+	
 	if (typeof val1 === 'object' || typeof val2 === 'object') {
 		if ((!val1 && !val2) || JSON.stringify(val1 ?? {}) !== JSON.stringify(val2 ?? {})) {
 			return true
