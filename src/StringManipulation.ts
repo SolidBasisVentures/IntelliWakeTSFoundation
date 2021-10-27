@@ -444,6 +444,16 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 	return val.substring(0, 11)
 }
 
+export const CleanPhoneNumber = (phone: string | null | undefined): string => {
+	if (!phone) return ''
+	
+	let cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
+	
+	while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1')) cleanPhone = cleanPhone.substr(1)
+	
+	return cleanPhone
+}
+
 /**
  * Returns a formatted ssn with dashes.
  *
@@ -454,9 +464,7 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
 	if (!phone) return ''
 	
-	let cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
-	
-	while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1')) cleanPhone = cleanPhone.substr(1)
+	let cleanPhone = CleanPhoneNumber(phone)
 	
 	let processPhone = cleanPhone.substr(0, 10)
 	
