@@ -1213,7 +1213,9 @@ var FormatSSN = function (ssn) {
 var FormatPhoneNumber = function (phone) {
     if (!phone)
         return '';
-    var cleanPhone = ReplaceAll(['(', ')', '-', ' '], '', phone);
+    var cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone);
+    while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1'))
+        cleanPhone = cleanPhone.substr(1);
     var processPhone = cleanPhone.substr(0, 10);
     var appendPhone = cleanPhone.substr(10);
     var val = '';

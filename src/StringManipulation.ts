@@ -454,7 +454,9 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
 	if (!phone) return ''
 	
-	const cleanPhone = ReplaceAll(['(', ')', '-', ' '], '', phone)
+	let cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
+	
+	while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1')) cleanPhone = cleanPhone.substr(1)
 	
 	let processPhone = cleanPhone.substr(0, 10)
 	
