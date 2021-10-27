@@ -189,13 +189,14 @@ export declare const ToStringArray: (value: string | string[]) => string[];
  * FormatSSN('123121234')
  */
 export declare const FormatSSN: (ssn: string | null | undefined) => string;
-export declare const CleanPhoneNumber: (phone: string | null | undefined) => string;
-export declare const CleanPhoneComponents: (phone: string | null | undefined) => {
+export interface IPhoneComponents {
+    countryCode: string;
     areaCode: string;
     exchangeNumber: string;
     subscriberNumber: string;
     extension: string;
-};
+}
+export declare const CleanPhoneComponents: (phone: string | null | undefined) => IPhoneComponents;
 /**
  * Returns a formatted ssn with dashes.
  *

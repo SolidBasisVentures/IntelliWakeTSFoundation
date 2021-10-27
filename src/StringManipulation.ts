@@ -444,25 +444,47 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 	return val.substring(0, 11)
 }
 
-export const CleanPhoneNumber = (phone: string | null | undefined): string => {
-	if (!phone) return ''
-	
-	let cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
-	
-	while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1')) cleanPhone = cleanPhone.substr(1)
-	
-	return cleanPhone
+export interface IPhoneComponents {
+	countryCode: string,
+	areaCode: string,
+	exchangeNumber: string,
+	subscriberNumber: string,
+	extension: string
 }
 
-export const CleanPhoneComponents = (phone: string | null | undefined): {areaCode: string, exchangeNumber: string, subscriberNumber: string, extension: string} => {
-	const cleanNumber = CleanPhoneNumber(phone)
+export const CleanPhoneComponents = (phone: string | null | undefined): IPhoneComponents => {
+	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
 	
-	return {
+	let countryCode = ''
+	
+	while (cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) {
+		countryCode += cleanNumber[0]
+		cleanNumber = cleanNumber.substr(1)
+	}
+	
+	let phoneComponents: IPhoneComponents = {
+		countryCode: countryCode,
 		areaCode: cleanNumber.substr(0, 3),
 		exchangeNumber: cleanNumber.substr(3, 3),
 		subscriberNumber: cleanNumber.substr(6, 4),
-		extension: cleanNumber.substr(10)
+		extension: ''
 	}
+	
+	if (!!phoneComponents.areaCode && !!phoneComponents.exchangeNumber && !!phoneComponents.subscriberNumber) {
+		let originalPhone = phone ?? ''
+		let extensionIdx = originalPhone.indexOf(phoneComponents.areaCode)
+		if (extensionIdx >= 0) {
+			extensionIdx = originalPhone.indexOf(phoneComponents.exchangeNumber, extensionIdx + phoneComponents.areaCode.length)
+			if (extensionIdx >= 0) {
+				extensionIdx = originalPhone.indexOf(phoneComponents.subscriberNumber, extensionIdx + phoneComponents.exchangeNumber.length)
+				if (extensionIdx >= 0) {
+					phoneComponents.extension = originalPhone.substr(extensionIdx + phoneComponents.subscriberNumber.length).trim()
+				}
+			}
+		}
+	}
+	
+	return phoneComponents
 }
 
 /**

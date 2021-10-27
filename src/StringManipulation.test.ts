@@ -1,4 +1,5 @@
 import {
+	CleanPhoneComponents,
 	CleanScripts,
 	DisplayNameFromFL,
 	DisplayNameFromObject,
@@ -96,6 +97,34 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('0015555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('15555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('+15555551234')).toStrictEqual('(555) 555-1234')
+	expect(CleanPhoneComponents('0015555551234 x321')).toEqual({
+		countryCode: '001',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: 'x321'
+	})
+	expect(CleanPhoneComponents('15555551234 x321')).toEqual({
+		countryCode: '1',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: 'x321'
+	})
+	expect(CleanPhoneComponents('+15555551234 x321')).toEqual({
+		countryCode: '1',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: 'x321'
+	})
+	expect(CleanPhoneComponents('5555551234 x321')).toEqual({
+		countryCode: '',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: 'x321'
+	})
 	expect(FormatPhoneNumberDots('5555551234')).toStrictEqual('555.555.1234')
 	expect(FormatPhoneNumberDots('555555123')).toStrictEqual('555555123')
 	expect(FormatZip('123456789')).toBe('12345-6789')
@@ -135,4 +164,6 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('223-123')).toEqual('(223) 123')
 	expect(FormatPhoneNumber('2231231234')).toEqual('(223) 123-1234')
 	expect(FormatPhoneNumber('2231231234x333')).toEqual('(223) 123-1234 x333')
+	expect(FormatPhoneNumber('2231231234 At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
+	expect(FormatPhoneNumber('2231231234At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
 })
