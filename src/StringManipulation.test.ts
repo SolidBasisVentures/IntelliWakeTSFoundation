@@ -1,5 +1,5 @@
 import {
-	CleanPhoneComponents,
+	PhoneComponents,
 	CleanScripts,
 	DisplayNameFromFL,
 	DisplayNameFromObject,
@@ -97,28 +97,28 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('0015555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('15555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('+15555551234')).toStrictEqual('(555) 555-1234')
-	expect(CleanPhoneComponents('0015555551234 x321')).toEqual({
+	expect(PhoneComponents('0015555551234 x321')).toEqual({
 		countryCode: '001',
 		areaCode: '555',
 		exchangeNumber: '555',
 		subscriberNumber: '1234',
 		extension: 'x321'
 	})
-	expect(CleanPhoneComponents('15555551234 x321')).toEqual({
+	expect(PhoneComponents('15555551234 x321')).toEqual({
 		countryCode: '1',
 		areaCode: '555',
 		exchangeNumber: '555',
 		subscriberNumber: '1234',
 		extension: 'x321'
 	})
-	expect(CleanPhoneComponents('+15555551234 x321')).toEqual({
+	expect(PhoneComponents('+15555551234 x321')).toEqual({
 		countryCode: '1',
 		areaCode: '555',
 		exchangeNumber: '555',
 		subscriberNumber: '1234',
 		extension: 'x321'
 	})
-	expect(CleanPhoneComponents('5555551234 x321')).toEqual({
+	expect(PhoneComponents('5555551234 x321')).toEqual({
 		countryCode: '',
 		areaCode: '555',
 		exchangeNumber: '555',

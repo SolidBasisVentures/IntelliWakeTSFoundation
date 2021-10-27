@@ -1203,7 +1203,7 @@ var FormatSSN = function (ssn) {
     // enforce max length
     return val.substring(0, 11);
 };
-var CleanPhoneComponents = function (phone) {
+var PhoneComponents = function (phone) {
     var cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone);
     var countryCode = '';
     while (cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) {
@@ -1240,7 +1240,7 @@ var CleanPhoneComponents = function (phone) {
  * FormatSSN('123121234')
  */
 var FormatPhoneNumber = function (phone) {
-    var components = CleanPhoneComponents(phone);
+    var components = PhoneComponents(phone);
     var val = '';
     if (!!components.areaCode)
         val += "(" + components.areaCode + ")";
@@ -3065,7 +3065,6 @@ exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
-exports.CleanPhoneComponents = CleanPhoneComponents;
 exports.CleanScripts = CleanScripts;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
 exports.ConsoleColor = ConsoleColor;
@@ -3131,6 +3130,7 @@ exports.ObjectToJSONString = ObjectToJSONString;
 exports.ObjectWithChanges = ObjectWithChanges;
 exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
+exports.PhoneComponents = PhoneComponents;
 exports.RandomString = RandomString;
 exports.ReSortOrder = ReSortOrder;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;

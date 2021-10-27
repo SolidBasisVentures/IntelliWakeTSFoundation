@@ -196,7 +196,7 @@ export interface IPhoneComponents {
     subscriberNumber: string;
     extension: string;
 }
-export declare const CleanPhoneComponents: (phone: string | null | undefined) => IPhoneComponents;
+export declare const PhoneComponents: (phone: string | null | undefined) => IPhoneComponents;
 /**
  * Returns a formatted ssn with dashes.
  *

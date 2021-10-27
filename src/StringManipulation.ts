@@ -452,7 +452,7 @@ export interface IPhoneComponents {
 	extension: string
 }
 
-export const CleanPhoneComponents = (phone: string | null | undefined): IPhoneComponents => {
+export const PhoneComponents = (phone: string | null | undefined): IPhoneComponents => {
 	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
 	
 	let countryCode = ''
@@ -495,7 +495,7 @@ export const CleanPhoneComponents = (phone: string | null | undefined): IPhoneCo
  * FormatSSN('123121234')
  */
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
-	const components = CleanPhoneComponents(phone)
+	const components = PhoneComponents(phone)
 	
 	let val = ''
 	
