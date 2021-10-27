@@ -1203,6 +1203,23 @@ var FormatSSN = function (ssn) {
     // enforce max length
     return val.substring(0, 11);
 };
+var CleanPhoneNumber = function (phone) {
+    if (!phone)
+        return '';
+    var cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone);
+    while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1'))
+        cleanPhone = cleanPhone.substr(1);
+    return cleanPhone;
+};
+var CleanPhoneComponents = function (phone) {
+    var cleanNumber = CleanPhoneNumber(phone);
+    return {
+        areaCode: cleanNumber.substr(0, 3),
+        exchangeNumber: cleanNumber.substr(3, 3),
+        subscriberNumber: cleanNumber.substr(6, 4),
+        extension: cleanNumber.substr(10)
+    };
+};
 /**
  * Returns a formatted ssn with dashes.
  *
@@ -1211,28 +1228,17 @@ var FormatSSN = function (ssn) {
  * FormatSSN('123121234')
  */
 var FormatPhoneNumber = function (phone) {
-    if (!phone)
-        return '';
-    var cleanPhone = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone);
-    while (cleanPhone.startsWith('0') || cleanPhone.startsWith('1'))
-        cleanPhone = cleanPhone.substr(1);
-    var processPhone = cleanPhone.substr(0, 10);
-    var appendPhone = cleanPhone.substr(10);
+    var components = CleanPhoneComponents(phone);
     var val = '';
-    var areaCode = processPhone.substring(0, 3);
-    var middle = processPhone.substring(3, 6);
-    var last = processPhone.substring(6, 10);
-    if (processPhone.length > 6) {
-        val = "(" + areaCode + ") " + middle + "-" + last;
-    }
-    else if (processPhone.length > 3) {
-        val = "(" + areaCode + ") " + middle;
-    }
-    else if (processPhone.length > 0) {
-        val = "(" + areaCode + ")";
-    }
-    // enforce max length
-    return val + (!!appendPhone ? ' ' + appendPhone : '');
+    if (!!components.areaCode)
+        val += "(" + components.areaCode + ")";
+    if (!!components.exchangeNumber)
+        val += " " + components.exchangeNumber;
+    if (!!components.subscriberNumber)
+        val += "-" + components.subscriberNumber;
+    if (!!components.extension)
+        val += " " + components.extension;
+    return val;
 };
 /**
  * Returns a formatted phone number with parenthesis.
@@ -3047,6 +3053,8 @@ exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
+exports.CleanPhoneComponents = CleanPhoneComponents;
+exports.CleanPhoneNumber = CleanPhoneNumber;
 exports.CleanScripts = CleanScripts;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
 exports.ConsoleColor = ConsoleColor;

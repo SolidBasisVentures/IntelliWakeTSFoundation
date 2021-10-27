@@ -454,6 +454,17 @@ export const CleanPhoneNumber = (phone: string | null | undefined): string => {
 	return cleanPhone
 }
 
+export const CleanPhoneComponents = (phone: string | null | undefined): {areaCode: string, exchangeNumber: string, subscriberNumber: string, extension: string} => {
+	const cleanNumber = CleanPhoneNumber(phone)
+	
+	return {
+		areaCode: cleanNumber.substr(0, 3),
+		exchangeNumber: cleanNumber.substr(3, 3),
+		subscriberNumber: cleanNumber.substr(6, 4),
+		extension: cleanNumber.substr(10)
+	}
+}
+
 /**
  * Returns a formatted ssn with dashes.
  *
@@ -462,31 +473,16 @@ export const CleanPhoneNumber = (phone: string | null | undefined): string => {
  * FormatSSN('123121234')
  */
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
-	if (!phone) return ''
-	
-	let cleanPhone = CleanPhoneNumber(phone)
-	
-	let processPhone = cleanPhone.substr(0, 10)
-	
-	let appendPhone = cleanPhone.substr(10)
-	
+	const components = CleanPhoneComponents(phone)
 	
 	let val = ''
 	
-	const areaCode = processPhone.substring(0, 3)
-	const middle = processPhone.substring(3, 6)
-	const last = processPhone.substring(6, 10)
+	if (!!components.areaCode) val += `(${components.areaCode})`
+	if (!!components.exchangeNumber) val += ` ${components.exchangeNumber}`
+	if (!!components.subscriberNumber) val += `-${components.subscriberNumber}`
+	if (!!components.extension) val += ` ${components.extension}`
 	
-	if (processPhone.length > 6) {
-		val = `(${areaCode}) ${middle}-${last}`
-	} else if (processPhone.length > 3) {
-		val = `(${areaCode}) ${middle}`
-	} else if (processPhone.length > 0) {
-		val = `(${areaCode})`
-	}
-	
-	// enforce max length
-	return val + (!!appendPhone ? ' ' + appendPhone : '')
+	return val
 }
 
 /**
