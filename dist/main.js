@@ -1897,20 +1897,29 @@ var IsJSON = function (json) {
         return false;
     }
 };
-var IsEqual = function (val1, val2) {
+var IsEqual = function (val1, val2, consoleLog) {
+    if (consoleLog === void 0) { consoleLog = false; }
     if (val1 === val2)
         return true;
     if (val1 === null)
         return val2 === null;
-    if (val2 === null)
+    if (val2 === null) {
+        if (consoleLog)
+            console.log(val1, val2);
         return false;
+    }
     if (val1 === undefined)
         return val2 === undefined;
-    if (val2 === undefined)
+    if (val2 === undefined) {
+        if (consoleLog)
+            console.log(val1, val2);
         return false;
+    }
     if (Array.isArray(val1)) {
         if (Array.isArray(val2)) {
             if (val1.length !== val2.length) {
+                if (consoleLog)
+                    console.log('Lengths', val1, val2);
                 return false;
             }
             for (var i = 0; i < val1.length; i++) {
@@ -1921,16 +1930,22 @@ var IsEqual = function (val1, val2) {
             return true;
         }
         else {
+            if (consoleLog)
+                console.log('Array/Not', val1, val2);
             return false;
         }
     }
     else if (Array.isArray(val2)) {
+        if (consoleLog)
+            console.log('Array/Not', val1, val2);
         return false;
     }
     if (typeof val1 === 'object' || typeof val2 === 'object') {
         if ((!val1 && !val2) || JSON.stringify(val1 !== null && val1 !== void 0 ? val1 : {}) !== JSON.stringify(val2 !== null && val2 !== void 0 ? val2 : {})) {
             return true;
         }
+        if (consoleLog)
+            console.log('Objects', val1, val2);
     }
     else if (val1 === val2) {
         return true;
@@ -1942,6 +1957,13 @@ var IsEqual = function (val1, val2) {
             if (secondNumber !== null && firstNumber === secondNumber) {
                 return true;
             }
+            if (consoleLog)
+                console.log('Numbers1', val1, val2);
+        }
+        else if (CleanNumberNull(val2) !== null) {
+            if (consoleLog)
+                console.log('Numbers2', val1, val2);
+            return false;
         }
         if (IsDateString(val1)) {
             var pTRM = DateFormat(val1, DATE_FORMAT_DATE);
@@ -1951,10 +1973,20 @@ var IsEqual = function (val1, val2) {
                     if (!!rM && pTRM === rM) {
                         return true;
                     }
+                    else {
+                        if (consoleLog)
+                            console.log('Dates', val1, val2);
+                    }
+                }
+                else {
+                    if (consoleLog)
+                        console.log('Dates', val1, val2);
                 }
             }
         }
     }
+    if (consoleLog)
+        console.log('Fallout', val1, val2);
     return false;
 };
 /**
