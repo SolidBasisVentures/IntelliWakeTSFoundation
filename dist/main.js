@@ -1941,11 +1941,20 @@ var IsEqual = function (val1, val2, consoleLog) {
         return false;
     }
     if (typeof val1 === 'object' || typeof val2 === 'object') {
-        if ((!val1 && !val2) || JSON.stringify(val1 !== null && val1 !== void 0 ? val1 : {}) !== JSON.stringify(val2 !== null && val2 !== void 0 ? val2 : {})) {
-            return true;
+        var keys1 = Object.keys(val1);
+        var keys2 = Object.keys(val2);
+        if (keys1.length !== keys2.length) {
+            if (consoleLog)
+                console.log('Object Keys', val1, val2);
+            return false;
         }
-        if (consoleLog)
-            console.log('Objects', val1, val2);
+        var idx = keys1.findIndex(function (key1) { return !IsEqual(val1[key1], val2[key1]); });
+        if (idx === -1)
+            return true;
+        if (consoleLog) {
+            console.log("Object Key", keys1[idx], val1, val2);
+            return false;
+        }
     }
     else if (val1 === val2) {
         return true;

@@ -279,10 +279,22 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 	}
 	
 	if (typeof val1 === 'object' || typeof val2 === 'object') {
-		if ((!val1 && !val2) || JSON.stringify(val1 ?? {}) !== JSON.stringify(val2 ?? {})) {
-			return true
+		const keys1 = Object.keys(val1)
+		const keys2 = Object.keys(val2)
+		
+		if (keys1.length !== keys2.length) {
+			if (consoleLog) console.log('Object Keys', val1, val2)
+			return false
 		}
-		if (consoleLog) console.log('Objects', val1, val2)
+	
+		const idx = keys1.findIndex(key1 => !IsEqual(val1[key1], val2[key1]))
+		
+		if (idx === -1) return true
+		
+		if (consoleLog) {
+			console.log(`Object Key`, keys1[idx], val1, val2)
+			return false
+		}
 	} else if (val1 === val2) {
 		return true
 	} else {
