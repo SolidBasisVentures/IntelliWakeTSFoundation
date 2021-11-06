@@ -569,3 +569,54 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	}
 	return ret
 }
+
+export function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K> {
+	let ret: any = {}
+	const includeSet: Set<string> = new Set(keys)
+	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+	
+	for (let key in obj) {
+		// noinspection JSUnfilteredForInLoop
+		if (includeSet.has(key)) {
+			// noinspection JSUnfilteredForInLoop
+			ret[key] = obj[key]
+		}
+	}
+	return ret
+}
+
+export function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
+	if (!value || !remove) return ''
+	
+	const arrayRemove = ToArray(remove)
+	
+	let newValue = value
+	
+	do {
+		for (const aRemove of arrayRemove) {
+			if (newValue.startsWith(aRemove)) {
+				newValue = newValue.substring(aRemove.length)
+			}
+		}
+	} while (recursive && arrayRemove.some(aRemove => newValue.startsWith(aRemove)))
+	
+	return newValue
+}
+
+export function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
+	if (!value || !remove) return ''
+	
+	const arrayRemove = ToArray(remove)
+	
+	let newValue = value
+	
+	do {
+		for (const aRemove of arrayRemove) {
+			if (newValue.endsWith(aRemove)) {
+				newValue = newValue.substring(0, newValue.length - aRemove.length)
+			}
+		}
+	} while (recursive && arrayRemove.some(aRemove => newValue.endsWith(aRemove)))
+	
+	return newValue
+}

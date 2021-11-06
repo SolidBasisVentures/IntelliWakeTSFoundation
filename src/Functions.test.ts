@@ -5,7 +5,7 @@ import {
 	IsOn,
 	JSONParse, JSONStringToObject,
 	ObjectToJSONString,
-	OmitProperty,
+	OmitProperty, PickProperty, RemoveEnding, RemoveStarting,
 	ReplaceAll,
 	RoundTo,
 	ToArray
@@ -84,6 +84,14 @@ test('Omits', () => {
 	}, 'id',  'is_active')).toEqual({name: 'My Name'})
 })
 
+test('Picks', () => {
+	expect(PickProperty({
+		id: 1,
+		name: 'My Name',
+		is_active: true
+	}, 'name')).toEqual({name: 'My Name'})
+})
+
 test('JSONParse', () => {
 	expect(JSONParse('{"id": 1}')).toEqual({id: 1})
 	expect(JSONParse(undefined)).toEqual(null)
@@ -106,4 +114,17 @@ test('ToArray', () => {
 	expect(ToArray([1, 2, 3])).toEqual([1, 2, 3])
 })
 
-
+test('RemoveStartEnd', () => {
+	expect(RemoveStarting('/', '/Test/Case/')).toEqual('Test/Case/')
+	expect(RemoveStarting('/', 'Test/Case/')).toEqual('Test/Case/')
+	expect(RemoveStarting('/', '//Test/Case/')).toEqual('/Test/Case/')
+	expect(RemoveStarting('/', '//Test/Case/', true)).toEqual('Test/Case/')
+	expect(RemoveStarting(['/', 'Te'], '/Test/Case/', true)).toEqual('st/Case/')
+	expect(RemoveStarting(['/', 'Te'], '//Test/Case/', true)).toEqual('st/Case/')
+	expect(RemoveEnding('/', '/Test/Case/')).toEqual('/Test/Case')
+	expect(RemoveEnding('/', '/Test/Case')).toEqual('/Test/Case')
+	expect(RemoveEnding('/', '/Test/Case//')).toEqual('/Test/Case/')
+	expect(RemoveEnding('/', '/Test/Case//', true)).toEqual('/Test/Case')
+	expect(RemoveEnding(['/', 'se'], '/Test/Case/', true)).toEqual('/Test/Ca')
+	expect(RemoveEnding(['/', 'se'], '/Test/Case//', true)).toEqual('/Test/Ca')
+})
