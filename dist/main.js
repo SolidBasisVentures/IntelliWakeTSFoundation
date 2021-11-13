@@ -320,8 +320,7 @@ var CleanNumberNull = function (value, roundClean) {
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-var JSONParse = function (json, defaultValue) {
-    if (defaultValue === void 0) { defaultValue = null; }
+var JSONParse = function (json) {
     if (!json) {
         return null;
     }
@@ -333,7 +332,7 @@ var JSONParse = function (json, defaultValue) {
     }
     catch (err) {
         // console.log('JSONParse', err)
-        return defaultValue;
+        return null;
     }
     return returnObj;
 };

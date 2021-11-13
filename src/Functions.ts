@@ -89,7 +89,7 @@ export const CleanNumberNull = (value: any, roundClean?: number): number | null 
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export const JSONParse = <T = any>(json: any, defaultValue = null): T | null => {
+export const JSONParse = <T = any>(json: any): T | null => {
 	if (!json) {
 		return null
 	}
@@ -103,7 +103,7 @@ export const JSONParse = <T = any>(json: any, defaultValue = null): T | null => 
 	} catch (err) {
 		// console.log('JSONParse', err)
 		
-		return defaultValue
+		return null
 	}
 	
 	return returnObj

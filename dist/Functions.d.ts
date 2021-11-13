@@ -54,7 +54,7 @@ export declare const CleanNumberNull: (value: any, roundClean?: number | undefin
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export declare const JSONParse: <T = any>(json: any, defaultValue?: null) => T | null;
+export declare const JSONParse: <T = any>(json: any) => T | null;
 export declare const Trunc: (subject: string, length: number) => string;
 /**
  * Returns a google maps link with the given coordinates.
