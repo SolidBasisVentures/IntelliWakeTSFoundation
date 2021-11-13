@@ -54,7 +54,7 @@ export declare const CleanNumberNull: (value: any, roundClean?: number | undefin
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-export declare const JSONParse: <T = any>(json: any) => T | null;
+export declare const JSONParse: <T = any>(json: any, defaultValue?: null) => T | null;
 export declare const Trunc: (subject: string, length: number) => string;
 /**
  * Returns a google maps link with the given coordinates.
@@ -249,3 +249,6 @@ export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<b
 export declare const ToArray: <T>(value: T | T[]) => T[];
 export declare const DeepEqual: (object1: any, object2: any) => boolean;
 export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;
+export declare function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K>;
+export declare function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
+export declare function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;

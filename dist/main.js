@@ -320,17 +320,20 @@ var CleanNumberNull = function (value, roundClean) {
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
-var JSONParse = function (json) {
+var JSONParse = function (json, defaultValue) {
+    if (defaultValue === void 0) { defaultValue = null; }
     if (!json) {
         return null;
     }
+    if (typeof json === 'object')
+        return json;
     var returnObj = null;
     try {
         returnObj = JSON.parse(json);
     }
     catch (err) {
         // console.log('JSONParse', err)
-        return null;
+        return defaultValue;
     }
     return returnObj;
 };
@@ -807,6 +810,55 @@ function OmitProperty(obj) {
         }
     }
     return ret;
+}
+function PickProperty(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    var ret = {};
+    var includeSet = new Set(keys);
+    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+    for (var key in obj) {
+        // noinspection JSUnfilteredForInLoop
+        if (includeSet.has(key)) {
+            // noinspection JSUnfilteredForInLoop
+            ret[key] = obj[key];
+        }
+    }
+    return ret;
+}
+function RemoveStarting(remove, value, recursive) {
+    if (recursive === void 0) { recursive = false; }
+    if (!value || !remove)
+        return '';
+    var arrayRemove = ToArray(remove);
+    var newValue = value;
+    do {
+        for (var _i = 0, arrayRemove_1 = arrayRemove; _i < arrayRemove_1.length; _i++) {
+            var aRemove = arrayRemove_1[_i];
+            if (newValue.startsWith(aRemove)) {
+                newValue = newValue.substring(aRemove.length);
+            }
+        }
+    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.startsWith(aRemove); }));
+    return newValue;
+}
+function RemoveEnding(remove, value, recursive) {
+    if (recursive === void 0) { recursive = false; }
+    if (!value || !remove)
+        return '';
+    var arrayRemove = ToArray(remove);
+    var newValue = value;
+    do {
+        for (var _i = 0, arrayRemove_2 = arrayRemove; _i < arrayRemove_2.length; _i++) {
+            var aRemove = arrayRemove_2[_i];
+            if (newValue.endsWith(aRemove)) {
+                newValue = newValue.substring(0, newValue.length - aRemove.length);
+            }
+        }
+    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.endsWith(aRemove); }));
+    return newValue;
 }
 
 /**
@@ -3172,12 +3224,15 @@ exports.ObjectWithChanges = ObjectWithChanges;
 exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.PhoneComponents = PhoneComponents;
+exports.PickProperty = PickProperty;
 exports.RandomString = RandomString;
 exports.ReSortOrder = ReSortOrder;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;
 exports.RemoveDupProperties = RemoveDupProperties;
 exports.RemoveDupPropertiesByID = RemoveDupPropertiesByID;
 exports.RemoveDupPropertiesByIDArray = RemoveDupPropertiesByIDArray;
+exports.RemoveEnding = RemoveEnding;
+exports.RemoveStarting = RemoveStarting;
 exports.ReplaceAll = ReplaceAll;
 exports.ReplaceLinks = ReplaceLinks;
 exports.RightPad = RightPad;
