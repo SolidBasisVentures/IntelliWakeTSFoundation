@@ -2587,8 +2587,8 @@ var IsStage = function (stages) {
 /**
  */
 var GetStage = function () {
-    var _a, _b;
-    return ((_b = (_a = process.env.REACT_APP_STAGE) !== null && _a !== void 0 ? _a : process.env.STAGE) !== null && _b !== void 0 ? _b : exports.Stages.Local);
+    var _a, _b, _c;
+    return ((_c = (_b = (_a = process.env.SVELTE_APP_STAGE) !== null && _a !== void 0 ? _a : process.env.REACT_APP_STAGE) !== null && _b !== void 0 ? _b : process.env.STAGE) !== null && _c !== void 0 ? _c : exports.Stages.Local);
 };
 /**
  * Returns the full name of the stage.
