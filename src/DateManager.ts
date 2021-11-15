@@ -35,7 +35,9 @@ export const IsDateString = (value: any): boolean => {
 	return !!DateParseTS(value)
 }
 
-export const DateParseTS = (date?: number | string | null): number | null => {
+export type TDateAny = number | string | null
+
+export const DateParseTS = (date?: TDateAny): number | null => {
 	if (!date) return Date.parse(new Date().toString())
 	
 	try {
@@ -56,14 +58,14 @@ export const DateParseTS = (date?: number | string | null): number | null => {
 		return null
 	}
 }
-export const DateISO = (date?: number | string | null): string | null => {
+export const DateISO = (date?: TDateAny): string | null => {
 	const parsed = DateParseTS(date)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date?: number | string | null): Date | null => {
+export const DateObject = (date?: TDateAny): Date | null => {
 	const parsed = DateParseTS(date)
 	
 	if (!parsed) return null
@@ -71,7 +73,7 @@ export const DateObject = (date?: number | string | null): Date | null => {
 	return new Date(parsed)
 }
 
-export const DateICS = (date?: string | null): string | null => {
+export const DateICS = (date?: TDateAny): string | null => {
 	const dateISO = DateISO(date)
 	
 	if (!dateISO) return null
@@ -91,7 +93,7 @@ export const DateICS = (date?: string | null): string | null => {
 	return dateICS
 }
 
-export const DateFormat = (date: number | string | null, format: string): string | null => {
+export const DateFormat = (date: TDateAny, format: string): string | null => {
 	const dateObject = DateObject(date)
 	
 	if (!dateObject || dateObject.valueOf() === 0) return null
@@ -213,24 +215,24 @@ export const DateFormat = (date: number | string | null, format: string): string
 	return result
 }
 
-export const YYYYMMDDHHmmss = (ts?: number | null): string => {
-	const dateObject = !ts ? new Date() : new Date(ts)
+export const YYYYMMDDHHmmss = (date?: TDateAny): string => {
+	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1).toString().padStart(2, '0')}${dateObject.getDate().toString().padStart(2, '0')}${dateObject.getHours().toString().padStart(2, '0')}${dateObject.getMinutes().toString().padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYY_MM_DD_HH_mm_ss = (ts?: number | null): string => {
-	const dateObject = !ts ? new Date() : new Date(ts)
+export const YYYY_MM_DD_HH_mm_ss = (date?: TDateAny): string => {
+	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')}_${dateObject.getHours().toString().padStart(2, '0')}-${dateObject.getMinutes().toString().padStart(2, '0')}-${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYYsMMsDDsHHcmmcss = (ts?: number | null): string => {
-	const dateObject = !ts ? new Date() : new Date(ts)
+export const YYYYsMMsDDsHHcmmcss = (date?: TDateAny): string => {
+	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject.getDate().toString().padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYYsMMsDD = (ts?: number | null): string => {
-	const dateObject = !ts ? new Date() : new Date(ts)
+export const YYYYsMMsDD = (date?: TDateAny): string => {
+	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject.getDate().toString().padStart(2, '0')}`
 }
-export const HHcmmcss = (ts?: number | null): string => {
-	const dateObject = !ts ? new Date() : new Date(ts)
+export const HHcmmcss = (date?: TDateAny): string => {
+	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 
@@ -266,6 +268,46 @@ export const TSDays = (ts: number, withinMonth?: boolean): number => Math.floor(
 export const TSHours = (ts: number, withinDay?: boolean): number => Math.floor((ts - (withinDay ? (TSDays(ts) * 24 * 60 * 60 * 1000) : 0)) / 60 / 60 / 1000)
 export const TSMinutes = (ts: number, withinHour?: boolean): number => Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000)
 export const TSSeconds = (ts: number, withinMinute?: boolean): number => Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000)
+
+export type TDuration = 'year' | 'years' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days' | 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds'
+
+export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
+	const date1 = DateParseTS(dateFrom)
+	const date2 = DateParseTS(dateTo)
+	
+	if (!date1 || !date2) return null
+	
+	const diff = date2 - date1
+	
+	switch(duration) {
+		case 'year':
+		case 'years':
+			return TSYearsEstimate(diff)
+		case 'month':
+		case 'months':
+			return TSMonthsEstimate(diff)
+		case 'week':
+		case 'weeks':
+			return TSWeeks(diff)
+		case 'day':
+		case 'days':
+			return TSDays(diff)
+		case 'hour':
+		case 'hours':
+			return TSHours(diff)
+		case 'minute':
+		case 'minutes':
+			return TSMinutes(diff)
+		case 'second':
+		case 'seconds':
+			return TSSeconds(diff)
+		case 'millisecond':
+		case 'milliseconds':
+			return diff
+	}
+	
+	return null
+}
 
 /**
  * Displays a simplified duration format from seconds.
