@@ -514,6 +514,48 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	return returnComponents
 }
 
+export const ComponentsLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, trimSeconds = false): string => {
+	const components = DateDiffComponents(dateFrom, dateTo)
+	
+	let text = ''
+	
+	if (components.year) {
+		text += ` ${ToDigits(components.year)} ${AddS('Year', components.year)}`
+		text += ` ${ToDigits(components.month)} ${AddS('Month', components.month)}`
+		if (components.day) {
+			text += ` ${ToDigits(components.day)} ${AddS('Day', components.day)}`
+		}
+	} else if (components.month) {
+		text += ` ${ToDigits(components.month)} ${AddS('Month', components.month)}`
+		
+		if (components.day) {
+			text += ` ${ToDigits(components.day)} ${AddS('Day', components.day)}`
+		}
+	} else if (components.day) {
+		text += ` ${ToDigits(components.day)} ${AddS('Day', components.day)}`
+		if (components.hour) {
+			text += ` ${ToDigits(components.hour)} ${AddS('Hour', components.hour)}`
+		}
+		if (components.minute) {
+			text += ` ${ToDigits(components.minute)} ${AddS('Minute', components.minute)}`
+		}
+	} else if (components.hour) {
+		text += ` ${ToDigits(components.hour)} ${AddS('Hour', components.hour)}`
+		if (components.minute) {
+			text += ` ${ToDigits(components.minute)} ${AddS('Minute', components.minute)}`
+		}
+	} else {
+		if (components.minute || (!text && trimSeconds)) {
+			text += ` ${ToDigits(components.minute)} ${AddS('Minute', components.minute)}`
+		}
+		if (!text || (!trimSeconds && components.second)) {
+			text += ` ${ToDigits(components.second)} ${AddS('Second', components.second)}`
+		}
+	}
+	
+	return text.trim()
+}
+
 /**
  * Displays a simplified duration format from seconds.
  *
