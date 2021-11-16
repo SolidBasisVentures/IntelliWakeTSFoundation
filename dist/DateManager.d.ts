@@ -19,6 +19,7 @@ export declare type TAdjustment = {
  * Current time in ISO string format
  */
 export declare const NowISOString: () => string;
+export declare const CurrentTimeZone: string;
 export declare const StringHasTimeData: (value: string) => boolean;
 export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;
@@ -28,7 +29,8 @@ export declare const DateParseTS: (date?: string | number | Date | null | undefi
 export declare const DateISO: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => string | null;
 export declare const DateObject: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => Date | null;
 export declare const DateICS: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => string | null;
-export declare const DateFormat: (date: TDateAny, format: string) => string | null;
+export declare type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
+export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezone?: string | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (date?: string | number | Date | null | undefined) => string;

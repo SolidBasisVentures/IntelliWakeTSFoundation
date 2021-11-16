@@ -1494,6 +1494,7 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
  * Current time in ISO string format
  */
 var NowISOString = function () { return new Date().toISOString(); };
+var CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
 var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
@@ -1557,31 +1558,44 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
-var DateFormat = function (date, format) {
+var DateFormat = function (date, format, timezone) {
     var dateObject = DateObject(date);
     if (!dateObject || dateObject.valueOf() === 0)
         return null;
-    var applyCommand = function (command) {
+    if (timezone) {
+        try {
+            if (!dateObject || dateObject.valueOf() === 0)
+                return null;
+            dateObject = DateObject(dateObject.toLocaleString("en-US", { timeZone: timezone }));
+        }
+        catch (err) {
+            console.log('Invalid Timezone', err);
+            return null;
+        }
+    }
+    if (!dateObject || dateObject.valueOf() === 0)
+        return null;
+    var applyCommand = function (command, date) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         switch (command) {
             case 'YYYY':
-                return dateObject.getFullYear().toString();
+                return date.getFullYear().toString();
             case 'YY':
-                return dateObject.getFullYear().toString().substr(2);
+                return date.getFullYear().toString().substr(2);
             case 'Q':
-                return (Math.ceil((dateObject.getMonth() + 1) / 3)).toString();
+                return (Math.ceil((date.getMonth() + 1) / 3)).toString();
             case 'Qo':
-                return (_a = DigitsNth((Math.ceil((dateObject.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
+                return (_a = DigitsNth((Math.ceil((date.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
             case 'MMMM':
-                return (_b = MonthNames[dateObject.getMonth() + 1]) !== null && _b !== void 0 ? _b : '';
+                return (_b = MonthNames[date.getMonth() + 1]) !== null && _b !== void 0 ? _b : '';
             case 'MMM':
-                return ((_c = MonthNames[dateObject.getMonth() + 1]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
+                return ((_c = MonthNames[date.getMonth() + 1]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
             case 'MM':
-                return (dateObject.getMonth() + 1).toString().padStart(2, '0');
+                return (date.getMonth() + 1).toString().padStart(2, '0');
             case 'Mo':
-                return (_d = DigitsNth(dateObject.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
+                return (_d = DigitsNth(date.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
             case 'M':
-                return (dateObject.getMonth() + 1).toString();
+                return (date.getMonth() + 1).toString();
             /**
              * Week of Year	w	1 2 ... 52 53
              * wo	1st 2nd ... 52nd 53rd
@@ -1596,46 +1610,85 @@ var DateFormat = function (date, format) {
              * DDDD	001 002 ... 364 365
              */
             case 'DD':
-                return dateObject.getDate().toString().padStart(2, '0');
+                return date.getDate().toString().padStart(2, '0');
             case 'Do':
-                return (_e = DigitsNth(dateObject.getDate())) !== null && _e !== void 0 ? _e : '';
+                return (_e = DigitsNth(date.getDate())) !== null && _e !== void 0 ? _e : '';
             case 'D':
-                return dateObject.getDate().toString();
+                return date.getDate().toString();
             case 'd':
-                return dateObject.getDay().toString();
+                return date.getDay().toString();
             case 'do':
-                return (_f = DigitsNth(dateObject.getDay())) !== null && _f !== void 0 ? _f : '';
+                return (_f = DigitsNth(date.getDay())) !== null && _f !== void 0 ? _f : '';
             case 'dd':
-                return ((_g = WeekDays[dateObject.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
+                return ((_g = WeekDays[date.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
             case 'ddd':
-                return ((_h = WeekDays[dateObject.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
+                return ((_h = WeekDays[date.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
             case 'dddd':
-                return ((_j = WeekDays[dateObject.getDay()]) !== null && _j !== void 0 ? _j : '');
+                return ((_j = WeekDays[date.getDay()]) !== null && _j !== void 0 ? _j : '');
             case 'HH':
-                return dateObject.getHours().toString().padStart(2, '0');
+                return date.getHours().toString().padStart(2, '0');
             case 'H':
-                return dateObject.getHours().toString();
+                return date.getHours().toString();
             case 'hh':
-                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString().padStart(2, '0');
+                return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString().padStart(2, '0');
             case 'h':
-                return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString();
+                return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString();
             case 'mm':
-                return dateObject.getMinutes().toString().padStart(2, '0');
+                return date.getMinutes().toString().padStart(2, '0');
             case 'm':
-                return dateObject.getMinutes().toString();
+                return date.getMinutes().toString();
             case 'ss':
-                return dateObject.getSeconds().toString().padStart(2, '0');
+                return date.getSeconds().toString().padStart(2, '0');
             case 's':
-                return dateObject.getSeconds().toString();
+                return date.getSeconds().toString();
             case 'A':
-                return dateObject.getHours() > 12 ? 'PM' : 'AM';
+                return date.getHours() > 12 ? 'PM' : 'AM';
             case 'a':
-                return dateObject.getHours() > 12 ? 'pm' : 'am';
+                return date.getHours() > 12 ? 'pm' : 'am';
             default:
                 return command;
         }
     };
-    var formatArray = format.split('');
+    var useFormat;
+    switch (format) {
+        case 'Local':
+            useFormat = 'MM/DD/YYYY';
+            break;
+        case 'Date':
+            useFormat = DATE_FORMAT_DATE;
+            break;
+        case 'DisplayDate':
+            useFormat = DATE_FORMAT_DATE_DISPLAY;
+            break;
+        case 'DisplayDateDoW':
+            useFormat = DATE_FORMAT_DATE_DISPLAY_DOW;
+            break;
+        case 'DisplayTime':
+            useFormat = DATE_FORMAT_TIME_DISPLAY;
+            break;
+        case 'DisplayDateTime':
+            useFormat = DATE_FORMAT_DATE_TIME_DISPLAY;
+            break;
+        case 'DisplayDateDoWTime':
+            useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW;
+            break;
+        case 'DisplayDateLong':
+            useFormat = DATE_FORMAT_DATE_DISPLAY_LONG;
+            break;
+        case 'DisplayDateDoWLong':
+            useFormat = DATE_FORMAT_DATE_DISPLAY_DOW_LONG;
+            break;
+        case 'DisplayDateTimeLong':
+            useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_LONG;
+            break;
+        case 'DisplayDateDoWTimeLong':
+            useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
+            break;
+        default:
+            useFormat = format !== null && format !== void 0 ? format : 'YYYY-MM-DD HH:mm:ss a';
+            break;
+    }
+    var formatArray = useFormat.split('');
     var result = '';
     var previousChar = '';
     var command = '';
@@ -1651,7 +1704,7 @@ var DateFormat = function (date, format) {
             }
         }
         else if (formatChar === '[') {
-            result += applyCommand(command);
+            result += applyCommand(command, dateObject);
             command = '';
             previousChar = '';
             inEscape = true;
@@ -1662,7 +1715,7 @@ var DateFormat = function (date, format) {
                 command += formatChar;
             }
             else {
-                result += applyCommand(command);
+                result += applyCommand(command, dateObject);
                 command = formatChar;
             }
             previousChar = formatChar;
@@ -1672,7 +1725,7 @@ var DateFormat = function (date, format) {
         var formatChar = formatArray_1[_i];
         _loop_1(formatChar);
     }
-    result += applyCommand(command);
+    result += applyCommand(command, dateObject);
     return result;
 };
 var YYYYMMDDHHmmss = function (date) {
@@ -3401,6 +3454,7 @@ exports.CleanScripts = CleanScripts;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
 exports.ComponentsLongDescription = ComponentsLongDescription;
 exports.ConsoleColor = ConsoleColor;
+exports.CurrentTimeZone = CurrentTimeZone;
 exports.DATE_FORMAT_DATE = DATE_FORMAT_DATE;
 exports.DATE_FORMAT_DATE_DISPLAY = DATE_FORMAT_DATE_DISPLAY;
 exports.DATE_FORMAT_DATE_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW;
