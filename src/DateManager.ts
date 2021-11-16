@@ -1,4 +1,4 @@
-import {AddS, ReplaceAll} from './Functions'
+import {AddS, CleanNumber, ReplaceAll} from './Functions'
 import {DigitsNth, ToDigits} from './StringManipulation'
 
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
@@ -17,6 +17,26 @@ export const DATE_FORMAT_DATE_DISPLAY_DOW_LONG = `dddd, ${DATE_FORMAT_DATE_DISPL
 export const DATE_FORMAT_DATE_TIME_DISPLAY_LONG = `${DATE_FORMAT_DATE_DISPLAY_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLAY_DOW_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 
+export type TDuration =
+	'year'
+	| 'years'
+	| 'month'
+	| 'months'
+	| 'week'
+	| 'weeks'
+	| 'day'
+	| 'days'
+	| 'hour'
+	| 'hours'
+	| 'minute'
+	| 'minutes'
+	| 'second'
+	| 'seconds'
+	| 'millisecond'
+	| 'milliseconds'
+
+export type TAdjustment = { [key in TDuration]?: number }
+
 /**
  * Current time in ISO string format
  */
@@ -32,13 +52,17 @@ export const IsDateString = (value: any): boolean => {
 	if (!StringHasDateData(value))
 		return false
 	
-	return !!DateParseTS(value)
+	return !!DateParseTSInternal(value)
 }
 
-export type TDateAny = number | string | null
+export type TDateAny = Date | number | string | null
 
-export const DateParseTS = (date?: TDateAny): number | null => {
+const DateParseTSInternal = (date?: TDateAny): number | null => {
 	if (!date) return Date.parse(new Date().toString())
+	
+	if (typeof date === 'object') {
+		return date.valueOf()
+	}
 	
 	try {
 		const result: any = Date.parse(date.toString())
@@ -58,23 +82,32 @@ export const DateParseTS = (date?: TDateAny): number | null => {
 		return null
 	}
 }
-export const DateISO = (date?: TDateAny): string | null => {
-	const parsed = DateParseTS(date)
+
+export const DateParseTS = (date?: TDateAny, adjustements?: TAdjustment): number | null => {
+	let newDate = DateParseTSInternal(date)
+	
+	if (!newDate || !adjustements) return newDate
+	
+	return DateAdjustTS(newDate, adjustements)
+}
+
+export const DateISO = (date?: TDateAny, adjustements?: TAdjustment): string | null => {
+	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date?: TDateAny): Date | null => {
-	const parsed = DateParseTS(date)
+export const DateObject = (date?: TDateAny, adjustements?: TAdjustment): Date | null => {
+	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed)
 }
 
-export const DateICS = (date?: TDateAny): string | null => {
-	const dateISO = DateISO(date)
+export const DateICS = (date?: TDateAny, adjustements?: TAdjustment): string | null => {
+	const dateISO = DateISO(date, adjustements)
 	
 	if (!dateISO) return null
 	
@@ -269,41 +302,163 @@ export const TSHours = (ts: number, withinDay?: boolean): number => Math.floor((
 export const TSMinutes = (ts: number, withinHour?: boolean): number => Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000)
 export const TSSeconds = (ts: number, withinMinute?: boolean): number => Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000)
 
-export type TDuration = 'year' | 'years' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days' | 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds'
+const DateIsLeapYear = (year: number): boolean => (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0))
+
+const DateDaysInMonth = (year: number, month: number): number => {
+	let monthCalc = month
+	let yearCalc = year
+	
+	while (monthCalc < 0) {
+		monthCalc += 12
+		yearCalc -= 1
+	}
+	
+	while (monthCalc > 11) {
+		monthCalc -= 12
+		yearCalc += 1
+	}
+	
+	return [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]
+}
+
+const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
+	let dateTS = DateParseTSInternal(date)
+	
+	if (!dateTS) return null
+	
+	const isNegative = months < 0
+	
+	const originalDateObject = DateObject(date) ?? new Date()
+	const originalDate = originalDateObject.getUTCDate()
+	const isLastDayOfMonth = originalDate === DateDaysInMonth(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth())
+	
+	for (let i = 0; i < Math.abs(months); i++) {
+		const dateObj = DateObject(dateTS) ?? new Date()
+		const year = dateObj.getUTCFullYear()
+		const month = dateObj.getUTCMonth()
+		
+		if (isLastDayOfMonth) {
+			if (isNegative) {
+				dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
+			} else {
+				dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month + 1)
+			}
+		} else {
+			if (isNegative) {
+				dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month - 1)
+			} else {
+				dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
+			}
+			
+			let currentDate = DateObject(dateTS) ?? new Date()
+			if (currentDate.getUTCDate() < 15 && currentDate.getUTCDate() < originalDate)
+				dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate()
+			
+			currentDate = DateObject(dateTS) ?? new Date()
+			const currentDaysInMonth = DateDaysInMonth(currentDate.getUTCFullYear(), currentDate.getUTCMonth())
+			if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
+				dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate())
+		}
+	}
+	
+	return dateTS
+}
+
+export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number | null => {
+	let dateTS = DateParseTSInternal(date)
+	
+	for (const key of Object.keys(adjustments)) {
+		if (!dateTS) return null
+		
+		switch (key) {
+			case 'year':
+			case 'years':
+				dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12)
+				break
+			case 'month':
+			case 'months':
+				dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]))
+				break
+			default:
+				if (!dateTS) return null
+				
+				switch (key) {
+					case 'week':
+					case 'weeks':
+						dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000
+						break
+					case 'day':
+					case 'days':
+						dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000
+						break
+					case 'hour':
+					case 'hours':
+						dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000
+						break
+					case 'minute':
+					case 'minutes':
+						dateTS += CleanNumber(adjustments[key]) * 60 * 1000
+						break
+					case 'second':
+					case 'seconds':
+						dateTS += CleanNumber(adjustments[key]) * 1000
+						break
+					case 'millisecond':
+					case 'milliseconds':
+						dateTS += CleanNumber(adjustments[key])
+						break
+				}
+				break
+		}
+	}
+	
+	return dateTS
+}
 
 export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
-	const date1 = DateParseTS(dateFrom)
-	const date2 = DateParseTS(dateTo)
+	const date1 = DateParseTSInternal(dateFrom)
+	const date2 = DateParseTSInternal(dateTo)
 	
 	if (!date1 || !date2) return null
-	
-	const diff = date2 - date1
-	
-	switch(duration) {
+
+	switch (duration) {
 		case 'year':
 		case 'years':
-			return TSYearsEstimate(diff)
 		case 'month':
 		case 'months':
-			return TSMonthsEstimate(diff)
-		case 'week':
-		case 'weeks':
-			return TSWeeks(diff)
-		case 'day':
-		case 'days':
-			return TSDays(diff)
-		case 'hour':
-		case 'hours':
-			return TSHours(diff)
-		case 'minute':
-		case 'minutes':
-			return TSMinutes(diff)
-		case 'second':
-		case 'seconds':
-			return TSSeconds(diff)
-		case 'millisecond':
-		case 'milliseconds':
-			return diff
+			const increment = (['year', 'years'].includes(duration) ? 12 : 1) * ((date1 > date2) ? 1 : -1)
+			let count = 0
+			let newTS = date2
+			
+			while (date1 > date2 ? date1 > newTS : date1 < newTS) {
+				count++
+				newTS = DateAdjustMonthTS(newTS, increment) ?? 0
+			}
+			
+			return count
+		default: {
+			const diff = date2 - date1
+			switch (duration) {
+				case 'week':
+				case 'weeks':
+					return TSWeeks(diff)
+				case 'day':
+				case 'days':
+					return TSDays(diff)
+				case 'hour':
+				case 'hours':
+					return TSHours(diff)
+				case 'minute':
+				case 'minutes':
+					return TSMinutes(diff)
+				case 'second':
+				case 'seconds':
+					return TSSeconds(diff)
+				case 'millisecond':
+				case 'milliseconds':
+					return diff
+			}
+		}
 	}
 	
 	return null
