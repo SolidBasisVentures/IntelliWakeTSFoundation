@@ -710,8 +710,8 @@ export const DurationLongDescription = (seconds: number, trimSeconds = false): s
 	return text.trim()
 }
 
-export const DateCompare = (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2?: TDateAny, atInterval?: TDuration): boolean => {
-	const components = DateDiffComponents(date1, date2)
+export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2?: TDateAny, atInterval?: TDuration): boolean => {
+	const components = DateDiffComponents(date2 ?? null, date1)
 	
 	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
 		if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)

@@ -68,4 +68,4 @@ export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo?: st
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
 export declare const DurationLongDescription: (seconds: number, trimSeconds?: boolean) => string;
-export declare const DateCompare: (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2?: string | number | Date | null | undefined, atInterval?: "year" | "years" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;
+export declare const DateCompare: (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2?: string | number | Date | null | undefined, atInterval?: "year" | "years" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;

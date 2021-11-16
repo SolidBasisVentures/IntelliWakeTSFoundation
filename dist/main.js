@@ -2095,9 +2095,9 @@ var DurationLongDescription = function (seconds, trimSeconds) {
     }
     return text.trim();
 };
-var DateCompare = function (evalType, date1, date2, atInterval) {
+var DateCompare = function (date1, evalType, date2, atInterval) {
     var _a, _b, _c, _d;
-    var components = DateDiffComponents(date1, date2);
+    var components = DateDiffComponents(date2 !== null && date2 !== void 0 ? date2 : null, date1);
     var checkType = function (evalCheck, diff) {
         if (diff === 0)
             return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
