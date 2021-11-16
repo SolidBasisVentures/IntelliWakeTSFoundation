@@ -1529,8 +1529,8 @@ var IsDateString = function (value) {
         return false;
     return !!DateParseTSInternal(value);
 };
-var DateParseTSInternal = function (date) {
-    var _a;
+var DateParseTSInternal = function (date, timezoneSource) {
+    var _a, _b;
     if (!date)
         return new Date().valueOf(); // Date.parse(new Date().toString())
     if (typeof date === 'number')
@@ -1548,16 +1548,17 @@ var DateParseTSInternal = function (date) {
         }
         // Set a time string with no other timezone data to the current timezone
         if (!StringHasTimeZoneData(date)) {
-            return result + (((_a = IANAOffset()) !== null && _a !== void 0 ? _a : 0) * 60 * 1000);
+            // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
+            return result + ((((_a = IANAOffset(timezoneSource)) !== null && _a !== void 0 ? _a : 0) - ((_b = IANAOffset()) !== null && _b !== void 0 ? _b : 0)) * 60 * 1000);
         }
         return result;
     }
-    catch (_b) {
+    catch (_c) {
         return null;
     }
 };
 var DateParseTS = function (date, adjustements) {
-    var newDate = DateParseTSInternal(date);
+    var newDate = DateParseTSInternal(date, adjustements === null || adjustements === void 0 ? void 0 : adjustements.timezoneSource);
     if (!newDate || !adjustements)
         return newDate;
     return DateAdjustTS(newDate, adjustements);
@@ -1588,24 +1589,22 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
-var DateFormat = function (date, format, timezone, timezoneSource) {
-    var dateObject = DateObject(date);
-    if (!dateObject || dateObject.valueOf() === 0)
-        return null;
-    if (timezone) {
+var DateFormat = function (date, format, timezoneDisplay, timezoneSource) {
+    var _a, _b, _c;
+    var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
+    var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource !== null && timezoneSource !== void 0 ? timezoneSource : timezoneDisplay) : undefined));
+    if (timezoneDisplay) {
         try {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
-            if (timezoneSource) {
-                var fromOffset = IANAOffset(timezoneSource);
-                var toOffset = IANAOffset(timezone);
-                if (fromOffset === null || toOffset === null)
-                    return null;
-                dateObject = DateObject(date, { minutes: fromOffset - toOffset });
-            }
-            else {
-                dateObject = DateObject(dateObject.toLocaleString('en-US', { timeZone: timezone }));
-            }
+            var sourceOffset = (_a = IANAOffset(timezoneSource)) !== null && _a !== void 0 ? _a : 0; // Chic 5
+            var displayOffset = (_b = IANAOffset(timezoneDisplay)) !== null && _b !== void 0 ? _b : 0; // Chic 6
+            var offset = noTZInfo ? !timezoneSource ? (displayOffset - sourceOffset) - (displayOffset - sourceOffset) : (((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) : (sourceOffset - displayOffset);
+            // if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
+            // console.log('---')
+            // 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
+            dateObject = DateObject(dateObject, { minutes: offset });
+            // dateObject = DateObject(dateObject, {minutes: toOffset})
         }
         catch (err) {
             console.log('Invalid Timezone', err);
@@ -1614,27 +1613,27 @@ var DateFormat = function (date, format, timezone, timezoneSource) {
     }
     if (!dateObject || dateObject.valueOf() === 0)
         return null;
-    var applyCommand = function (command, date) {
+    var applyCommand = function (command, dateApply) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         switch (command) {
             case 'YYYY':
-                return date.getFullYear().toString();
+                return dateApply.getFullYear().toString();
             case 'YY':
-                return date.getFullYear().toString().substr(2);
+                return dateApply.getFullYear().toString().substr(2);
             case 'Q':
-                return (Math.ceil((date.getMonth() + 1) / 3)).toString();
+                return (Math.ceil((dateApply.getMonth() + 1) / 3)).toString();
             case 'Qo':
-                return (_a = DigitsNth((Math.ceil((date.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
+                return (_a = DigitsNth((Math.ceil((dateApply.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
             case 'MMMM':
-                return (_b = MonthNames[date.getMonth()]) !== null && _b !== void 0 ? _b : '';
+                return (_b = MonthNames[dateApply.getMonth()]) !== null && _b !== void 0 ? _b : '';
             case 'MMM':
-                return ((_c = MonthNames[date.getMonth()]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
+                return ((_c = MonthNames[dateApply.getMonth()]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
             case 'MM':
-                return (date.getMonth() + 1).toString().padStart(2, '0');
+                return (dateApply.getMonth() + 1).toString().padStart(2, '0');
             case 'Mo':
-                return (_d = DigitsNth(date.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
+                return (_d = DigitsNth(dateApply.getMonth() + 1)) !== null && _d !== void 0 ? _d : '';
             case 'M':
-                return (date.getMonth() + 1).toString();
+                return (dateApply.getMonth() + 1).toString();
             /**
              * Week of Year	w	1 2 ... 52 53
              * wo	1st 2nd ... 52nd 53rd
@@ -1649,41 +1648,41 @@ var DateFormat = function (date, format, timezone, timezoneSource) {
              * DDDD	001 002 ... 364 365
              */
             case 'DD':
-                return date.getDate().toString().padStart(2, '0');
+                return dateApply.getDate().toString().padStart(2, '0');
             case 'Do':
-                return (_e = DigitsNth(date.getDate())) !== null && _e !== void 0 ? _e : '';
+                return (_e = DigitsNth(dateApply.getDate())) !== null && _e !== void 0 ? _e : '';
             case 'D':
-                return date.getDate().toString();
+                return dateApply.getDate().toString();
             case 'd':
-                return date.getDay().toString();
+                return dateApply.getDay().toString();
             case 'do':
-                return (_f = DigitsNth(date.getDay())) !== null && _f !== void 0 ? _f : '';
+                return (_f = DigitsNth(dateApply.getDay())) !== null && _f !== void 0 ? _f : '';
             case 'dd':
-                return ((_g = WeekDays[date.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
+                return ((_g = WeekDays[dateApply.getDay()]) !== null && _g !== void 0 ? _g : '').substr(0, 2);
             case 'ddd':
-                return ((_h = WeekDays[date.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
+                return ((_h = WeekDays[dateApply.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
             case 'dddd':
-                return ((_j = WeekDays[date.getDay()]) !== null && _j !== void 0 ? _j : '');
+                return ((_j = WeekDays[dateApply.getDay()]) !== null && _j !== void 0 ? _j : '');
             case 'HH':
-                return date.getHours().toString().padStart(2, '0');
+                return dateApply.getHours().toString().padStart(2, '0');
             case 'H':
-                return date.getHours().toString();
+                return dateApply.getHours().toString();
             case 'hh':
-                return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString().padStart(2, '0');
+                return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString().padStart(2, '0');
             case 'h':
-                return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString();
+                return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString();
             case 'mm':
-                return date.getMinutes().toString().padStart(2, '0');
+                return dateApply.getMinutes().toString().padStart(2, '0');
             case 'm':
-                return date.getMinutes().toString();
+                return dateApply.getMinutes().toString();
             case 'ss':
-                return date.getSeconds().toString().padStart(2, '0');
+                return dateApply.getSeconds().toString().padStart(2, '0');
             case 's':
-                return date.getSeconds().toString();
+                return dateApply.getSeconds().toString();
             case 'A':
-                return date.getHours() > 12 ? 'PM' : 'AM';
+                return dateApply.getHours() > 12 ? 'PM' : 'AM';
             case 'a':
-                return date.getHours() > 12 ? 'pm' : 'am';
+                return dateApply.getHours() > 12 ? 'pm' : 'am';
             default:
                 return command;
         }

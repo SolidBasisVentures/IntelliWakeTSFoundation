@@ -82,7 +82,7 @@ export const IsDateString = (value: any): boolean => {
 
 export type TDateAny = Date | number | string | null
 
-const DateParseTSInternal = (date?: TDateAny): number | null => {
+const DateParseTSInternal = (date?: TDateAny, timezoneSource?: string): number | null => {
 	if (!date) return new Date().valueOf() // Date.parse(new Date().toString())
 	
 	if (typeof date === 'number') return date
@@ -104,7 +104,8 @@ const DateParseTSInternal = (date?: TDateAny): number | null => {
 		
 		// Set a time string with no other timezone data to the current timezone
 		if (!StringHasTimeZoneData(date)) {
-			return result + ((IANAOffset() ?? 0) * 60 * 1000)
+			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
+			return result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
 		
 		return result
@@ -113,22 +114,24 @@ const DateParseTSInternal = (date?: TDateAny): number | null => {
 	}
 }
 
-export const DateParseTS = (date?: TDateAny, adjustements?: TAdjustment): number | null => {
-	let newDate = DateParseTSInternal(date)
+export type TDateParseOptions = TAdjustment & {timezoneSource?: string}
+
+export const DateParseTS = (date?: TDateAny, adjustements?: TDateParseOptions): number | null => {
+	let newDate = DateParseTSInternal(date, adjustements?.timezoneSource)
 	
 	if (!newDate || !adjustements) return newDate
 	
 	return DateAdjustTS(newDate, adjustements)
 }
 
-export const DateISO = (date?: TDateAny, adjustements?: TAdjustment): string | null => {
+export const DateISO = (date?: TDateAny, adjustements?: TDateParseOptions): string | null => {
 	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date?: TDateAny, adjustements?: TAdjustment): Date | null => {
+export const DateObject = (date?: TDateAny, adjustements?: TDateParseOptions): Date | null => {
 	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
@@ -136,7 +139,7 @@ export const DateObject = (date?: TDateAny, adjustements?: TAdjustment): Date | 
 	return new Date(parsed)
 }
 
-export const DateICS = (date?: TDateAny, adjustements?: TAdjustment): string | null => {
+export const DateICS = (date?: TDateAny, adjustements?: TDateParseOptions): string | null => {
 	const dateISO = DateISO(date, adjustements)
 	
 	if (!dateISO) return null
@@ -168,25 +171,25 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
-export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timezone?: string, timezoneSource?: string): string | null => {
-	let dateObject = DateObject(date)
+export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timezoneDisplay?: string, timezoneSource?: string): string | null => {
+	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
-	if (!dateObject || dateObject.valueOf() === 0) return null
+	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
 	
-	if (timezone) {
+	if (timezoneDisplay) {
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
 			
-			if (timezoneSource) {
-				const fromOffset = IANAOffset(timezoneSource)
-				const toOffset = IANAOffset(timezone)
-				
-				if (fromOffset === null || toOffset === null) return null
-				
-				dateObject = DateObject(date, {minutes: fromOffset - toOffset})
-			} else {
-				dateObject = DateObject(dateObject.toLocaleString('en-US', {timeZone: timezone}))
-			}
+			const sourceOffset = IANAOffset(timezoneSource) ?? 0 // Chic 5
+			const displayOffset = IANAOffset(timezoneDisplay) ?? 0 // Chic 6
+			const offset = noTZInfo ? !timezoneSource ? (displayOffset - sourceOffset) - (displayOffset - sourceOffset) : ((IANAOffset() ?? 0) - sourceOffset) - (displayOffset - sourceOffset) : (sourceOffset - displayOffset)
+
+			// if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
+			// console.log('---')
+			// 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
+			
+			dateObject = DateObject(dateObject, {minutes: offset})
+			// dateObject = DateObject(dateObject, {minutes: toOffset})
 		} catch (err) {
 			console.log('Invalid Timezone', err)
 			return null
@@ -195,26 +198,26 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 	
 	if (!dateObject || dateObject.valueOf() === 0) return null
 	
-	const applyCommand = (command: string, date: Date): string => {
+	const applyCommand = (command: string, dateApply: Date): string => {
 		switch (command) {
 			case 'YYYY':
-				return date.getFullYear().toString()
+				return dateApply.getFullYear().toString()
 			case 'YY':
-				return date.getFullYear().toString().substr(2)
+				return dateApply.getFullYear().toString().substr(2)
 			case 'Q':
-				return (Math.ceil((date.getMonth() + 1) / 3)).toString()
+				return (Math.ceil((dateApply.getMonth() + 1) / 3)).toString()
 			case 'Qo':
-				return DigitsNth((Math.ceil((date.getMonth() + 1) / 3))) ?? ''
+				return DigitsNth((Math.ceil((dateApply.getMonth() + 1) / 3))) ?? ''
 			case 'MMMM':
-				return MonthNames[date.getMonth()] ?? ''
+				return MonthNames[dateApply.getMonth()] ?? ''
 			case 'MMM':
-				return (MonthNames[date.getMonth()] ?? '').substr(0, 3)
+				return (MonthNames[dateApply.getMonth()] ?? '').substr(0, 3)
 			case 'MM':
-				return (date.getMonth() + 1).toString().padStart(2, '0')
+				return (dateApply.getMonth() + 1).toString().padStart(2, '0')
 			case 'Mo':
-				return DigitsNth(date.getMonth() + 1) ?? ''
+				return DigitsNth(dateApply.getMonth() + 1) ?? ''
 			case 'M':
-				return (date.getMonth() + 1).toString()
+				return (dateApply.getMonth() + 1).toString()
 			/**
 			 * Week of Year	w	1 2 ... 52 53
 			 * wo	1st 2nd ... 52nd 53rd
@@ -229,41 +232,41 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 			 * DDDD	001 002 ... 364 365
 			 */
 			case 'DD':
-				return date.getDate().toString().padStart(2, '0')
+				return dateApply.getDate().toString().padStart(2, '0')
 			case 'Do':
-				return DigitsNth(date.getDate()) ?? ''
+				return DigitsNth(dateApply.getDate()) ?? ''
 			case 'D':
-				return date.getDate().toString()
+				return dateApply.getDate().toString()
 			case 'd':
-				return date.getDay().toString()
+				return dateApply.getDay().toString()
 			case 'do':
-				return DigitsNth(date.getDay()) ?? ''
+				return DigitsNth(dateApply.getDay()) ?? ''
 			case 'dd':
-				return (WeekDays[date.getDay()] ?? '').substr(0, 2)
+				return (WeekDays[dateApply.getDay()] ?? '').substr(0, 2)
 			case 'ddd':
-				return (WeekDays[date.getDay()] ?? '').substr(0, 3)
+				return (WeekDays[dateApply.getDay()] ?? '').substr(0, 3)
 			case 'dddd':
-				return (WeekDays[date.getDay()] ?? '')
+				return (WeekDays[dateApply.getDay()] ?? '')
 			case 'HH':
-				return date.getHours().toString().padStart(2, '0')
+				return dateApply.getHours().toString().padStart(2, '0')
 			case 'H':
-				return date.getHours().toString()
+				return dateApply.getHours().toString()
 			case 'hh':
-				return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString().padStart(2, '0')
+				return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString().padStart(2, '0')
 			case 'h':
-				return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString()
+				return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString()
 			case 'mm':
-				return date.getMinutes().toString().padStart(2, '0')
+				return dateApply.getMinutes().toString().padStart(2, '0')
 			case 'm':
-				return date.getMinutes().toString()
+				return dateApply.getMinutes().toString()
 			case 'ss':
-				return date.getSeconds().toString().padStart(2, '0')
+				return dateApply.getSeconds().toString().padStart(2, '0')
 			case 's':
-				return date.getSeconds().toString()
+				return dateApply.getSeconds().toString()
 			case 'A':
-				return date.getHours() > 12 ? 'PM' : 'AM'
+				return dateApply.getHours() > 12 ? 'PM' : 'AM'
 			case 'a':
-				return date.getHours() > 12 ? 'pm' : 'am'
+				return dateApply.getHours() > 12 ? 'pm' : 'am'
 			default:
 				return command
 		}
@@ -572,7 +575,7 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
-export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
+export const DateDiffComponents = (dateFrom: TDateAny, dateTo?: TDateAny): {
 	year: number
 	month: number
 	day: number
@@ -617,7 +620,7 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	return returnComponents
 }
 
-export const ComponentsLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, trimSeconds = false): string => {
+export const ComponentsLongDescription = (dateFrom: TDateAny, dateTo?: TDateAny, trimSeconds = false): string => {
 	const components = DateDiffComponents(dateFrom, dateTo)
 	
 	let text = ''
@@ -707,7 +710,7 @@ export const DurationLongDescription = (seconds: number, trimSeconds = false): s
 	return text.trim()
 }
 
-export const DateCompare = (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2: TDateAny, atInterval?: TDuration): boolean => {
+export const DateCompare = (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2?: TDateAny, atInterval?: TDuration): boolean => {
 	const components = DateDiffComponents(date1, date2)
 	
 	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {

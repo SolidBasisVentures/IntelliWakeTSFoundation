@@ -1,4 +1,4 @@
-import {DateFormat, DateISO} from '../src/DateManager'
+import {DateFormat} from '../src/DateManager'
 
 require('source-map-support').install()
 
@@ -7,13 +7,22 @@ require('source-map-support').install()
 // console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong'))
 // console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
 // console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
-console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles'))
+console.log('NY', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong'), '10')
+console.log('NY', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York'), '10')
+console.log('LA', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'), '1p')
+console.log('CA', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Chicago'), '11a')
+console.log('NY-LA', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles'), '1p')
+console.log('LA-NY', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles', 'America/New_York'), '7a')
+console.log('NY-CA', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Chicago'), '11a')
+console.log('LA-CA', DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles', 'America/Chicago'), '8a')
+console.log('CA-NY', DateFormat('2021-01-01 09:00:00', 'DisplayDateDoWTimeLong', 'America/Chicago', 'America/New_York'), '8a')
+console.log('CA-LA', DateFormat('2021-01-01 09:00:00', 'DisplayDateDoWTimeLong', 'America/Chicago', 'America/Los_Angeles'), '11a')
 
-console.log(DateISO())
-console.log(DateFormat(undefined, 'DisplayDateDoWTime'))
-console.log(DateISO('2021-01-01'))
-console.log(DateFormat('2021-01-01', 'DisplayDateDoW'))
-console.log(DateFormat('2021-01-01', 'DisplayDateDoWTime'))
+// console.log(DateISO())
+// console.log(DateFormat(undefined, 'DisplayDateDoWTime'))
+// console.log(DateISO('2021-01-01'))
+// console.log(DateFormat('2021-01-01', 'DisplayDateDoW'))
+// console.log(DateFormat('2021-01-01', 'DisplayDateDoWTime'))
 
 
 // for (const mnth of [...Array(28).keys()]) {

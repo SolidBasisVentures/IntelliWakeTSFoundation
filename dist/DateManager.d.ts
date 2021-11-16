@@ -26,12 +26,15 @@ export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;
 export declare const IsDateString: (value: any) => boolean;
 export declare type TDateAny = Date | number | string | null;
-export declare const DateParseTS: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => number | null;
-export declare const DateISO: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => string | null;
-export declare const DateObject: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => Date | null;
-export declare const DateICS: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => string | null;
+export declare type TDateParseOptions = TAdjustment & {
+    timezoneSource?: string;
+};
+export declare const DateParseTS: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => number | null;
+export declare const DateISO: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => string | null;
+export declare const DateObject: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => Date | null;
+export declare const DateICS: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => string | null;
 export declare type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
-export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezone?: string | undefined, timezoneSource?: string | undefined) => string | null;
+export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (date?: string | number | Date | null | undefined) => string;
@@ -48,7 +51,7 @@ export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) =
 export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
 export declare const DateDiff: (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration) => number | null;
-export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
+export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo?: string | number | Date | null | undefined) => {
     year: number;
     month: number;
     day: number;
@@ -57,7 +60,7 @@ export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) 
     second: number;
     millisecond: number;
 };
-export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo: TDateAny, trimSeconds?: boolean) => string;
+export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo?: string | number | Date | null | undefined, trimSeconds?: boolean) => string;
 /**
  * Displays a simplified duration format from seconds.
  *
@@ -65,4 +68,4 @@ export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo: TDa
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
 export declare const DurationLongDescription: (seconds: number, trimSeconds?: boolean) => string;
-export declare const DateCompare: (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2: TDateAny, atInterval?: "year" | "years" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;
+export declare const DateCompare: (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2?: string | number | Date | null | undefined, atInterval?: "year" | "years" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;
