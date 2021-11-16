@@ -426,12 +426,13 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 		case 'years':
 		case 'month':
 		case 'months':
-			const increment = (['year', 'years'].includes(duration) ? 12 : 1) * ((date1 > date2) ? 1 : -1)
+			const isNegative = date1 < date2
+			const increment = (['year', 'years'].includes(duration) ? 12 : 1) * (isNegative ? -1 : 1)
 			let count = 0
-			let newTS = date2
+			let newTS = DateAdjustMonthTS(date2, increment) ?? 0
 			
-			while (date1 > date2 ? date1 > newTS : date1 < newTS) {
-				count++
+			while (date1 > date2 ? date1 >= newTS : date1 <= newTS) {
+				count += isNegative ? 1 : -1
 				newTS = DateAdjustMonthTS(newTS, increment) ?? 0
 			}
 			
@@ -441,19 +442,19 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 			switch (duration) {
 				case 'week':
 				case 'weeks':
-					return TSWeeks(diff)
+					return diff < 0 ? TSWeeks(diff * -1) * -1 : TSWeeks(diff)
 				case 'day':
 				case 'days':
-					return TSDays(diff)
+					return diff < 0 ? TSDays(diff * -1) * -1 : TSDays(diff)
 				case 'hour':
 				case 'hours':
-					return TSHours(diff)
+					return diff < 0 ? TSHours(diff * -1) * -1 : TSHours(diff)
 				case 'minute':
 				case 'minutes':
-					return TSMinutes(diff)
+					return diff < 0 ? TSMinutes(diff * -1) * -1 : TSMinutes(diff)
 				case 'second':
 				case 'seconds':
-					return TSSeconds(diff)
+					return diff < 0 ? TSSeconds(diff * -1) * -1 : TSSeconds(diff)
 				case 'millisecond':
 				case 'milliseconds':
 					return diff
@@ -462,6 +463,55 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	}
 	
 	return null
+}
+
+export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
+	year: number
+	month: number
+	day: number
+	hour: number
+	minute: number
+	second: number
+	millisecond: number
+} => {
+	let returnComponents = {
+		year: 0,
+		month: 0,
+		day: 0,
+		hour: 0,
+		minute: 0,
+		second: 0,
+		millisecond: 0
+	}
+	
+	const dateFromTS = DateParseTSInternal(dateFrom) ?? 0
+	let checkTo = DateParseTSInternal(dateTo) ?? 0
+	
+	returnComponents.year = DateDiff(dateFromTS, checkTo, 'year') ?? 0
+	if (returnComponents.year) checkTo = DateParseTS(checkTo, {year: returnComponents.year * -1}) ?? 0
+	
+	returnComponents.month = DateDiff(dateFromTS, checkTo, 'month') ?? 0
+	if (returnComponents.month) checkTo = DateParseTS(checkTo, {month: returnComponents.month * -1}) ?? 0
+	
+	// console.log(DateISO(dateFromTS), DateISO(checkTo))
+
+	returnComponents.day = DateDiff(dateFromTS, checkTo, 'day') ?? 0
+	if (returnComponents.day) checkTo = DateParseTS(checkTo, {day: returnComponents.day * -1}) ?? 0
+	
+	// console.log(DateISO(dateFromTS), DateISO(checkTo))
+	
+	returnComponents.hour = DateDiff(dateFromTS, checkTo, 'hour') ?? 0
+	if (returnComponents.hour) checkTo = DateParseTS(checkTo, {hour: returnComponents.hour * -1}) ?? 0
+	
+	returnComponents.minute = DateDiff(dateFromTS, checkTo, 'minute') ?? 0
+	if (returnComponents.minute) checkTo = DateParseTS(checkTo, {minute: returnComponents.minute * -1}) ?? 0
+	
+	returnComponents.second = DateDiff(dateFromTS, checkTo, 'second') ?? 0
+	if (returnComponents.second) checkTo = DateParseTS(checkTo, {second: returnComponents.second * -1}) ?? 0
+	
+	returnComponents.millisecond = DateDiff(dateFromTS, checkTo, 'millisecond') ?? 0
+	
+	return returnComponents
 }
 
 /**
