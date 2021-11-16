@@ -1,7 +1,4 @@
-import {
-	DateCompare,
-	DateFormat
-} from '../src/DateManager'
+import {DateFormat, DateISO} from '../src/DateManager'
 
 require('source-map-support').install()
 
@@ -12,9 +9,11 @@ require('source-map-support').install()
 // console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
 console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles'))
 
-const isoLongDateString = '2021-01-01T10:00:00-05:00'
-
-console.log(DateCompare('IsSame', isoLongDateString, isoLongDateString))
+console.log(DateISO())
+console.log(DateFormat(undefined, 'DisplayDateDoWTime'))
+console.log(DateISO('2021-01-01'))
+console.log(DateFormat('2021-01-01', 'DisplayDateDoW'))
+console.log(DateFormat('2021-01-01', 'DisplayDateDoWTime'))
 
 
 // for (const mnth of [...Array(28).keys()]) {

@@ -41,12 +41,12 @@ export type TAdjustment = { [key in TDuration]?: number }
  * Current time in ISO string format
  */
 export const NowISOString = (): string => new Date().toISOString()
-export const CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export const IANAOffset = (timeZone: string): number | null => {
+export const IANAOffset = (timeZone?: string): number | null => {
 	const timeZoneName = Intl.DateTimeFormat('ia', {
 		timeZoneName: 'short',
-		timeZone: timeZone
+		timeZone: timeZone ?? CurrentTimeZone()
 	})
 		.formatToParts()
 		.find((i) => i.type === 'timeZoneName')?.value
@@ -69,7 +69,7 @@ export const IANAOffset = (timeZone: string): number | null => {
 
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
-export const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.includes('+') || value.substr(15).includes('-')
+export const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-')
 
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
@@ -83,11 +83,11 @@ export const IsDateString = (value: any): boolean => {
 export type TDateAny = Date | number | string | null
 
 const DateParseTSInternal = (date?: TDateAny): number | null => {
-	if (!date) return Date.parse(new Date().toString())
+	if (!date) return new Date().valueOf() // Date.parse(new Date().toString())
 	
-	if (typeof date === 'object') {
-		return date.valueOf()
-	}
+	if (typeof date === 'number') return date
+	
+	if (typeof date === 'object') return date.valueOf()
 	
 	try {
 		const result: any = Date.parse(date.toString())
@@ -100,6 +100,11 @@ const DateParseTSInternal = (date?: TDateAny): number | null => {
 			}
 			
 			return Date.parse(check.toString())
+		}
+		
+		// Set a time string with no other timezone data to the current timezone
+		if (!StringHasTimeZoneData(date)) {
+			return result + ((IANAOffset() ?? 0) * 60 * 1000)
 		}
 		
 		return result

@@ -1494,12 +1494,12 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
  * Current time in ISO string format
  */
 var NowISOString = function () { return new Date().toISOString(); };
-var CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
 var IANAOffset = function (timeZone) {
     var _a;
     var timeZoneName = (_a = Intl.DateTimeFormat('ia', {
         timeZoneName: 'short',
-        timeZone: timeZone
+        timeZone: timeZone !== null && timeZone !== void 0 ? timeZone : CurrentTimeZone()
     })
         .formatToParts()
         .find(function (i) { return i.type === 'timeZoneName'; })) === null || _a === void 0 ? void 0 : _a.value;
@@ -1521,7 +1521,7 @@ var IANAOffset = function (timeZone) {
 };
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
-var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
+var StringHasTimeZoneData = function (value) { return value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-'); };
 var IsDateString = function (value) {
     if (!value || typeof value !== 'string')
         return false;
@@ -1530,11 +1530,13 @@ var IsDateString = function (value) {
     return !!DateParseTSInternal(value);
 };
 var DateParseTSInternal = function (date) {
+    var _a;
     if (!date)
-        return Date.parse(new Date().toString());
-    if (typeof date === 'object') {
+        return new Date().valueOf(); // Date.parse(new Date().toString())
+    if (typeof date === 'number')
+        return date;
+    if (typeof date === 'object')
         return date.valueOf();
-    }
     try {
         var result = Date.parse(date.toString());
         if (isNaN(result)) {
@@ -1544,9 +1546,13 @@ var DateParseTSInternal = function (date) {
             }
             return Date.parse(check.toString());
         }
+        // Set a time string with no other timezone data to the current timezone
+        if (!StringHasTimeZoneData(date)) {
+            return result + (((_a = IANAOffset()) !== null && _a !== void 0 ? _a : 0) * 60 * 1000);
+        }
         return result;
     }
-    catch (_a) {
+    catch (_b) {
         return null;
     }
 };
