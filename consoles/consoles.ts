@@ -1,14 +1,16 @@
 import {
-	DateFormat,
-	NowISOString
+	DateFormat
 } from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(NowISOString())
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
-console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong'))
-console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
+// console.log(NowISOString())
+// console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
+// console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong'))
+// console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
+// console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
+console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles'))
+
 
 // for (const mnth of [...Array(28).keys()]) {
 // 	console.log(mnth - 14, DateISO('2021-01-31T00:00:00Z', {month: mnth - 14})?.substr(5, 5))

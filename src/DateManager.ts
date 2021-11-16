@@ -43,6 +43,30 @@ export type TAdjustment = { [key in TDuration]?: number }
 export const NowISOString = (): string => new Date().toISOString()
 export const CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
+export const IANAOffset = (timeZone: string): number | null => {
+	const timeZoneName = Intl.DateTimeFormat('ia', {
+		timeZoneName: 'short',
+		timeZone: timeZone
+	})
+		.formatToParts()
+		.find((i) => i.type === 'timeZoneName')?.value
+	const offset = timeZoneName?.slice(3)
+	if (!offset) return 0
+	
+	const matchData = offset.match(/([+-])(\d+)(?::(\d+))?/)
+	if (!matchData) {
+		console.log(`cannot parse timezone name: ${timeZoneName}`)
+		return null
+	}
+	
+	const [, sign, hour, minute] = matchData
+	let result = parseInt(hour) * 60
+	if (sign === '+') result *= -1
+	if (minute) result += parseInt(minute)
+	
+	return result
+}
+
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
 export const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.includes('+') || value.substr(15).includes('-')
@@ -127,9 +151,19 @@ export const DateICS = (date?: TDateAny, adjustements?: TAdjustment): string | n
 	return dateICS
 }
 
-export type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong'
+export type TDateFormat =
+	'Local'
+	| 'Date'
+	| 'DisplayDate'
+	| 'DisplayDateDoW'
+	| 'DisplayDateTime'
+	| 'DisplayDateDoWTime'
+	| 'DisplayDateLong'
+	| 'DisplayDateDoWLong'
+	| 'DisplayDateTimeLong'
+	| 'DisplayDateDoWTimeLong'
 
-export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timezone?: string): string | null => {
+export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timezone?: string, timezoneSource?: string): string | null => {
 	let dateObject = DateObject(date)
 	
 	if (!dateObject || dateObject.valueOf() === 0) return null
@@ -138,7 +172,16 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
 			
-			dateObject = DateObject(dateObject.toLocaleString("en-US", {timeZone: timezone}))
+			if (timezoneSource) {
+				const fromOffset = IANAOffset(timezoneSource)
+				const toOffset = IANAOffset(timezone)
+				
+				if (fromOffset === null || toOffset === null) return null
+				
+				dateObject = DateObject(date, {minutes: fromOffset - toOffset})
+			} else {
+				dateObject = DateObject(dateObject.toLocaleString('en-US', {timeZone: timezone}))
+			}
 		} catch (err) {
 			console.log('Invalid Timezone', err)
 			return null
@@ -223,7 +266,7 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 	
 	let useFormat: string
 	
-	switch(format) {
+	switch (format) {
 		case 'Local':
 			useFormat = 'MM/DD/YYYY'
 			break
@@ -259,7 +302,7 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 			break
 		default:
 			useFormat = format ?? 'YYYY-MM-DD HH:mm:ss a'
-			break;
+			break
 	}
 	
 	const formatArray = useFormat.split('')
@@ -477,7 +520,7 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	const date2 = DateParseTSInternal(dateTo)
 	
 	if (!date1 || !date2) return null
-
+	
 	switch (duration) {
 		case 'year':
 		case 'years':
@@ -551,7 +594,7 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	if (returnComponents.month) checkTo = DateParseTS(checkTo, {month: returnComponents.month * -1}) ?? 0
 	
 	// console.log(DateISO(dateFromTS), DateISO(checkTo))
-
+	
 	returnComponents.day = DateDiff(dateFromTS, checkTo, 'day') ?? 0
 	if (returnComponents.day) checkTo = DateParseTS(checkTo, {day: returnComponents.day * -1}) ?? 0
 	

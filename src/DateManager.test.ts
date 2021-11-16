@@ -8,6 +8,7 @@ test('Date Managers', () => {
 	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
 	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong')).toEqual('Thursday, December 31, 2020, 7:00 pm')
 	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
+	expect(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
 	expect(DateAdjustTS(dateTS, {
