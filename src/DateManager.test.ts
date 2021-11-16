@@ -1,4 +1,4 @@
-import {DateAdjustTS, DateDiff, DateDiffComponents, DateFormat, DateISO, DateParseTS} from './DateManager'
+import {DateAdjustTS, DateCompare, DateDiff, DateDiffComponents, DateFormat, DateISO, DateParseTS} from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dateTS = DateParseTS(isoLongDateString)
@@ -71,4 +71,31 @@ test('Date Managers', () => {
 		second: -1,
 		millisecond: 0
 	})
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z')).toEqual(true)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'second')).toEqual(true)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'millisecond')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'second')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'millisecond')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'second')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'millisecond')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'second')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:00:00Z', 'millisecond')).toEqual(true)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z')).toEqual(false)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'second')).toEqual(false)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'minute')).toEqual(false)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'hour')).toEqual(true)
+	expect(DateCompare('IsSame', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'day')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2023-01-01T00:01:00Z', 'year')).toEqual(false)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2023-01-01T00:01:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2018-01-01T00:01:00Z', 'year')).toEqual(true)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2018-01-01T00:01:00Z', 'year')).toEqual(false)
+	expect(DateCompare('IsSameOrBefore', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'second')).toEqual(false)
+	expect(DateCompare('IsSameOrAfter', '2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', 'second')).toEqual(true)
 })

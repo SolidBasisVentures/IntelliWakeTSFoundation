@@ -20,6 +20,7 @@ export declare type TAdjustment = {
  */
 export declare const NowISOString: () => string;
 export declare const CurrentTimeZone: string;
+export declare const IANAOffset: (timeZone: string) => number | null;
 export declare const StringHasTimeData: (value: string) => boolean;
 export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;
@@ -30,35 +31,14 @@ export declare const DateISO: (date?: string | number | Date | null | undefined,
 export declare const DateObject: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => Date | null;
 export declare const DateICS: (date?: string | number | Date | null | undefined, adjustements?: TAdjustment | undefined) => string | null;
 export declare type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
-export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezone?: string | undefined) => string | null;
+export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezone?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYYsMMsDD: (date?: string | number | Date | null | undefined) => string;
 export declare const HHcmmcss: (date?: string | number | Date | null | undefined) => string;
-export declare const MonthNames: {
-    1: string;
-    2: string;
-    3: string;
-    4: string;
-    5: string;
-    6: string;
-    7: string;
-    8: string;
-    9: string;
-    10: string;
-    11: string;
-    12: string;
-};
-export declare const WeekDays: {
-    0: string;
-    1: string;
-    2: string;
-    3: string;
-    4: string;
-    5: string;
-    6: string;
-};
+export declare const MonthNames: string[];
+export declare const WeekDays: string[];
 export declare const TSYearsEstimate: (ts: number) => number;
 export declare const TSMonthsEstimate: (ts: number, withinYear?: boolean | undefined) => number;
 export declare const TSWeeks: (ts: number) => number;
@@ -85,3 +65,4 @@ export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo: TDa
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
 export declare const DurationLongDescription: (seconds: number, trimSeconds?: boolean) => string;
+export declare const DateCompare: (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2: TDateAny, atInterval?: "year" | "years" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;

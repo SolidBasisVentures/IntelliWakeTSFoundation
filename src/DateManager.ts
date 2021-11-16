@@ -201,9 +201,9 @@ export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timez
 			case 'Qo':
 				return DigitsNth((Math.ceil((date.getMonth() + 1) / 3))) ?? ''
 			case 'MMMM':
-				return MonthNames[date.getMonth() + 1] ?? ''
+				return MonthNames[date.getMonth()] ?? ''
 			case 'MMM':
-				return (MonthNames[date.getMonth() + 1] ?? '').substr(0, 3)
+				return (MonthNames[date.getMonth()] ?? '').substr(0, 3)
 			case 'MM':
 				return (date.getMonth() + 1).toString().padStart(2, '0')
 			case 'Mo':
@@ -369,30 +369,30 @@ export const HHcmmcss = (date?: TDateAny): string => {
 	return `${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 
-export const MonthNames = {
-	1: 'January',
-	2: 'February',
-	3: 'March',
-	4: 'April',
-	5: 'May',
-	6: 'June',
-	7: 'July',
-	8: 'August',
-	9: 'September',
-	10: 'October',
-	11: 'November',
-	12: 'December'
-}
+export const MonthNames = [
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December'
+]
 
-export const WeekDays = {
-	0: 'Sunday',
-	1: 'Monday',
-	2: 'Tuesday',
-	3: 'Wednesday',
-	4: 'Thursday',
-	5: 'Friday',
-	6: 'Saturday'
-}
+export const WeekDays = [
+	'Sunday',
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday'
+]
 
 export const TSYearsEstimate = (ts: number): number => Math.floor(ts / 365 / 24 / 60 / 60 / 1000)
 export const TSMonthsEstimate = (ts: number, withinYear?: boolean): number => Math.floor((ts - (withinYear ? (TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000) : 0)) / 30 / 24 / 60 / 60 / 1000)
@@ -521,6 +521,8 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	
 	if (!date1 || !date2) return null
 	
+	if (date1 === date2) return 0
+	
 	switch (duration) {
 		case 'year':
 		case 'years':
@@ -531,8 +533,8 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 			let count = 0
 			let newTS = DateAdjustMonthTS(date2, increment) ?? 0
 			
-			while (date1 > date2 ? date1 >= newTS : date1 <= newTS) {
-				count += isNegative ? 1 : -1
+			while (isNegative ? date1 <= newTS : date1 >= newTS) {
+				count -= isNegative ? -1 : 1
 				newTS = DateAdjustMonthTS(newTS, increment) ?? 0
 			}
 			
@@ -593,12 +595,8 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	returnComponents.month = DateDiff(dateFromTS, checkTo, 'month') ?? 0
 	if (returnComponents.month) checkTo = DateParseTS(checkTo, {month: returnComponents.month * -1}) ?? 0
 	
-	// console.log(DateISO(dateFromTS), DateISO(checkTo))
-	
 	returnComponents.day = DateDiff(dateFromTS, checkTo, 'day') ?? 0
 	if (returnComponents.day) checkTo = DateParseTS(checkTo, {day: returnComponents.day * -1}) ?? 0
-	
-	// console.log(DateISO(dateFromTS), DateISO(checkTo))
 	
 	returnComponents.hour = DateDiff(dateFromTS, checkTo, 'hour') ?? 0
 	if (returnComponents.hour) checkTo = DateParseTS(checkTo, {hour: returnComponents.hour * -1}) ?? 0
@@ -702,4 +700,34 @@ export const DurationLongDescription = (seconds: number, trimSeconds = false): s
 	}
 	
 	return text.trim()
+}
+
+export const DateCompare = (evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date1: TDateAny, date2: TDateAny, atInterval?: TDuration): boolean => {
+	const components = DateDiffComponents(date1, date2)
+	
+	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
+		if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)
+		
+		if (diff > 0) return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck)
+		
+		return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
+	}
+	
+	if (!atInterval || ['millisecond', 'milliseconds'].includes(atInterval)) return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
+	
+	if (['year', 'years'].includes(atInterval) || components.year !== 0) return checkType(evalType, components.year)
+	
+	if (['month', 'months'].includes(atInterval) || components.month !== 0) return checkType(evalType, components.month)
+	
+	if (['week', 'weeks'].includes(atInterval) || Math.abs(components.day) >= 7) return checkType(evalType, components.day)
+	
+	if (['day', 'days'].includes(atInterval) || components.day !== 0) return checkType(evalType, components.day)
+	
+	if (['hour', 'hours'].includes(atInterval) || components.hour !== 0) return checkType(evalType, components.hour)
+	
+	if (['minute', 'minutes'].includes(atInterval) || components.minute !== 0) return checkType(evalType, components.minute)
+	
+	if (['second', 'seconds'].includes(atInterval) || components.second !== 0) return checkType(evalType, components.second)
+	
+	return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
 }

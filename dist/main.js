@@ -1495,6 +1495,30 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
  */
 var NowISOString = function () { return new Date().toISOString(); };
 var CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+var IANAOffset = function (timeZone) {
+    var _a;
+    var timeZoneName = (_a = Intl.DateTimeFormat('ia', {
+        timeZoneName: 'short',
+        timeZone: timeZone
+    })
+        .formatToParts()
+        .find(function (i) { return i.type === 'timeZoneName'; })) === null || _a === void 0 ? void 0 : _a.value;
+    var offset = timeZoneName === null || timeZoneName === void 0 ? void 0 : timeZoneName.slice(3);
+    if (!offset)
+        return 0;
+    var matchData = offset.match(/([+-])(\d+)(?::(\d+))?/);
+    if (!matchData) {
+        console.log("cannot parse timezone name: " + timeZoneName);
+        return null;
+    }
+    var sign = matchData[1], hour = matchData[2], minute = matchData[3];
+    var result = parseInt(hour) * 60;
+    if (sign === '+')
+        result *= -1;
+    if (minute)
+        result += parseInt(minute);
+    return result;
+};
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
 var StringHasTimeZoneData = function (value) { return value.includes('T') || value.includes('+') || value.substr(15).includes('-'); };
@@ -1558,7 +1582,7 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
-var DateFormat = function (date, format, timezone) {
+var DateFormat = function (date, format, timezone, timezoneSource) {
     var dateObject = DateObject(date);
     if (!dateObject || dateObject.valueOf() === 0)
         return null;
@@ -1566,7 +1590,16 @@ var DateFormat = function (date, format, timezone) {
         try {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
-            dateObject = DateObject(dateObject.toLocaleString("en-US", { timeZone: timezone }));
+            if (timezoneSource) {
+                var fromOffset = IANAOffset(timezoneSource);
+                var toOffset = IANAOffset(timezone);
+                if (fromOffset === null || toOffset === null)
+                    return null;
+                dateObject = DateObject(date, { minutes: fromOffset - toOffset });
+            }
+            else {
+                dateObject = DateObject(dateObject.toLocaleString('en-US', { timeZone: timezone }));
+            }
         }
         catch (err) {
             console.log('Invalid Timezone', err);
@@ -1587,9 +1620,9 @@ var DateFormat = function (date, format, timezone) {
             case 'Qo':
                 return (_a = DigitsNth((Math.ceil((date.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
             case 'MMMM':
-                return (_b = MonthNames[date.getMonth() + 1]) !== null && _b !== void 0 ? _b : '';
+                return (_b = MonthNames[date.getMonth()]) !== null && _b !== void 0 ? _b : '';
             case 'MMM':
-                return ((_c = MonthNames[date.getMonth() + 1]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
+                return ((_c = MonthNames[date.getMonth()]) !== null && _c !== void 0 ? _c : '').substr(0, 3);
             case 'MM':
                 return (date.getMonth() + 1).toString().padStart(2, '0');
             case 'Mo':
@@ -1753,29 +1786,29 @@ var HHcmmcss = function (date) {
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
     return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
 };
-var MonthNames = {
-    1: 'January',
-    2: 'February',
-    3: 'March',
-    4: 'April',
-    5: 'May',
-    6: 'June',
-    7: 'July',
-    8: 'August',
-    9: 'September',
-    10: 'October',
-    11: 'November',
-    12: 'December'
-};
-var WeekDays = {
-    0: 'Sunday',
-    1: 'Monday',
-    2: 'Tuesday',
-    3: 'Wednesday',
-    4: 'Thursday',
-    5: 'Friday',
-    6: 'Saturday'
-};
+var MonthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
+var WeekDays = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+];
 var TSYearsEstimate = function (ts) { return Math.floor(ts / 365 / 24 / 60 / 60 / 1000); };
 var TSMonthsEstimate = function (ts, withinYear) { return Math.floor((ts - (withinYear ? (TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000) : 0)) / 30 / 24 / 60 / 60 / 1000); };
 var TSWeeks = function (ts) { return Math.floor(ts / 7 / 24 / 60 / 60 / 1000); };
@@ -1891,6 +1924,8 @@ var DateDiff = function (dateFrom, dateTo, duration) {
     var date2 = DateParseTSInternal(dateTo);
     if (!date1 || !date2)
         return null;
+    if (date1 === date2)
+        return 0;
     switch (duration) {
         case 'year':
         case 'years':
@@ -1900,8 +1935,8 @@ var DateDiff = function (dateFrom, dateTo, duration) {
             var increment = (['year', 'years'].includes(duration) ? 12 : 1) * (isNegative ? -1 : 1);
             var count = 0;
             var newTS = (_a = DateAdjustMonthTS(date2, increment)) !== null && _a !== void 0 ? _a : 0;
-            while (date1 > date2 ? date1 >= newTS : date1 <= newTS) {
-                count += isNegative ? 1 : -1;
+            while (isNegative ? date1 <= newTS : date1 >= newTS) {
+                count -= isNegative ? -1 : 1;
                 newTS = (_b = DateAdjustMonthTS(newTS, increment)) !== null && _b !== void 0 ? _b : 0;
             }
             return count;
@@ -1950,11 +1985,9 @@ var DateDiffComponents = function (dateFrom, dateTo) {
     returnComponents.month = (_e = DateDiff(dateFromTS, checkTo, 'month')) !== null && _e !== void 0 ? _e : 0;
     if (returnComponents.month)
         checkTo = (_f = DateParseTS(checkTo, { month: returnComponents.month * -1 })) !== null && _f !== void 0 ? _f : 0;
-    // console.log(DateISO(dateFromTS), DateISO(checkTo))
     returnComponents.day = (_g = DateDiff(dateFromTS, checkTo, 'day')) !== null && _g !== void 0 ? _g : 0;
     if (returnComponents.day)
         checkTo = (_h = DateParseTS(checkTo, { day: returnComponents.day * -1 })) !== null && _h !== void 0 ? _h : 0;
-    // console.log(DateISO(dateFromTS), DateISO(checkTo))
     returnComponents.hour = (_j = DateDiff(dateFromTS, checkTo, 'hour')) !== null && _j !== void 0 ? _j : 0;
     if (returnComponents.hour)
         checkTo = (_k = DateParseTS(checkTo, { hour: returnComponents.hour * -1 })) !== null && _k !== void 0 ? _k : 0;
@@ -2056,6 +2089,34 @@ var DurationLongDescription = function (seconds, trimSeconds) {
         }
     }
     return text.trim();
+};
+var DateCompare = function (evalType, date1, date2, atInterval) {
+    var _a, _b, _c, _d;
+    var components = DateDiffComponents(date1, date2);
+    var checkType = function (evalCheck, diff) {
+        if (diff === 0)
+            return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
+        if (diff > 0)
+            return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
+        return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
+    };
+    if (!atInterval || ['millisecond', 'milliseconds'].includes(atInterval))
+        return checkType(evalType, ((_a = DateParseTSInternal(date1)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2)) !== null && _b !== void 0 ? _b : 0));
+    if (['year', 'years'].includes(atInterval) || components.year !== 0)
+        return checkType(evalType, components.year);
+    if (['month', 'months'].includes(atInterval) || components.month !== 0)
+        return checkType(evalType, components.month);
+    if (['week', 'weeks'].includes(atInterval) || Math.abs(components.day) >= 7)
+        return checkType(evalType, components.day);
+    if (['day', 'days'].includes(atInterval) || components.day !== 0)
+        return checkType(evalType, components.day);
+    if (['hour', 'hours'].includes(atInterval) || components.hour !== 0)
+        return checkType(evalType, components.hour);
+    if (['minute', 'minutes'].includes(atInterval) || components.minute !== 0)
+        return checkType(evalType, components.minute);
+    if (['second', 'seconds'].includes(atInterval) || components.second !== 0)
+        return checkType(evalType, components.second);
+    return checkType(evalType, ((_c = DateParseTSInternal(date1)) !== null && _c !== void 0 ? _c : 0) - ((_d = DateParseTSInternal(date2)) !== null && _d !== void 0 ? _d : 0));
 };
 
 var initialChanges = {};
@@ -3471,6 +3532,7 @@ exports.DATE_FORMAT_TIME_SECONDS = DATE_FORMAT_TIME_SECONDS;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
 exports.DateAdjustTS = DateAdjustTS;
+exports.DateCompare = DateCompare;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
 exports.DateFormat = DateFormat;
@@ -3499,6 +3561,7 @@ exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
+exports.IANAOffset = IANAOffset;
 exports.IsDateString = IsDateString;
 exports.IsEqual = IsEqual;
 exports.IsJSON = IsJSON;
