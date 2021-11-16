@@ -6,6 +6,8 @@ const dateTS = DateParseTS(isoLongDateString)
 test('Date Managers', () => {
 	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong')).toEqual('Thursday, December 31, 2020, 7:00 pm')
 	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
+	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong')).toEqual('Thursday, December 31, 2020, 7:00 pm')
+	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
 	expect(DateAdjustTS(dateTS, {

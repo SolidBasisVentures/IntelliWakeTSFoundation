@@ -41,6 +41,7 @@ export type TAdjustment = { [key in TDuration]?: number }
  * Current time in ISO string format
  */
 export const NowISOString = (): string => new Date().toISOString()
+export const CurrentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
