@@ -1,20 +1,9 @@
-import {ComponentsLongDescription, DateParseTS, DurationLongDescription} from '../src/DateManager'
+import {ComponentsLongDescription, DateFormat, DateParseTS, DurationLongDescription} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DurationLongDescription((60) + 23))
-
-console.log(DateParseTS())
-console.log(DateParseTS(new Date()))
-console.log(DateParseTS(1637025083521))
-console.log(DateParseTS('2021-01-01T00:00:00Z'))
-
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2022-02-31T02:02:00Z'))
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2021-02-31T02:02:00Z'))
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2021-01-31T02:02:00Z'))
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2021-01-01T02:02:00Z'))
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2021-01-01T00:02:02Z'))
-console.log(ComponentsLongDescription('2021-01-01T00:00:00Z', '2021-01-01T00:00:02Z'))
+console.log(DateFormat('2021-01-01T00:00:00Z', 'DisplayDateDoWTimeLong'))
+console.log(DateFormat('2021-01-01T00:00:00Z', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
 
 // for (const mnth of [...Array(28).keys()]) {
 // 	console.log(mnth - 14, DateISO('2021-01-31T00:00:00Z', {month: mnth - 14})?.substr(5, 5))

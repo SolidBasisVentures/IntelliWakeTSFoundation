@@ -1,9 +1,11 @@
-import {DateAdjustTS, DateDiff, DateDiffComponents, DateISO, DateParseTS} from './DateManager'
+import {DateAdjustTS, DateDiff, DateDiffComponents, DateFormat, DateISO, DateParseTS} from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dateTS = DateParseTS(isoLongDateString)
 
 test('Date Managers', () => {
+	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong')).toEqual('Thursday, December 31, 2020, 7:00 pm')
+	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
 	expect(DateAdjustTS(dateTS, {

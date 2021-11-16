@@ -126,31 +126,46 @@ export const DateICS = (date?: TDateAny, adjustements?: TAdjustment): string | n
 	return dateICS
 }
 
-export const DateFormat = (date: TDateAny, format: string): string | null => {
-	const dateObject = DateObject(date)
+export type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong'
+
+export const DateFormat = (date?: TDateAny, format?: string | TDateFormat, timezone?: string): string | null => {
+	let dateObject = DateObject(date)
 	
 	if (!dateObject || dateObject.valueOf() === 0) return null
 	
-	const applyCommand = (command: string): string => {
+	if (timezone) {
+		try {
+			if (!dateObject || dateObject.valueOf() === 0) return null
+			
+			dateObject = DateObject(dateObject.toLocaleString("en-US", {timeZone: timezone}))
+		} catch (err) {
+			console.log('Invalid Timezone', err)
+			return null
+		}
+	}
+	
+	if (!dateObject || dateObject.valueOf() === 0) return null
+	
+	const applyCommand = (command: string, date: Date): string => {
 		switch (command) {
 			case 'YYYY':
-				return dateObject.getFullYear().toString()
+				return date.getFullYear().toString()
 			case 'YY':
-				return dateObject.getFullYear().toString().substr(2)
+				return date.getFullYear().toString().substr(2)
 			case 'Q':
-				return (Math.ceil((dateObject.getMonth() + 1) / 3)).toString()
+				return (Math.ceil((date.getMonth() + 1) / 3)).toString()
 			case 'Qo':
-				return DigitsNth((Math.ceil((dateObject.getMonth() + 1) / 3))) ?? ''
+				return DigitsNth((Math.ceil((date.getMonth() + 1) / 3))) ?? ''
 			case 'MMMM':
-				return MonthNames[dateObject.getMonth() + 1] ?? ''
+				return MonthNames[date.getMonth() + 1] ?? ''
 			case 'MMM':
-				return (MonthNames[dateObject.getMonth() + 1] ?? '').substr(0, 3)
+				return (MonthNames[date.getMonth() + 1] ?? '').substr(0, 3)
 			case 'MM':
-				return (dateObject.getMonth() + 1).toString().padStart(2, '0')
+				return (date.getMonth() + 1).toString().padStart(2, '0')
 			case 'Mo':
-				return DigitsNth(dateObject.getMonth() + 1) ?? ''
+				return DigitsNth(date.getMonth() + 1) ?? ''
 			case 'M':
-				return (dateObject.getMonth() + 1).toString()
+				return (date.getMonth() + 1).toString()
 			/**
 			 * Week of Year	w	1 2 ... 52 53
 			 * wo	1st 2nd ... 52nd 53rd
@@ -165,47 +180,88 @@ export const DateFormat = (date: TDateAny, format: string): string | null => {
 			 * DDDD	001 002 ... 364 365
 			 */
 			case 'DD':
-				return dateObject.getDate().toString().padStart(2, '0')
+				return date.getDate().toString().padStart(2, '0')
 			case 'Do':
-				return DigitsNth(dateObject.getDate()) ?? ''
+				return DigitsNth(date.getDate()) ?? ''
 			case 'D':
-				return dateObject.getDate().toString()
+				return date.getDate().toString()
 			case 'd':
-				return dateObject.getDay().toString()
+				return date.getDay().toString()
 			case 'do':
-				return DigitsNth(dateObject.getDay()) ?? ''
+				return DigitsNth(date.getDay()) ?? ''
 			case 'dd':
-				return (WeekDays[dateObject.getDay()] ?? '').substr(0, 2)
+				return (WeekDays[date.getDay()] ?? '').substr(0, 2)
 			case 'ddd':
-				return (WeekDays[dateObject.getDay()] ?? '').substr(0, 3)
+				return (WeekDays[date.getDay()] ?? '').substr(0, 3)
 			case 'dddd':
-				return (WeekDays[dateObject.getDay()] ?? '')
+				return (WeekDays[date.getDay()] ?? '')
 			case 'HH':
-				return dateObject.getHours().toString().padStart(2, '0')
+				return date.getHours().toString().padStart(2, '0')
 			case 'H':
-				return dateObject.getHours().toString()
+				return date.getHours().toString()
 			case 'hh':
-				return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString().padStart(2, '0')
+				return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString().padStart(2, '0')
 			case 'h':
-				return (dateObject.getHours() > 12 ? dateObject.getHours() - 12 : dateObject.getHours()).toString()
+				return (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()).toString()
 			case 'mm':
-				return dateObject.getMinutes().toString().padStart(2, '0')
+				return date.getMinutes().toString().padStart(2, '0')
 			case 'm':
-				return dateObject.getMinutes().toString()
+				return date.getMinutes().toString()
 			case 'ss':
-				return dateObject.getSeconds().toString().padStart(2, '0')
+				return date.getSeconds().toString().padStart(2, '0')
 			case 's':
-				return dateObject.getSeconds().toString()
+				return date.getSeconds().toString()
 			case 'A':
-				return dateObject.getHours() > 12 ? 'PM' : 'AM'
+				return date.getHours() > 12 ? 'PM' : 'AM'
 			case 'a':
-				return dateObject.getHours() > 12 ? 'pm' : 'am'
+				return date.getHours() > 12 ? 'pm' : 'am'
 			default:
 				return command
 		}
 	}
 	
-	const formatArray = format.split('')
+	let useFormat: string
+	
+	switch(format) {
+		case 'Local':
+			useFormat = 'MM/DD/YYYY'
+			break
+		case 'Date':
+			useFormat = DATE_FORMAT_DATE
+			break
+		case 'DisplayDate':
+			useFormat = DATE_FORMAT_DATE_DISPLAY
+			break
+		case 'DisplayDateDoW':
+			useFormat = DATE_FORMAT_DATE_DISPLAY_DOW
+			break
+		case 'DisplayTime':
+			useFormat = DATE_FORMAT_TIME_DISPLAY
+			break
+		case 'DisplayDateTime':
+			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY
+			break
+		case 'DisplayDateDoWTime':
+			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW
+			break
+		case 'DisplayDateLong':
+			useFormat = DATE_FORMAT_DATE_DISPLAY_LONG
+			break
+		case 'DisplayDateDoWLong':
+			useFormat = DATE_FORMAT_DATE_DISPLAY_DOW_LONG
+			break
+		case 'DisplayDateTimeLong':
+			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_LONG
+			break
+		case 'DisplayDateDoWTimeLong':
+			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG
+			break
+		default:
+			useFormat = format ?? 'YYYY-MM-DD HH:mm:ss a'
+			break;
+	}
+	
+	const formatArray = useFormat.split('')
 	let result = ''
 	
 	let previousChar = ''
@@ -222,7 +278,7 @@ export const DateFormat = (date: TDateAny, format: string): string | null => {
 				result += formatChar
 			}
 		} else if (formatChar === '[') {
-			result += applyCommand(command)
+			result += applyCommand(command, dateObject)
 			
 			command = ''
 			
@@ -234,7 +290,7 @@ export const DateFormat = (date: TDateAny, format: string): string | null => {
 				patterns.some(pattern => pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1)))) {
 				command += formatChar
 			} else {
-				result += applyCommand(command)
+				result += applyCommand(command, dateObject)
 				
 				command = formatChar
 			}
@@ -243,7 +299,7 @@ export const DateFormat = (date: TDateAny, format: string): string | null => {
 		}
 	}
 	
-	result += applyCommand(command)
+	result += applyCommand(command, dateObject)
 	
 	return result
 }
