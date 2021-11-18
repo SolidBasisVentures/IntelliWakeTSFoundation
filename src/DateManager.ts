@@ -172,8 +172,6 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
-export type TDateFormatString = TDateFormat | string
-
 export const DateFormat = (date?: TDateAny, format?: 'Local'
 	| 'Date'
 	| 'DisplayDate'
