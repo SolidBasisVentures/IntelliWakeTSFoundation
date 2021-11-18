@@ -1589,17 +1589,7 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
-/**
- *
- * @param date?: TDateAny
- * @param format?: TDateFormat | string
- * @param timezoneDisplay?: string
- * @param timezoneSource?: string
- * @constructor
- *
- * @return string | null
- */
-var DateFormat = function (date, format, timezoneDisplay, timezoneSource) {
+var DateFormatAny = function (date, format, timezoneDisplay, timezoneSource) {
     var _a, _b, _c;
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
     var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource !== null && timezoneSource !== void 0 ? timezoneSource : timezoneDisplay) : undefined));
@@ -1776,6 +1766,7 @@ var DateFormat = function (date, format, timezoneDisplay, timezoneSource) {
     result += applyCommand(command, dateObject);
     return result;
 };
+var DateFormat = function (date, format, timezoneDisplay, timezoneSource) { return DateFormatAny(date, format, timezoneDisplay, timezoneSource); };
 var YYYYMMDDHHmmss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
@@ -3551,6 +3542,7 @@ exports.DateCompare = DateCompare;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
 exports.DateFormat = DateFormat;
+exports.DateFormatAny = DateFormatAny;
 exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateObject = DateObject;

@@ -34,17 +34,8 @@ export declare const DateISO: (date?: string | number | Date | null | undefined,
 export declare const DateObject: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => Date | null;
 export declare const DateICS: (date?: string | number | Date | null | undefined, adjustements?: TDateParseOptions | undefined) => string | null;
 export declare type TDateFormat = 'Local' | 'Date' | 'DisplayDate' | 'DisplayTime' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
-/**
- *
- * @param date?: TDateAny
- * @param format?: TDateFormat | string
- * @param timezoneDisplay?: string
- * @param timezoneSource?: string
- * @constructor
- *
- * @return string | null
- */
-export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: string | undefined, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
+export declare const DateFormatAny: (date?: string | number | Date | null | undefined, format?: string | undefined, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
+export declare const DateFormat: (date?: string | number | Date | null | undefined, format?: "Local" | "Date" | "DisplayDate" | "DisplayTime" | "DisplayDateDoW" | "DisplayDateTime" | "DisplayDateDoWTime" | "DisplayDateLong" | "DisplayDateDoWLong" | "DisplayDateTimeLong" | "DisplayDateDoWTimeLong" | undefined, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (date?: string | number | Date | null | undefined) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (date?: string | number | Date | null | undefined) => string;

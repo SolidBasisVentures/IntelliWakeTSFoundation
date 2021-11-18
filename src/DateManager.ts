@@ -172,17 +172,7 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
-/**
- *
- * @param date?: TDateAny
- * @param format?: TDateFormat | string
- * @param timezoneDisplay?: string
- * @param timezoneSource?: string
- * @constructor
- *
- * @return string | null
- */
-export const DateFormat = (date?: TDateAny, format?: TDateFormat | string, timezoneDisplay?: string, timezoneSource?: string): string | null => {
+export const DateFormatAny = (date?: TDateAny, format?: TDateFormat | string, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
 	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
@@ -194,7 +184,7 @@ export const DateFormat = (date?: TDateAny, format?: TDateFormat | string, timez
 			const sourceOffset = IANAOffset(timezoneSource) ?? 0 // Chic 5
 			const displayOffset = IANAOffset(timezoneDisplay) ?? 0 // Chic 6
 			const offset = noTZInfo ? !timezoneSource ? (displayOffset - sourceOffset) - (displayOffset - sourceOffset) : ((IANAOffset() ?? 0) - sourceOffset) - (displayOffset - sourceOffset) : (sourceOffset - displayOffset)
-
+			
 			// if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
 			// console.log('---')
 			// 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
@@ -366,6 +356,8 @@ export const DateFormat = (date?: TDateAny, format?: TDateFormat | string, timez
 	
 	return result
 }
+
+export const DateFormat = (date?: TDateAny, format?: TDateFormat, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(date, format, timezoneDisplay, timezoneSource)
 
 export const YYYYMMDDHHmmss = (date?: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
