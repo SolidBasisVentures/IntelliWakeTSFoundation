@@ -2006,7 +2006,7 @@ var DateDiffComponents = function (dateFrom, dateTo) {
     returnComponents.millisecond = (_q = DateDiff(dateFromTS, checkTo, 'millisecond')) !== null && _q !== void 0 ? _q : 0;
     return returnComponents;
 };
-var ComponentsLongDescription = function (dateFrom, dateTo, trimSeconds) {
+var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds) {
     if (trimSeconds === void 0) { trimSeconds = false; }
     var components = DateDiffComponents(dateFrom, dateTo);
     var text = '';
@@ -3519,7 +3519,6 @@ exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
 exports.CleanScripts = CleanScripts;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
-exports.ComponentsLongDescription = ComponentsLongDescription;
 exports.ConsoleColor = ConsoleColor;
 exports.CurrentTimeZone = CurrentTimeZone;
 exports.DATE_FORMAT_DATE = DATE_FORMAT_DATE;
@@ -3541,6 +3540,7 @@ exports.DateAdjustTS = DateAdjustTS;
 exports.DateCompare = DateCompare;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
+exports.DateDiffLongDescription = DateDiffLongDescription;
 exports.DateFormat = DateFormat;
 exports.DateFormatAny = DateFormatAny;
 exports.DateICS = DateICS;

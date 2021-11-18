@@ -61,7 +61,7 @@ export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo?: string | 
     second: number;
     millisecond: number;
 };
-export declare const ComponentsLongDescription: (dateFrom: TDateAny, dateTo?: string | number | Date | null | undefined, trimSeconds?: boolean) => string;
+export declare const DateDiffLongDescription: (dateFrom: TDateAny, dateTo?: string | number | Date | null | undefined, trimSeconds?: boolean) => string;
 /**
  * Displays a simplified duration format from seconds.
  *
