@@ -623,7 +623,7 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo?: TDateAny): {
 	return returnComponents
 }
 
-export const DateCompareLongDescription = (dateFrom: TDateAny, dateTo?: TDateAny, trimSeconds = false): string => {
+export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo?: TDateAny, trimSeconds = false): string => {
 	const components = DateDiffComponents(dateFrom, dateTo)
 	
 	let text = ''
