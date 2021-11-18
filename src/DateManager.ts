@@ -89,6 +89,8 @@ const DateParseTSInternal = (date?: TDateAny, timezoneSource?: string): number |
 	
 	if (typeof date === 'object') return date.valueOf()
 	
+	if (date.toLowerCase() === 'now' || date.toLowerCase() === 'today') return new Date().valueOf()
+	
 	try {
 		const result: any = Date.parse(date.toString())
 		
