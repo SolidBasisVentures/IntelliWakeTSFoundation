@@ -1589,7 +1589,7 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
-var DateFormatAny = function (date, format, timezoneDisplay, timezoneSource) {
+var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     var _a, _b, _c;
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
     var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource !== null && timezoneSource !== void 0 ? timezoneSource : timezoneDisplay) : undefined));
@@ -1766,7 +1766,7 @@ var DateFormatAny = function (date, format, timezoneDisplay, timezoneSource) {
     result += applyCommand(command, dateObject);
     return result;
 };
-var DateFormat = function (date, format, timezoneDisplay, timezoneSource) { return DateFormatAny(date, format, timezoneDisplay, timezoneSource); };
+var DateFormat = function (format, date, timezoneDisplay, timezoneSource) { return DateFormatAny(format, date, timezoneDisplay, timezoneSource); };
 var YYYYMMDDHHmmss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
