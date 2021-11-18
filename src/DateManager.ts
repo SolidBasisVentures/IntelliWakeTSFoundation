@@ -174,7 +174,17 @@ export type TDateFormat =
 
 export type TDateFormatString = TDateFormat | string
 
-export const DateFormat = (date?: TDateAny, format?: TDateFormatString, timezoneDisplay?: string, timezoneSource?: string): string | null => {
+export const DateFormat = (date?: TDateAny, format?: 'Local'
+	| 'Date'
+	| 'DisplayDate'
+	| 'DisplayTime'
+	| 'DisplayDateDoW'
+	| 'DisplayDateTime'
+	| 'DisplayDateDoWTime'
+	| 'DisplayDateLong'
+	| 'DisplayDateDoWLong'
+	| 'DisplayDateTimeLong'
+	| 'DisplayDateDoWTimeLong' | string, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
 	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
