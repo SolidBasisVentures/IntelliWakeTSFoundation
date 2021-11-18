@@ -172,7 +172,7 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
-export const DateFormatAny = (date?: TDateAny, format?: TDateFormat | string, timezoneDisplay?: string, timezoneSource?: string): string | null => {
+export const DateFormatAny = (format: TDateFormat | string, date?: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
 	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
@@ -357,7 +357,7 @@ export const DateFormatAny = (date?: TDateAny, format?: TDateFormat | string, ti
 	return result
 }
 
-export const DateFormat = (date?: TDateAny, format?: TDateFormat, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(date, format, timezoneDisplay, timezoneSource)
+export const DateFormat = (format: TDateFormat, date?: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
 
 export const YYYYMMDDHHmmss = (date?: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()

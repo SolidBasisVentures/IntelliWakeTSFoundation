@@ -4,13 +4,13 @@ const isoLongDateString = '2021-01-01T00:00:00Z'
 const dateTS = DateParseTS(isoLongDateString)
 
 test('Date Managers', () => {
-	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong')).toEqual('Thursday, December 31, 2020, 7:00 pm')
-	expect(DateFormat(isoLongDateString, 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
-	expect(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
-	expect(DateFormat('2021-01-01 09:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles', 'America/Chicago')).toEqual('Friday, January 1, 2021, 7:00 am')
-	expect(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong')).toEqual('Friday, January 1, 2021, 10:00 am')
-	expect(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Chicago')).toEqual('Friday, January 1, 2021, 11:00 am')
-	expect(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString)).toEqual('Thursday, December 31, 2020, 7:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Los_Angeles', 'America/Chicago')).toEqual('Friday, January 1, 2021, 7:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00')).toEqual('Friday, January 1, 2021, 10:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago')).toEqual('Friday, January 1, 2021, 11:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
 	expect(DateAdjustTS(dateTS, {
