@@ -1589,6 +1589,16 @@ var DateICS = function (date, adjustements) {
     dateICS = ReplaceAll(':', '', dateICS);
     return dateICS;
 };
+/**
+ *
+ * @param date?: TDateAny
+ * @param format?: TDateFormat | string
+ * @param timezoneDisplay?: string
+ * @param timezoneSource?: string
+ * @constructor
+ *
+ * @return string | null
+ */
 var DateFormat = function (date, format, timezoneDisplay, timezoneSource) {
     var _a, _b, _c;
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
