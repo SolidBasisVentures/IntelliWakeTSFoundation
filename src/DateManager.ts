@@ -80,7 +80,7 @@ export const IsDateString = (value: any): boolean => {
 	return !!DateParseTSInternal(value)
 }
 
-export type TDateAny = Date | number | string | null
+export type TDateAny = Date | number | string | null | undefined
 
 const DateParseTSInternal = (date?: TDateAny, timezoneSource?: string): number | null => {
 	if (!date) return new Date().valueOf() // Date.parse(new Date().toString())
