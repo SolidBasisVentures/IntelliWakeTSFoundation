@@ -709,3 +709,5 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 	
 	return result
 }
+
+export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')

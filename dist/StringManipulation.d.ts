@@ -274,3 +274,4 @@ export declare const UCWords: (str: string | null) => string | null;
  * RandomString(5, '12345')
  */
 export declare const RandomString: (length: number, validChars?: string) => string;
+export declare const RandomKey: (length: number) => string;
