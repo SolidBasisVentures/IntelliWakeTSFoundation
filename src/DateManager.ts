@@ -80,10 +80,10 @@ export const IsDateString = (value: any): boolean => {
 	return !!DateParseTSInternal(value)
 }
 
-export type TDateAny = Date | number | string | null | undefined
+export type TDateAny = Date | number | 'now' | 'today' | string | null | undefined
 
-const DateParseTSInternal = (date?: TDateAny, timezoneSource?: string): number | null => {
-	if (!date) return new Date().valueOf() // Date.parse(new Date().toString())
+const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | null => {
+	if (!date) return null // new Date().valueOf() // Date.parse(new Date().toString())
 	
 	if (typeof date === 'number') return date
 	
@@ -118,7 +118,7 @@ const DateParseTSInternal = (date?: TDateAny, timezoneSource?: string): number |
 
 export type TDateParseOptions = TAdjustment & {timezoneSource?: string}
 
-export const DateParseTS = (date?: TDateAny, adjustements?: TDateParseOptions): number | null => {
+export const DateParseTS = (date: TDateAny, adjustements?: TDateParseOptions): number | null => {
 	let newDate = DateParseTSInternal(date, adjustements?.timezoneSource)
 	
 	if (!newDate || !adjustements) return newDate
@@ -126,14 +126,14 @@ export const DateParseTS = (date?: TDateAny, adjustements?: TDateParseOptions): 
 	return DateAdjustTS(newDate, adjustements)
 }
 
-export const DateISO = (date?: TDateAny, adjustements?: TDateParseOptions): string | null => {
+export const DateISO = (date: TDateAny, adjustements?: TDateParseOptions): string | null => {
 	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date?: TDateAny, adjustements?: TDateParseOptions): Date | null => {
+export const DateObject = (date: TDateAny, adjustements?: TDateParseOptions): Date | null => {
 	const parsed = DateParseTS(date, adjustements)
 	
 	if (!parsed) return null
@@ -141,7 +141,7 @@ export const DateObject = (date?: TDateAny, adjustements?: TDateParseOptions): D
 	return new Date(parsed)
 }
 
-export const DateICS = (date?: TDateAny, adjustements?: TDateParseOptions): string | null => {
+export const DateICS = (date: TDateAny, adjustements?: TDateParseOptions): string | null => {
 	const dateISO = DateISO(date, adjustements)
 	
 	if (!dateISO) return null
@@ -174,7 +174,7 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
-export const DateFormatAny = (format: TDateFormat | string, date?: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => {
+export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
 	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
@@ -359,25 +359,25 @@ export const DateFormatAny = (format: TDateFormat | string, date?: TDateAny, tim
 	return result
 }
 
-export const DateFormat = (format: TDateFormat, date?: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
+export const DateFormat = (format: TDateFormat, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
 
-export const YYYYMMDDHHmmss = (date?: TDateAny): string => {
+export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1).toString().padStart(2, '0')}${dateObject.getDate().toString().padStart(2, '0')}${dateObject.getHours().toString().padStart(2, '0')}${dateObject.getMinutes().toString().padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYY_MM_DD_HH_mm_ss = (date?: TDateAny): string => {
+export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject.getDate().toString().padStart(2, '0')}_${dateObject.getHours().toString().padStart(2, '0')}-${dateObject.getMinutes().toString().padStart(2, '0')}-${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYYsMMsDDsHHcmmcss = (date?: TDateAny): string => {
+export const YYYYsMMsDDsHHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject.getDate().toString().padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
-export const YYYYsMMsDD = (date?: TDateAny): string => {
+export const YYYYsMMsDD = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject.getDate().toString().padStart(2, '0')}`
 }
-export const HHcmmcss = (date?: TDateAny): string => {
+export const HHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getHours().toString().padStart(2, '0')}:${dateObject.getMinutes().toString().padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
@@ -580,7 +580,7 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
-export const DateDiffComponents = (dateFrom: TDateAny, dateTo?: TDateAny): {
+export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	year: number
 	month: number
 	day: number
@@ -625,7 +625,7 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo?: TDateAny): {
 	return returnComponents
 }
 
-export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo?: TDateAny, trimSeconds = false): string => {
+export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, trimSeconds = false): string => {
 	const components = DateDiffComponents(dateFrom, dateTo)
 	
 	let text = ''
@@ -715,7 +715,7 @@ export const DurationLongDescription = (seconds: number, trimSeconds = false): s
 	return text.trim()
 }
 
-export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2?: TDateAny, atInterval?: TDuration): boolean => {
+export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny, minInterval?: TDuration): boolean => {
 	const components = DateDiffComponents(date2 ?? null, date1)
 	
 	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
@@ -726,21 +726,21 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 		return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 	}
 	
-	if (!atInterval || ['millisecond', 'milliseconds'].includes(atInterval)) return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
+	if (!minInterval || ['millisecond', 'milliseconds'].includes(minInterval)) return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
 	
-	if (['year', 'years'].includes(atInterval) || components.year !== 0) return checkType(evalType, components.year)
+	if (['year', 'years'].includes(minInterval) || components.year !== 0) return checkType(evalType, components.year)
 	
-	if (['month', 'months'].includes(atInterval) || components.month !== 0) return checkType(evalType, components.month)
+	if (['month', 'months'].includes(minInterval) || components.month !== 0) return checkType(evalType, components.month)
 	
-	if (['week', 'weeks'].includes(atInterval) || Math.abs(components.day) >= 7) return checkType(evalType, components.day)
+	if (['week', 'weeks'].includes(minInterval) || Math.abs(components.day) >= 7) return checkType(evalType, components.day)
 	
-	if (['day', 'days'].includes(atInterval) || components.day !== 0) return checkType(evalType, components.day)
+	if (['day', 'days'].includes(minInterval) || components.day !== 0) return checkType(evalType, components.day)
 	
-	if (['hour', 'hours'].includes(atInterval) || components.hour !== 0) return checkType(evalType, components.hour)
+	if (['hour', 'hours'].includes(minInterval) || components.hour !== 0) return checkType(evalType, components.hour)
 	
-	if (['minute', 'minutes'].includes(atInterval) || components.minute !== 0) return checkType(evalType, components.minute)
+	if (['minute', 'minutes'].includes(minInterval) || components.minute !== 0) return checkType(evalType, components.minute)
 	
-	if (['second', 'seconds'].includes(atInterval) || components.second !== 0) return checkType(evalType, components.second)
+	if (['second', 'seconds'].includes(minInterval) || components.second !== 0) return checkType(evalType, components.second)
 	
 	return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
 }
