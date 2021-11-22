@@ -2009,15 +2009,15 @@ var DateDiffComponents = function (dateFrom, dateTo) {
     returnComponents.millisecond = (_q = DateDiff(dateFromTS, checkTo, 'millisecond')) !== null && _q !== void 0 ? _q : 0;
     return returnComponents;
 };
-var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds, abbreviated) {
-    if (trimSeconds === void 0) { trimSeconds = false; }
+var DateDiffLongDescription = function (dateFrom, dateTo, tripToSecondsOrTwo, abbreviated) {
+    if (tripToSecondsOrTwo === void 0) { tripToSecondsOrTwo = false; }
     if (abbreviated === void 0) { abbreviated = false; }
     var components = DateDiffComponents(dateFrom, dateTo);
     var text = '';
     if (components.year) {
         text += " " + ToDigits(components.year) + (abbreviated ? 'Y' : AddS(' Year', components.year));
         text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : AddS(' Month', components.month));
-        if (components.day) {
+        if (components.day && !tripToSecondsOrTwo) {
             text += " " + ToDigits(components.day) + (abbreviated ? 'D' : AddS(' Day', components.day));
         }
     }
@@ -2032,7 +2032,7 @@ var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds, abbreviat
         if (components.hour) {
             text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : AddS(' Hour', components.hour));
         }
-        if (components.minute) {
+        if (components.minute && !tripToSecondsOrTwo) {
             text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : AddS(' Minute', components.minute));
         }
     }
@@ -2043,10 +2043,10 @@ var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds, abbreviat
         }
     }
     else {
-        if (components.minute || (!text && trimSeconds)) {
+        if (components.minute || (!text && tripToSecondsOrTwo)) {
             text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : AddS(' Minute', components.minute));
         }
-        if (!text || (!trimSeconds && components.second)) {
+        if (!text || (!tripToSecondsOrTwo && components.second)) {
             text += " " + ToDigits(components.second) + (abbreviated ? 's' : AddS(' Second', components.second));
         }
     }
@@ -2058,15 +2058,15 @@ var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds, abbreviat
  * @example
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
-var DurationLongDescription = function (seconds, trimSeconds, abbreviated) {
-    if (trimSeconds === void 0) { trimSeconds = false; }
+var DurationLongDescription = function (seconds, tripToSecondsOrTwo, abbreviated) {
+    if (tripToSecondsOrTwo === void 0) { tripToSecondsOrTwo = false; }
     if (abbreviated === void 0) { abbreviated = false; }
     var durationTS = seconds * 1000;
     var text = '';
     if (TSYearsEstimate(durationTS)) {
         text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + (abbreviated ? 'Y' : AddS(' Year', TSYearsEstimate(durationTS)));
         text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + (abbreviated ? 'Mo' : AddS(' Month', TSMonthsEstimate(durationTS, true)));
-        if (TSDays(durationTS, true)) {
+        if (TSDays(durationTS, true) && !tripToSecondsOrTwo) {
             text += " " + ToDigits(TSDays(durationTS, true), 0) + (abbreviated ? 'D' : AddS(' Day', TSDays(durationTS, true)));
         }
     }
@@ -2081,7 +2081,7 @@ var DurationLongDescription = function (seconds, trimSeconds, abbreviated) {
         if (TSHours(durationTS, true)) {
             text += " " + ToDigits(TSHours(durationTS, true), 0) + (abbreviated ? 'h' : AddS(' Hour', TSHours(durationTS, true)));
         }
-        if (TSMinutes(durationTS, true)) {
+        if (TSMinutes(durationTS, true) && !tripToSecondsOrTwo) {
             text += " " + ToDigits(TSMinutes(durationTS, true), 0) + (abbreviated ? 'm' : AddS(' Minute', TSMinutes(durationTS, true)));
         }
     }
@@ -2092,10 +2092,10 @@ var DurationLongDescription = function (seconds, trimSeconds, abbreviated) {
         }
     }
     else {
-        if (TSMinutes(durationTS, true) || (!text && trimSeconds)) {
+        if (TSMinutes(durationTS, true) || (!text && tripToSecondsOrTwo)) {
             text += " " + ToDigits(TSMinutes(durationTS, true), 0) + (abbreviated ? 'm' : AddS(' Minute', TSMinutes(durationTS, true)));
         }
-        if (!text || (!trimSeconds && TSSeconds(durationTS, true))) {
+        if (!text || (!tripToSecondsOrTwo && TSSeconds(durationTS, true))) {
             text += " " + ToDigits(TSSeconds(durationTS, true), 0) + (abbreviated ? 's' : AddS(' Second', TSSeconds(durationTS, true)));
         }
     }
