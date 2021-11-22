@@ -1533,7 +1533,7 @@ var IsDateString = function (value) {
 var DateParseTSInternal = function (date, timezoneSource) {
     var _a, _b;
     if (!date)
-        return new Date().valueOf(); // Date.parse(new Date().toString())
+        return null; // new Date().valueOf() // Date.parse(new Date().toString())
     if (typeof date === 'number')
         return date;
     if (typeof date === 'object')
@@ -2009,44 +2009,45 @@ var DateDiffComponents = function (dateFrom, dateTo) {
     returnComponents.millisecond = (_q = DateDiff(dateFromTS, checkTo, 'millisecond')) !== null && _q !== void 0 ? _q : 0;
     return returnComponents;
 };
-var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds) {
+var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds, abbreviated) {
     if (trimSeconds === void 0) { trimSeconds = false; }
+    if (abbreviated === void 0) { abbreviated = false; }
     var components = DateDiffComponents(dateFrom, dateTo);
     var text = '';
     if (components.year) {
-        text += " " + ToDigits(components.year) + " " + AddS('Year', components.year);
-        text += " " + ToDigits(components.month) + " " + AddS('Month', components.month);
+        text += " " + ToDigits(components.year) + " " + AddS(abbreviated ? 'Y' : 'Year', components.year);
+        text += " " + ToDigits(components.month) + " " + AddS(abbreviated ? 'Mo' : 'Month', components.month);
         if (components.day) {
-            text += " " + ToDigits(components.day) + " " + AddS('Day', components.day);
+            text += " " + ToDigits(components.day) + " " + AddS(abbreviated ? 'D' : 'Day', components.day);
         }
     }
     else if (components.month) {
-        text += " " + ToDigits(components.month) + " " + AddS('Month', components.month);
+        text += " " + ToDigits(components.month) + " " + AddS(abbreviated ? 'Mo' : 'Month', components.month);
         if (components.day) {
-            text += " " + ToDigits(components.day) + " " + AddS('Day', components.day);
+            text += " " + ToDigits(components.day) + " " + AddS(abbreviated ? 'D' : 'Day', components.day);
         }
     }
     else if (components.day) {
-        text += " " + ToDigits(components.day) + " " + AddS('Day', components.day);
+        text += " " + ToDigits(components.day) + " " + AddS(abbreviated ? 'D' : 'Day', components.day);
         if (components.hour) {
-            text += " " + ToDigits(components.hour) + " " + AddS('Hour', components.hour);
+            text += " " + ToDigits(components.hour) + " " + AddS(abbreviated ? 'H' : 'Hour', components.hour);
         }
         if (components.minute) {
-            text += " " + ToDigits(components.minute) + " " + AddS('Minute', components.minute);
+            text += " " + ToDigits(components.minute) + " " + AddS(abbreviated ? 'M' : 'Minute', components.minute);
         }
     }
     else if (components.hour) {
-        text += " " + ToDigits(components.hour) + " " + AddS('Hour', components.hour);
+        text += " " + ToDigits(components.hour) + " " + AddS(abbreviated ? 'H' : 'Hour', components.hour);
         if (components.minute) {
-            text += " " + ToDigits(components.minute) + " " + AddS('Minute', components.minute);
+            text += " " + ToDigits(components.minute) + " " + AddS(abbreviated ? 'M' : 'Minute', components.minute);
         }
     }
     else {
         if (components.minute || (!text && trimSeconds)) {
-            text += " " + ToDigits(components.minute) + " " + AddS('Minute', components.minute);
+            text += " " + ToDigits(components.minute) + " " + AddS(abbreviated ? 'M' : 'Minute', components.minute);
         }
         if (!text || (!trimSeconds && components.second)) {
-            text += " " + ToDigits(components.second) + " " + AddS('Second', components.second);
+            text += " " + ToDigits(components.second) + " " + AddS(abbreviated ? 'S' : 'Second', components.second);
         }
     }
     return text.trim();
@@ -2057,49 +2058,50 @@ var DateDiffLongDescription = function (dateFrom, dateTo, trimSeconds) {
  * @example
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
-var DurationLongDescription = function (seconds, trimSeconds) {
+var DurationLongDescription = function (seconds, trimSeconds, abbreviated) {
     if (trimSeconds === void 0) { trimSeconds = false; }
+    if (abbreviated === void 0) { abbreviated = false; }
     var durationTS = seconds * 1000;
     var text = '';
     if (TSYearsEstimate(durationTS)) {
-        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + " " + AddS('Year', TSYearsEstimate(durationTS));
-        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS('Month', TSMonthsEstimate(durationTS, true));
+        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + " " + AddS(abbreviated ? 'Y' : 'Year', TSYearsEstimate(durationTS));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS(abbreviated ? 'Mo' : 'Month', TSMonthsEstimate(durationTS, true));
         if (TSDays(durationTS, true)) {
-            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('D', TSDays(durationTS, true));
         }
     }
     else if (TSMonthsEstimate(durationTS, true)) {
-        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS('Month', TSMonthsEstimate(durationTS, true));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS(abbreviated ? 'Mo' : 'Month', TSMonthsEstimate(durationTS, true));
         if (TSDays(durationTS, true)) {
-            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS(abbreviated ? 'D' : 'Day', TSDays(durationTS, true));
         }
     }
     else if (TSDays(durationTS, true)) {
-        text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('Day', TSDays(durationTS, true));
+        text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS(abbreviated ? 'D' : 'Day', TSDays(durationTS, true));
         if (TSHours(durationTS, true)) {
-            text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS('Hour', TSHours(durationTS, true));
+            text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS(abbreviated ? 'H' : 'Hour', TSHours(durationTS, true));
         }
         if (TSMinutes(durationTS, true)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
         }
     }
     else if (TSHours(durationTS, true)) {
-        text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS('Hour', TSHours(durationTS, true));
+        text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS(abbreviated ? 'H' : 'Hour', TSHours(durationTS, true));
         if (TSMinutes(durationTS, true)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
         }
     }
     else {
         if (TSMinutes(durationTS, true) || (!text && trimSeconds)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS('Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
         }
         if (!text || (!trimSeconds && TSSeconds(durationTS, true))) {
-            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + " " + AddS('Second', TSSeconds(durationTS, true));
+            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + " " + AddS(abbreviated ? 'S' : 'Second', TSSeconds(durationTS, true));
         }
     }
     return text.trim();
 };
-var DateCompare = function (date1, evalType, date2, atInterval) {
+var DateCompare = function (date1, evalType, date2, minInterval) {
     var _a, _b, _c, _d;
     var components = DateDiffComponents(date2 !== null && date2 !== void 0 ? date2 : null, date1);
     var checkType = function (evalCheck, diff) {
@@ -2109,21 +2111,21 @@ var DateCompare = function (date1, evalType, date2, atInterval) {
             return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
         return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
     };
-    if (!atInterval || ['millisecond', 'milliseconds'].includes(atInterval))
+    if (!minInterval || ['millisecond', 'milliseconds'].includes(minInterval))
         return checkType(evalType, ((_a = DateParseTSInternal(date1)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2)) !== null && _b !== void 0 ? _b : 0));
-    if (['year', 'years'].includes(atInterval) || components.year !== 0)
+    if (['year', 'years'].includes(minInterval) || components.year !== 0)
         return checkType(evalType, components.year);
-    if (['month', 'months'].includes(atInterval) || components.month !== 0)
+    if (['month', 'months'].includes(minInterval) || components.month !== 0)
         return checkType(evalType, components.month);
-    if (['week', 'weeks'].includes(atInterval) || Math.abs(components.day) >= 7)
+    if (['week', 'weeks'].includes(minInterval) || Math.abs(components.day) >= 7)
         return checkType(evalType, components.day);
-    if (['day', 'days'].includes(atInterval) || components.day !== 0)
+    if (['day', 'days'].includes(minInterval) || components.day !== 0)
         return checkType(evalType, components.day);
-    if (['hour', 'hours'].includes(atInterval) || components.hour !== 0)
+    if (['hour', 'hours'].includes(minInterval) || components.hour !== 0)
         return checkType(evalType, components.hour);
-    if (['minute', 'minutes'].includes(atInterval) || components.minute !== 0)
+    if (['minute', 'minutes'].includes(minInterval) || components.minute !== 0)
         return checkType(evalType, components.minute);
-    if (['second', 'seconds'].includes(atInterval) || components.second !== 0)
+    if (['second', 'seconds'].includes(minInterval) || components.second !== 0)
         return checkType(evalType, components.second);
     return checkType(evalType, ((_c = DateParseTSInternal(date1)) !== null && _c !== void 0 ? _c : 0) - ((_d = DateParseTSInternal(date2)) !== null && _d !== void 0 ? _d : 0));
 };
