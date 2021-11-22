@@ -1584,9 +1584,9 @@ var DateParseTSInternal = function (date, timezoneSource) {
                 return newDateObj.valueOf();
             }
             var otherDateObj = Date.parse(check.toString());
-            if (!otherDateObj)
+            if (!otherDateObj || isNaN(otherDateObj))
                 return null;
-            return otherDateObj.valueOf();
+            return otherDateObj;
         }
         // Set a time string with no other timezone data to the current timezone
         if (!StringHasTimeZoneData(date)) {

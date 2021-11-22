@@ -92,7 +92,7 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 	if (date.toLowerCase() === 'now' || date.toLowerCase() === 'today') return new Date().valueOf()
 	
 	try {
-		const result: any = Date.parse(date.toString())
+		const result: number = Date.parse(date.toString())
 		
 		if (isNaN(result)) {
 			const check = new Date(date)
@@ -150,11 +150,11 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 				return newDateObj.valueOf()
 			}
 			
-			let otherDateObj = Date.parse(check.toString())
+			let otherDateObj: number = Date.parse(check.toString())
 			
-			if (!otherDateObj) return null
+			if (!otherDateObj || isNaN(otherDateObj)) return null
 			
-			return otherDateObj.valueOf()
+			return otherDateObj
 		}
 		
 		// Set a time string with no other timezone data to the current timezone
