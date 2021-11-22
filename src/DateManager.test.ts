@@ -108,6 +108,6 @@ test('Date Managers', () => {
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsBefore', '2021-01-01T00:01:00Z')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsAfter', '2021-01-01T00:01:00Z', 'day')).toEqual(false)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsBefore', '2021-01-01T00:01:00Z', 'day')).toEqual(false)
-	expect(DateCompare('2999-11-18', 'IsBefore', null, 'day')).toEqual(false)
-	expect(DateCompare('2999-11-18', 'IsAfter', null, 'day')).toEqual(true)
+	expect(DateCompare('2999-11-18', 'IsBefore', 'now', 'day')).toEqual(false)
+	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 })

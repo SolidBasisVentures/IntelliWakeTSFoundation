@@ -1476,6 +1476,7 @@ var RandomString = function (length, validChars) {
     }
     return result;
 };
+var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789'); };
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -3594,6 +3595,7 @@ exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.PhoneComponents = PhoneComponents;
 exports.PickProperty = PickProperty;
+exports.RandomKey = RandomKey;
 exports.RandomString = RandomString;
 exports.ReSortOrder = ReSortOrder;
 exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;
