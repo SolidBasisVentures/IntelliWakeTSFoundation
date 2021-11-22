@@ -26,6 +26,7 @@ export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;
 export declare const IsDateString: (value: any) => boolean;
 export declare type TDateAny = Date | number | 'now' | 'today' | string | null | undefined;
+export declare const ManualParse: (date: string) => number | null;
 export declare type TDateParseOptions = TAdjustment & {
     timezoneSource?: string;
 };

@@ -1,4 +1,4 @@
-import {DateAdjustTS, DateCompare, DateDiff, DateDiffComponents, DateFormat, DateISO, DateParseTS} from './DateManager'
+import {DateAdjustTS, DateCompare, DateDiff, DateDiffComponents, DateFormat, DateISO, DateParseTS, ManualParse} from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dateTS = DateParseTS(isoLongDateString)
@@ -111,4 +111,5 @@ test('Date Managers', () => {
 	expect(DateCompare('2999-11-18', 'IsBefore', 'now', 'day')).toEqual(false)
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
+	expect(ManualParse('2021-11-11 10:15:33.188-05')).toEqual(1636643921000)
 })

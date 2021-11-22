@@ -1530,8 +1530,55 @@ var IsDateString = function (value) {
         return false;
     return !!DateParseTSInternal(value);
 };
+var ManualParse = function (date) {
+    var regexps = ['([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
+        '([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'];
+    var d = regexps.reduce(function (result, regexp) {
+        var nextMatch = date.match(new RegExp(regexp));
+        if (!result)
+            return nextMatch;
+        if (!nextMatch)
+            return result;
+        if (!!nextMatch[10] && !result[10])
+            return nextMatch;
+        return result;
+    }, null);
+    if (d === null) {
+        return null;
+    }
+    var dateObj = new Date(CleanNumber(d[1]), 0, 1);
+    if (d[3]) {
+        dateObj.setMonth(CleanNumber(d[3]) - 1);
+    }
+    if (d[5]) {
+        dateObj.setDate(CleanNumber(d[5]));
+    }
+    if (d[7]) {
+        dateObj.setHours(CleanNumber(d[7]));
+    }
+    if (d[8]) {
+        dateObj.setMinutes(CleanNumber(d[8]));
+    }
+    if (d[10]) {
+        dateObj.setSeconds(CleanNumber(d[10]));
+    }
+    if (d[12]) {
+        dateObj.setMilliseconds((CleanNumber(d[12])) * 1000);
+    }
+    var offset = 0;
+    if (d[14]) {
+        offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10);
+        offset *= ((d[15] === '-') ? 1 : -1);
+    }
+    // offset -= dateObj.getTimezoneOffset()
+    var time = dateObj.getTime() + offset * 60 * 1000;
+    var newDateObj = new Date(time);
+    if (!newDateObj)
+        return null;
+    return newDateObj.valueOf();
+};
 var DateParseTSInternal = function (date, timezoneSource) {
-    var _a, _b;
+    var _a, _b, _c;
     if (!date)
         return null; // new Date().valueOf() // Date.parse(new Date().toString())
     if (typeof date === 'number')
@@ -1544,54 +1591,20 @@ var DateParseTSInternal = function (date, timezoneSource) {
         var result = Date.parse(date.toString());
         if (isNaN(result)) {
             var check = new Date(date);
-            if (!!check.valueOf())
-                return check.valueOf();
-            var regexp = '([0-9]{4})(-([0-9]{2})(-([0-9]{2})' +
-                '(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?' +
-                '(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?';
-            var d = date.match(new RegExp(regexp));
-            if (d === null) {
-                return null;
+            if (!check.valueOf()) {
+                result = (_a = ManualParse(date)) !== null && _a !== void 0 ? _a : 0;
             }
-            var offset = 0;
-            var dateObj = new Date(CleanNumber(d[1]), 0, 1);
-            if (d[3]) {
-                dateObj.setMonth(CleanNumber(d[3]) - 1);
-            }
-            if (d[5]) {
-                dateObj.setDate(CleanNumber(d[5]));
-            }
-            if (d[7]) {
-                dateObj.setHours(CleanNumber(d[7]));
-            }
-            if (d[8]) {
-                dateObj.setMinutes(CleanNumber(d[8]));
-            }
-            if (d[10]) {
-                dateObj.setSeconds(CleanNumber(d[10]));
-            }
-            if (d[12]) {
-                dateObj.setMilliseconds((CleanNumber(d[12])) * 1000);
-            }
-            if (d[14]) {
-                offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10);
-                offset *= ((d[15] === '-') ? 1 : -1);
-            }
-            offset -= dateObj.getTimezoneOffset();
-            var time = dateObj.getTime() + offset * 60 * 1000;
-            var newDateObj = new Date(time);
-            if (!newDateObj)
-                return null;
-            return newDateObj.valueOf();
         }
+        if (!result)
+            return null;
         // Set a time string with no other timezone data to the current timezone
         if (!StringHasTimeZoneData(date)) {
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-            return result + ((((_a = IANAOffset(timezoneSource)) !== null && _a !== void 0 ? _a : 0) - ((_b = IANAOffset()) !== null && _b !== void 0 ? _b : 0)) * 60 * 1000);
+            return result + ((((_b = IANAOffset(timezoneSource)) !== null && _b !== void 0 ? _b : 0) - ((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0)) * 60 * 1000);
         }
         return result;
     }
-    catch (_c) {
+    catch (_d) {
         return null;
     }
 };
@@ -3621,6 +3634,7 @@ exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.JSONStringToObject = JSONStringToObject;
 exports.LeftPad = LeftPad;
+exports.ManualParse = ManualParse;
 exports.MonthNames = MonthNames;
 exports.NowISOString = NowISOString;
 exports.ObjectContainsSearch = ObjectContainsSearch;
