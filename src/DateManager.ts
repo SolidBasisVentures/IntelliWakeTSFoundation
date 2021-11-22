@@ -97,64 +97,58 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 		if (isNaN(result)) {
 			const check = new Date(date)
 			
-			if (!check) {
-				const regexp = '([0-9]{4})(-([0-9]{2})(-([0-9]{2})' +
-					'(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?' +
-					'(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
-				
-				const d = date.match(new RegExp(regexp))
-				
-				if (d === null) {
-					return null
-				}
-				
-				let offset = 0
-				let dateObj = new Date(CleanNumber(d[1]), 0, 1)
-				
-				if (d[3]) {
-					dateObj.setMonth(CleanNumber(d[3]) - 1)
-				}
-				
-				if (d[5]) {
-					dateObj.setDate(CleanNumber(d[5]))
-				}
-				
-				if (d[7]) {
-					dateObj.setHours(CleanNumber(d[7]))
-				}
-				
-				if (d[8]) {
-					dateObj.setMinutes(CleanNumber(d[8]))
-				}
-				
-				if (d[10]) {
-					dateObj.setSeconds(CleanNumber(d[10]))
-				}
-				
-				if (d[12]) {
-					dateObj.setMilliseconds((CleanNumber(d[12])) * 1000)
-				}
-				
-				if (d[14]) {
-					offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10)
-					offset *= ((d[15] === '-') ? 1 : -1)
-				}
-				
-				offset -= dateObj.getTimezoneOffset()
-				const time = dateObj.getTime() + offset * 60 * 1000
-				
-				let newDateObj = new Date(time)
-				
-				if (!newDateObj) return null
-				
-				return newDateObj.valueOf()
+			if (!!check.valueOf()) return check.valueOf()
+			
+			const regexp = '([0-9]{4})(-([0-9]{2})(-([0-9]{2})' +
+				'(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?' +
+				'(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
+			
+			const d = date.match(new RegExp(regexp))
+			
+			if (d === null) {
+				return null
 			}
 			
-			let otherDateObj: number = Date.parse(check.toString())
+			let offset = 0
+			let dateObj = new Date(CleanNumber(d[1]), 0, 1)
 			
-			if (!otherDateObj || isNaN(otherDateObj)) return null
+			if (d[3]) {
+				dateObj.setMonth(CleanNumber(d[3]) - 1)
+			}
 			
-			return otherDateObj
+			if (d[5]) {
+				dateObj.setDate(CleanNumber(d[5]))
+			}
+			
+			if (d[7]) {
+				dateObj.setHours(CleanNumber(d[7]))
+			}
+			
+			if (d[8]) {
+				dateObj.setMinutes(CleanNumber(d[8]))
+			}
+			
+			if (d[10]) {
+				dateObj.setSeconds(CleanNumber(d[10]))
+			}
+			
+			if (d[12]) {
+				dateObj.setMilliseconds((CleanNumber(d[12])) * 1000)
+			}
+			
+			if (d[14]) {
+				offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10)
+				offset *= ((d[15] === '-') ? 1 : -1)
+			}
+			
+			offset -= dateObj.getTimezoneOffset()
+			const time = dateObj.getTime() + offset * 60 * 1000
+			
+			let newDateObj = new Date(time)
+			
+			if (!newDateObj) return null
+			
+			return newDateObj.valueOf()
 		}
 		
 		// Set a time string with no other timezone data to the current timezone
