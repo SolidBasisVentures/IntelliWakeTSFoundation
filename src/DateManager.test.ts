@@ -111,5 +111,5 @@ test('Date Managers', () => {
 	expect(DateCompare('2999-11-18', 'IsBefore', 'now', 'day')).toEqual(false)
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
-	expect(ManualParse('2021-11-11 10:15:33.188-05')).toEqual(1636643921000)
+	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
 })

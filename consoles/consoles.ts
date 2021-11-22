@@ -1,12 +1,12 @@
-import {DateDiff, DateFormat, DateISO, DateParseTS, ManualParse} from '../src/DateManager'
+import {DateDiff, DateISO, DateParseTS, ManualParse} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log(DateDiff('2021-11-11 10:09:58.865-05', '2021-11-22T19:05:00Z', 'second'))
 console.log(DateDiff('2021-11-11 10:15:33.188-05', '2021-11-22T19:05:00Z', 'second'))
 console.log('Not', DateParseTS('Not a date'))
-console.log('Try', ManualParse('2021-11-11 10:15:33.188-05'), DateISO(ManualParse('2021-11-11 10:15:33.188-05')))
-console.log('Manual', '2021-11-11 10:15:33.188-05', DateISO(ManualParse('2021-11-11 10:15:33.188-05')), DateFormat('DisplayDateTime', ManualParse('2021-11-11 10:15:33.188-05')))
+console.log('Try', '2021-11-12 14:08:54.71-05', ManualParse('2021-11-12 14:08:54.71-05'), DateISO(ManualParse('2021-11-12 14:08:54.71-05')))
+// console.log('Manual', '2021-11-11 10:15:33.188-05', DateISO(ManualParse('2021-11-11 10:15:33.188-05')), DateFormat('DisplayDateTime', ManualParse('2021-11-11 10:15:33.188-05')))
 
 // console.log(NowISOString())
 

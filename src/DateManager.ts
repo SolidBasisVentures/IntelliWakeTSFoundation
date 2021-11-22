@@ -102,6 +102,8 @@ export const ManualParse = (date: string) => {
 		return null
 	}
 	
+	// console.log(d)
+	
 	let dateObj = new Date(CleanNumber(d[1]), 0, 1)
 	
 	if (d[3]) {
@@ -125,7 +127,7 @@ export const ManualParse = (date: string) => {
 	}
 	
 	if (d[12]) {
-		dateObj.setMilliseconds((CleanNumber(d[12])) * 1000)
+		dateObj.setMilliseconds((CleanNumber(d[12]))*10)
 	}
 	
 	let offset = 0

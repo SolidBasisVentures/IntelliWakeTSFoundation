@@ -1546,6 +1546,7 @@ var ManualParse = function (date) {
     if (d === null) {
         return null;
     }
+    // console.log(d)
     var dateObj = new Date(CleanNumber(d[1]), 0, 1);
     if (d[3]) {
         dateObj.setMonth(CleanNumber(d[3]) - 1);
@@ -1563,7 +1564,7 @@ var ManualParse = function (date) {
         dateObj.setSeconds(CleanNumber(d[10]));
     }
     if (d[12]) {
-        dateObj.setMilliseconds((CleanNumber(d[12])) * 1000);
+        dateObj.setMilliseconds((CleanNumber(d[12])) * 10);
     }
     var offset = 0;
     if (d[14]) {
