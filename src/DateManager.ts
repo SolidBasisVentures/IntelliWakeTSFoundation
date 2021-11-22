@@ -631,36 +631,36 @@ export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, tr
 	let text = ''
 	
 	if (components.year) {
-		text += ` ${ToDigits(components.year)} ${AddS(abbreviated ? 'Y' : 'Year', components.year)}`
-		text += ` ${ToDigits(components.month)} ${AddS(abbreviated ? 'Mo' : 'Month', components.month)}`
+		text += ` ${ToDigits(components.year)} ${abbreviated ? 'Y' : AddS('Year', components.year)}`
+		text += ` ${ToDigits(components.month)} ${abbreviated ? 'Mo' : AddS('Month', components.month)}`
 		if (components.day) {
-			text += ` ${ToDigits(components.day)} ${AddS(abbreviated ? 'D' : 'Day', components.day)}`
+			text += ` ${ToDigits(components.day)} ${abbreviated ? 'D' : AddS('Day', components.day)}`
 		}
 	} else if (components.month) {
-		text += ` ${ToDigits(components.month)} ${AddS(abbreviated ? 'Mo' : 'Month', components.month)}`
+		text += ` ${ToDigits(components.month)} ${abbreviated ? 'Mo' : AddS('Month', components.month)}`
 		
 		if (components.day) {
-			text += ` ${ToDigits(components.day)} ${AddS(abbreviated ? 'D' : 'Day', components.day)}`
+			text += ` ${ToDigits(components.day)} ${abbreviated ? 'D' : AddS('Day', components.day)}`
 		}
 	} else if (components.day) {
-		text += ` ${ToDigits(components.day)} ${AddS(abbreviated ? 'D' : 'Day', components.day)}`
+		text += ` ${ToDigits(components.day)} ${abbreviated ? 'D' : AddS('Day', components.day)}`
 		if (components.hour) {
-			text += ` ${ToDigits(components.hour)} ${AddS(abbreviated ? 'H' : 'Hour', components.hour)}`
+			text += ` ${ToDigits(components.hour)} ${abbreviated ? 'H' : AddS('Hour', components.hour)}`
 		}
 		if (components.minute) {
-			text += ` ${ToDigits(components.minute)} ${AddS(abbreviated ? 'M' : 'Minute', components.minute)}`
+			text += ` ${ToDigits(components.minute)} ${abbreviated ? 'M' : AddS('Minute', components.minute)}`
 		}
 	} else if (components.hour) {
-		text += ` ${ToDigits(components.hour)} ${AddS(abbreviated ? 'H' : 'Hour', components.hour)}`
+		text += ` ${ToDigits(components.hour)} ${abbreviated ? 'H' : AddS('Hour', components.hour)}`
 		if (components.minute) {
-			text += ` ${ToDigits(components.minute)} ${AddS(abbreviated ? 'M' : 'Minute', components.minute)}`
+			text += ` ${ToDigits(components.minute)} ${abbreviated ? 'M' : AddS('Minute', components.minute)}`
 		}
 	} else {
 		if (components.minute || (!text && trimSeconds)) {
-			text += ` ${ToDigits(components.minute)} ${AddS(abbreviated ? 'M' : 'Minute', components.minute)}`
+			text += ` ${ToDigits(components.minute)} ${abbreviated ? 'M' : AddS('Minute', components.minute)}`
 		}
 		if (!text || (!trimSeconds && components.second)) {
-			text += ` ${ToDigits(components.second)} ${AddS(abbreviated ? 'S' : 'Second', components.second)}`
+			text += ` ${ToDigits(components.second)} ${abbreviated ? 'S' : AddS('Second', components.second)}`
 		}
 	}
 	
