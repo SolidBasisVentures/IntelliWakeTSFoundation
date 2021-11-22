@@ -1,22 +1,26 @@
-import {DateFormat} from '../src/DateManager'
+import {DateDiff, DateFormat} from '../src/DateManager'
 
 require('source-map-support').install()
 
+console.log(DateDiff('2021-11-11 10:09:58.865-05', '2021-11-22T19:05:00Z', 'second'))
+console.log(DateDiff('2021-11-11 10:15:33.188-05', '2021-11-22T19:05:00Z', 'second'))
+
 // console.log(NowISOString())
+
 // console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
 // console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong'))
 // console.log(DateFormat('2021-01-01T10:00:00-05:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
 // console.log(DateFormat('2021-01-01 10:00:00', 'DisplayDateDoWTimeLong', 'America/Los_Angeles'))
-console.log('NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', ), '10')
-console.log('NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York'), '10')
-console.log('LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles'), '1p')
-console.log('CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago'), '11a')
-console.log('NY-LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles'), '1p')
-console.log('LA-NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'America/New_York'), '7a')
-console.log('NY-CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Chicago'), '11a')
-console.log('LA-CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'America/Chicago'), '8a')
-console.log('CA-NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Chicago', 'America/New_York'), '8a')
-console.log('CA-LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Chicago', 'America/Los_Angeles'), '11a')
+// console.log('NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', ), '10')
+// console.log('NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York'), '10')
+// console.log('LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles'), '1p')
+// console.log('CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago'), '11a')
+// console.log('NY-LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles'), '1p')
+// console.log('LA-NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'America/New_York'), '7a')
+// console.log('NY-CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Chicago'), '11a')
+// console.log('LA-CA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'America/Chicago'), '8a')
+// console.log('CA-NY', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Chicago', 'America/New_York'), '8a')
+// console.log('CA-LA', DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Chicago', 'America/Los_Angeles'), '11a')
 
 // console.log(DateISO())
 // console.log(DateFormat(undefined, 'DisplayDateDoWTime'))
