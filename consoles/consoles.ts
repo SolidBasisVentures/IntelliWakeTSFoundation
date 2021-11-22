@@ -1,9 +1,10 @@
-import {DateDiff, DateFormat} from '../src/DateManager'
+import {DateDiff, DateParseTS} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log(DateDiff('2021-11-11 10:09:58.865-05', '2021-11-22T19:05:00Z', 'second'))
 console.log(DateDiff('2021-11-11 10:15:33.188-05', '2021-11-22T19:05:00Z', 'second'))
+console.log('Not', DateParseTS('Not a date'))
 
 // console.log(NowISOString())
 
