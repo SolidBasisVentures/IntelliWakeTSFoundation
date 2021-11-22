@@ -2064,39 +2064,39 @@ var DurationLongDescription = function (seconds, trimSeconds, abbreviated) {
     var durationTS = seconds * 1000;
     var text = '';
     if (TSYearsEstimate(durationTS)) {
-        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + " " + AddS(abbreviated ? 'Y' : 'Year', TSYearsEstimate(durationTS));
-        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS(abbreviated ? 'Mo' : 'Month', TSMonthsEstimate(durationTS, true));
+        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + " " + (abbreviated ? 'Y' : AddS('Year', TSYearsEstimate(durationTS)));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + (abbreviated ? 'Mo' : AddS('Month', TSMonthsEstimate(durationTS, true)));
         if (TSDays(durationTS, true)) {
-            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS('D', TSDays(durationTS, true));
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + (abbreviated ? 'D' : AddS('Day', TSDays(durationTS, true)));
         }
     }
     else if (TSMonthsEstimate(durationTS, true)) {
-        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + AddS(abbreviated ? 'Mo' : 'Month', TSMonthsEstimate(durationTS, true));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + " " + (abbreviated ? 'Mo' : AddS('Month', TSMonthsEstimate(durationTS, true)));
         if (TSDays(durationTS, true)) {
-            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS(abbreviated ? 'D' : 'Day', TSDays(durationTS, true));
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + (abbreviated ? 'D' : AddS('Day', TSDays(durationTS, true)));
         }
     }
     else if (TSDays(durationTS, true)) {
-        text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + AddS(abbreviated ? 'D' : 'Day', TSDays(durationTS, true));
+        text += " " + ToDigits(TSDays(durationTS, true), 0) + " " + (abbreviated ? 'D' : AddS('Day', TSDays(durationTS, true)));
         if (TSHours(durationTS, true)) {
-            text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS(abbreviated ? 'H' : 'Hour', TSHours(durationTS, true));
+            text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + (abbreviated ? 'H' : AddS('Hour', TSHours(durationTS, true)));
         }
         if (TSMinutes(durationTS, true)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + (abbreviated ? 'M' : AddS('Minute', TSMinutes(durationTS, true)));
         }
     }
     else if (TSHours(durationTS, true)) {
-        text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + AddS(abbreviated ? 'H' : 'Hour', TSHours(durationTS, true));
+        text += " " + ToDigits(TSHours(durationTS, true), 0) + " " + (abbreviated ? 'H' : AddS('Hour', TSHours(durationTS, true)));
         if (TSMinutes(durationTS, true)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + (abbreviated ? 'M' : AddS('Minute', TSMinutes(durationTS, true)));
         }
     }
     else {
         if (TSMinutes(durationTS, true) || (!text && trimSeconds)) {
-            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + AddS(abbreviated ? 'M' : 'Minute', TSMinutes(durationTS, true));
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + " " + (abbreviated ? 'M' : AddS('Minute', TSMinutes(durationTS, true)));
         }
         if (!text || (!trimSeconds && TSSeconds(durationTS, true))) {
-            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + " " + AddS(abbreviated ? 'S' : 'Second', TSSeconds(durationTS, true));
+            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + " " + (abbreviated ? 'S' : AddS('Second', TSSeconds(durationTS, true)));
         }
     }
     return text.trim();
