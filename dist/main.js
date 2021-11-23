@@ -1497,30 +1497,51 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
 var NowISOString = function () { return new Date().toISOString(); };
 var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
 var IANAOffset = function (timeZone) {
-    var _a;
     if (!timeZone)
         return new Date().getTimezoneOffset();
-    var timeZoneName = (_a = Intl.DateTimeFormat('ia', {
-        timeZoneName: 'short',
-        timeZone: timeZone !== null && timeZone !== void 0 ? timeZone : CurrentTimeZone()
-    })
-        .formatToParts()
-        .find(function (i) { return i.type === 'timeZoneName'; })) === null || _a === void 0 ? void 0 : _a.value;
-    var offset = timeZoneName === null || timeZoneName === void 0 ? void 0 : timeZoneName.slice(3);
-    if (!offset)
-        return 0;
-    var matchData = offset.match(/([+-])(\d+)(?::(\d+))?/);
-    if (!matchData) {
-        console.log("cannot parse timezone name: " + timeZoneName);
-        return null;
+    var date = new Date();
+    function objFromStr(str) {
+        var array = str.replace(':', ' ').split(' ');
+        return {
+            day: parseInt(array[0]),
+            hour: parseInt(array[1]),
+            minute: parseInt(array[2])
+        };
     }
-    var sign = matchData[1], hour = matchData[2], minute = matchData[3];
-    var result = parseInt(hour) * 60;
-    if (sign === '+')
-        result *= -1;
-    if (minute)
-        result += parseInt(minute);
-    return result;
+    var str = date.toLocaleString(['nl-NL'], {
+        timeZone: timeZone,
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+    });
+    var other = objFromStr(str);
+    str = date.toLocaleString(['nl-NL'], { day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false });
+    var myLocale = objFromStr(str);
+    var amsterdamOffset = other.day * 24 * 60 + other.hour * 60 + other.minute;
+    var myLocaleOffset = myLocale.day * 24 * 60 + myLocale.hour * 60 + myLocale.minute;
+    return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset();
+    // const timeZoneName = Intl.DateTimeFormat('ia', {
+    // 	timeZoneName: 'short',
+    // 	timeZone: timeZone ?? CurrentTimeZone()
+    // })
+    // 	.formatToParts()
+    // 	.find((i) => i.type === 'timeZoneName')?.value
+    // const offset = timeZoneName?.slice(3)
+    // if (!offset) return 0
+    //
+    // const matchData = offset.match(/([+-])(\d+)(?::(\d+))?/)
+    // if (!matchData) {
+    // 	console.log(`cannot parse timezone name: ${timeZoneName}`)
+    // 	return null
+    // }
+    //
+    // const [, sign, hour, minute] = matchData
+    // let result = parseInt(hour) * 60
+    // if (sign === '+') result *= -1
+    // if (minute) result += parseInt(minute)
+    //
+    // return result
 };
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };

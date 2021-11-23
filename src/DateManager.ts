@@ -45,27 +45,53 @@ export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptio
 
 export const IANAOffset = (timeZone?: string): number | null => {
 	if (!timeZone) return new Date().getTimezoneOffset()
-	const timeZoneName = Intl.DateTimeFormat('ia', {
-		timeZoneName: 'short',
-		timeZone: timeZone ?? CurrentTimeZone()
-	})
-		.formatToParts()
-		.find((i) => i.type === 'timeZoneName')?.value
-	const offset = timeZoneName?.slice(3)
-	if (!offset) return 0
 	
-	const matchData = offset.match(/([+-])(\d+)(?::(\d+))?/)
-	if (!matchData) {
-		console.log(`cannot parse timezone name: ${timeZoneName}`)
-		return null
+	let date = new Date()
+	
+	function objFromStr(str: string) {
+		const array = str.replace(':', ' ').split(' ')
+		return {
+			day: parseInt(array[0]),
+			hour: parseInt(array[1]),
+			minute: parseInt(array[2])
+		}
 	}
 	
-	const [, sign, hour, minute] = matchData
-	let result = parseInt(hour) * 60
-	if (sign === '+') result *= -1
-	if (minute) result += parseInt(minute)
+	let str = date.toLocaleString(['nl-NL'], {
+		timeZone: timeZone,
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		hour12: false
+	})
+	const other = objFromStr(str)
+	str = date.toLocaleString(['nl-NL'], {day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false})
+	const myLocale = objFromStr(str)
+	const amsterdamOffset = other.day * 24 * 60 + other.hour * 60 + other.minute
+	const myLocaleOffset = myLocale.day * 24 * 60 + myLocale.hour * 60 + myLocale.minute
+	return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
 	
-	return result
+	// const timeZoneName = Intl.DateTimeFormat('ia', {
+	// 	timeZoneName: 'short',
+	// 	timeZone: timeZone ?? CurrentTimeZone()
+	// })
+	// 	.formatToParts()
+	// 	.find((i) => i.type === 'timeZoneName')?.value
+	// const offset = timeZoneName?.slice(3)
+	// if (!offset) return 0
+	//
+	// const matchData = offset.match(/([+-])(\d+)(?::(\d+))?/)
+	// if (!matchData) {
+	// 	console.log(`cannot parse timezone name: ${timeZoneName}`)
+	// 	return null
+	// }
+	//
+	// const [, sign, hour, minute] = matchData
+	// let result = parseInt(hour) * 60
+	// if (sign === '+') result *= -1
+	// if (minute) result += parseInt(minute)
+	//
+	// return result
 }
 
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
