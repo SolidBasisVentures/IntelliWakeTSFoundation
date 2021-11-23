@@ -44,6 +44,7 @@ export const NowISOString = (): string => new Date().toISOString()
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export const IANAOffset = (timeZone?: string): number | null => {
+	if (!timeZone) return new Date().getTimezoneOffset()
 	const timeZoneName = Intl.DateTimeFormat('ia', {
 		timeZoneName: 'short',
 		timeZone: timeZone ?? CurrentTimeZone()

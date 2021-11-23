@@ -112,4 +112,10 @@ test('Date Managers', () => {
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
 	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
+	expect(DateISO('2021-11-12 14:08:54.71', {
+		timezoneSource: 'America/New_York'
+	})).toEqual('2021-11-12T19:08:54.710Z')
+	expect(DateISO('2021-11-12 14:08:54.71', {
+		timezoneSource: 'America/Chicago'
+	})).toEqual('2021-11-12T20:08:54.710Z')
 })

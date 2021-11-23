@@ -1498,6 +1498,8 @@ var NowISOString = function () { return new Date().toISOString(); };
 var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
 var IANAOffset = function (timeZone) {
     var _a;
+    if (!timeZone)
+        return new Date().getTimezoneOffset();
     var timeZoneName = (_a = Intl.DateTimeFormat('ia', {
         timeZoneName: 'short',
         timeZone: timeZone !== null && timeZone !== void 0 ? timeZone : CurrentTimeZone()
