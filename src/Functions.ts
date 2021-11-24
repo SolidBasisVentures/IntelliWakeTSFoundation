@@ -6,6 +6,8 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
+import {ToDigits} from './StringManipulation'
+
 /**
  * Replace all occurences of a string.
  *
@@ -388,10 +390,11 @@ export const JSONStringToObject = <T = any>(val: string): T => (!val ? undefined
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
  * @param text
  * @param count
+ * @param showNumber
  * @constructor
  */
-export const AddS = (text?: string | null, count?: number | null): string =>
-	!text ? '' : text + (CleanNumber(count ?? 0) !== 1 ? 's' : '')
+export const AddS = (text?: string | null, count?: number | null, showNumber = false): string =>
+	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()
 
 // noinspection JSPotentiallyInvalidConstructorUsage
 /**
