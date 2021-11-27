@@ -1547,7 +1547,7 @@ var IANAOffset = function (timeZone) {
 };
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
-var StringHasTimeZoneData = function (value) { return value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-'); };
+var StringHasTimeZoneData = function (value) { return value === 'now' || value === 'today' || value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-'); };
 var IsDateString = function (value) {
     if (!value || typeof value !== 'string')
         return false;
@@ -1768,6 +1768,9 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     switch (format) {
         case 'Local':
             useFormat = 'MM/DD/YYYY';
+            break;
+        case 'LocalDateTime':
+            useFormat = 'MM/DD/YYYY h:mm a';
             break;
         case 'Date':
             useFormat = DATE_FORMAT_DATE;

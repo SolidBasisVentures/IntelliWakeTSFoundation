@@ -96,7 +96,7 @@ export const IANAOffset = (timeZone?: string): number | null => {
 
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
-export const StringHasTimeZoneData = (value: string): boolean => value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-')
+export const StringHasTimeZoneData = (value: string): boolean => value === 'now' || value === 'today' || value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-')
 
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
