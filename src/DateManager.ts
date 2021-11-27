@@ -255,6 +255,7 @@ export const DateICS = (date: TDateAny, adjustements?: TDateParseOptions): strin
 
 export type TDateFormat =
 	'Local'
+	| 'LocalDateTime'
 	| 'Date'
 	| 'DisplayDate'
 	| 'DisplayTime'
@@ -372,6 +373,9 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 	switch (format) {
 		case 'Local':
 			useFormat = 'MM/DD/YYYY'
+			break
+		case 'LocalDateTime':
+			useFormat = 'MM/DD/YYYY h:mm a'
 			break
 		case 'Date':
 			useFormat = DATE_FORMAT_DATE
