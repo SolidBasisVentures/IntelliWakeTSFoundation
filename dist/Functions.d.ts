@@ -194,9 +194,10 @@ export declare const JSONStringToObject: <T = any>(val: string) => T;
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
  * @param text
  * @param count
+ * @param showNumber
  * @constructor
  */
-export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined) => string;
+export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean) => string;
 /**
  * Is ArrayBuffer
  * @param buf
