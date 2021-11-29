@@ -1771,8 +1771,14 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         case 'Local':
             useFormat = 'MM/DD/YYYY';
             break;
+        case 'LocalDow':
+            useFormat = 'dd, MM/DD/YYYY';
+            break;
         case 'LocalDateTime':
             useFormat = 'MM/DD/YYYY h:mm a';
+            break;
+        case 'LocalDoWTime':
+            useFormat = 'dd, MM/DD/YYYY h:mm a';
             break;
         case 'Date':
             useFormat = DATE_FORMAT_DATE;
