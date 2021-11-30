@@ -53,6 +53,7 @@ export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) =
 export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
 export declare const DateDiff: (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration) => number | null;
+export declare const DateWeekNumber: (date: TDateAny) => number | null;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;
     month: number;

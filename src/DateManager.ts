@@ -686,6 +686,19 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
+export const DateWeekNumber = (date: TDateAny): number | null => {
+	const currentdate = DateObject(date)
+	if (!currentdate) return null
+	
+	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01`)
+	if (!oneJan) return null
+	
+	const numberOfDays = DateDiff(oneJan, currentdate, 'days') ?? 0
+	const weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7)
+	if (weekNumber > 52) return 1
+	return weekNumber
+}
+
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	year: number
 	month: number
@@ -822,8 +835,6 @@ export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = fa
 }
 
 export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny, minInterval?: TDuration): boolean => {
-	const components = DateDiffComponents(date2 ?? null, date1)
-	
 	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
 		if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)
 		
@@ -832,21 +843,75 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 		return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 	}
 	
-	if (!minInterval || ['millisecond', 'milliseconds'].includes(minInterval)) return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
+	const msDifference = (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0)
 	
-	if (['year', 'years'].includes(minInterval) || components.year !== 0) return checkType(evalType, components.year)
+	if (msDifference === 0) {
+		return checkType(evalType, msDifference)
+	}
 	
-	if (['month', 'months'].includes(minInterval) || components.month !== 0) return checkType(evalType, components.month)
+	if (!!minInterval) {
+		const yearDiff = (DateObject(date1)?.getUTCFullYear() ?? 0) - (DateObject(date2)?.getUTCFullYear() ?? 0)
+		
+		if (['year', 'years'].includes(minInterval)) {
+			return checkType(evalType, yearDiff)
+		}
+		
+		const monthDiff = (DateObject(date1)?.getUTCMonth() ?? 0) - (DateObject(date2)?.getUTCMonth() ?? 0)
+		
+		if (['month', 'months'].includes(minInterval)) {
+			if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			return checkType(evalType, monthDiff)
+		}
+		
+		if (['week', 'weeks'].includes(minInterval) ) {
+			if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000) return checkType(evalType, msDifference)
+			const weekDiff = (DateWeekNumber(date1) ?? 0) - (DateWeekNumber(date2) ?? 0)
+			// Check if in the same week that spans years
+			if (weekDiff === 0 && (DateWeekNumber(date1) ?? 0) === 1 && Math.abs(yearDiff) > 1) {
+				if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			}
+			
+			return checkType(evalType, weekDiff)
+		}
+		
+		const dateOfMonthDiff = (DateObject(date1)?.getUTCDate() ?? 0) - (DateObject(date2)?.getUTCDate() ?? 0)
+		
+		if (['day', 'days'].includes(minInterval)) {
+			if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			if (monthDiff !== 0) return checkType(evalType, monthDiff)
+			return checkType(evalType, dateOfMonthDiff)
+		}
+		
+		const hourDiff = (DateObject(date1)?.getUTCHours() ?? 0) - (DateObject(date2)?.getUTCHours() ?? 0)
+		
+		if (['hour', 'hours'].includes(minInterval)) {
+			if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			if (monthDiff !== 0) return checkType(evalType, monthDiff)
+			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)
+			return checkType(evalType, hourDiff)
+		}
+		
+		const minuteDiff = (DateObject(date1)?.getUTCMinutes() ?? 0) - (DateObject(date2)?.getUTCMinutes() ?? 0)
+		
+		if (['hour', 'hours'].includes(minInterval)) {
+			if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			if (monthDiff !== 0) return checkType(evalType, monthDiff)
+			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)
+			if (hourDiff !== 0) return checkType(evalType, hourDiff)
+			return checkType(evalType, minuteDiff)
+		}
+		
+		const secondDiff = (DateObject(date1)?.getUTCSeconds() ?? 0) - (DateObject(date2)?.getUTCSeconds() ?? 0)
+		
+		if (['hour', 'hours'].includes(minInterval)) {
+			if (yearDiff !== 0) return checkType(evalType, yearDiff)
+			if (monthDiff !== 0) return checkType(evalType, monthDiff)
+			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)
+			if (hourDiff !== 0) return checkType(evalType, hourDiff)
+			if (minuteDiff !== 0) return checkType(evalType, minuteDiff)
+			return checkType(evalType, secondDiff)
+		}
+	}
 	
-	if (['week', 'weeks'].includes(minInterval) || Math.abs(components.day) >= 7) return checkType(evalType, components.day)
-	
-	if (['day', 'days'].includes(minInterval) || components.day !== 0) return checkType(evalType, components.day)
-	
-	if (['hour', 'hours'].includes(minInterval) || components.hour !== 0) return checkType(evalType, components.hour)
-	
-	if (['minute', 'minutes'].includes(minInterval) || components.minute !== 0) return checkType(evalType, components.minute)
-	
-	if (['second', 'seconds'].includes(minInterval) || components.second !== 0) return checkType(evalType, components.second)
-	
-	return checkType(evalType, (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2) ?? 0))
+	return checkType(evalType, msDifference)
 }

@@ -1,18 +1,12 @@
-import {CurrentTimeZone, DateDiff, DateFormat, DateISO, DateParseTS, IANAOffset, ManualParse} from '../src/DateManager'
+import {DateCompare, DateWeekNumber} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DateDiff('2021-11-11 10:09:58.865-05', '2021-11-22T19:05:00Z', 'second'))
-console.log(DateDiff('2021-11-11 10:15:33.188-05', '2021-11-22T19:05:00Z', 'second'))
-console.log('Not', DateParseTS('Not a date'))
-console.log('Try', '2021-11-12 14:08:54.71-05', ManualParse('2021-11-12 14:08:54.71-05'), DateISO(ManualParse('2021-11-12 14:08:54.71-05')))
-console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
-console.log(DateFormat('LocalDateTime', 'now', 'America/Chicago'))
-console.log('-----------')
-console.log('Started...', DateFormat('LocalDateTime', 'now', 'America/New_York'))
-console.log(DateISO('now'))
-console.log(IANAOffset(), CurrentTimeZone())
-console.log('Started...', DateFormat('LocalDateTime', 'now', 'America/Chicago'))
+console.log(DateWeekNumber('2021-12-31'))
+console.log(DateWeekNumber('2021-01-01'))
+console.log(DateWeekNumber('2021-01-02'))
+console.log(DateWeekNumber('2021-01-03'))
+console.log(DateCompare('2021-01-02', 'IsSame', '2021-01-01T10:00:00Z', 'day'))
 
 // console.log('Manual', '2021-11-11 10:15:33.188-05', DateISO(ManualParse('2021-11-11 10:15:33.188-05')), DateFormat('DisplayDateTime', ManualParse('2021-11-11 10:15:33.188-05')))
 
