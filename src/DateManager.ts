@@ -353,8 +353,10 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 				return dateApply.getHours().toString()
 			case 'hh':
 				return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString().padStart(2, '0')
-			case 'h':
-				return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString()
+			case 'h': {
+				const hour = (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours())
+				return (hour === 0 ? 12 : hour).toString()
+			}
 			case 'mm':
 				return dateApply.getMinutes().toString().padStart(2, '0')
 			case 'm':
@@ -364,9 +366,9 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			case 's':
 				return dateApply.getSeconds().toString()
 			case 'A':
-				return dateApply.getHours() > 12 ? 'PM' : 'AM'
+				return dateApply.getHours() >= 12 ? 'PM' : 'AM'
 			case 'a':
-				return dateApply.getHours() > 12 ? 'pm' : 'am'
+				return dateApply.getHours() >= 12 ? 'pm' : 'am'
 			default:
 				return command
 		}
@@ -418,7 +420,7 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG
 			break
 		default:
-			useFormat = format ?? 'YYYY-MM-DD HH:mm:ss a'
+			useFormat = format ?? 'YYYY-MM-DD h:mm:ss a'
 			break
 	}
 	

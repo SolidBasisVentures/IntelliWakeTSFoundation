@@ -136,4 +136,19 @@ test('Date Managers', () => {
 	expect(DateISO('2021-11-12 14:08:54.71', {
 		timezoneSource: 'America/Chicago'
 	})).toEqual('2021-11-12T20:08:54.710Z')
+	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 00:00:00.00', {
+		timezoneSource: 'America/New_York'
+	}), 'America/New_York')).toEqual('11/12/2021 12:00 am')
+	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 01:00:00.00', {
+		timezoneSource: 'America/New_York'
+	}), 'America/New_York')).toEqual('11/12/2021 1:00 am')
+	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 11:00:00.00', {
+		timezoneSource: 'America/New_York'
+	}), 'America/New_York')).toEqual('11/12/2021 11:00 am')
+	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 12:00:00.00', {
+		timezoneSource: 'America/New_York'
+	}), 'America/New_York')).toEqual('11/12/2021 12:00 pm')
+	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 13:00:00.00', {
+		timezoneSource: 'America/New_York'
+	}), 'America/New_York')).toEqual('11/12/2021 1:00 pm')
 })

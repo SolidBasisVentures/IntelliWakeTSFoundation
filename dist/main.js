@@ -1748,8 +1748,10 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
                 return dateApply.getHours().toString();
             case 'hh':
                 return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString().padStart(2, '0');
-            case 'h':
-                return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString();
+            case 'h': {
+                var hour = (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours());
+                return (hour === 0 ? 12 : hour).toString();
+            }
             case 'mm':
                 return dateApply.getMinutes().toString().padStart(2, '0');
             case 'm':
@@ -1759,9 +1761,9 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             case 's':
                 return dateApply.getSeconds().toString();
             case 'A':
-                return dateApply.getHours() > 12 ? 'PM' : 'AM';
+                return dateApply.getHours() >= 12 ? 'PM' : 'AM';
             case 'a':
-                return dateApply.getHours() > 12 ? 'pm' : 'am';
+                return dateApply.getHours() >= 12 ? 'pm' : 'am';
             default:
                 return command;
         }
@@ -1811,7 +1813,7 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
             break;
         default:
-            useFormat = format !== null && format !== void 0 ? format : 'YYYY-MM-DD HH:mm:ss a';
+            useFormat = format !== null && format !== void 0 ? format : 'YYYY-MM-DD h:mm:ss a';
             break;
     }
     var formatArray = useFormat.split('');
@@ -2060,6 +2062,20 @@ var DateDiff = function (dateFrom, dateTo, duration) {
     }
     return null;
 };
+var DateWeekNumber = function (date) {
+    var _a;
+    var currentdate = DateObject(date);
+    if (!currentdate)
+        return null;
+    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01");
+    if (!oneJan)
+        return null;
+    var numberOfDays = (_a = DateDiff(oneJan, currentdate, 'days')) !== null && _a !== void 0 ? _a : 0;
+    var weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7);
+    if (weekNumber > 52)
+        return 1;
+    return weekNumber;
+};
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     var returnComponents = {
@@ -2187,8 +2203,7 @@ var DurationLongDescription = function (seconds, tripToSecondsOrTwo, abbreviated
     return text.trim();
 };
 var DateCompare = function (date1, evalType, date2, minInterval) {
-    var _a, _b, _c, _d;
-    var components = DateDiffComponents(date2 !== null && date2 !== void 0 ? date2 : null, date1);
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
     var checkType = function (evalCheck, diff) {
         if (diff === 0)
             return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
@@ -2196,23 +2211,78 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
             return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
         return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
     };
-    if (!minInterval || ['millisecond', 'milliseconds'].includes(minInterval))
-        return checkType(evalType, ((_a = DateParseTSInternal(date1)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2)) !== null && _b !== void 0 ? _b : 0));
-    if (['year', 'years'].includes(minInterval) || components.year !== 0)
-        return checkType(evalType, components.year);
-    if (['month', 'months'].includes(minInterval) || components.month !== 0)
-        return checkType(evalType, components.month);
-    if (['week', 'weeks'].includes(minInterval) || Math.abs(components.day) >= 7)
-        return checkType(evalType, components.day);
-    if (['day', 'days'].includes(minInterval) || components.day !== 0)
-        return checkType(evalType, components.day);
-    if (['hour', 'hours'].includes(minInterval) || components.hour !== 0)
-        return checkType(evalType, components.hour);
-    if (['minute', 'minutes'].includes(minInterval) || components.minute !== 0)
-        return checkType(evalType, components.minute);
-    if (['second', 'seconds'].includes(minInterval) || components.second !== 0)
-        return checkType(evalType, components.second);
-    return checkType(evalType, ((_c = DateParseTSInternal(date1)) !== null && _c !== void 0 ? _c : 0) - ((_d = DateParseTSInternal(date2)) !== null && _d !== void 0 ? _d : 0));
+    var msDifference = ((_a = DateParseTSInternal(date1)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2)) !== null && _b !== void 0 ? _b : 0);
+    if (msDifference === 0) {
+        return checkType(evalType, msDifference);
+    }
+    if (!!minInterval) {
+        var yearDiff = ((_d = (_c = DateObject(date1)) === null || _c === void 0 ? void 0 : _c.getUTCFullYear()) !== null && _d !== void 0 ? _d : 0) - ((_f = (_e = DateObject(date2)) === null || _e === void 0 ? void 0 : _e.getUTCFullYear()) !== null && _f !== void 0 ? _f : 0);
+        if (['year', 'years'].includes(minInterval)) {
+            return checkType(evalType, yearDiff);
+        }
+        var monthDiff = ((_h = (_g = DateObject(date1)) === null || _g === void 0 ? void 0 : _g.getUTCMonth()) !== null && _h !== void 0 ? _h : 0) - ((_k = (_j = DateObject(date2)) === null || _j === void 0 ? void 0 : _j.getUTCMonth()) !== null && _k !== void 0 ? _k : 0);
+        if (['month', 'months'].includes(minInterval)) {
+            if (yearDiff !== 0)
+                return checkType(evalType, yearDiff);
+            return checkType(evalType, monthDiff);
+        }
+        if (['week', 'weeks'].includes(minInterval)) {
+            if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000)
+                return checkType(evalType, msDifference);
+            var weekDiff = ((_l = DateWeekNumber(date1)) !== null && _l !== void 0 ? _l : 0) - ((_m = DateWeekNumber(date2)) !== null && _m !== void 0 ? _m : 0);
+            // Check if in the same week that spans years
+            if (weekDiff === 0 && ((_o = DateWeekNumber(date1)) !== null && _o !== void 0 ? _o : 0) === 1 && Math.abs(yearDiff) > 1) {
+                if (yearDiff !== 0)
+                    return checkType(evalType, yearDiff);
+            }
+            return checkType(evalType, weekDiff);
+        }
+        var dateOfMonthDiff = ((_q = (_p = DateObject(date1)) === null || _p === void 0 ? void 0 : _p.getUTCDate()) !== null && _q !== void 0 ? _q : 0) - ((_s = (_r = DateObject(date2)) === null || _r === void 0 ? void 0 : _r.getUTCDate()) !== null && _s !== void 0 ? _s : 0);
+        if (['day', 'days'].includes(minInterval)) {
+            if (yearDiff !== 0)
+                return checkType(evalType, yearDiff);
+            if (monthDiff !== 0)
+                return checkType(evalType, monthDiff);
+            return checkType(evalType, dateOfMonthDiff);
+        }
+        var hourDiff = ((_u = (_t = DateObject(date1)) === null || _t === void 0 ? void 0 : _t.getUTCHours()) !== null && _u !== void 0 ? _u : 0) - ((_w = (_v = DateObject(date2)) === null || _v === void 0 ? void 0 : _v.getUTCHours()) !== null && _w !== void 0 ? _w : 0);
+        if (['hour', 'hours'].includes(minInterval)) {
+            if (yearDiff !== 0)
+                return checkType(evalType, yearDiff);
+            if (monthDiff !== 0)
+                return checkType(evalType, monthDiff);
+            if (dateOfMonthDiff !== 0)
+                return checkType(evalType, dateOfMonthDiff);
+            return checkType(evalType, hourDiff);
+        }
+        var minuteDiff = ((_y = (_x = DateObject(date1)) === null || _x === void 0 ? void 0 : _x.getUTCMinutes()) !== null && _y !== void 0 ? _y : 0) - ((_0 = (_z = DateObject(date2)) === null || _z === void 0 ? void 0 : _z.getUTCMinutes()) !== null && _0 !== void 0 ? _0 : 0);
+        if (['hour', 'hours'].includes(minInterval)) {
+            if (yearDiff !== 0)
+                return checkType(evalType, yearDiff);
+            if (monthDiff !== 0)
+                return checkType(evalType, monthDiff);
+            if (dateOfMonthDiff !== 0)
+                return checkType(evalType, dateOfMonthDiff);
+            if (hourDiff !== 0)
+                return checkType(evalType, hourDiff);
+            return checkType(evalType, minuteDiff);
+        }
+        var secondDiff = ((_2 = (_1 = DateObject(date1)) === null || _1 === void 0 ? void 0 : _1.getUTCSeconds()) !== null && _2 !== void 0 ? _2 : 0) - ((_4 = (_3 = DateObject(date2)) === null || _3 === void 0 ? void 0 : _3.getUTCSeconds()) !== null && _4 !== void 0 ? _4 : 0);
+        if (['hour', 'hours'].includes(minInterval)) {
+            if (yearDiff !== 0)
+                return checkType(evalType, yearDiff);
+            if (monthDiff !== 0)
+                return checkType(evalType, monthDiff);
+            if (dateOfMonthDiff !== 0)
+                return checkType(evalType, dateOfMonthDiff);
+            if (hourDiff !== 0)
+                return checkType(evalType, hourDiff);
+            if (minuteDiff !== 0)
+                return checkType(evalType, minuteDiff);
+            return checkType(evalType, secondDiff);
+        }
+    }
+    return checkType(evalType, msDifference);
 };
 
 var initialChanges = {};
@@ -3637,6 +3707,7 @@ exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateObject = DateObject;
 exports.DateParseTS = DateParseTS;
+exports.DateWeekNumber = DateWeekNumber;
 exports.DeepEqual = DeepEqual;
 exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;
