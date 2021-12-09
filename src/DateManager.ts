@@ -917,3 +917,11 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 	
 	return checkType(evalType, msDifference)
 }
+
+export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number | null =>
+	DateCompare(date1, 'IsBefore', date2, minInterval) ? -1
+		: DateCompare(date1, 'IsAfter', date2, minInterval) ? 1
+		: null
+
+export const SortCompareDate = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number =>
+	SortCompareDateNull(date1, date2, minInterval) ?? 0

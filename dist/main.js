@@ -2284,6 +2284,12 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
     }
     return checkType(evalType, msDifference);
 };
+var SortCompareDateNull = function (date1, date2, minInterval) {
+    return DateCompare(date1, 'IsBefore', date2, minInterval) ? -1
+        : DateCompare(date1, 'IsAfter', date2, minInterval) ? 1
+            : null;
+};
+var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a = SortCompareDateNull(date1, date2, minInterval)) !== null && _a !== void 0 ? _a : 0; };
 
 var initialChanges = {};
 /**
@@ -3775,6 +3781,8 @@ exports.SelectBetweenIDs = SelectBetweenIDs;
 exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.SortCompare = SortCompare;
+exports.SortCompareDate = SortCompareDate;
+exports.SortCompareDateNull = SortCompareDateNull;
 exports.SortCompareNull = SortCompareNull;
 exports.SortPerArray = SortPerArray;
 exports.StringContainsSearch = StringContainsSearch;

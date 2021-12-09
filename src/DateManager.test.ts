@@ -7,7 +7,7 @@ import {
 	DateISO,
 	DateParseTS,
 	DateWeekNumber,
-	ManualParse
+	ManualParse, SortCompareDate, SortCompareDateNull
 } from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
@@ -157,4 +157,13 @@ test('Date Managers', () => {
 	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 13:00:00.00', {
 		timezoneSource: 'America/New_York'
 	}), 'America/New_York')).toEqual('11/12/2021 1:00 pm')
+	expect(SortCompareDateNull('2021-01-01', '2021-01-02')).toEqual(-1)
+	expect(SortCompareDateNull('2021-01-02', '2021-01-01')).toEqual(1)
+	expect(SortCompareDateNull('2021-01-01', '2021-01-01')).toEqual(null)
+	expect(SortCompareDate('2021-01-01', '2021-01-02')).toEqual(-1)
+	expect(SortCompareDate('2021-01-02', '2021-01-01')).toEqual(1)
+	expect(SortCompareDate('2021-01-01', '2021-01-01')).toEqual(0)
+	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:00:00')).toEqual(0)
+	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00')).toEqual(-1)
+	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00', 'day')).toEqual(0)
 })

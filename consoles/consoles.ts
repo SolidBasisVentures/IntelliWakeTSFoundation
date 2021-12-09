@@ -1,12 +1,17 @@
-import {DateCompare, DateWeekNumber} from '../src/DateManager'
+import {SortCompareDateNull} from '../src/DateManager'
+import {SortCompareNull} from '../src/SortSearch'
 
 require('source-map-support').install()
 
-console.log(DateWeekNumber('2021-12-31'))
-console.log(DateWeekNumber('2021-01-01'))
-console.log(DateWeekNumber('2021-01-02'))
-console.log(DateWeekNumber('2021-01-03'))
-console.log(DateCompare('2021-01-02', 'IsSame', '2021-01-01T10:00:00Z', 'day'))
+console.log(SortCompareNull(0, 1), SortCompareDateNull('2021-01-01', '2021-01-02'))
+console.log(SortCompareNull(1, 0), SortCompareDateNull('2021-01-02', '2021-01-01'))
+console.log(SortCompareNull(1, 1), SortCompareDateNull('2021-01-01', '2021-01-01'))
+
+// console.log(DateWeekNumber('2021-12-31'))
+// console.log(DateWeekNumber('2021-01-01'))
+// console.log(DateWeekNumber('2021-01-02'))
+// console.log(DateWeekNumber('2021-01-03'))
+// console.log(DateCompare('2021-01-02', 'IsSame', '2021-01-01T10:00:00Z', 'day'))
 
 // console.log('Manual', '2021-11-11 10:15:33.188-05', DateISO(ManualParse('2021-11-11 10:15:33.188-05')), DateFormat('DisplayDateTime', ManualParse('2021-11-11 10:15:33.188-05')))
 
