@@ -457,7 +457,7 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
 	
 	let countryCode = ''
 	
-	while (cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) {
+	while ((cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) && cleanNumber.length !== 10) {
 		countryCode += cleanNumber[0]
 		cleanNumber = cleanNumber.substr(1)
 	}
@@ -711,3 +711,13 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 }
 
 export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
+
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * @param text
+ * @param count
+ * @param showNumber
+ * @constructor
+ */
+export const AddS = (text?: string | null, count?: number | null, showNumber = false): string =>
+	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()

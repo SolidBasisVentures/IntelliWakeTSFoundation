@@ -21,7 +21,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords
+	UCWords, AddS
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 
@@ -96,6 +96,8 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('555555123')).toStrictEqual('(555) 555-123')
 	expect(FormatPhoneNumber('0015555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('15555551234')).toStrictEqual('(555) 555-1234')
+	expect(FormatPhoneNumber('123-123-1234')).toStrictEqual('(123) 123-1234')
+	expect(FormatPhoneNumber('321-321-4321')).toStrictEqual('(321) 321-4321')
 	expect(FormatPhoneNumber('+15555551234')).toStrictEqual('(555) 555-1234')
 	expect(PhoneComponents('0015555551234 x321')).toEqual({
 		countryCode: '001',
@@ -166,4 +168,10 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('2231231234x333')).toEqual('(223) 123-1234 x333')
 	expect(FormatPhoneNumber('2231231234 At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
 	expect(FormatPhoneNumber('2231231234At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
+})
+
+test('AddS', () => {
+	expect(AddS('Row', 0)).toBe('Rows')
+	expect(AddS('Row', 1)).toBe('Row')
+	expect(AddS('Row', 2)).toBe('Rows')
 })

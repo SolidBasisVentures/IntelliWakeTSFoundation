@@ -1,11 +1,9 @@
-import {SortCompareDateNull} from '../src/DateManager'
-import {SortCompareNull} from '../src/SortSearch'
+import {FormatPhoneNumber} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
-console.log(SortCompareNull(0, 1), SortCompareDateNull('2021-01-01', '2021-01-02'))
-console.log(SortCompareNull(1, 0), SortCompareDateNull('2021-01-02', '2021-01-01'))
-console.log(SortCompareNull(1, 1), SortCompareDateNull('2021-01-01', '2021-01-01'))
+console.log(FormatPhoneNumber('123-123-1234'))
+console.log(FormatPhoneNumber('321-321-4321'))
 
 // console.log(DateWeekNumber('2021-12-31'))
 // console.log(DateWeekNumber('2021-01-01'))

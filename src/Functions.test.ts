@@ -1,5 +1,4 @@
 import {
-	AddS,
 	CleanNumber,
 	DeepEqual,
 	IsOn,
@@ -22,12 +21,6 @@ test('RoundTo', () => {
 	expect(RoundTo(10.14, 1)).toBe(10.1)
 	expect(RoundTo(10.15, 0)).toBe(10)
 	expect(RoundTo(10.5, 0)).toBe(11)
-})
-
-test('AddS', () => {
-	expect(AddS('Row', 0)).toBe('Rows')
-	expect(AddS('Row', 1)).toBe('Row')
-	expect(AddS('Row', 2)).toBe('Rows')
 })
 
 const item = {

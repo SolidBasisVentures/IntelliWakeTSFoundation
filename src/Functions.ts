@@ -6,8 +6,6 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
-import {ToDigits} from './StringManipulation'
-
 /**
  * Replace all occurences of a string.
  *
@@ -385,16 +383,6 @@ export const RoundTo = (num: any, decimalPlaces: number = 0) =>
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
 export const JSONStringToObject = <T = any>(val: string): T => (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))) as T
-
-/**
- * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
- * @param text
- * @param count
- * @param showNumber
- * @constructor
- */
-export const AddS = (text?: string | null, count?: number | null, showNumber = false): string =>
-	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()
 
 // noinspection JSPotentiallyInvalidConstructorUsage
 /**

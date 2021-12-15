@@ -1,5 +1,5 @@
-import {AddS, CleanNumber, ReplaceAll} from './Functions'
-import {DigitsNth, ToDigits} from './StringManipulation'
+import {CleanNumber, ReplaceAll} from './Functions'
+import {AddS, DigitsNth, ToDigits} from './StringManipulation'
 
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
 export const DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss'
