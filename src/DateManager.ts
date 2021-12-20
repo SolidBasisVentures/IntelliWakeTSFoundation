@@ -152,12 +152,11 @@ export const ManualParse = (date: string): number | null => {
 	}
 	
 	if (d[10]) {
-		console.log(date, 'sec', CleanNumber(d[10]))
 		dateObj.setSeconds(CleanNumber(d[10]))
 	}
 	
 	if (d[12]) {
-		dateObj.setMilliseconds((CleanNumber(d[12])) * 10)
+		dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0'))))
 	}
 	
 	let offset = 0
@@ -165,10 +164,19 @@ export const ManualParse = (date: string): number | null => {
 	if (d[14]) {
 		offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10)
 		offset *= ((d[15] === '-') ? 1 : -1)
+		// console.log('o off', dateObj.getTime(), offset)
+	// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
+		// offset -= CleanNumber(date.substr(-3))
+		// console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
+	} else if (date.includes('Z') && date.includes('T')) {
+		offset -= (dateObj.getTimezoneOffset() / 60)
+		// console.log('t off', dateObj.getTimezoneOffset(), offset)
+		// } else {
+		// offset -= (dateObj.getTimezoneOffset() / 60)
+		// console.log('e off', dateObj.getTime(), offset)
 	}
 	
-	// offset -= dateObj.getTimezoneOffset()
-	const time = dateObj.getTime() + offset * 60 * 1000
+	const time = dateObj.getTime() + (offset * 60 * 60 * 1000)
 	
 	let newDateObj = new Date(time)
 	
@@ -189,15 +197,15 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 	try {
 		let result = ManualParse(date)
 		
-		if (!!result) return result
-		
-		result = Date.parse(date.toString())
-		
-		if (isNaN(result)) {
-			const check = new Date(date)
+		if (!result) {
+			result = Date.parse(date.toString())
 			
-			if (!check.valueOf()) {
-				result = ManualParse(date) ?? 0
+			if (isNaN(result)) {
+				const check = new Date(date)
+				
+				if (!check.valueOf()) {
+					result = ManualParse(date) ?? 0
+				}
 			}
 		}
 		
@@ -694,17 +702,35 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 }
 
 export const DateWeekNumber = (date: TDateAny): number | null => {
-	const currentdate = DateObject(date)
+	const currentdate = DateObject(date, {timezoneSource: 'UTC'})
 	if (!currentdate) return null
 	
-	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01`)
+	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01 00:00:00`, {timezoneSource: 'UTC'})
 	if (!oneJan) return null
 	
 	const numberOfDays = DateDiff(oneJan, currentdate, 'days') ?? 0
+	
 	const weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7)
 	if (weekNumber > 52) return 1
 	return weekNumber
 }
+
+// export const DateWeekNumber = (date: TDateAny): number | null => {
+// 	let dateObject = DateObject(date)
+// 	if (!dateObject) return null
+//
+// 	dateObject.setHours(0, 0, 0, 0)
+// 	// Thursday in current week decides the year.
+// 	dateObject.setDate((dateObject.getDate() + 3 - (dateObject.getDay() + 6) % 7) + 1)
+// 	// January 4 is always in week 1.
+// 	const week1 = new Date(dateObject.getFullYear(), 0, 4)
+// 	// Adjust to Thursday in week 1 and count number of weeks from date to week1.
+// 	const weekNumber = 1 + (Math.round(((dateObject.getTime() - week1.getTime()) / 86400000)
+// 		- 3 + (week1.getDay() + 6) % 7) / 7)
+//
+// 	if (weekNumber > 52) return 1
+// 	return weekNumber
+// }
 
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	year: number
@@ -870,7 +896,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, monthDiff)
 		}
 		
-		if (['week', 'weeks'].includes(minInterval) ) {
+		if (['week', 'weeks'].includes(minInterval)) {
 			if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000) return checkType(evalType, msDifference)
 			const weekDiff = (DateWeekNumber(date1) ?? 0) - (DateWeekNumber(date2) ?? 0)
 			// Check if in the same week that spans years
@@ -926,7 +952,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number | null =>
 	DateCompare(date1, 'IsBefore', date2, minInterval) ? -1
 		: DateCompare(date1, 'IsAfter', date2, minInterval) ? 1
-		: null
+			: null
 
 export const SortCompareDate = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number =>
 	SortCompareDateNull(date1, date2, minInterval) ?? 0

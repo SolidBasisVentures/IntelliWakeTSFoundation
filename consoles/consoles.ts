@@ -1,11 +1,23 @@
 import {DeepEqual} from '../src/DeepEqual'
-import {RemoveDupProperties} from '../src/DataConstructs'
-import {DateObject, DateParseTS} from '../src/DateManager'
+import {DateObject} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log('DOs', DateObject('2021-12-20 13:54:32.926-05'), DateObject('2021-12-20T18:54:32.926Z'))
-console.log('TSs', (DateParseTS('2021-12-20 13:54:32.926-05') ?? 0)- (DateParseTS('2021-12-20T18:54:32.926Z') ?? 0))
+console.log('2021-12-20T17:12:36.370Z', DateObject('2021-12-20T17:12:36.370Z'))
+console.log('2021-12-20 12:12:36.37-05', DateObject('2021-12-20 12:12:36.37-05'))
+console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
+
+// console.log(DateWeekNumber('2021-01-02'))
+// console.log(DateWeekNumber('2021-01-09'))
+
+// const isoLongDateString = '2021-01-01T00:00:00Z'
+
+
+// console.log('2021-12-20T17:12:36.370Z', DateObject('2021-12-20T17:12:36.370Z'))
+// console.log('2021-12-20 12:12:36.37-05', DateObject('2021-12-20 12:12:36.37-05'))
+// console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
+// console.log('B', '2021-12-20T18:54:32.926Z', DateObject('2021-12-20T18:54:32.926Z'))
+// console.log('TSs', (DateParseTS('2021-12-20 13:54:32.926-05') ?? 0) - (DateParseTS('2021-12-20T18:54:32.926Z') ?? 0))
 
 
 // for (const sig of [...Array(25).keys()]) {

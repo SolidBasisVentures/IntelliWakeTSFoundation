@@ -1583,19 +1583,28 @@ var ManualParse = function (date) {
         dateObj.setMinutes(CleanNumber(d[8]));
     }
     if (d[10]) {
-        console.log(date, 'sec', CleanNumber(d[10]));
         dateObj.setSeconds(CleanNumber(d[10]));
     }
     if (d[12]) {
-        dateObj.setMilliseconds((CleanNumber(d[12])) * 10);
+        dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0'))));
     }
     var offset = 0;
     if (d[14]) {
         offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10);
         offset *= ((d[15] === '-') ? 1 : -1);
+        // console.log('o off', dateObj.getTime(), offset)
+        // } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
+        // offset -= CleanNumber(date.substr(-3))
+        // console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
     }
-    // offset -= dateObj.getTimezoneOffset()
-    var time = dateObj.getTime() + offset * 60 * 1000;
+    else if (date.includes('Z') && date.includes('T')) {
+        offset -= (dateObj.getTimezoneOffset() / 60);
+        // console.log('t off', dateObj.getTimezoneOffset(), offset)
+        // } else {
+        // offset -= (dateObj.getTimezoneOffset() / 60)
+        // console.log('e off', dateObj.getTime(), offset)
+    }
+    var time = dateObj.getTime() + (offset * 60 * 60 * 1000);
     var newDateObj = new Date(time);
     if (!newDateObj)
         return null;
@@ -1613,13 +1622,13 @@ var DateParseTSInternal = function (date, timezoneSource) {
         return new Date().valueOf();
     try {
         var result = ManualParse(date);
-        if (!!result)
-            return result;
-        result = Date.parse(date.toString());
-        if (isNaN(result)) {
-            var check = new Date(date);
-            if (!check.valueOf()) {
-                result = (_a = ManualParse(date)) !== null && _a !== void 0 ? _a : 0;
+        if (!result) {
+            result = Date.parse(date.toString());
+            if (isNaN(result)) {
+                var check = new Date(date);
+                if (!check.valueOf()) {
+                    result = (_a = ManualParse(date)) !== null && _a !== void 0 ? _a : 0;
+                }
             }
         }
         if (!result)
@@ -2063,10 +2072,10 @@ var DateDiff = function (dateFrom, dateTo, duration) {
 };
 var DateWeekNumber = function (date) {
     var _a;
-    var currentdate = DateObject(date);
+    var currentdate = DateObject(date, { timezoneSource: 'UTC' });
     if (!currentdate)
         return null;
-    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01");
+    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01 00:00:00", { timezoneSource: 'UTC' });
     if (!oneJan)
         return null;
     var numberOfDays = (_a = DateDiff(oneJan, currentdate, 'days')) !== null && _a !== void 0 ? _a : 0;
@@ -2075,6 +2084,22 @@ var DateWeekNumber = function (date) {
         return 1;
     return weekNumber;
 };
+// export const DateWeekNumber = (date: TDateAny): number | null => {
+// 	let dateObject = DateObject(date)
+// 	if (!dateObject) return null
+//
+// 	dateObject.setHours(0, 0, 0, 0)
+// 	// Thursday in current week decides the year.
+// 	dateObject.setDate((dateObject.getDate() + 3 - (dateObject.getDay() + 6) % 7) + 1)
+// 	// January 4 is always in week 1.
+// 	const week1 = new Date(dateObject.getFullYear(), 0, 4)
+// 	// Adjust to Thursday in week 1 and count number of weeks from date to week1.
+// 	const weekNumber = 1 + (Math.round(((dateObject.getTime() - week1.getTime()) / 86400000)
+// 		- 3 + (week1.getDay() + 6) % 7) / 7)
+//
+// 	if (weekNumber > 52) return 1
+// 	return weekNumber
+// }
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     var returnComponents = {
@@ -2341,6 +2366,7 @@ var DeepEqual = function (object1, object2) {
             if (!!ts1) {
                 var ts2 = DateParseTS(object2);
                 if (!!ts2) {
+                    // console.log('Here', object1, ts1, object2, ts2)
                     return DateCompare(ts1, 'IsSame', ts2, 'second');
                 }
             }
