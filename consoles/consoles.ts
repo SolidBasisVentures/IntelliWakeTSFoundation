@@ -1,4 +1,4 @@
-import {DeepEqual} from '../src/Functions'
+import {DeepEqual} from '../src/DeepEqual'
 
 require('source-map-support').install()
 

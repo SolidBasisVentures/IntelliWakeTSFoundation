@@ -737,56 +737,6 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
  * @constructor
  */
 var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
-var DeepEqual = function (object1, object2) {
-    var _a, _b;
-    if (object1 === undefined && object2 === undefined)
-        return true;
-    if (object1 === null && object2 === null)
-        return true;
-    if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
-        return false;
-    if (Array.isArray(object1)) {
-        if (object1.length !== object2.length)
-            return false;
-        for (var i = 0; i < object1.length; i++) {
-            if (!DeepEqual(object1[i], object2[i]))
-                return false;
-        }
-        return true;
-    }
-    switch (typeof object1) {
-        case 'function':
-            return true;
-        case 'object':
-            if (typeof object1 === 'object' && ((_a = object1.type) === null || _a === void 0 ? void 0 : _a.toString().includes('react.')))
-                return true;
-            if (typeof object2 === 'object' && ((_b = object2.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
-                return true;
-            var keys1 = Object.keys(object1);
-            var keys2 = Object.keys(object2);
-            if (keys1.length !== keys2.length) {
-                return false;
-            }
-            for (var _i = 0, keys1_1 = keys1; _i < keys1_1.length; _i++) {
-                var key = keys1_1[_i];
-                var val1 = object1[key];
-                var val2 = object2[key];
-                if (typeof val1 !== typeof val2)
-                    return false;
-                var areObjects = isObject(val1) && isObject(val2);
-                if ((areObjects && !DeepEqual(val1, val2)) ||
-                    (!areObjects && val1 !== val2)) {
-                    return false;
-                }
-            }
-            return true;
-        default:
-            return object1 === object2;
-    }
-};
-function isObject(object) {
-    return object !== null && object !== undefined && typeof object === 'object';
-}
 function OmitProperty(obj) {
     var keys = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -3712,6 +3662,64 @@ var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
         }
     }
     return betweenIDs;
+};
+
+function isObject(object) {
+    return object !== null && object !== undefined && typeof object === 'object';
+}
+var DeepEqual = function (object1, object2) {
+    var _a, _b;
+    if (object1 === undefined && object2 === undefined)
+        return true;
+    if (object1 === null && object2 === null)
+        return true;
+    if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
+        return false;
+    if (Array.isArray(object1)) {
+        if (object1.length !== object2.length)
+            return false;
+        for (var i = 0; i < object1.length; i++) {
+            if (!DeepEqual(object1[i], object2[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof object1) {
+        case 'function':
+            return true;
+        case 'object':
+            if (typeof object1 === 'object' && ((_a = object1.type) === null || _a === void 0 ? void 0 : _a.toString().includes('react.')))
+                return true;
+            if (typeof object2 === 'object' && ((_b = object2.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            var keys1 = Object.keys(object1);
+            var keys2 = Object.keys(object2);
+            if (keys1.length !== keys2.length) {
+                return false;
+            }
+            for (var _i = 0, keys1_1 = keys1; _i < keys1_1.length; _i++) {
+                var key = keys1_1[_i];
+                var val1 = object1[key];
+                var val2 = object2[key];
+                if (typeof val1 !== typeof val2)
+                    return false;
+                var areObjects = isObject(val1) && isObject(val2);
+                if ((areObjects && !DeepEqual(val1, val2)) ||
+                    (!areObjects && val1 !== val2)) {
+                    return false;
+                }
+            }
+            return true;
+        default:
+            var ts1 = DateParseTS(object1);
+            if (!!ts1) {
+                var ts2 = DateParseTS(object2);
+                if (!!ts2) {
+                    return DateCompare(ts1, 'IsSame', ts2, 'second');
+                }
+            }
+            return object1 === object2;
+    }
 };
 
 exports.AddChange = AddChange;

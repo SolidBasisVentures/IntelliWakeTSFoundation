@@ -1,6 +1,5 @@
 import {
 	CleanNumber,
-	DeepEqual,
 	IsOn,
 	JSONParse, JSONStringToObject,
 	ObjectToJSONString,
@@ -9,6 +8,7 @@ import {
 	RoundTo,
 	ToArray
 } from './Functions'
+import {DeepEqual} from './DeepEqual'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
