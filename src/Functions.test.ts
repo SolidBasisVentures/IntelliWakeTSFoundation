@@ -47,6 +47,7 @@ test('Deep Equal', () => {
 	expect(DeepEqual(item, {...item, val4: {...item.val4, valA: 2}})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['Two', 'One']})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
+	expect(DeepEqual("2021-12-20T17:12:36.370Z", "2021-12-20 12:12:36.37-05")).toBe(true)
 	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
 })
 

@@ -1,11 +1,13 @@
-import {RightPad, ShortNumber} from '../src/StringManipulation'
+import {DeepEqual} from '../src/Functions'
 
 require('source-map-support').install()
 
-for (const sig of [...Array(25).keys()]) {
-	const val = RightPad('', sig, '6')
-	console.log('Short', val, ShortNumber(val, 1))
-}
+console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
+
+// for (const sig of [...Array(25).keys()]) {
+// 	const val = RightPad('', sig, '6')
+// 	console.log('Short', val, ShortNumber(val, 1))
+// }
 
 // console.log(DateWeekNumber('2021-12-31'))
 // console.log(DateWeekNumber('2021-01-01'))

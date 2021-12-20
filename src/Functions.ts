@@ -6,6 +6,8 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
+import {DateCompare, DateParseTS} from './DateManager'
+
 /**
  * Replace all occurences of a string.
  *
@@ -542,6 +544,14 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 			
 			return true
 		default:
+			const ts1 = DateParseTS(object1)
+			if (!!ts1) {
+				const ts2 = DateParseTS(object2)
+				if (!!ts2) {
+					return DateCompare(ts1, 'IsSame', ts2, 'second')
+				}
+			}
+			
 			return object1 === object2
 	}
 }
