@@ -109,7 +109,7 @@ export const IsDateString = (value: any): boolean => {
 
 export type TDateAny = Date | number | 'now' | 'today' | string | null | undefined
 
-export const ManualParse = (date: string) => {
+export const ManualParse = (date: string): number | null => {
 	const regexps = [
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
@@ -152,6 +152,7 @@ export const ManualParse = (date: string) => {
 	}
 	
 	if (d[10]) {
+		console.log(date, 'sec', CleanNumber(d[10]))
 		dateObj.setSeconds(CleanNumber(d[10]))
 	}
 	
@@ -186,7 +187,11 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 	if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today') return new Date().valueOf()
 	
 	try {
-		let result: number = Date.parse(date.toString())
+		let result = ManualParse(date)
+		
+		if (!!result) return result
+		
+		result = Date.parse(date.toString())
 		
 		if (isNaN(result)) {
 			const check = new Date(date)

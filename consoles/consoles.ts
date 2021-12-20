@@ -1,11 +1,12 @@
 import {DeepEqual} from '../src/DeepEqual'
 import {RemoveDupProperties} from '../src/DataConstructs'
+import {DateObject, DateParseTS} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
-console.log(DeepEqual('2021-12-20T17:28:01.130Z', '2021-12-20 12:28:01.13-05'))
-console.log(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.13-05'}))
+console.log('DOs', DateObject('2021-12-20 13:54:32.926-05'), DateObject('2021-12-20T18:54:32.926Z'))
+console.log('TSs', (DateParseTS('2021-12-20 13:54:32.926-05') ?? 0)- (DateParseTS('2021-12-20T18:54:32.926Z') ?? 0))
+
 
 // for (const sig of [...Array(25).keys()]) {
 // 	const val = RightPad('', sig, '6')

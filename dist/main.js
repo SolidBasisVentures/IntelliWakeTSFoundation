@@ -1583,6 +1583,7 @@ var ManualParse = function (date) {
         dateObj.setMinutes(CleanNumber(d[8]));
     }
     if (d[10]) {
+        console.log(date, 'sec', CleanNumber(d[10]));
         dateObj.setSeconds(CleanNumber(d[10]));
     }
     if (d[12]) {
@@ -1611,7 +1612,10 @@ var DateParseTSInternal = function (date, timezoneSource) {
     if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today')
         return new Date().valueOf();
     try {
-        var result = Date.parse(date.toString());
+        var result = ManualParse(date);
+        if (!!result)
+            return result;
+        result = Date.parse(date.toString());
         if (isNaN(result)) {
             var check = new Date(date);
             if (!check.valueOf()) {
