@@ -377,8 +377,10 @@ export const StringToByteArray = (str: string): any => {
 
 export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
 
-export const RoundTo = (num: any, decimalPlaces: number = 0) =>
-	+Math.round((num + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
+export const RoundTo = (num: any, decimalPlaces: number = 0, roundDir: 'round' | 'up' | 'down' = 'round') =>
+	roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
+		:roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces) :
+			+Math.ceil((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 

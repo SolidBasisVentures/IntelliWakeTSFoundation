@@ -4,7 +4,7 @@
  * @example
  * ToSnakeCase('UserToken')  // returns "user_token"
  */
-import {CleanNumber, ReplaceAll, RoundTo} from './Functions'
+import {CleanNumber, CleanNumberNull, ReplaceAll, RoundTo} from './Functions'
 
 export const ToSnakeCase = (str: string | undefined | null): string => {
 	if (!str) return ''
@@ -721,3 +721,60 @@ export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklm
  */
 export const AddS = (text?: string | null, count?: number | null, showNumber = false): string =>
 	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()
+
+
+export const ShortNumber = (value: any, options?: {
+	decimals?: number
+	round?: 'round' | 'up' | 'down'
+}): string | null => {
+	let calcValue = CleanNumberNull(value)
+	
+	if (calcValue === null) return null
+	
+	const showValue = (val: number, extension: string, options?: {
+		decimals?: number
+		round?: 'round' | 'up' | 'down'
+	}): string => {
+		let returnVal = ToDigits(RoundTo(val, options?.decimals, options?.round), options?.decimals)
+		
+		if (!!options?.decimals) {
+			while (returnVal.endsWith('0')) returnVal = returnVal.substr(0, returnVal.length - 1)
+			while (returnVal.endsWith('.')) returnVal = returnVal.substr(0, returnVal.length - 1)
+		}
+		
+		return returnVal + extension
+	}
+	
+	if (calcValue < 999) {
+		return showValue(calcValue, '', options)
+	}
+	
+	calcValue /= 1000
+	if (calcValue < 999) {
+		return showValue(calcValue, 'k', options)
+	}
+	
+	calcValue /= 1000
+	if (calcValue < 999) {
+		return showValue(calcValue, 'M', options)
+	}
+	
+	calcValue /= 1000
+	if (calcValue < 999) {
+		return showValue(calcValue, 'B', options)
+	}
+	
+	calcValue /= 1000
+	if (calcValue < 999) {
+		return showValue(calcValue, 'T', options)
+	}
+	
+	let trillions = ''
+	
+	do {
+		trillions += 'Q'
+		calcValue /= 1000
+	} while (calcValue > 999)
+	
+	return showValue(calcValue, trillions, options)
+}

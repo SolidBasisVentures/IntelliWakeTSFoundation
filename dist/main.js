@@ -581,9 +581,12 @@ var StringToByteArray = function (str) {
     return array;
 };
 var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
-var RoundTo = function (num, decimalPlaces) {
+var RoundTo = function (num, decimalPlaces, roundDir) {
     if (decimalPlaces === void 0) { decimalPlaces = 0; }
-    return +Math.round((num + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
+    if (roundDir === void 0) { roundDir = 'round'; }
+    return roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces))
+        : roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces)) :
+            +Math.ceil((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
 };
 var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
 var JSONStringToObject = function (val) { return (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))); };
@@ -1478,6 +1481,46 @@ var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmno
 var AddS = function (text, count, showNumber) {
     if (showNumber === void 0) { showNumber = false; }
     return !text ? '' : ((showNumber ? ToDigits(count !== null && count !== void 0 ? count : 0) : '') + " " + text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '')).trim();
+};
+var ShortNumber = function (value, options) {
+    var calcValue = CleanNumberNull(value);
+    if (calcValue === null)
+        return null;
+    var showValue = function (val, extension, options) {
+        var returnVal = ToDigits(RoundTo(val, options === null || options === void 0 ? void 0 : options.decimals, options === null || options === void 0 ? void 0 : options.round), options === null || options === void 0 ? void 0 : options.decimals);
+        if (!!(options === null || options === void 0 ? void 0 : options.decimals)) {
+            while (returnVal.endsWith('0'))
+                returnVal = returnVal.substr(0, returnVal.length - 1);
+            while (returnVal.endsWith('.'))
+                returnVal = returnVal.substr(0, returnVal.length - 1);
+        }
+        return returnVal + extension;
+    };
+    if (calcValue < 999) {
+        return showValue(calcValue, '', options);
+    }
+    calcValue /= 1000;
+    if (calcValue < 999) {
+        return showValue(calcValue, 'k', options);
+    }
+    calcValue /= 1000;
+    if (calcValue < 999) {
+        return showValue(calcValue, 'M', options);
+    }
+    calcValue /= 1000;
+    if (calcValue < 999) {
+        return showValue(calcValue, 'B', options);
+    }
+    calcValue /= 1000;
+    if (calcValue < 999) {
+        return showValue(calcValue, 'T', options);
+    }
+    var trillions = '';
+    do {
+        trillions += 'Q';
+        calcValue /= 1000;
+    } while (calcValue > 999);
+    return showValue(calcValue, trillions, options);
 };
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
@@ -3778,6 +3821,7 @@ exports.SearchRows = SearchRows;
 exports.SearchSort = SearchSort;
 exports.SearchTerms = SearchTerms;
 exports.SelectBetweenIDs = SelectBetweenIDs;
+exports.ShortNumber = ShortNumber;
 exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.SortCompare = SortCompare;

@@ -21,7 +21,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords, AddS
+	UCWords, AddS, ShortNumber
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 
@@ -174,4 +174,18 @@ test('AddS', () => {
 	expect(AddS('Row', 0)).toBe('Rows')
 	expect(AddS('Row', 1)).toBe('Row')
 	expect(AddS('Row', 2)).toBe('Rows')
+})
+
+test('ShortNumber', () => {
+	expect(ShortNumber(6, {decimals: 1})).toBe('6')
+	expect(ShortNumber(66, {decimals: 1})).toBe('66')
+	expect(ShortNumber(666, {decimals: 1})).toBe('666')
+	expect(ShortNumber(6666, {decimals: 1})).toBe('6.7k')
+	expect(ShortNumber(66666, {decimals: 1})).toBe('66.7k')
+	expect(ShortNumber(6666666, {decimals: 1})).toBe('6.7M')
+	expect(ShortNumber(6666)).toBe('7k')
+	expect(ShortNumber(6666, {decimals: 1, round: 'up'})).toBe('6.7k')
+	expect(ShortNumber(6666, {decimals: 1, round: 'down'})).toBe('6.6k')
+	expect(ShortNumber(3333, {decimals: 1, round: 'up'})).toBe('3.4k')
+	expect(ShortNumber(3333, {decimals: 1, round: 'down'})).toBe('3.3k')
 })

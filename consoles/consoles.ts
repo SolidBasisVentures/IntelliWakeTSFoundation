@@ -1,9 +1,11 @@
-import {FormatPhoneNumber} from '../src/StringManipulation'
+import {RightPad, ShortNumber} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
-console.log(FormatPhoneNumber('123-123-1234'))
-console.log(FormatPhoneNumber('321-321-4321'))
+for (const sig of [...Array(25).keys()]) {
+	const val = RightPad('', sig, '6')
+	console.log('Short', val, ShortNumber(val, {decimals: 1}))
+}
 
 // console.log(DateWeekNumber('2021-12-31'))
 // console.log(DateWeekNumber('2021-01-01'))
