@@ -723,21 +723,15 @@ export const AddS = (text?: string | null, count?: number | null, showNumber = f
 	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()
 
 
-export const ShortNumber = (value: any, options?: {
-	decimals?: number
-	round?: 'round' | 'up' | 'down'
-}): string | null => {
+export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'down' = 'round'): string | null => {
 	let calcValue = CleanNumberNull(value)
 	
 	if (calcValue === null) return null
 	
-	const showValue = (val: number, extension: string, options?: {
-		decimals?: number
-		round?: 'round' | 'up' | 'down'
-	}): string => {
-		let returnVal = ToDigits(RoundTo(val, options?.decimals, options?.round), options?.decimals)
+	const showValue = (val: number, extension: string): string => {
+		let returnVal = ToDigits(RoundTo(val, decimals, round), decimals)
 		
-		if (!!options?.decimals) {
+		if (!!decimals) {
 			while (returnVal.endsWith('0')) returnVal = returnVal.substr(0, returnVal.length - 1)
 			while (returnVal.endsWith('.')) returnVal = returnVal.substr(0, returnVal.length - 1)
 		}
@@ -746,27 +740,27 @@ export const ShortNumber = (value: any, options?: {
 	}
 	
 	if (calcValue < 999) {
-		return showValue(calcValue, '', options)
+		return showValue(calcValue, '')
 	}
 	
 	calcValue /= 1000
 	if (calcValue < 999) {
-		return showValue(calcValue, 'k', options)
+		return showValue(calcValue, 'k')
 	}
 	
 	calcValue /= 1000
 	if (calcValue < 999) {
-		return showValue(calcValue, 'M', options)
+		return showValue(calcValue, 'M')
 	}
 	
 	calcValue /= 1000
 	if (calcValue < 999) {
-		return showValue(calcValue, 'B', options)
+		return showValue(calcValue, 'B')
 	}
 	
 	calcValue /= 1000
 	if (calcValue < 999) {
-		return showValue(calcValue, 'T', options)
+		return showValue(calcValue, 'T')
 	}
 	
 	let trillions = ''
@@ -776,5 +770,5 @@ export const ShortNumber = (value: any, options?: {
 		calcValue /= 1000
 	} while (calcValue > 999)
 	
-	return showValue(calcValue, trillions, options)
+	return showValue(calcValue, trillions)
 }

@@ -4,7 +4,7 @@ require('source-map-support').install()
 
 for (const sig of [...Array(25).keys()]) {
 	const val = RightPad('', sig, '6')
-	console.log('Short', val, ShortNumber(val, {decimals: 1}))
+	console.log('Short', val, ShortNumber(val, 1))
 }
 
 // console.log(DateWeekNumber('2021-12-31'))

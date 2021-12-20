@@ -1482,13 +1482,15 @@ var AddS = function (text, count, showNumber) {
     if (showNumber === void 0) { showNumber = false; }
     return !text ? '' : ((showNumber ? ToDigits(count !== null && count !== void 0 ? count : 0) : '') + " " + text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '')).trim();
 };
-var ShortNumber = function (value, options) {
+var ShortNumber = function (value, decimals, round) {
+    if (decimals === void 0) { decimals = 0; }
+    if (round === void 0) { round = 'round'; }
     var calcValue = CleanNumberNull(value);
     if (calcValue === null)
         return null;
-    var showValue = function (val, extension, options) {
-        var returnVal = ToDigits(RoundTo(val, options === null || options === void 0 ? void 0 : options.decimals, options === null || options === void 0 ? void 0 : options.round), options === null || options === void 0 ? void 0 : options.decimals);
-        if (!!(options === null || options === void 0 ? void 0 : options.decimals)) {
+    var showValue = function (val, extension) {
+        var returnVal = ToDigits(RoundTo(val, decimals, round), decimals);
+        if (!!decimals) {
             while (returnVal.endsWith('0'))
                 returnVal = returnVal.substr(0, returnVal.length - 1);
             while (returnVal.endsWith('.'))
@@ -1497,30 +1499,30 @@ var ShortNumber = function (value, options) {
         return returnVal + extension;
     };
     if (calcValue < 999) {
-        return showValue(calcValue, '', options);
+        return showValue(calcValue, '');
     }
     calcValue /= 1000;
     if (calcValue < 999) {
-        return showValue(calcValue, 'k', options);
+        return showValue(calcValue, 'k');
     }
     calcValue /= 1000;
     if (calcValue < 999) {
-        return showValue(calcValue, 'M', options);
+        return showValue(calcValue, 'M');
     }
     calcValue /= 1000;
     if (calcValue < 999) {
-        return showValue(calcValue, 'B', options);
+        return showValue(calcValue, 'B');
     }
     calcValue /= 1000;
     if (calcValue < 999) {
-        return showValue(calcValue, 'T', options);
+        return showValue(calcValue, 'T');
     }
     var trillions = '';
     do {
         trillions += 'Q';
         calcValue /= 1000;
     } while (calcValue > 999);
-    return showValue(calcValue, trillions, options);
+    return showValue(calcValue, trillions);
 };
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';

@@ -275,3 +275,12 @@ export declare const UCWords: (str: string | null) => string | null;
  */
 export declare const RandomString: (length: number, validChars?: string) => string;
 export declare const RandomKey: (length: number) => string;
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * @param text
+ * @param count
+ * @param showNumber
+ * @constructor
+ */
+export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean) => string;
+export declare const ShortNumber: (value: any, decimals?: number, round?: 'round' | 'up' | 'down') => string | null;
