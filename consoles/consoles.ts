@@ -1,8 +1,11 @@
 import {DeepEqual} from '../src/DeepEqual'
+import {RemoveDupProperties} from '../src/DataConstructs'
 
 require('source-map-support').install()
 
 console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
+console.log(DeepEqual('2021-12-20T17:28:01.130Z', '2021-12-20 12:28:01.13-05'))
+console.log(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.13-05'}))
 
 // for (const sig of [...Array(25).keys()]) {
 // 	const val = RightPad('', sig, '6')

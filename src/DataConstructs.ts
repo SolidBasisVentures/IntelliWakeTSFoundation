@@ -1,5 +1,6 @@
 import {CleanNumberNull, GenerateUUID, ReplaceAll} from './Functions'
 import {DATE_FORMAT_DATE, DateFormat, IsDateString} from './DateManager'
+import {DeepEqual} from './DeepEqual'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -353,7 +354,7 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 	
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
-			if (IsEqual(propsToRemove[key], result[key])) {
+			if (DeepEqual(propsToRemove[key], result[key])) {
 				delete result[key]
 			}
 		}

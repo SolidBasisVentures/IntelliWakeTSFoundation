@@ -4,7 +4,7 @@ import {
 	ArrayWithIDChanges,
 	ChangeArrayByIDOrUUID,
 	CombineArrayWithIDOrUUIDChanges, IsEqual,
-	ObjectWithChanges,
+	ObjectWithChanges, RemoveDupProperties,
 	RemoveDupPropertiesByIDArray
 } from './DataConstructs'
 import {ReSortOrder} from './SortSearch'
@@ -73,7 +73,7 @@ test('Data Contructs', () => {
 			{id: 4, sort_order: 10},
 			{id: 5, sort_order: 30}
 		]
-		))
+	))
 		.toEqual([
 			{id: 4, sort_order: 10},
 			{id: 1, sort_order: 20},
@@ -81,5 +81,8 @@ test('Data Contructs', () => {
 			{id: 3, sort_order: 40},
 			{id: 2, sort_order: 50}
 		])
+	
+	expect(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.13-05'}))
+		.toEqual({id: 1})
 	
 })
