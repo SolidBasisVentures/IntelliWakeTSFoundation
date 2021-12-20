@@ -1608,7 +1608,7 @@ var DateParseTSInternal = function (date, timezoneSource) {
         return date;
     if (typeof date === 'object')
         return date.valueOf();
-    if (date.toLowerCase() === 'now' || date.toLowerCase() === 'today')
+    if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today')
         return new Date().valueOf();
     try {
         var result = Date.parse(date.toString());
