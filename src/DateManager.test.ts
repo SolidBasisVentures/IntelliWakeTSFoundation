@@ -166,4 +166,5 @@ test('Date Managers', () => {
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:00:00')).toEqual(0)
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00')).toEqual(-1)
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00', 'day')).toEqual(0)
+	expect(DateFormat('DisplayTime', '2021-12-22 14:41:24.404782-05')).toEqual('2:41 pm')
 })

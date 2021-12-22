@@ -1586,7 +1586,7 @@ var ManualParse = function (date) {
         dateObj.setSeconds(CleanNumber(d[10]));
     }
     if (d[12]) {
-        dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0'))));
+        dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0').substr(0, 3))));
     }
     var offset = 0;
     if (d[14]) {

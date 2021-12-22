@@ -156,7 +156,7 @@ export const ManualParse = (date: string): number | null => {
 	}
 	
 	if (d[12]) {
-		dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0'))))
+		dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0').substr(0, 3))))
 	}
 	
 	let offset = 0
