@@ -1408,17 +1408,29 @@ var UCWords = function (str) {
  */
 var RandomString = function (length, validChars) {
     if (validChars === void 0) { validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789'; }
-    var validCharLength = validChars.length - 1;
     var result = '';
+    var charactersLength = validChars.length;
     for (var i = 0; i < length; i++) {
-        result += validChars.substr(Math.floor(Math.random() * validCharLength), 1);
-    }
-    var ts = new Date().valueOf().toString();
-    if (length > ts.length * 0.5) {
-        var offset = RoundTo((length - ts.length) / 2, 0);
-        return result.substr(0, offset) + ts + result.substr(offset + ts.length);
+        result += validChars.charAt(Math.floor(Math.random() *
+            charactersLength));
     }
     return result;
+    // const validCharLength = validChars.length - 1
+    //
+    // let result = ''
+    // for (let i = 0; i < length; i++) {
+    // 	result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
+    // }
+    //
+    // const ts = new Date().valueOf().toString()
+    //
+    // if (length > ts.length * 0.5) {
+    // 	const offset = RoundTo((length - ts.length) / 2, 0)
+    //
+    // 	return result.substr(0, offset) + ts + result.substr(offset + ts.length)
+    // }
+    //
+    // return result
 };
 var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789'); };
 /**

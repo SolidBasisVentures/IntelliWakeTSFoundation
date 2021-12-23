@@ -692,22 +692,31 @@ export const UCWords = (str: string | null): string | null => {
  * RandomString(5, '12345')
  */
 export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789') => {
-	const validCharLength = validChars.length - 1
-	
 	let result = ''
-	for (let i = 0; i < length; i++) {
-		result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
+	
+	const charactersLength = validChars.length;
+	for ( let i = 0; i < length; i++ ) {
+		result += validChars.charAt(Math.floor(Math.random() *
+			charactersLength));
 	}
+	return result;
 	
-	const ts = new Date().valueOf().toString()
-	
-	if (length > ts.length * 0.5) {
-		const offset = RoundTo((length - ts.length) / 2, 0)
-		
-		return result.substr(0, offset) + ts + result.substr(offset + ts.length)
-	}
-	
-	return result
+	// const validCharLength = validChars.length - 1
+	//
+	// let result = ''
+	// for (let i = 0; i < length; i++) {
+	// 	result += validChars.substr(Math.floor(Math.random() * validCharLength), 1)
+	// }
+	//
+	// const ts = new Date().valueOf().toString()
+	//
+	// if (length > ts.length * 0.5) {
+	// 	const offset = RoundTo((length - ts.length) / 2, 0)
+	//
+	// 	return result.substr(0, offset) + ts + result.substr(offset + ts.length)
+	// }
+	//
+	// return result
 }
 
 export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')

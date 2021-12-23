@@ -1,4 +1,5 @@
 import {DateFormat, DateObject} from '../src/DateManager'
+import {RandomKey, RandomString} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -7,6 +8,9 @@ const dt = '2021-12-22 14:41:24.404782-05'
 // console.log('2021-12-20T17:12:36.370Z', DateObject('2021-12-20T17:12:36.370Z'))
 console.log(dt, DateObject(dt), DateFormat('DisplayTime', dt))
 // console.log(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05'))
+
+console.log(RandomString(8))
+console.log(RandomKey(18))
 
 // console.log(DateWeekNumber('2021-01-02'))
 // console.log(DateWeekNumber('2021-01-09'))
