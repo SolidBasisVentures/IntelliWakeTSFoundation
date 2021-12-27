@@ -11,6 +11,7 @@ import {
 } from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
+const dt = '2021-12-22T14:41:24Z'
 const dateTS = DateParseTS(isoLongDateString)
 
 test('Date Managers', () => {
@@ -167,4 +168,22 @@ test('Date Managers', () => {
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00')).toEqual(-1)
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00', 'day')).toEqual(0)
 	expect(DateFormat('DisplayTime', '2021-12-22 14:41:24.404782-05')).toEqual('2:41 pm')
+	expect(DateISO(dt, {year: 'StartOf'})).toEqual('2021-01-01T00:00:00.000Z')
+	expect(DateISO(dt, {year: 'EndOf'})).toEqual('2021-12-31T23:59:59.999Z')
+	expect(DateISO(dt, {quarter: 'StartOf'})).toEqual('2021-10-01T00:00:00.000Z')
+	expect(DateISO(dt, {quarter: 'EndOf'})).toEqual('2021-12-31T23:59:59.999Z')
+	expect(DateISO(dt, {month: 'StartOf'})).toEqual('2021-12-01T00:00:00.000Z')
+	expect(DateISO(dt, {month: 'EndOf'})).toEqual('2021-12-31T23:59:59.999Z')
+	expect(DateISO(dt, {day: 'StartOf'})).toEqual('2021-12-22T00:00:00.000Z')
+	expect(DateISO(dt, {day: 'EndOf'})).toEqual('2021-12-22T23:59:59.999Z')
+	expect(DateISO(dt, {week: 'StartOf'})).toEqual('2021-12-19T00:00:00.000Z')
+	expect(DateISO(dt, {week: 'EndOf'})).toEqual('2021-12-25T23:59:59.999Z')
+	expect(DateISO(dt, {hour: 'StartOf'})).toEqual('2021-12-22T14:00:00.000Z')
+	expect(DateISO(dt, {hour: 'EndOf'})).toEqual('2021-12-22T14:59:59.999Z')
+	expect(DateISO(dt, {minute: 'StartOf'})).toEqual('2021-12-22T14:41:00.000Z')
+	expect(DateISO(dt, {minute: 'EndOf'})).toEqual('2021-12-22T14:41:59.999Z')
+	expect(DateISO(dt, {second: 'StartOf'})).toEqual('2021-12-22T14:41:24.000Z')
+	expect(DateISO(dt, {second: 'EndOf'})).toEqual('2021-12-22T14:41:24.999Z')
 })
+
+// '2021-12-22T14:41:24Z'

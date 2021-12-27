@@ -20,6 +20,8 @@ export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLA
 export type TDuration =
 	'year'
 	| 'years'
+	| 'quarter'
+	| 'quarters'
 	| 'month'
 	| 'months'
 	| 'week'
@@ -35,7 +37,7 @@ export type TDuration =
 	| 'millisecond'
 	| 'milliseconds'
 
-export type TAdjustment = { [key in TDuration]?: number }
+export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 
 /**
  * Current time in ISO string format
@@ -165,7 +167,7 @@ export const ManualParse = (date: string): number | null => {
 		offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10)
 		offset *= ((d[15] === '-') ? 1 : -1)
 		// console.log('o off', dateObj.getTime(), offset)
-	// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
+		// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
 		// offset -= CleanNumber(date.substr(-3))
 		// console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
 	} else if (date.includes('Z') && date.includes('T')) {
@@ -607,11 +609,75 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 		switch (key) {
 			case 'year':
 			case 'years':
-				dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12)
+				switch (adjustments[key]) {
+					case 'StartOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							month: dateObj.getUTCMonth() * -1,
+							months: 'StartOf'
+						}) ?? 0
+					}
+						break
+					case 'EndOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							month: 11 - dateObj.getUTCMonth(),
+							months: 'EndOf'
+						}) ?? 0
+					}
+						break
+					default:
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12)
+						break
+				}
 				break
 			case 'month':
 			case 'months':
-				dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]))
+				switch (adjustments[key]) {
+					case 'StartOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							day: (dateObj.getUTCDate() - 1) * -1,
+							days: 'StartOf'
+						}) ?? 0
+					}
+						break
+					case 'EndOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							day: DateDaysInMonth(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
+							days: 'EndOf'
+						}) ?? 0
+					}
+						break
+					default:
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]))
+						break
+				}
+				break
+			case 'quarter':
+			case 'quarters':
+				switch (adjustments[key]) {
+					case 'StartOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							month: (dateObj.getUTCMonth() % 3) * -1,
+							months: 'StartOf'
+						}) ?? 0
+					}
+						break
+					case 'EndOf': {
+						const dateObj = DateObject(dateTS) ?? new Date()
+						dateTS = DateAdjustTS(dateTS, {
+							month: 2 - (dateObj.getUTCMonth() % 3),
+							months: 'EndOf'
+						}) ?? 0
+					}
+						break
+					default:
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 3)
+						break
+				}
 				break
 			default:
 				if (!dateTS) return null
@@ -619,23 +685,121 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 				switch (key) {
 					case 'week':
 					case 'weeks':
-						dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000
+						switch (adjustments[key]) {
+							case 'StartOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									day: dateObj.getUTCDay() * -1,
+									days: 'StartOf'
+								}) ?? 0
+							}
+								break
+							case 'EndOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									day: 6 - dateObj.getUTCDay(),
+									days: 'EndOf'
+								}) ?? 0
+							}
+								break
+							default:
+								dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000
+								break
+						}
 						break
 					case 'day':
 					case 'days':
-						dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000
+						switch (adjustments[key]) {
+							case 'StartOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									hour: dateObj.getUTCHours() * -1,
+									hours: 'StartOf'
+								}) ?? 0
+							}
+								break
+							case 'EndOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									hour: 23 - dateObj.getUTCHours(),
+									hours: 'EndOf'
+								}) ?? 0
+							}
+								break
+							default:
+								dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000
+								break
+						}
 						break
 					case 'hour':
 					case 'hours':
-						dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000
+						switch (adjustments[key]) {
+							case 'StartOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									minute: dateObj.getUTCMinutes() * -1,
+									minutes: 'StartOf'
+								}) ?? 0
+							}
+								break
+							case 'EndOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									minute: 59 - dateObj.getUTCMinutes(),
+									minutes: 'EndOf'
+								}) ?? 0
+							}
+								break
+							default:
+								dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000
+								break
+						}
 						break
 					case 'minute':
 					case 'minutes':
-						dateTS += CleanNumber(adjustments[key]) * 60 * 1000
+						switch (adjustments[key]) {
+							case 'StartOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									second: dateObj.getUTCSeconds() * -1,
+									seconds: 'StartOf'
+								}) ?? 0
+							}
+								break
+							case 'EndOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									second: 59 - dateObj.getUTCSeconds(),
+									seconds: 'EndOf'
+								}) ?? 0
+							}
+								break
+							default:
+								dateTS += CleanNumber(adjustments[key]) * 60 * 1000
+								break
+						}
 						break
 					case 'second':
 					case 'seconds':
-						dateTS += CleanNumber(adjustments[key]) * 1000
+						switch (adjustments[key]) {
+							case 'StartOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									millisecond: dateObj.getUTCMilliseconds() * -1
+								}) ?? 0
+							}
+								break
+							case 'EndOf': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								dateTS = DateAdjustTS(dateTS, {
+									millisecond: 999 - dateObj.getUTCMilliseconds()
+								}) ?? 0
+							}
+								break
+							default:
+								dateTS += CleanNumber(adjustments[key]) * 1000
+								break
+						}
 						break
 					case 'millisecond':
 					case 'milliseconds':
