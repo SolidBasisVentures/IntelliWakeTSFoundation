@@ -1150,6 +1150,11 @@ export interface IQuarter {
 	quarter: EQuarter
 }
 
+export const initialDateQuarter: IQuarter = {
+	year: new Date().getFullYear(),
+	quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
+}
+
 export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	const dateObj = DateObject(date)
 	

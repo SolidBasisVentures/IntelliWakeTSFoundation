@@ -2521,6 +2521,10 @@ var DatesQuarter = function (year, quarter) {
         end: ((_b = DateISO(baseDate, { quarter: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10)
     };
 };
+var initialDateQuarter = {
+    year: new Date().getFullYear(),
+    quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
+};
 var DateQuarter = function (date) {
     var dateObj = DateObject(date);
     if (!dateObj)
@@ -4136,6 +4140,7 @@ exports.filterAsync = filterAsync;
 exports.findAsync = findAsync;
 exports.initialChanges = initialChanges;
 exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
+exports.initialDateQuarter = initialDateQuarter;
 exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
