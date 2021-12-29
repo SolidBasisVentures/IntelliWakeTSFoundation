@@ -1135,7 +1135,7 @@ export interface IDates {
 }
 
 export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => {
-	const baseDate = DateParseTSInternal(`${year}-${(quarter * 3) - 1}-01`, 'UTC')
+	const baseDate = DateParseTSInternal(`${year}-${((quarter * 3) - 1).toString().padStart(2, '0')}-01`, 'UTC')
 	
 	if (!baseDate) return null
 	

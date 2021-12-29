@@ -2513,7 +2513,7 @@ var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a 
 })(exports.EQuarter || (exports.EQuarter = {}));
 var DatesQuarter = function (year, quarter) {
     var _a, _b;
-    var baseDate = DateParseTSInternal(year + "-" + ((quarter * 3) - 1) + "-01", 'UTC');
+    var baseDate = DateParseTSInternal(year + "-" + ((quarter * 3) - 1).toString().padStart(2, '0') + "-01", 'UTC');
     if (!baseDate)
         return null;
     return {
