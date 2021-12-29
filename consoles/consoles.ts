@@ -1,14 +1,16 @@
-import {DateQuarter} from '../src/DateManager'
+import {RemoveDupProperties} from '../src/DataConstructs'
 
 require('source-map-support').install()
 
-console.log(DateQuarter('2021-01-01'))
-console.log(DateQuarter('2021-02-01'))
-console.log(DateQuarter('2021-04-01'))
-console.log(DateQuarter('2021-07-01'))
-console.log(DateQuarter('2021-10-01'))
-console.log(DateQuarter('2021-12-31'))
+console.log(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.14-05'}))
+console.log(RemoveDupProperties({id: 1, sts: '2021'}, {id: 2, sts: '2022'}))
 
+// console.log(DateQuarter('2021-01-01'))
+// console.log(DateQuarter('2021-02-01'))
+// console.log(DateQuarter('2021-04-01'))
+// console.log(DateQuarter('2021-07-01'))
+// console.log(DateQuarter('2021-10-01'))
+// console.log(DateQuarter('2021-12-31'))
 
 // const dt = '2021-11-22T14:41:24Z'
 //

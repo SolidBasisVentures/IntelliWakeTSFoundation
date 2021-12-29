@@ -1090,7 +1090,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 		
 		const minuteDiff = (DateObject(date1)?.getUTCMinutes() ?? 0) - (DateObject(date2)?.getUTCMinutes() ?? 0)
 		
-		if (['hour', 'hours'].includes(minInterval)) {
+		if (['minute', 'minutes'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
 			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)
@@ -1100,7 +1100,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 		
 		const secondDiff = (DateObject(date1)?.getUTCSeconds() ?? 0) - (DateObject(date2)?.getUTCSeconds() ?? 0)
 		
-		if (['hour', 'hours'].includes(minInterval)) {
+		if (['second', 'second'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
 			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)

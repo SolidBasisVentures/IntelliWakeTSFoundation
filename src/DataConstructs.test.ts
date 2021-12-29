@@ -82,7 +82,11 @@ test('Data Contructs', () => {
 			{id: 2, sort_order: 50}
 		])
 	
-	expect(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.13-05'}))
+	expect(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.14-05'}))
 		.toEqual({id: 1})
+	expect(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:02.14-05'}))
+		.toEqual({id: 1, sts: '2021-12-20T17:28:01.130Z'})
+	expect(RemoveDupProperties({id: 1, sts: '2021'}, {id: 2, sts: '2022'}))
+		.toEqual({id: 1, sts: '2021'})
 	
 })

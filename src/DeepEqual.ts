@@ -50,16 +50,19 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 			}
 			
 			return true
-		default:
-			const ts1 = DateParseTS(object1)
-			if (!!ts1) {
-				const ts2 = DateParseTS(object2)
-				if (!!ts2) {
-					// console.log('Here', object1, ts1, object2, ts2)
-					return DateCompare(ts1, 'IsSame', ts2, 'second')
+		case 'string':
+			if (typeof object2 === 'string') {
+				const ts1 = DateParseTS(object1)
+				if (!!ts1) {
+					const ts2 = DateParseTS(object2)
+					if (!!ts2) {
+						return DateCompare(ts1, 'IsSame', ts2, 'second')
+					}
 				}
 			}
 			
+			return object1 === object2
+		default:
 			return object1 === object2
 	}
 }

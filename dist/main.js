@@ -2471,7 +2471,7 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
             return checkType(evalType, hourDiff);
         }
         var minuteDiff = ((_y = (_x = DateObject(date1)) === null || _x === void 0 ? void 0 : _x.getUTCMinutes()) !== null && _y !== void 0 ? _y : 0) - ((_0 = (_z = DateObject(date2)) === null || _z === void 0 ? void 0 : _z.getUTCMinutes()) !== null && _0 !== void 0 ? _0 : 0);
-        if (['hour', 'hours'].includes(minInterval)) {
+        if (['minute', 'minutes'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
             if (monthDiff !== 0)
@@ -2483,7 +2483,7 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
             return checkType(evalType, minuteDiff);
         }
         var secondDiff = ((_2 = (_1 = DateObject(date1)) === null || _1 === void 0 ? void 0 : _1.getUTCSeconds()) !== null && _2 !== void 0 ? _2 : 0) - ((_4 = (_3 = DateObject(date2)) === null || _3 === void 0 ? void 0 : _3.getUTCSeconds()) !== null && _4 !== void 0 ? _4 : 0);
-        if (['hour', 'hours'].includes(minInterval)) {
+        if (['second', 'second'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
             if (monthDiff !== 0)
@@ -2581,15 +2581,18 @@ var DeepEqual = function (object1, object2) {
                 }
             }
             return true;
-        default:
-            var ts1 = DateParseTS(object1);
-            if (!!ts1) {
-                var ts2 = DateParseTS(object2);
-                if (!!ts2) {
-                    // console.log('Here', object1, ts1, object2, ts2)
-                    return DateCompare(ts1, 'IsSame', ts2, 'second');
+        case 'string':
+            if (typeof object2 === 'string') {
+                var ts1 = DateParseTS(object1);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(object2);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
                 }
             }
+            return object1 === object2;
+        default:
             return object1 === object2;
     }
 };
