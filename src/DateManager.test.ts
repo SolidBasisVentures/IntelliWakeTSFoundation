@@ -5,7 +5,7 @@ import {
 	DateDiffComponents,
 	DateFormat,
 	DateISO,
-	DateParseTS,
+	DateParseTS, DatesQuarter,
 	DateWeekNumber,
 	ManualParse, SortCompareDate, SortCompareDateNull
 } from './DateManager'
@@ -184,6 +184,8 @@ test('Date Managers', () => {
 	expect(DateISO(dt, {minute: 'EndOf'})).toEqual('2021-12-22T14:41:59.999Z')
 	expect(DateISO(dt, {second: 'StartOf'})).toEqual('2021-12-22T14:41:24.000Z')
 	expect(DateISO(dt, {second: 'EndOf'})).toEqual('2021-12-22T14:41:24.999Z')
+	expect(DatesQuarter(2021, 4)).toEqual({start: '2021-10-01', end: '2021-12-31'})
+	expect(DatesQuarter(2021, 1)).toEqual({start: '2021-01-01', end: '2021-03-31'})
 })
 
 // '2021-12-22T14:41:24Z'
