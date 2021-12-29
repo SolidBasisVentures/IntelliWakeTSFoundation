@@ -1,13 +1,20 @@
-import {DateFormat, DateISO, DateObject} from '../src/DateManager'
-import {RandomKey, RandomString} from '../src/StringManipulation'
+import {DateQuarter} from '../src/DateManager'
 
 require('source-map-support').install()
 
-const dt = '2021-11-22T14:41:24Z'
+console.log(DateQuarter('2021-01-01'))
+console.log(DateQuarter('2021-02-01'))
+console.log(DateQuarter('2021-04-01'))
+console.log(DateQuarter('2021-07-01'))
+console.log(DateQuarter('2021-10-01'))
+console.log(DateQuarter('2021-12-31'))
 
-console.log(dt)
-console.log('Start Quarter', DateISO(dt, {quarter: 'StartOf'}))
-console.log('End Quarter', DateISO(dt, {quarter: 'EndOf'}))
+
+// const dt = '2021-11-22T14:41:24Z'
+//
+// console.log(dt)
+// console.log('Start Quarter', DateISO(dt, {quarter: 'StartOf'}))
+// console.log('End Quarter', DateISO(dt, {quarter: 'EndOf'}))
 
 // Array(12).fill(0).map((_item, idx) => console.log((idx%3)))
 

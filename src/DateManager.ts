@@ -1141,6 +1141,22 @@ export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => 
 	
 	return {
 		start: (DateISO(baseDate, {quarter: 'StartOf'}) ?? '').substr(0, 10),
-		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substr(0, 10),
+		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substr(0, 10)
+	}
+}
+
+export interface IQuarter {
+	year: number
+	quarter: EQuarter
+}
+
+export const DateQuarter = (date: TDateAny): IQuarter | null => {
+	const dateObj = DateObject(date)
+	
+	if (!dateObj) return null
+	
+	return {
+		year: dateObj.getUTCFullYear(),
+		quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
 	}
 }

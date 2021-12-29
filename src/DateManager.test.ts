@@ -5,9 +5,13 @@ import {
 	DateDiffComponents,
 	DateFormat,
 	DateISO,
-	DateParseTS, DatesQuarter,
+	DateParseTS,
+	DateQuarter,
+	DatesQuarter,
 	DateWeekNumber,
-	ManualParse, SortCompareDate, SortCompareDateNull
+	ManualParse,
+	SortCompareDate,
+	SortCompareDateNull
 } from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
@@ -186,6 +190,12 @@ test('Date Managers', () => {
 	expect(DateISO(dt, {second: 'EndOf'})).toEqual('2021-12-22T14:41:24.999Z')
 	expect(DatesQuarter(2021, 4)).toEqual({start: '2021-10-01', end: '2021-12-31'})
 	expect(DatesQuarter(2021, 1)).toEqual({start: '2021-01-01', end: '2021-03-31'})
+	expect(DateQuarter('2021-01-01')).toEqual({year: 2021, quarter: 1})
+	expect(DateQuarter('2021-02-01')).toEqual({year: 2021, quarter: 1})
+	expect(DateQuarter('2021-04-01')).toEqual({year: 2021, quarter: 2})
+	expect(DateQuarter('2021-07-01')).toEqual({year: 2021, quarter: 3})
+	expect(DateQuarter('2021-10-01')).toEqual({year: 2021, quarter: 4})
+	expect(DateQuarter('2021-12-31')).toEqual({year: 2021, quarter: 4})
 })
 
 // '2021-12-22T14:41:24Z'

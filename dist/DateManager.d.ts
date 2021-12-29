@@ -85,3 +85,8 @@ export interface IDates {
     end: string;
 }
 export declare const DatesQuarter: (year: number, quarter: EQuarter) => IDates | null;
+export interface IQuarter {
+    year: number;
+    quarter: EQuarter;
+}
+export declare const DateQuarter: (date: TDateAny) => IQuarter | null;

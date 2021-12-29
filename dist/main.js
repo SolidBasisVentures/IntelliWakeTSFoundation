@@ -2518,7 +2518,16 @@ var DatesQuarter = function (year, quarter) {
         return null;
     return {
         start: ((_a = DateISO(baseDate, { quarter: 'StartOf' })) !== null && _a !== void 0 ? _a : '').substr(0, 10),
-        end: ((_b = DateISO(baseDate, { quarter: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10),
+        end: ((_b = DateISO(baseDate, { quarter: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10)
+    };
+};
+var DateQuarter = function (date) {
+    var dateObj = DateObject(date);
+    if (!dateObj)
+        return null;
+    return {
+        year: dateObj.getUTCFullYear(),
+        quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
     };
 };
 
@@ -4003,6 +4012,7 @@ exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateObject = DateObject;
 exports.DateParseTS = DateParseTS;
+exports.DateQuarter = DateQuarter;
 exports.DateWeekNumber = DateWeekNumber;
 exports.DatesQuarter = DatesQuarter;
 exports.DeepEqual = DeepEqual;
