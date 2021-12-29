@@ -89,5 +89,5 @@ export interface IQuarter {
     year: number;
     quarter: EQuarter;
 }
-export declare const initialDateQuarter: IQuarter;
+export declare const initialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;

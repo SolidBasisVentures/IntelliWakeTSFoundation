@@ -2521,10 +2521,10 @@ var DatesQuarter = function (year, quarter) {
         end: ((_b = DateISO(baseDate, { quarter: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10)
     };
 };
-var initialDateQuarter = {
+var initialDateQuarter = function () { return ({
     year: new Date().getFullYear(),
     quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
-};
+}); };
 var DateQuarter = function (date) {
     var dateObj = DateObject(date);
     if (!dateObj)
