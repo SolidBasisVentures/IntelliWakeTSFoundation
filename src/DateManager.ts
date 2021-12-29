@@ -1120,3 +1120,27 @@ export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterva
 
 export const SortCompareDate = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number =>
 	SortCompareDateNull(date1, date2, minInterval) ?? 0
+
+
+export enum EQuarter {
+	Q1 = 1,
+	Q2 = 2,
+	Q3 = 3,
+	Q4 = 4
+}
+
+export interface IDates {
+	start: string
+	end: string
+}
+
+export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => {
+	const baseDate = DateParseTSInternal(`${year}-${(quarter * 3) - 1}-01`, 'UTC')
+	
+	if (!baseDate) return null
+	
+	return {
+		start: (DateISO(baseDate, {quarter: 'StartOf'}) ?? '').substr(0, 10),
+		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substr(0, 10),
+	}
+}

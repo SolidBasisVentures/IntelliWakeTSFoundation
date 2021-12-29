@@ -74,3 +74,14 @@ export declare const DurationLongDescription: (seconds: number, tripToSecondsOrT
 export declare const DateCompare: (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;
 export declare const SortCompareDateNull: (date1: TDateAny, date2: TDateAny, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => number | null;
 export declare const SortCompareDate: (date1: TDateAny, date2: TDateAny, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => number;
+export declare enum EQuarter {
+    Q1 = 1,
+    Q2 = 2,
+    Q3 = 3,
+    Q4 = 4
+}
+export interface IDates {
+    start: string;
+    end: string;
+}
+export declare const DatesQuarter: (year: number, quarter: EQuarter) => IDates | null;
