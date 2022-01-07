@@ -24,8 +24,8 @@ test('Date Managers', () => {
 	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
 	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Los_Angeles', 'America/Chicago')).toEqual('Friday, January 1, 2021, 7:00 am')
 	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00')).toEqual('Friday, January 1, 2021, 10:00 am')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago')).toEqual('Friday, January 1, 2021, 11:00 am')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago', 'EST')).toEqual('Friday, January 1, 2021, 9:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'EST')).toEqual('Friday, January 1, 2021, 7:00 am')
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
 	expect(DateAdjustTS(dateTS, {
@@ -198,6 +198,19 @@ test('Date Managers', () => {
 	expect(DateQuarter('2021-07-01')).toEqual({year: 2021, quarter: 3})
 	expect(DateQuarter('2021-10-01')).toEqual({year: 2021, quarter: 4})
 	expect(DateQuarter('2021-12-31')).toEqual({year: 2021, quarter: 4})
+	const otz = process.env.TZ
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	process.env.TZ = "Asia/Tehran"
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	process.env.TZ = "America/New_York"
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	process.env.TZ = "America/Las_Angeles"
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	if (!!otz) {
+		process.env.TZ = otz
+	} else {
+		delete process.env.TZ
+	}
 })
 
 // '2021-12-22T14:41:24Z'

@@ -137,29 +137,33 @@ export const ManualParse = (date: string): number | null => {
 	
 	let dateObj = new Date(CleanNumber(d[1]), 0, 1)
 	
+	if (d[1]) {
+		dateObj.setUTCFullYear(CleanNumber(d[1]))
+	}
+	
 	if (d[3]) {
-		dateObj.setMonth(CleanNumber(d[3]) - 1)
+		dateObj.setUTCMonth(CleanNumber(d[3]) - 1)
 	}
 	
 	if (d[5]) {
-		dateObj.setDate(CleanNumber(d[5]))
+		dateObj.setUTCDate(CleanNumber(d[5]))
 	}
 	
-	if (d[7]) {
-		dateObj.setHours(CleanNumber(d[7]))
-	}
+	// if (d[7]) {
+		dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
+	// }
 	
-	if (d[8]) {
-		dateObj.setMinutes(CleanNumber(d[8]))
-	}
+	// if (d[8]) {
+		dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
+	// }
 	
-	if (d[10]) {
-		dateObj.setSeconds(CleanNumber(d[10]))
-	}
+	// if (d[10]) {
+		dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
+	// }
 	
-	if (d[12]) {
-		dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0').substr(0, 3))))
-	}
+	// if (d[12]) {
+		dateObj.setUTCMilliseconds((CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3))))
+	// }
 	
 	let offset = 0
 	
@@ -170,15 +174,26 @@ export const ManualParse = (date: string): number | null => {
 		// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
 		// offset -= CleanNumber(date.substr(-3))
 		// console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
-	} else if (date.includes('Z') && date.includes('T')) {
-		offset -= (dateObj.getTimezoneOffset() / 60)
+		// } else if (date.includes('Z') && date.includes('T')) {
+		// console.log('Here')
+		// offset -= (dateObj.getTimezoneOffset() / 60)
 		// console.log('t off', dateObj.getTimezoneOffset(), offset)
 		// } else {
 		// offset -= (dateObj.getTimezoneOffset() / 60)
 		// console.log('e off', dateObj.getTime(), offset)
+	} else if (date.length > 12) {
+		const last3 = date.substring(date.length - 3)
+		if (last3.startsWith('-') || last3.endsWith('+')) {
+			offset -= CleanNumber(last3)
+			// console.log('Offset', dateObj, offset)
+		}
 	}
 	
-	const time = dateObj.getTime() + (offset * 60 * 60 * 1000)
+	// console.log(date, d, dateObj, offset)
+	
+	// console.log('offset', dateObj, offset, dateObj.getTime())
+	
+	const time = dateObj.valueOf() + (offset * 60 * 60 * 1000)
 	
 	let newDateObj = new Date(time)
 	
@@ -213,10 +228,14 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 		
 		if (!result) return null
 		
+		// console.log('hasTZ', StringHasTimeZoneData(date))
+		
 		// Set a time string with no other timezone data to the current timezone
 		if (!StringHasTimeZoneData(date)) {
+			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
 			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-			return result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
+			result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
+			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
 		
 		return result
@@ -289,7 +308,9 @@ export type TDateFormat =
 export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 	
-	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource ?? timezoneDisplay) : undefined))
+	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined))
+	
+	// console.log('DFA', date, dateObject)
 	
 	if (timezoneDisplay) {
 		try {
@@ -297,13 +318,21 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			
 			const sourceOffset = IANAOffset(timezoneSource) ?? 0 // Chic 5
 			const displayOffset = IANAOffset(timezoneDisplay) ?? 0 // Chic 6
-			const offset = noTZInfo ? !timezoneSource ? (displayOffset - sourceOffset) - (displayOffset - sourceOffset) : ((IANAOffset() ?? 0) - sourceOffset) - (displayOffset - sourceOffset) : (sourceOffset - displayOffset)
+			const offset = noTZInfo ?
+				!timezoneSource ?
+					(displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
+					((IANAOffset() ?? 0) - sourceOffset) - (displayOffset - sourceOffset) :
+				(sourceOffset - displayOffset)
+			
+			// console.log(date, dateObject, sourceOffset, displayOffset, offset, noTZInfo)
 			
 			// if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
 			// console.log('---')
 			// 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
 			
 			dateObject = DateObject(dateObject, {minutes: offset})
+			
+			// console.log('New', dateObject)
 			// dateObject = DateObject(dateObject, {minutes: toOffset})
 		} catch (err) {
 			console.log('Invalid Timezone', err)
@@ -482,7 +511,8 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 	return result
 }
 
-export const DateFormat = (format: TDateFormat, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
+export const DateFormat = (format: TDateFormat, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null =>
+	DateFormatAny(format, date, timezoneDisplay, timezoneSource)
 
 export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
@@ -867,12 +897,19 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 
 export const DateWeekNumber = (date: TDateAny): number | null => {
 	const currentdate = DateObject(date, {timezoneSource: 'UTC'})
+	
 	if (!currentdate) return null
 	
-	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01 00:00:00`, {timezoneSource: 'UTC'})
+	// console.log(currentdate, currentdate.getUTCFullYear())
+	
+	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01T00:00:00Z`)
 	if (!oneJan) return null
 	
+	// console.log(oneJan)
+	
 	const numberOfDays = DateDiff(oneJan, currentdate, 'days') ?? 0
+	
+	// console.log('nOD', numberOfDays, currentdate.getDay())
 	
 	const weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7)
 	if (weekNumber > 52) return 1

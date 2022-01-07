@@ -1563,6 +1563,7 @@ var IsDateString = function (value) {
     return !!DateParseTSInternal(value);
 };
 var ManualParse = function (date) {
+    var _a, _b, _c, _d;
     var regexps = [
         '([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
         '([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
@@ -1582,24 +1583,27 @@ var ManualParse = function (date) {
     }
     // console.log(d)
     var dateObj = new Date(CleanNumber(d[1]), 0, 1);
+    if (d[1]) {
+        dateObj.setUTCFullYear(CleanNumber(d[1]));
+    }
     if (d[3]) {
-        dateObj.setMonth(CleanNumber(d[3]) - 1);
+        dateObj.setUTCMonth(CleanNumber(d[3]) - 1);
     }
     if (d[5]) {
-        dateObj.setDate(CleanNumber(d[5]));
+        dateObj.setUTCDate(CleanNumber(d[5]));
     }
-    if (d[7]) {
-        dateObj.setHours(CleanNumber(d[7]));
-    }
-    if (d[8]) {
-        dateObj.setMinutes(CleanNumber(d[8]));
-    }
-    if (d[10]) {
-        dateObj.setSeconds(CleanNumber(d[10]));
-    }
-    if (d[12]) {
-        dateObj.setMilliseconds((CleanNumber(d[12].toString().padEnd(3, '0').substr(0, 3))));
-    }
+    // if (d[7]) {
+    dateObj.setUTCHours(CleanNumber((_a = d[7]) !== null && _a !== void 0 ? _a : 0));
+    // }
+    // if (d[8]) {
+    dateObj.setUTCMinutes(CleanNumber((_b = d[8]) !== null && _b !== void 0 ? _b : 0));
+    // }
+    // if (d[10]) {
+    dateObj.setUTCSeconds(CleanNumber((_c = d[10]) !== null && _c !== void 0 ? _c : 0));
+    // }
+    // if (d[12]) {
+    dateObj.setUTCMilliseconds((CleanNumber(((_d = d[12]) !== null && _d !== void 0 ? _d : 0).toString().padEnd(3, '0').substr(0, 3))));
+    // }
     var offset = 0;
     if (d[14]) {
         offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10);
@@ -1608,22 +1612,31 @@ var ManualParse = function (date) {
         // } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
         // offset -= CleanNumber(date.substr(-3))
         // console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
-    }
-    else if (date.includes('Z') && date.includes('T')) {
-        offset -= (dateObj.getTimezoneOffset() / 60);
+        // } else if (date.includes('Z') && date.includes('T')) {
+        // console.log('Here')
+        // offset -= (dateObj.getTimezoneOffset() / 60)
         // console.log('t off', dateObj.getTimezoneOffset(), offset)
         // } else {
         // offset -= (dateObj.getTimezoneOffset() / 60)
         // console.log('e off', dateObj.getTime(), offset)
     }
-    var time = dateObj.getTime() + (offset * 60 * 60 * 1000);
+    else if (date.length > 12) {
+        var last3 = date.substring(date.length - 3);
+        if (last3.startsWith('-') || last3.endsWith('+')) {
+            offset -= CleanNumber(last3);
+            // console.log('Offset', dateObj, offset)
+        }
+    }
+    // console.log(date, d, dateObj, offset)
+    // console.log('offset', dateObj, offset, dateObj.getTime())
+    var time = dateObj.valueOf() + (offset * 60 * 60 * 1000);
     var newDateObj = new Date(time);
     if (!newDateObj)
         return null;
     return newDateObj.valueOf();
 };
 var DateParseTSInternal = function (date, timezoneSource) {
-    var _a, _b, _c;
+    var _a, _b;
     if (!date)
         return null; // new Date().valueOf() // Date.parse(new Date().toString())
     if (typeof date === 'number')
@@ -1645,14 +1658,17 @@ var DateParseTSInternal = function (date, timezoneSource) {
         }
         if (!result)
             return null;
+        // console.log('hasTZ', StringHasTimeZoneData(date))
         // Set a time string with no other timezone data to the current timezone
         if (!StringHasTimeZoneData(date)) {
+            // console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-            return result + ((((_b = IANAOffset(timezoneSource)) !== null && _b !== void 0 ? _b : 0) - ((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0)) * 60 * 1000);
+            result += (((_b = IANAOffset(timezoneSource)) !== null && _b !== void 0 ? _b : 0) * 60 * 1000);
+            // result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
         }
         return result;
     }
-    catch (_d) {
+    catch (_c) {
         return null;
     }
 };
@@ -1691,18 +1707,25 @@ var DateICS = function (date, adjustements) {
 var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     var _a, _b, _c;
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
-    var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? (timezoneSource !== null && timezoneSource !== void 0 ? timezoneSource : timezoneDisplay) : undefined));
+    var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined));
+    // console.log('DFA', date, dateObject)
     if (timezoneDisplay) {
         try {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
             var sourceOffset = (_a = IANAOffset(timezoneSource)) !== null && _a !== void 0 ? _a : 0; // Chic 5
             var displayOffset = (_b = IANAOffset(timezoneDisplay)) !== null && _b !== void 0 ? _b : 0; // Chic 6
-            var offset = noTZInfo ? !timezoneSource ? (displayOffset - sourceOffset) - (displayOffset - sourceOffset) : (((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) : (sourceOffset - displayOffset);
+            var offset = noTZInfo ?
+                !timezoneSource ?
+                    (displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
+                    (((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) :
+                (sourceOffset - displayOffset);
+            // console.log(date, dateObject, sourceOffset, displayOffset, offset, noTZInfo)
             // if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
             // console.log('---')
             // 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
             dateObject = DateObject(dateObject, { minutes: offset });
+            // console.log('New', dateObject)
             // dateObject = DateObject(dateObject, {minutes: toOffset})
         }
         catch (err) {
@@ -1876,7 +1899,9 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     result += applyCommand(command, dateObject);
     return result;
 };
-var DateFormat = function (format, date, timezoneDisplay, timezoneSource) { return DateFormatAny(format, date, timezoneDisplay, timezoneSource); };
+var DateFormat = function (format, date, timezoneDisplay, timezoneSource) {
+    return DateFormatAny(format, date, timezoneDisplay, timezoneSource);
+};
 var YYYYMMDDHHmmss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
@@ -2266,10 +2291,13 @@ var DateWeekNumber = function (date) {
     var currentdate = DateObject(date, { timezoneSource: 'UTC' });
     if (!currentdate)
         return null;
-    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01 00:00:00", { timezoneSource: 'UTC' });
+    // console.log(currentdate, currentdate.getUTCFullYear())
+    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01T00:00:00Z");
     if (!oneJan)
         return null;
+    // console.log(oneJan)
     var numberOfDays = (_a = DateDiff(oneJan, currentdate, 'days')) !== null && _a !== void 0 ? _a : 0;
+    // console.log('nOD', numberOfDays, currentdate.getDay())
     var weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7);
     if (weekNumber > 52)
         return 1;
