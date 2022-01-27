@@ -1208,5 +1208,5 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	
 	if (!dateObj) return null
 	
-	return dateObj.getDay()
+	return dateObj.getUTCDay()
 }
