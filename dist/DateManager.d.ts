@@ -91,3 +91,4 @@ export interface IQuarter {
 }
 export declare const initialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
+export declare const DateDayOfWeek: (date: TDateAny) => number | null;

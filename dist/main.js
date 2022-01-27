@@ -2562,6 +2562,12 @@ var DateQuarter = function (date) {
         quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
     };
 };
+var DateDayOfWeek = function (date) {
+    var dateObj = DateObject(date);
+    if (!dateObj)
+        return null;
+    return dateObj.getDay();
+};
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4038,6 +4044,7 @@ exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
 exports.DateAdjustTS = DateAdjustTS;
 exports.DateCompare = DateCompare;
+exports.DateDayOfWeek = DateDayOfWeek;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
 exports.DateDiffLongDescription = DateDiffLongDescription;

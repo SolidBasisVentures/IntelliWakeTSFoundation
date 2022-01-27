@@ -1202,3 +1202,11 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 		quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
 	}
 }
+
+export const DateDayOfWeek = (date: TDateAny): number | null => {
+	const dateObj = DateObject(date)
+	
+	if (!dateObj) return null
+	
+	return dateObj.getDay()
+}
