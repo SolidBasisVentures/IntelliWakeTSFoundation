@@ -424,7 +424,7 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 		case 'Local':
 			useFormat = 'MM/DD/YYYY'
 			break
-		case 'LocalDow':
+		case 'LocalDoW':
 			useFormat = 'dd, MM/DD/YYYY'
 			break
 		case 'LocalDateTime':

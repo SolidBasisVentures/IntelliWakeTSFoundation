@@ -1816,7 +1816,7 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         case 'Local':
             useFormat = 'MM/DD/YYYY';
             break;
-        case 'LocalDow':
+        case 'LocalDoW':
             useFormat = 'dd, MM/DD/YYYY';
             break;
         case 'LocalDateTime':
@@ -2566,7 +2566,7 @@ var DateDayOfWeek = function (date) {
     var dateObj = DateObject(date);
     if (!dateObj)
         return null;
-    return dateObj.getDay();
+    return dateObj.getUTCDay();
 };
 
 function isObject(object) {
