@@ -19,6 +19,7 @@ const dt = '2021-12-22T14:41:24Z'
 const dateTS = DateParseTS(isoLongDateString)
 
 test('Date Managers', () => {
+	expect(DateParseTS('2000-01-01 08:00')).toEqual(DateParseTS('2000-01-01 08:00:00'))
 	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString)).toEqual('Thursday, December 31, 2020, 7:00 pm')
 	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
 	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')

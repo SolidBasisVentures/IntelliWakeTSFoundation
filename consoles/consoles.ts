@@ -1,9 +1,9 @@
-import {RemoveDupProperties} from '../src/DataConstructs'
+import {DateObject} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(RemoveDupProperties({id: 1, sts: '2021-12-20T17:28:01.130Z'}, {id: 2, sts: '2021-12-20 12:28:01.14-05'}))
-console.log(RemoveDupProperties({id: 1, sts: '2021'}, {id: 2, sts: '2022'}))
+console.log(DateObject('2000-01-01 08:00', {timezoneSource: 'UTC'}))
+console.log(DateObject('2000-01-01 08:00:00', {timezoneSource: 'UTC'}))
 
 // console.log(DateQuarter('2021-01-01'))
 // console.log(DateQuarter('2021-02-01'))

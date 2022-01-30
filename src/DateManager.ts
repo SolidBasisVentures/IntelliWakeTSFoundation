@@ -118,7 +118,7 @@ export const ManualParse = (date: string): number | null => {
 	]
 	
 	let d = regexps.reduce<RegExpMatchArray | null>((result, regexp) => {
-		const nextMatch = date.match(new RegExp(regexp))
+		const nextMatch = (date.length === 16 ? date + ':00' : date).match(new RegExp(regexp))
 		
 		if (!result) return nextMatch
 		
