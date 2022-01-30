@@ -1569,7 +1569,7 @@ var ManualParse = function (date) {
         '([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
     ];
     var d = regexps.reduce(function (result, regexp) {
-        var nextMatch = date.match(new RegExp(regexp));
+        var nextMatch = (date.length === 16 ? date + ':00' : date).match(new RegExp(regexp));
         if (!result)
             return nextMatch;
         if (!nextMatch)
