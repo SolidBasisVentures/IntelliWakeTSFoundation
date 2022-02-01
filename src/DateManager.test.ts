@@ -201,12 +201,16 @@ test('Date Managers', () => {
 	expect(DateQuarter('2021-12-31')).toEqual({year: 2021, quarter: 4})
 	const otz = process.env.TZ
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	process.env.TZ = "Asia/Tehran"
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	process.env.TZ = "America/New_York"
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	process.env.TZ = "America/Las_Angeles"
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	if (!!otz) {
 		process.env.TZ = otz
 	} else {

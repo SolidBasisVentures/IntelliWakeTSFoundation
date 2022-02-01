@@ -1691,7 +1691,10 @@ var DateParseTSInternal = function (date, timezoneSource) {
         if (!StringHasTimeZoneData(date)) {
             // console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
+            // console.log(date, date.length)
+            // if (date.length > 10) {
             result += (((_b = IANAOffset(timezoneSource)) !== null && _b !== void 0 ? _b : 0) * 60 * 1000);
+            // }
             // result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
         }
         return result;

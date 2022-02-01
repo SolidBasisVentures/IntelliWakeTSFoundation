@@ -1,9 +1,8 @@
-import {DateObject} from '../src/DateManager'
+import {DateFormat} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DateObject('2000-01-01 08:00', {timezoneSource: 'UTC'}))
-console.log(DateObject('2000-01-01 08:00:00', {timezoneSource: 'UTC'}))
+console.log(DateFormat('Local', '2022-01-06'))
 
 // console.log(DateQuarter('2021-01-01'))
 // console.log(DateQuarter('2021-02-01'))

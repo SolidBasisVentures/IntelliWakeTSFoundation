@@ -234,7 +234,10 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 		if (!StringHasTimeZoneData(date)) {
 			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
 			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-			result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
+			// console.log(date, date.length)
+			// if (date.length > 10) {
+				result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
+			// }
 			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
 		
