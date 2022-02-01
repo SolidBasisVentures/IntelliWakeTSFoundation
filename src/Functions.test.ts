@@ -1,8 +1,8 @@
 import {
-	CleanNumber,
+	CleanNumber, CoalesceFalsey,
 	IsOn,
 	JSONParse, JSONStringToObject,
-	ObjectToJSONString,
+	ObjectToJSONString, OmitFalsey,
 	OmitProperty, PickProperty, RemoveEnding, RemoveStarting,
 	ReplaceAll,
 	RoundTo,
@@ -121,4 +121,17 @@ test('RemoveStartEnd', () => {
 	expect(RemoveEnding('/', '/Test/Case//', true)).toEqual('/Test/Case')
 	expect(RemoveEnding(['/', 'se'], '/Test/Case/', true)).toEqual('/Test/Ca')
 	expect(RemoveEnding(['/', 'se'], '/Test/Case//', true)).toEqual('/Test/Ca')
+})
+
+test('Other', () => {
+	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name', 'description')).toEqual({id: 1, name: 'Test'})
+	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name')).toEqual({id: 1, name: 'Test', description: ''})
+	expect(OmitFalsey({id: 0, name: 'Test', description: ''}, 'name', 'id')).toEqual({name: 'Test', description: ''})
+	expect(CoalesceFalsey(undefined)).toEqual(undefined)
+	expect(CoalesceFalsey(undefined, 'Other')).toEqual('Other')
+	expect(CoalesceFalsey('Original', 'Other')).toEqual('Original')
+	expect(CoalesceFalsey(undefined, null)).toEqual(null)
+	expect(CoalesceFalsey('Original', null, 'Other')).toEqual('Original')
+	expect(CoalesceFalsey(null, 'Original', null, 'Other')).toEqual('Original')
+	expect(CoalesceFalsey(null, null, null, 'Other')).toEqual('Other')
 })

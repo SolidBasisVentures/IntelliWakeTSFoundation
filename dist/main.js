@@ -754,6 +754,20 @@ function OmitProperty(obj) {
     }
     return ret;
 }
+function OmitFalsey(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    var ret = __assign({}, obj);
+    var excludeSet = new Set(keys);
+    for (var key in obj) {
+        if (excludeSet.has(key) && !ret[key]) {
+            delete ret[key];
+        }
+    }
+    return ret;
+}
 function PickProperty(obj) {
     var keys = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -802,6 +816,20 @@ function RemoveEnding(remove, value, recursive) {
         }
     } while (recursive && arrayRemove.some(function (aRemove) { return newValue.endsWith(aRemove); }));
     return newValue;
+}
+function CoalesceFalsey(checkVal) {
+    var otherVals = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        otherVals[_i - 1] = arguments[_i];
+    }
+    if (!!checkVal || otherVals.length === 0)
+        return checkVal;
+    for (var _a = 0, otherVals_1 = otherVals; _a < otherVals_1.length; _a++) {
+        var otherVal = otherVals_1[_a];
+        if (!!otherVal)
+            return otherVal;
+    }
+    return otherVals[otherVals.length - 1];
 }
 
 /**
@@ -1814,16 +1842,16 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     var useFormat;
     switch (format) {
         case 'Local':
-            useFormat = 'MM/DD/YYYY';
+            useFormat = 'M/D/YYYY';
             break;
         case 'LocalDoW':
-            useFormat = 'dd, MM/DD/YYYY';
+            useFormat = 'dd, M/D/YYYY';
             break;
         case 'LocalDateTime':
-            useFormat = 'MM/DD/YYYY h:mm a';
+            useFormat = 'M/D/YYYY h:mm a';
             break;
         case 'LocalDoWTime':
-            useFormat = 'dd, MM/DD/YYYY h:mm a';
+            useFormat = 'dd, M/D/YYYY h:mm a';
             break;
         case 'Date':
             useFormat = DATE_FORMAT_DATE;
@@ -4024,6 +4052,7 @@ exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
 exports.CleanScripts = CleanScripts;
+exports.CoalesceFalsey = CoalesceFalsey;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
 exports.ConsoleColor = ConsoleColor;
 exports.CurrentTimeZone = CurrentTimeZone;
@@ -4099,6 +4128,7 @@ exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
 exports.ObjectDiffs = ObjectDiffs;
 exports.ObjectToJSONString = ObjectToJSONString;
 exports.ObjectWithChanges = ObjectWithChanges;
+exports.OmitFalsey = OmitFalsey;
 exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.PhoneComponents = PhoneComponents;

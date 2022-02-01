@@ -241,6 +241,8 @@ export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<b
  */
 export declare const ToArray: <T>(value: T | T[]) => T[];
 export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;
+export declare function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): T & Partial<K>;
 export declare function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K>;
 export declare function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
 export declare function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
+export declare function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T;

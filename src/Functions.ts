@@ -379,7 +379,7 @@ export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&
 
 export const RoundTo = (num: any, decimalPlaces: number = 0, roundDir: 'round' | 'up' | 'down' = 'round') =>
 	roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
-		:roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces) :
+		: roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces) :
 			+Math.ceil((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
@@ -510,6 +510,19 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	return ret
 }
 
+export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): T & Partial<K> {
+	let ret: T & Partial<K> = {...obj}
+	const excludeSet: Set<string> = new Set(keys)
+	
+	for (let key in obj) {
+		if (excludeSet.has(key) && !ret[key]) {
+			delete ret[key]
+		}
+	}
+	
+	return ret
+}
+
 export function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K> {
 	let ret: any = {}
 	const includeSet: Set<string> = new Set(keys)
@@ -559,4 +572,14 @@ export function RemoveEnding(remove: string | string[] | null | undefined, value
 	} while (recursive && arrayRemove.some(aRemove => newValue.endsWith(aRemove)))
 	
 	return newValue
+}
+
+export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
+	if (!!checkVal || otherVals.length === 0) return checkVal
+	
+	for (const otherVal of otherVals) {
+		if (!!otherVal) return otherVal
+	}
+	
+	return otherVals[otherVals.length - 1]
 }
