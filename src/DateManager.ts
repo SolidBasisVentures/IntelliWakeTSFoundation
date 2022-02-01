@@ -422,16 +422,16 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 	
 	switch (format) {
 		case 'Local':
-			useFormat = 'MM/DD/YYYY'
+			useFormat = 'M/D/YYYY'
 			break
 		case 'LocalDoW':
-			useFormat = 'dd, MM/DD/YYYY'
+			useFormat = 'dd, M/D/YYYY'
 			break
 		case 'LocalDateTime':
-			useFormat = 'MM/DD/YYYY h:mm a'
+			useFormat = 'M/D/YYYY h:mm a'
 			break
 		case 'LocalDoWTime':
-			useFormat = 'dd, MM/DD/YYYY h:mm a'
+			useFormat = 'dd, M/D/YYYY h:mm a'
 			break
 		case 'Date':
 			useFormat = DATE_FORMAT_DATE
