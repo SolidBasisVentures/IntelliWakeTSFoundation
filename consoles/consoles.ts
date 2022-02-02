@@ -2,11 +2,8 @@ import {DateCompare, DateFormat} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DateCompare(new Date(), 'IsSame', new Date(), 'day'))
-console.log(DateCompare(new Date(), 'IsBefore', new Date(), 'day'))
-console.log(DateCompare(new Date(), 'IsSame', {seconds: -2}, 'day'))
-console.log(DateCompare(new Date(), 'IsSame', {days: -2}, 'day'))
-console.log(DateCompare(new Date(), 'IsAfter', {days: -2}, 'day'))
+console.log('false', DateCompare(new Date(), 'IsAfter', {seconds: 2}, 'second'))
+console.log('true', DateCompare(new Date(), 'IsAfter', {seconds: -2}, 'second'))
 
 console.log(DateFormat('Local', '2022-01-06'))
 
