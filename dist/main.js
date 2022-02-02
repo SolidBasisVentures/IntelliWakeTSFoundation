@@ -1632,10 +1632,10 @@ var ManualParse = function (date) {
     // if (d[12]) {
     dateObj.setUTCMilliseconds((CleanNumber(((_d = d[12]) !== null && _d !== void 0 ? _d : 0).toString().padEnd(3, '0').substr(0, 3))));
     // }
-    var offset = 0;
+    var offsetHours = 0;
     if (d[14]) {
-        offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10);
-        offset *= ((d[15] === '-') ? 1 : -1);
+        offsetHours = (CleanNumber(d[16])) + parseInt(d[17], 10);
+        offsetHours *= ((d[15] === '-') ? 1 : -1);
         // console.log('o off', dateObj.getTime(), offset)
         // } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
         // offset -= CleanNumber(date.substr(-3))
@@ -1651,13 +1651,14 @@ var ManualParse = function (date) {
     else if (date.length > 12) {
         var last3 = date.substring(date.length - 3);
         if (last3.startsWith('-') || last3.endsWith('+')) {
-            offset -= CleanNumber(last3);
+            offsetHours -= CleanNumber(last3);
             // console.log('Offset', dateObj, offset)
         }
     }
     // console.log(date, d, dateObj, offset)
     // console.log('offset', dateObj, offset, dateObj.getTime())
-    var time = dateObj.valueOf() + (offset * 60 * 60 * 1000);
+    // console.log('Trying...', dateObj, offsetHours)
+    var time = dateObj.valueOf() + (offsetHours * 60 * 60 * 1000);
     var newDateObj = new Date(time);
     if (!newDateObj)
         return null;

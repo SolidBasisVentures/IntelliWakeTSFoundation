@@ -1,11 +1,11 @@
-import {DateCompare, DateFormat} from '../src/DateManager'
+import {DateFormat} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log('false', DateCompare(new Date(), 'IsAfter', {seconds: 2}, 'second'))
-console.log('true', DateCompare(new Date(), 'IsAfter', {seconds: -2}, 'second'))
-
-console.log(DateFormat('Local', '2022-01-06'))
+// console.log(DateObject( '2022-02-01T15:18:37.633-05:00'))
+// console.log(DateFormat('Local', '2022-02-01T15:18:37.633-05:00'))
+console.log(DateFormat('LocalDateTime', '2022-02-01 15:18'))
+console.log(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00'))
 
 // console.log(DateQuarter('2021-01-01'))
 // console.log(DateQuarter('2021-02-01'))

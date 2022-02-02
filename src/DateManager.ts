@@ -165,11 +165,12 @@ export const ManualParse = (date: string): number | null => {
 		dateObj.setUTCMilliseconds((CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3))))
 	// }
 	
-	let offset = 0
+	let offsetHours = 0
 	
 	if (d[14]) {
-		offset = (CleanNumber(d[16]) * 60) + parseInt(d[17], 10)
-		offset *= ((d[15] === '-') ? 1 : -1)
+		offsetHours = (CleanNumber(d[16])) + parseInt(d[17], 10)
+		
+		offsetHours *= ((d[15] === '-') ? 1 : -1)
 		// console.log('o off', dateObj.getTime(), offset)
 		// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
 		// offset -= CleanNumber(date.substr(-3))
@@ -184,7 +185,7 @@ export const ManualParse = (date: string): number | null => {
 	} else if (date.length > 12) {
 		const last3 = date.substring(date.length - 3)
 		if (last3.startsWith('-') || last3.endsWith('+')) {
-			offset -= CleanNumber(last3)
+			offsetHours -= CleanNumber(last3)
 			// console.log('Offset', dateObj, offset)
 		}
 	}
@@ -193,7 +194,9 @@ export const ManualParse = (date: string): number | null => {
 	
 	// console.log('offset', dateObj, offset, dateObj.getTime())
 	
-	const time = dateObj.valueOf() + (offset * 60 * 60 * 1000)
+	// console.log('Trying...', dateObj, offsetHours)
+	
+	const time = dateObj.valueOf() + (offsetHours * 60 * 60 * 1000)
 	
 	let newDateObj = new Date(time)
 	
