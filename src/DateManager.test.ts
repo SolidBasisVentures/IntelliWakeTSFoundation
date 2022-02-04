@@ -3,7 +3,7 @@ import {
 	DateCompare,
 	DateDiff,
 	DateDiffComponents,
-	DateFormat,
+	DateFormat, DateFormatAny,
 	DateISO,
 	DateParseTS,
 	DateQuarter,
@@ -204,6 +204,7 @@ test('Date Managers', () => {
 	expect(DateCompare(new Date(), 'IsSame', {seconds: -2}, 'day')).toEqual(true)
 	expect(DateCompare(new Date(), 'IsSame', {days: -2}, 'day')).toEqual(false)
 	expect(DateCompare(new Date(), 'IsAfter', {days: -2}, 'day')).toEqual(true)
+	expect(DateFormatAny('YYYY-MM', '2022-02-01 03:26:13.670000 +00:00', 'America/Los_Angeles')).toEqual('2022-01')
 	const otz = process.env.TZ
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
