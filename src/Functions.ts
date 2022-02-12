@@ -510,13 +510,13 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	return ret
 }
 
-export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): T & Partial<K> {
-	let ret: T & Partial<K> = {...obj}
+export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> & Partial<K> {
+	let ret: Omit<T, K> & Partial<K> = {...obj}
 	const excludeSet: Set<string> = new Set(keys)
 	
 	for (let key in obj) {
-		if (excludeSet.has(key) && !ret[key]) {
-			delete ret[key]
+		if (excludeSet.has(key) && !(ret as any)[key]) {
+			delete (ret as any)[key]
 		}
 	}
 	

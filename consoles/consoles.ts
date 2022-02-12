@@ -1,4 +1,5 @@
 import {DateFormat} from '../src/DateManager'
+import {OmitFalsey} from '../src/Functions'
 
 require('source-map-support').install()
 
@@ -6,6 +7,14 @@ require('source-map-support').install()
 // console.log(DateFormat('Local', '2022-02-01T15:18:37.633-05:00'))
 console.log(DateFormat('LocalDateTime', '2022-02-01 15:18'))
 console.log(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00'))
+
+interface ITemp {id: number, name: string, disabled?: boolean}
+
+const temp: ITemp = {id: 1, name: 'Den', disabled: false}
+
+const newTemp = OmitFalsey(temp, 'disabled', 'name')
+
+console.log(newTemp)
 
 // console.log(DateQuarter('2021-01-01'))
 // console.log(DateQuarter('2021-02-01'))
