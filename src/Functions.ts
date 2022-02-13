@@ -495,6 +495,10 @@ export const filterAsync = async <T>(
  */
 export const ToArray = <T>(value: T | T[]): T[] => !value ? [] : Array.isArray(value) ? value : [value]
 
+export const PropertiesExist = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data)
+
+export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data && !!data[key])
+
 export function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> {
 	let ret: any = {}
 	const excludeSet: Set<string> = new Set(keys)

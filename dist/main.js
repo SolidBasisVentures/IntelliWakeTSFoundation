@@ -737,6 +737,20 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
  * @constructor
  */
 var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
+var PropertiesExist = function (data) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    return keys.every(function (key) { return key in data; });
+};
+var PropertiesNotFalsey = function (data) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    return keys.every(function (key) { return key in data && !!data[key]; });
+};
 function OmitProperty(obj) {
     var keys = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -4138,6 +4152,8 @@ exports.OmitProperty = OmitProperty;
 exports.PagesForRange = PagesForRange;
 exports.PhoneComponents = PhoneComponents;
 exports.PickProperty = PickProperty;
+exports.PropertiesExist = PropertiesExist;
+exports.PropertiesNotFalsey = PropertiesNotFalsey;
 exports.RandomKey = RandomKey;
 exports.RandomString = RandomString;
 exports.ReSortOrder = ReSortOrder;
