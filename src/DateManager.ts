@@ -17,7 +17,7 @@ export const DATE_FORMAT_DATE_DISPLAY_DOW_LONG = `dddd, ${DATE_FORMAT_DATE_DISPL
 export const DATE_FORMAT_DATE_TIME_DISPLAY_LONG = `${DATE_FORMAT_DATE_DISPLAY_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLAY_DOW_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 
-export type TDuration =
+export type TDateOnlyDuration =
 	'year'
 	| 'years'
 	| 'quarter'
@@ -28,6 +28,9 @@ export type TDuration =
 	| 'weeks'
 	| 'day'
 	| 'days'
+
+export type TDuration =
+	TDateOnlyDuration
 	| 'hour'
 	| 'hours'
 	| 'minute'
@@ -36,6 +39,8 @@ export type TDuration =
 	| 'seconds'
 	| 'millisecond'
 	| 'milliseconds'
+
+export type TDateOnlyAdjustment = { [key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf' }
 
 export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 
