@@ -1223,3 +1223,15 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	
 	return dateObj.getUTCDay()
 }
+
+export const DateOnly = (date: 'now' | 'today' | string | null | undefined, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
+	const useDate = (date ?? '').substring(0, 10)
+	
+	let dateObj = !useDate || ['now', 'today'].includes(useDate) ? new Date() : new Date(useDate)
+	
+	if (!!adjustments) {
+		dateObj = DateObject(dateObj, adjustments) ?? dateObj
+	}
+	
+	return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
+}

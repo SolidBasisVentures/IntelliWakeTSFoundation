@@ -11,7 +11,11 @@ export declare const DATE_FORMAT_DATE_DISPLAY_LONG = "MMMM D, YYYY";
 export declare const DATE_FORMAT_DATE_DISPLAY_DOW_LONG: string;
 export declare const DATE_FORMAT_DATE_TIME_DISPLAY_LONG: string;
 export declare const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG: string;
-export declare type TDuration = 'year' | 'years' | 'quarter' | 'quarters' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days' | 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds';
+export declare type TDateOnlyDuration = 'year' | 'years' | 'quarter' | 'quarters' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days';
+export declare type TDuration = TDateOnlyDuration | 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds';
+export declare type TDateOnlyAdjustment = {
+    [key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf';
+};
 export declare type TAdjustment = {
     [key in TDuration]?: number | 'StartOf' | 'EndOf';
 };
@@ -92,3 +96,6 @@ export interface IQuarter {
 export declare const initialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
 export declare const DateDayOfWeek: (date: TDateAny) => number | null;
+export declare const DateOnly: (date: 'now' | 'today' | string | null | undefined, adjustments?: (TDateOnlyAdjustment & {
+    formatLocale?: boolean | undefined;
+}) | undefined) => string;
