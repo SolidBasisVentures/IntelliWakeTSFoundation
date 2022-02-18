@@ -1231,7 +1231,9 @@ export const DateOnly = (date: 'now' | 'today' | string | null | undefined, adju
 	
 	if (!!adjustments) {
 		dateObj = DateObject(dateObj, adjustments) ?? dateObj
+		if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 	}
+	
 	
 	return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
 }

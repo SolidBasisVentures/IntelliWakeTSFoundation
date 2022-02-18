@@ -2,12 +2,10 @@ import {DateOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(DateOnly('now', {day: 'StartOf'}))
-console.log(DateOnly('now', {day: 'EndOf'}))
-console.log(DateOnly('now', {week: 'StartOf'}))
-console.log(DateOnly('now', {week: 'EndOf'}))
-console.log(DateOnly('2022-02-17', {week: 'StartOf'}))
-console.log(DateOnly('2022-02-17', {week: 'EndOf'}))
+console.log(13, DateOnly('now', {week: 'StartOf'}))
+console.log(19, DateOnly('now', {week: 'EndOf'}))
+console.log(15, DateOnly('now', {months: 3, month: 'StartOf'}))
+console.log(21, DateOnly('now', {months: 3, month: 'EndOf'}))
 
 // console.log(DateObject( '2022-02-01T15:18:37.633-05:00'))
 // console.log(DateFormat('Local', '2022-02-01T15:18:37.633-05:00'))
