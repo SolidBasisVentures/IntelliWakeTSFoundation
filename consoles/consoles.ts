@@ -1,11 +1,11 @@
-import {DateOnly} from '../src/DateManager'
+import {DateDiff} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(13, DateOnly('now', {week: 'StartOf'}))
-console.log(19, DateOnly('now', {week: 'EndOf'}))
-console.log(15, DateOnly('now', {months: 3, month: 'StartOf'}))
-console.log(21, DateOnly('now', {months: 3, month: 'EndOf'}))
+console.log(DateDiff('2022-02-17', '2022-02-16', 'day'), DateDiff('now', '2022-02-16', 'day'))
+console.log(DateDiff('2022-02-17', '2022-02-17', 'day'), DateDiff('now', '2022-02-17', 'day'))
+console.log(DateDiff('2022-02-17', '2022-02-18', 'day'), DateDiff('now', '2022-02-18', 'day'))
+console.log(DateDiff('2022-02-17', '2022-02-19', 'day'), DateDiff('now', '2022-02-19', 'day'))
 
 // console.log(DateObject( '2022-02-01T15:18:37.633-05:00'))
 // console.log(DateFormat('Local', '2022-02-01T15:18:37.633-05:00'))

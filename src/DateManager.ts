@@ -855,8 +855,20 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 }
 
 export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
-	const date1 = DateParseTSInternal(dateFrom)
-	const date2 = DateParseTSInternal(dateTo)
+	// const isDayRanged = ['year'
+	// 										 , 'years'
+	// 										 , 'quarter'
+	// 										 , 'quarters'
+	// 										 , 'month'
+	// 										 , 'months'
+	// 										 , 'week'
+	// 										 , 'weeks'
+	// 										 , 'day'
+	// 										 , 'days'].includes(duration)
+	
+	
+	let date1 = DateParseTSInternal(dateFrom)
+	let date2 = DateParseTSInternal(dateTo)
 	
 	if (!date1 || !date2) return null
 	
