@@ -2616,14 +2616,13 @@ var DateDayOfWeek = function (date) {
     return dateObj.getUTCDay();
 };
 var DateOnly = function (date, adjustments) {
-    var _a, _b;
-    var useDate = (date !== null && date !== void 0 ? date : '').substring(0, 10);
-    var nowOrToday = !useDate || ['now', 'today'].includes(useDate);
-    var dateObj = nowOrToday ? new Date() : new Date(useDate);
+    var _a, _b, _c;
+    var useDate = !date || ['now', 'today'].includes(date) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+    var dateObj = new Date(useDate);
     if (!!adjustments) {
-        dateObj = (_a = DateObject(dateObj, adjustments)) !== null && _a !== void 0 ? _a : dateObj;
+        dateObj = (_b = DateObject(dateObj, adjustments)) !== null && _b !== void 0 ? _b : dateObj;
     }
-    return (_b = DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, nowOrToday ? CurrentTimeZone() : 'UTC')) !== null && _b !== void 0 ? _b : dateObj.toISOString().substring(0, 10);
+    return (_c = DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC')) !== null && _c !== void 0 ? _c : dateObj.toISOString().substring(0, 10);
 };
 
 function isObject(object) {
