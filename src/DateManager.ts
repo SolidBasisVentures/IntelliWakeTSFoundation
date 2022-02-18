@@ -155,19 +155,19 @@ export const ManualParse = (date: string): number | null => {
 	}
 	
 	// if (d[7]) {
-		dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
+	dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
 	// }
 	
 	// if (d[8]) {
-		dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
+	dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
 	// }
 	
 	// if (d[10]) {
-		dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
+	dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
 	// }
 	
 	// if (d[12]) {
-		dateObj.setUTCMilliseconds((CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3))))
+	dateObj.setUTCMilliseconds((CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3))))
 	// }
 	
 	let offsetHours = 0
@@ -244,7 +244,7 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
 			// console.log(date, date.length)
 			// if (date.length > 10) {
-				result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
+			result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
 			// }
 			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
@@ -1226,12 +1226,13 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 
 export const DateOnly = (date: 'now' | 'today' | string | null | undefined, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
 	const useDate = (date ?? '').substring(0, 10)
+	const nowOrToday = !useDate || ['now', 'today'].includes(useDate)
 	
-	let dateObj = !useDate || ['now', 'today'].includes(useDate) ? new Date() : new Date(useDate)
+	let dateObj = nowOrToday ? new Date() : new Date(useDate)
 	
 	if (!!adjustments) {
 		dateObj = DateObject(dateObj, adjustments) ?? dateObj
 	}
 	
-	return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
+	return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, nowOrToday ? CurrentTimeZone() : 'UTC') ?? dateObj.toISOString().substring(0, 10)
 }
