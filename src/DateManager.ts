@@ -1236,8 +1236,8 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	return dateObj.getUTCDay()
 }
 
-export const DateOnly = (date: 'now' | 'today' | string | null | undefined, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
-	const useDate = !date || ['now', 'today'].includes(date) ? DateFormat('Date', date ?? 'today', CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
+export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
+	const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date ?? 'today', CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
 	
 	let dateObj = new Date(useDate)
 	
