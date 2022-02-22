@@ -96,6 +96,6 @@ export interface IQuarter {
 export declare const initialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
 export declare const DateDayOfWeek: (date: TDateAny) => number | null;
-export declare const DateOnly: (date: 'now' | 'today' | string | null | undefined, adjustments?: (TDateOnlyAdjustment & {
+export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;

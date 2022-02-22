@@ -294,6 +294,35 @@ var CleanNumber = function (value, roundClean, allowNaN) {
     return parseFloat(str);
 };
 /**
+ * Cleans a multiple numbers and rounds them
+ *
+ * @example
+ * // return 112.23
+ * CleanNumbers(2, '$100', 12.234)
+ *
+ * // return 1012.24
+ * CleanNumbers(2, '$1,000', 12.236)
+ *
+ * // return 1012
+ * CleanNumbers(0, '$1,000', 12.236)
+ */
+var CleanNumbers = function (roundTo) {
+    var values = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
+    }
+    var result = 0;
+    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+        var value = values_1[_a];
+        var valueArray = ToArray(value);
+        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
+            var valueItem = valueArray_1[_b];
+            result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo);
+        }
+    }
+    return result;
+};
+/**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
@@ -2285,6 +2314,16 @@ var DateAdjustTS = function (date, adjustments) {
     return dateTS;
 };
 var DateDiff = function (dateFrom, dateTo, duration) {
+    // const isDayRanged = ['year'
+    // 										 , 'years'
+    // 										 , 'quarter'
+    // 										 , 'quarters'
+    // 										 , 'month'
+    // 										 , 'months'
+    // 										 , 'week'
+    // 										 , 'weeks'
+    // 										 , 'day'
+    // 										 , 'days'].includes(duration)
     var _a, _b;
     var date1 = DateParseTSInternal(dateFrom);
     var date2 = DateParseTSInternal(dateTo);
@@ -2617,7 +2656,7 @@ var DateDayOfWeek = function (date) {
 };
 var DateOnly = function (date, adjustments) {
     var _a, _b, _c;
-    var useDate = !date || ['now', 'today'].includes(date) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+    var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
     var dateObj = new Date(useDate);
     if (!!adjustments) {
         dateObj = (_b = DateObject(dateObj, adjustments)) !== null && _b !== void 0 ? _b : dateObj;
@@ -4081,6 +4120,7 @@ exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
+exports.CleanNumbers = CleanNumbers;
 exports.CleanScripts = CleanScripts;
 exports.CoalesceFalsey = CoalesceFalsey;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;

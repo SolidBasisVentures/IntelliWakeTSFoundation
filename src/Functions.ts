@@ -60,6 +60,33 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	return parseFloat(str)
 }
 
+
+/**
+ * Cleans a multiple numbers and rounds them
+ *
+ * @example
+ * // return 112.23
+ * CleanNumbers(2, '$100', 12.234)
+ *
+ * // return 1012.24
+ * CleanNumbers(2, '$1,000', 12.236)
+ *
+ * // return 1012
+ * CleanNumbers(0, '$1,000', 12.236)
+ */
+export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): number => {
+	let result = 0
+	
+	for (const value of values) {
+		const valueArray = ToArray(value)
+		for (const valueItem of valueArray) {
+			result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo)
+		}
+	}
+	
+	return result
+}
+
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *

@@ -1,5 +1,5 @@
 import {
-	CleanNumber, CoalesceFalsey,
+	CleanNumber, CleanNumbers, CoalesceFalsey,
 	IsOn,
 	JSONParse, JSONStringToObject,
 	ObjectToJSONString, OmitFalsey,
@@ -21,6 +21,10 @@ test('RoundTo', () => {
 	expect(RoundTo(10.14, 1)).toBe(10.1)
 	expect(RoundTo(10.15, 0)).toBe(10)
 	expect(RoundTo(10.5, 0)).toBe(11)
+	expect(CleanNumbers(2, '$1,000', 12.236)).toBe(1012.24)
+	expect(CleanNumbers(2, '$100', 12.234)).toBe(112.23)
+	expect(CleanNumbers(0, '$1,000', 12.236)).toBe(1012)
+	expect(CleanNumbers(0, '$1,000', [10, 2.236])).toBe(1012)
 })
 
 const item = {
