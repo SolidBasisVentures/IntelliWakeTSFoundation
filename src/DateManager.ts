@@ -306,7 +306,6 @@ export type TDateFormat =
 	| 'LocalDateTime'
 	| 'LocalDoWTime'
 	| 'Date'
-	| 'Time'
 	| 'DateTime'
 	| 'DisplayDate'
 	| 'DisplayTime'
@@ -448,9 +447,6 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			break
 		case 'Date':
 			useFormat = DATE_FORMAT_DATE
-			break
-		case 'Time':
-			useFormat = DATE_FORMAT_TIME_SECONDS
 			break
 		case 'DateTime':
 			useFormat = DATE_FORMAT_DATE_TIME
@@ -1260,4 +1256,42 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 	} catch (err) {
 		return new Date().toISOString().substring(0, 10)
 	}
+}
+
+export const TimeOnly = (time: TDateAny, adjustments?: TDateOnlyAdjustment): string => {
+	try {
+		let timeValue = DateFormatAny('HH:mm:ss', DateParseTS(time, adjustments))
+		if (!!timeValue) return timeValue
+		
+		let useTime = (time ?? '').toString().toLowerCase().trim()
+		
+		let changeHours = 0
+		
+		if (useTime.endsWith('am')) useTime = useTime.substring(0, useTime.length - 2).trim()
+		if (useTime.endsWith('a')) useTime = useTime.substring(0, useTime.length - 1).trim()
+		if (useTime.endsWith('pm')) {
+			useTime = useTime.substring(0, useTime.length - 2).trim()
+			changeHours += 12
+		}
+		if (useTime.endsWith('p')) {
+			useTime = useTime.substring(0, useTime.length - 1).trim()
+			changeHours += 12
+		}
+		
+		
+		if (useTime.substring(1, 2) === ':') useTime = `0${useTime}`
+		
+		useTime = DateOnly('now') + 'T' + useTime
+		
+		let tsValue = DateParseTS(useTime, adjustments)
+		if (!!tsValue) {
+			let newValue = DateFormatAny('HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC')
+			if (!!newValue) return newValue
+		}
+	} catch (err) {
+	}
+	
+	const dateObj = new Date()
+	
+	return DateFormatAny('HH:mm:ss', dateObj) ?? ''
 }

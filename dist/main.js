@@ -1903,9 +1903,6 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         case 'Date':
             useFormat = DATE_FORMAT_DATE;
             break;
-        case 'Time':
-            useFormat = DATE_FORMAT_TIME_SECONDS;
-            break;
         case 'DateTime':
             useFormat = DATE_FORMAT_DATE_TIME;
             break;
@@ -2675,6 +2672,41 @@ var DateOnly = function (date, adjustments) {
     catch (err) {
         return new Date().toISOString().substring(0, 10);
     }
+};
+var TimeOnly = function (time, adjustments) {
+    var _a;
+    try {
+        var timeValue = DateFormatAny('HH:mm:ss', DateParseTS(time, adjustments));
+        if (!!timeValue)
+            return timeValue;
+        var useTime = (time !== null && time !== void 0 ? time : '').toString().toLowerCase().trim();
+        var changeHours = 0;
+        if (useTime.endsWith('am'))
+            useTime = useTime.substring(0, useTime.length - 2).trim();
+        if (useTime.endsWith('a'))
+            useTime = useTime.substring(0, useTime.length - 1).trim();
+        if (useTime.endsWith('pm')) {
+            useTime = useTime.substring(0, useTime.length - 2).trim();
+            changeHours += 12;
+        }
+        if (useTime.endsWith('p')) {
+            useTime = useTime.substring(0, useTime.length - 1).trim();
+            changeHours += 12;
+        }
+        if (useTime.substring(1, 2) === ':')
+            useTime = "0" + useTime;
+        useTime = DateOnly('now') + 'T' + useTime;
+        var tsValue = DateParseTS(useTime, adjustments);
+        if (!!tsValue) {
+            var newValue = DateFormatAny('HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC');
+            if (!!newValue)
+                return newValue;
+        }
+    }
+    catch (err) {
+    }
+    var dateObj = new Date();
+    return (_a = DateFormatAny('HH:mm:ss', dateObj)) !== null && _a !== void 0 ? _a : '';
 };
 
 function isObject(object) {
@@ -4258,6 +4290,7 @@ exports.TSWeeks = TSWeeks;
 exports.TSYearsEstimate = TSYearsEstimate;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
+exports.TimeOnly = TimeOnly;
 exports.ToArray = ToArray;
 exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;

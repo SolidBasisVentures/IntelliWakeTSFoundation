@@ -38,7 +38,7 @@ export declare const DateParseTS: (date: TDateAny, adjustements?: TDateParseOpti
 export declare const DateISO: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => string | null;
 export declare const DateObject: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => Date | null;
 export declare const DateICS: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => string | null;
-export declare type TDateFormat = 'Local' | 'LocalDoW' | 'LocalDateTime' | 'LocalDoWTime' | 'Date' | 'Time' | 'DateTime' | 'DisplayDate' | 'DisplayTime' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
+export declare type TDateFormat = 'Local' | 'LocalDoW' | 'LocalDateTime' | 'LocalDoWTime' | 'Date' | 'DateTime' | 'DisplayDate' | 'DisplayTime' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
 export declare const DateFormatAny: (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const DateFormat: (format: TDateFormat, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const YYYYMMDDHHmmss: (date: TDateAny) => string;
@@ -99,3 +99,4 @@ export declare const DateDayOfWeek: (date: TDateAny) => number | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;
+export declare const TimeOnly: (time: TDateAny, adjustments?: TDateOnlyAdjustment | undefined) => string;
