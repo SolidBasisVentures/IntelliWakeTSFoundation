@@ -12,9 +12,13 @@ export declare const DATE_FORMAT_DATE_DISPLAY_DOW_LONG: string;
 export declare const DATE_FORMAT_DATE_TIME_DISPLAY_LONG: string;
 export declare const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG: string;
 export declare type TDateOnlyDuration = 'year' | 'years' | 'quarter' | 'quarters' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days';
-export declare type TDuration = TDateOnlyDuration | 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds';
+export declare type TTimeOnlyDuration = 'hour' | 'hours' | 'minute' | 'minutes' | 'second' | 'seconds' | 'millisecond' | 'milliseconds';
+export declare type TDuration = TDateOnlyDuration | TTimeOnlyDuration;
 export declare type TDateOnlyAdjustment = {
     [key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf';
+};
+export declare type TTimeOnlyAdjustment = {
+    [key in TTimeOnlyDuration]?: number | 'StartOf' | 'EndOf';
 };
 export declare type TAdjustment = {
     [key in TDuration]?: number | 'StartOf' | 'EndOf';
@@ -99,4 +103,4 @@ export declare const DateDayOfWeek: (date: TDateAny) => number | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;
-export declare const TimeOnly: (time: TDateAny, adjustments?: TDateOnlyAdjustment | undefined) => string;
+export declare const TimeOnly: (time: TDateAny, adjustments?: TTimeOnlyAdjustment | undefined) => string;

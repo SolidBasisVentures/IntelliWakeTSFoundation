@@ -29,8 +29,7 @@ export type TDateOnlyDuration =
 	| 'day'
 	| 'days'
 
-export type TDuration =
-	TDateOnlyDuration
+export type TTimeOnlyDuration =
 	| 'hour'
 	| 'hours'
 	| 'minute'
@@ -40,7 +39,11 @@ export type TDuration =
 	| 'millisecond'
 	| 'milliseconds'
 
+export type TDuration = TDateOnlyDuration | TTimeOnlyDuration
+
 export type TDateOnlyAdjustment = { [key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf' }
+
+export type TTimeOnlyAdjustment = { [key in TTimeOnlyDuration]?: number | 'StartOf' | 'EndOf' }
 
 export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 
@@ -1258,7 +1261,7 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 	}
 }
 
-export const TimeOnly = (time: TDateAny, adjustments?: TDateOnlyAdjustment): string => {
+export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment): string => {
 	try {
 		let timeValue = DateFormatAny('HH:mm:ss', DateParseTS(time, adjustments))
 		if (!!timeValue) return timeValue
