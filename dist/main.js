@@ -1903,6 +1903,12 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         case 'Date':
             useFormat = DATE_FORMAT_DATE;
             break;
+        case 'Time':
+            useFormat = DATE_FORMAT_TIME_SECONDS;
+            break;
+        case 'DateTime':
+            useFormat = DATE_FORMAT_DATE_TIME;
+            break;
         case 'DisplayDate':
             useFormat = DATE_FORMAT_DATE_DISPLAY;
             break;

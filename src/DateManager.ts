@@ -306,6 +306,8 @@ export type TDateFormat =
 	| 'LocalDateTime'
 	| 'LocalDoWTime'
 	| 'Date'
+	| 'Time'
+	| 'DateTime'
 	| 'DisplayDate'
 	| 'DisplayTime'
 	| 'DisplayDateDoW'
@@ -446,6 +448,12 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			break
 		case 'Date':
 			useFormat = DATE_FORMAT_DATE
+			break
+		case 'Time':
+			useFormat = DATE_FORMAT_TIME_SECONDS
+			break
+		case 'DateTime':
+			useFormat = DATE_FORMAT_DATE_TIME
 			break
 		case 'DisplayDate':
 			useFormat = DATE_FORMAT_DATE_DISPLAY

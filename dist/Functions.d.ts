@@ -33,6 +33,20 @@ export declare const ReplaceAll: (find: string | string[], replace: string, subj
  */
 export declare const CleanNumber: (value: any, roundClean?: number | undefined, allowNaN?: boolean | undefined) => number;
 /**
+ * Cleans a multiple numbers and rounds them
+ *
+ * @example
+ * // return 112.23
+ * CleanNumbers(2, '$100', 12.234)
+ *
+ * // return 1012.24
+ * CleanNumbers(2, '$1,000', 12.236)
+ *
+ * // return 1012
+ * CleanNumbers(0, '$1,000', 12.236)
+ */
+export declare const CleanNumbers: (roundTo: number, ...values: (any | any[])[]) => number;
+/**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
