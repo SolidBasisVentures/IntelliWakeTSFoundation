@@ -1245,15 +1245,19 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 }
 
 export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
-	const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date ?? 'today', CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
-	
-	let dateObj = new Date(useDate)
-	
-	if (!!adjustments) {
-		dateObj = DateObject(dateObj, adjustments) ?? dateObj
-		if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
+	try {
+		const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date ?? 'today', CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
+		
+		let dateObj = new Date(useDate)
+		
+		if (!!adjustments) {
+			dateObj = DateObject(dateObj, adjustments) ?? dateObj
+			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
+		}
+		
+		
+		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
+	} catch (err) {
+		return new Date().toISOString().substring(0, 10)
 	}
-	
-	
-	return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
 }

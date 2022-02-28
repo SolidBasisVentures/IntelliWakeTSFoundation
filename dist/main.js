@@ -2662,14 +2662,19 @@ var DateDayOfWeek = function (date) {
 };
 var DateOnly = function (date, adjustments) {
     var _a, _b, _c;
-    var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
-    var dateObj = new Date(useDate);
-    if (!!adjustments) {
-        dateObj = (_b = DateObject(dateObj, adjustments)) !== null && _b !== void 0 ? _b : dateObj;
-        if (Object.values(adjustments).includes('EndOf'))
-            dateObj.setUTCHours(10);
+    try {
+        var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+        var dateObj = new Date(useDate);
+        if (!!adjustments) {
+            dateObj = (_b = DateObject(dateObj, adjustments)) !== null && _b !== void 0 ? _b : dateObj;
+            if (Object.values(adjustments).includes('EndOf'))
+                dateObj.setUTCHours(10);
+        }
+        return (_c = DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC')) !== null && _c !== void 0 ? _c : dateObj.toISOString().substring(0, 10);
     }
-    return (_c = DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC')) !== null && _c !== void 0 ? _c : dateObj.toISOString().substring(0, 10);
+    catch (err) {
+        return new Date().toISOString().substring(0, 10);
+    }
 };
 
 function isObject(object) {
