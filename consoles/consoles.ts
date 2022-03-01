@@ -2,6 +2,10 @@ import {TimeOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
+console.log(TimeOnly(''))
+console.log(TimeOnly(null))
+console.log(TimeOnly('blah'))
+
 const times = [
 	['20:00:00', '20:00:00'],
 	['20:00', '20:00:00'],
