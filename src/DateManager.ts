@@ -1262,7 +1262,7 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 }
 
 export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string | null => {
-	if (!time) return null
+	if (!time || (typeof time === 'string' && !StringHasTimeData(time))) return null
 	
 	try {
 		let timeValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments))

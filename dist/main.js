@@ -2674,7 +2674,7 @@ var DateOnly = function (date, adjustments) {
     }
 };
 var TimeOnly = function (time, adjustments) {
-    if (!time)
+    if (!time || (typeof time === 'string' && !StringHasTimeData(time)))
         return null;
     try {
         var timeValue = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments));
