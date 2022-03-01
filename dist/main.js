@@ -2674,7 +2674,6 @@ var DateOnly = function (date, adjustments) {
     }
 };
 var TimeOnly = function (time, adjustments) {
-    var _a;
     try {
         var timeValue = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments));
         if (!!timeValue)
@@ -2705,8 +2704,7 @@ var TimeOnly = function (time, adjustments) {
     }
     catch (err) {
     }
-    var dateObj = new Date();
-    return (_a = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', dateObj)) !== null && _a !== void 0 ? _a : '';
+    return null;
 };
 
 function isObject(object) {

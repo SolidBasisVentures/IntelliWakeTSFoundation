@@ -1261,7 +1261,7 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 	}
 }
 
-export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string => {
+export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string | null => {
 	try {
 		let timeValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments))
 		if (!!timeValue) return timeValue
@@ -1294,7 +1294,5 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
 	} catch (err) {
 	}
 	
-	const dateObj = new Date()
-	
-	return DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', dateObj) ?? ''
+	return null
 }

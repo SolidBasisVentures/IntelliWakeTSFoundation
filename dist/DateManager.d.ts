@@ -105,4 +105,4 @@ export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustme
 }) | undefined) => string;
 export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustment & {
     formatLocale?: boolean | undefined;
-}) | undefined) => string;
+}) | undefined) => string | null;
