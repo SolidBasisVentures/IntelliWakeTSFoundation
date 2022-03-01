@@ -1261,9 +1261,9 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 	}
 }
 
-export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment): string => {
+export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string => {
 	try {
-		let timeValue = DateFormatAny('HH:mm:ss', DateParseTS(time, adjustments))
+		let timeValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments))
 		if (!!timeValue) return timeValue
 		
 		let useTime = (time ?? '').toString().toLowerCase().trim()
@@ -1288,7 +1288,7 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment): str
 		
 		let tsValue = DateParseTS(useTime, adjustments)
 		if (!!tsValue) {
-			let newValue = DateFormatAny('HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC')
+			let newValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC')
 			if (!!newValue) return newValue
 		}
 	} catch (err) {
@@ -1296,5 +1296,5 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment): str
 	
 	const dateObj = new Date()
 	
-	return DateFormatAny('HH:mm:ss', dateObj) ?? ''
+	return DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', dateObj) ?? ''
 }

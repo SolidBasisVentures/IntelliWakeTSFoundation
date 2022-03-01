@@ -103,4 +103,6 @@ export declare const DateDayOfWeek: (date: TDateAny) => number | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;
-export declare const TimeOnly: (time: TDateAny, adjustments?: TTimeOnlyAdjustment | undefined) => string;
+export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustment & {
+    formatLocale?: boolean | undefined;
+}) | undefined) => string;
