@@ -53,10 +53,12 @@ export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 export const NowISOString = (): string => new Date().toISOString()
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export const IANAOffset = (timeZone?: string): number | null => {
-	if (!timeZone) return new Date().getTimezoneOffset()
+export const IANAOffset = (timeZone?: string, sourceDate?: TDateAny): number | null => {
+	if (!timeZone) return (DateObject(sourceDate ?? 'now') ?? new Date()).getTimezoneOffset()
 	
-	let date = new Date()
+	const sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null
+	
+	let date = !sourceTS ? new Date() : new Date(sourceTS)
 	
 	function objFromStr(str: string) {
 		const array = str.replace(':', ' ').split(' ')
@@ -77,9 +79,19 @@ export const IANAOffset = (timeZone?: string): number | null => {
 	const other = objFromStr(str)
 	str = date.toLocaleString(['nl-NL'], {day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false})
 	const myLocale = objFromStr(str)
-	const amsterdamOffset = other.day * 24 * 60 + other.hour * 60 + other.minute
-	const myLocaleOffset = myLocale.day * 24 * 60 + myLocale.hour * 60 + myLocale.minute
-	return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
+	const amsterdamOffset = other.day * 1440 + other.hour * 60 + other.minute
+	const myLocaleOffset = myLocale.day * 1440 + myLocale.hour * 60 + myLocale.minute
+	let result = myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
+	// if (result >= 1440 || result <= -1440) result = result % 1440
+	// while (result >= 1440 /* 24 * 60 */) {
+	// 	result -= 1440
+	// }
+	// while (result <= -1440 /*24 * 60 * -1 */) {
+	// 	result += 1440
+	// }
+	// if (!!sourceDate) result += 0
+	return result % 1440
+	// return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
 	
 	// const timeZoneName = Intl.DateTimeFormat('ia', {
 	// 	timeZoneName: 'short',
@@ -213,7 +225,7 @@ export const ManualParse = (date: string): number | null => {
 	return newDateObj.valueOf()
 }
 
-const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | null => {
+const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA?: boolean): number | null => {
 	if (!date) return null // new Date().valueOf() // Date.parse(new Date().toString())
 	
 	if (typeof date === 'number') return date
@@ -242,12 +254,12 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string): number | 
 		// console.log('hasTZ', StringHasTimeZoneData(date))
 		
 		// Set a time string with no other timezone data to the current timezone
-		if (!StringHasTimeZoneData(date)) {
+		if (!ignoreIANA && !StringHasTimeZoneData(date)) {
 			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
 			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
 			// console.log(date, date.length)
 			// if (date.length > 10) {
-			result += ((IANAOffset(timezoneSource) ?? 0) * 60 * 1000)
+			result += ((IANAOffset(timezoneSource, date) ?? 0) * 60 * 1000)
 			// }
 			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
@@ -327,25 +339,31 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 	
 	// console.log('DFA', date, dateObject)
 	
+	// const objectUTC = false //(typeof date === 'object' && timezoneDisplay === 'UTC')
+	
 	if (timezoneDisplay) {
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
 			
-			const sourceOffset = IANAOffset(timezoneSource) ?? 0 // Chic 5
-			const displayOffset = IANAOffset(timezoneDisplay) ?? 0 // Chic 6
+			const sourceDate = (!!date && date !== 'now' && date !== 'today') ? dateObject : undefined
+			
+			const sourceOffset = IANAOffset(timezoneSource, sourceDate) ?? 0 // Chic 5
+			const displayOffset = IANAOffset(timezoneDisplay, sourceDate) ?? 0 // Chic 6
 			const offset = noTZInfo ?
 				!timezoneSource ?
 					(displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
-					((IANAOffset() ?? 0) - sourceOffset) - (displayOffset - sourceOffset) :
+					((IANAOffset(undefined, sourceDate) ?? 0) - sourceOffset) - (displayOffset - sourceOffset) :
 				(sourceOffset - displayOffset)
 			
-			// console.log(date, dateObject, sourceOffset, displayOffset, offset, noTZInfo)
+			// console.log(date, noTZInfo, timezoneSource, sourceOffset, timezoneDisplay, displayOffset, offset)
 			
 			// if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
 			// console.log('---')
 			// 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
 			
 			dateObject = DateObject(dateObject, {minutes: offset})
+			
+			// console.log(dateObject)
 			
 			// console.log('New', dateObject)
 			// dateObject = DateObject(dateObject, {minutes: toOffset})
@@ -1253,7 +1271,6 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 			dateObj = DateObject(dateObj, adjustments) ?? dateObj
 			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 		}
-		
 		
 		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
 	} catch (err) {

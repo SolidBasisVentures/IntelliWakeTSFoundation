@@ -1,23 +1,22 @@
-import {TimeOnly} from '../src/DateManager'
+import {DateOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log(TimeOnly(''))
-console.log(TimeOnly(null))
-console.log(TimeOnly('blah'))
+console.log('Here', DateOnly('today'))
+console.log('Here 2', DateOnly('02/17/2022', {days: -1}))
 
-const times = [
-	['20:00:00', '20:00:00'],
-	['20:00', '20:00:00'],
-	['8:00 pm', '20:00:00'],
-	['8:00 am', '08:00:00'],
-	['8:00', '08:00:00'],
-	['08:00 pm', '20:00:00']
-]
-
-console.log('--------------')
-
-times.forEach(time => console.log(time[1], '---', TimeOnly(time[0])))
+// const times = [
+// 	['20:00:00', '20:00:00'],
+// 	['20:00', '20:00:00'],
+// 	['8:00 pm', '20:00:00'],
+// 	['8:00 am', '08:00:00'],
+// 	['8:00', '08:00:00'],
+// 	['08:00 pm', '20:00:00']
+// ]
+//
+// console.log('--------------')
+//
+// times.forEach(time => console.log(time[1], '---', TimeOnly(time[0])))
 
 // console.log(DateDiff('2022-02-17', '2022-02-16', 'day'), DateDiff('now', '2022-02-16', 'day'))
 // console.log(DateDiff('2022-02-17', '2022-02-17', 'day'), DateDiff('now', '2022-02-17', 'day'))
