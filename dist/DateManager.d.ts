@@ -28,7 +28,7 @@ export declare type TAdjustment = {
  */
 export declare const NowISOString: () => string;
 export declare const CurrentTimeZone: () => string;
-export declare const IANAOffset: (timeZone?: string | undefined) => number | null;
+export declare const IANAOffset: (timeZone?: string | undefined, sourceDate?: TDateAny) => number | null;
 export declare const StringHasTimeData: (value: string) => boolean;
 export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;

@@ -1576,10 +1576,12 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
  */
 var NowISOString = function () { return new Date().toISOString(); };
 var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
-var IANAOffset = function (timeZone) {
+var IANAOffset = function (timeZone, sourceDate) {
+    var _a;
     if (!timeZone)
-        return new Date().getTimezoneOffset();
-    var date = new Date();
+        return ((_a = DateObject(sourceDate !== null && sourceDate !== void 0 ? sourceDate : 'now')) !== null && _a !== void 0 ? _a : new Date()).getTimezoneOffset();
+    var sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null;
+    var date = !sourceTS ? new Date() : new Date(sourceTS);
     function objFromStr(str) {
         var array = str.replace(':', ' ').split(' ');
         return {
@@ -1598,9 +1600,19 @@ var IANAOffset = function (timeZone) {
     var other = objFromStr(str);
     str = date.toLocaleString(['nl-NL'], { day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false });
     var myLocale = objFromStr(str);
-    var amsterdamOffset = other.day * 24 * 60 + other.hour * 60 + other.minute;
-    var myLocaleOffset = myLocale.day * 24 * 60 + myLocale.hour * 60 + myLocale.minute;
-    return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset();
+    var amsterdamOffset = other.day * 1440 + other.hour * 60 + other.minute;
+    var myLocaleOffset = myLocale.day * 1440 + myLocale.hour * 60 + myLocale.minute;
+    var result = myLocaleOffset - amsterdamOffset + date.getTimezoneOffset();
+    // if (result >= 1440 || result <= -1440) result = result % 1440
+    // while (result >= 1440 /* 24 * 60 */) {
+    // 	result -= 1440
+    // }
+    // while (result <= -1440 /*24 * 60 * -1 */) {
+    // 	result += 1440
+    // }
+    // if (!!sourceDate) result += 0
+    return result % 1440;
+    // return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
     // const timeZoneName = Intl.DateTimeFormat('ia', {
     // 	timeZoneName: 'short',
     // 	timeZone: timeZone ?? CurrentTimeZone()
@@ -1707,7 +1719,7 @@ var ManualParse = function (date) {
         return null;
     return newDateObj.valueOf();
 };
-var DateParseTSInternal = function (date, timezoneSource) {
+var DateParseTSInternal = function (date, timezoneSource, ignoreIANA) {
     var _a, _b;
     if (!date)
         return null; // new Date().valueOf() // Date.parse(new Date().toString())
@@ -1732,12 +1744,12 @@ var DateParseTSInternal = function (date, timezoneSource) {
             return null;
         // console.log('hasTZ', StringHasTimeZoneData(date))
         // Set a time string with no other timezone data to the current timezone
-        if (!StringHasTimeZoneData(date)) {
+        if (!ignoreIANA && !StringHasTimeZoneData(date)) {
             // console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
             // console.log(date, date.length)
             // if (date.length > 10) {
-            result += (((_b = IANAOffset(timezoneSource)) !== null && _b !== void 0 ? _b : 0) * 60 * 1000);
+            result += (((_b = IANAOffset(timezoneSource, date)) !== null && _b !== void 0 ? _b : 0) * 60 * 1000);
             // }
             // result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
         }
@@ -1784,22 +1796,25 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
     var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined));
     // console.log('DFA', date, dateObject)
+    // const objectUTC = false //(typeof date === 'object' && timezoneDisplay === 'UTC')
     if (timezoneDisplay) {
         try {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
-            var sourceOffset = (_a = IANAOffset(timezoneSource)) !== null && _a !== void 0 ? _a : 0; // Chic 5
-            var displayOffset = (_b = IANAOffset(timezoneDisplay)) !== null && _b !== void 0 ? _b : 0; // Chic 6
+            var sourceDate = (!!date && date !== 'now' && date !== 'today') ? dateObject : undefined;
+            var sourceOffset = (_a = IANAOffset(timezoneSource, sourceDate)) !== null && _a !== void 0 ? _a : 0; // Chic 5
+            var displayOffset = (_b = IANAOffset(timezoneDisplay, sourceDate)) !== null && _b !== void 0 ? _b : 0; // Chic 6
             var offset = noTZInfo ?
                 !timezoneSource ?
                     (displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
-                    (((_c = IANAOffset()) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) :
+                    (((_c = IANAOffset(undefined, sourceDate)) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) :
                 (sourceOffset - displayOffset);
-            // console.log(date, dateObject, sourceOffset, displayOffset, offset, noTZInfo)
+            // console.log(date, noTZInfo, timezoneSource, sourceOffset, timezoneDisplay, displayOffset, offset)
             // if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
             // console.log('---')
             // 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
             dateObject = DateObject(dateObject, { minutes: offset });
+            // console.log(dateObject)
             // console.log('New', dateObject)
             // dateObject = DateObject(dateObject, {minutes: toOffset})
         }
