@@ -1579,7 +1579,7 @@ var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions
 var IANAOffset = function (timeZone, sourceDate) {
     var _a;
     if (!timeZone)
-        return ((_a = DateObject(sourceDate !== null && sourceDate !== void 0 ? sourceDate : 'now')) !== null && _a !== void 0 ? _a : new Date()).getTimezoneOffset();
+        return ((_a = DateObject(sourceDate !== null && sourceDate !== void 0 ? sourceDate : 'now', { ignoreIANA: true })) !== null && _a !== void 0 ? _a : new Date()).getTimezoneOffset();
     var sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null;
     var date = !sourceTS ? new Date() : new Date(sourceTS);
     function objFromStr(str) {
@@ -1713,7 +1713,7 @@ var ManualParse = function (date) {
     // console.log(date, d, dateObj, offset)
     // console.log('offset', dateObj, offset, dateObj.getTime())
     // console.log('Trying...', dateObj, offsetHours)
-    var time = dateObj.valueOf() + (offsetHours * 60 * 60 * 1000);
+    var time = dateObj.valueOf() + (offsetHours * 3600000);
     var newDateObj = new Date(time);
     if (!newDateObj)
         return null;
@@ -1749,7 +1749,7 @@ var DateParseTSInternal = function (date, timezoneSource, ignoreIANA) {
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
             // console.log(date, date.length)
             // if (date.length > 10) {
-            result += (((_b = IANAOffset(timezoneSource, date)) !== null && _b !== void 0 ? _b : 0) * 60 * 1000);
+            result += (((_b = IANAOffset(timezoneSource, date)) !== null && _b !== void 0 ? _b : 0) * 60000);
             // }
             // result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
         }
@@ -1760,7 +1760,7 @@ var DateParseTSInternal = function (date, timezoneSource, ignoreIANA) {
     }
 };
 var DateParseTS = function (date, adjustements) {
-    var newDate = DateParseTSInternal(date, adjustements === null || adjustements === void 0 ? void 0 : adjustements.timezoneSource);
+    var newDate = DateParseTSInternal(date, adjustements === null || adjustements === void 0 ? void 0 : adjustements.timezoneSource, adjustements === null || adjustements === void 0 ? void 0 : adjustements.ignoreIANA);
     if (!newDate || !adjustements)
         return newDate;
     return DateAdjustTS(newDate, adjustements);
@@ -2548,26 +2548,30 @@ var DurationLongDescription = function (seconds, tripToSecondsOrTwo, abbreviated
     }
     return text.trim();
 };
+var checkType = function (evalCheck, diff) {
+    if (diff === 0)
+        return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
+    if (diff > 0)
+        return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
+    return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
+};
 var DateCompare = function (date1, evalType, date2, minInterval) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
-    var date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date)) ? DateParseTS('now', date2) : date2;
-    var checkType = function (evalCheck, diff) {
-        if (diff === 0)
-            return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
-        if (diff > 0)
-            return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
-        return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
-    };
-    var msDifference = ((_a = DateParseTSInternal(date1)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2ToUse)) !== null && _b !== void 0 ? _b : 0);
+    var _a, _b, _c, _d, _e, _f, _g;
+    var date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
+        ? DateParseTS('now', date2)
+        : date2;
+    var msDifference = ((_a = DateParseTSInternal(date1, undefined, true)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2ToUse, undefined, true)) !== null && _b !== void 0 ? _b : 0);
     if (msDifference === 0) {
         return checkType(evalType, msDifference);
     }
     if (!!minInterval) {
-        var yearDiff = ((_d = (_c = DateObject(date1)) === null || _c === void 0 ? void 0 : _c.getUTCFullYear()) !== null && _d !== void 0 ? _d : 0) - ((_f = (_e = DateObject(date2ToUse)) === null || _e === void 0 ? void 0 : _e.getUTCFullYear()) !== null && _f !== void 0 ? _f : 0);
+        var date1Object = (_c = DateObject(date1)) !== null && _c !== void 0 ? _c : new Date();
+        var date2Object = (_d = DateObject(date2ToUse)) !== null && _d !== void 0 ? _d : new Date();
+        var yearDiff = date1Object.getUTCFullYear() - date2Object.getUTCFullYear();
         if (['year', 'years'].includes(minInterval)) {
             return checkType(evalType, yearDiff);
         }
-        var monthDiff = ((_h = (_g = DateObject(date1)) === null || _g === void 0 ? void 0 : _g.getUTCMonth()) !== null && _h !== void 0 ? _h : 0) - ((_k = (_j = DateObject(date2ToUse)) === null || _j === void 0 ? void 0 : _j.getUTCMonth()) !== null && _k !== void 0 ? _k : 0);
+        var monthDiff = date1Object.getUTCMonth() - date2Object.getUTCMonth();
         if (['month', 'months'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
@@ -2576,15 +2580,15 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
         if (['week', 'weeks'].includes(minInterval)) {
             if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000)
                 return checkType(evalType, msDifference);
-            var weekDiff = ((_l = DateWeekNumber(date1)) !== null && _l !== void 0 ? _l : 0) - ((_m = DateWeekNumber(date2ToUse)) !== null && _m !== void 0 ? _m : 0);
+            var weekDiff = ((_e = DateWeekNumber(date1)) !== null && _e !== void 0 ? _e : 0) - ((_f = DateWeekNumber(date2ToUse)) !== null && _f !== void 0 ? _f : 0);
             // Check if in the same week that spans years
-            if (weekDiff === 0 && ((_o = DateWeekNumber(date1)) !== null && _o !== void 0 ? _o : 0) === 1 && Math.abs(yearDiff) > 1) {
+            if (weekDiff === 0 && ((_g = DateWeekNumber(date1)) !== null && _g !== void 0 ? _g : 0) === 1 && Math.abs(yearDiff) > 1) {
                 if (yearDiff !== 0)
                     return checkType(evalType, yearDiff);
             }
             return checkType(evalType, weekDiff);
         }
-        var dateOfMonthDiff = ((_q = (_p = DateObject(date1)) === null || _p === void 0 ? void 0 : _p.getUTCDate()) !== null && _q !== void 0 ? _q : 0) - ((_s = (_r = DateObject(date2ToUse)) === null || _r === void 0 ? void 0 : _r.getUTCDate()) !== null && _s !== void 0 ? _s : 0);
+        var dateOfMonthDiff = date1Object.getUTCDate() - date2Object.getUTCDate();
         if (['day', 'days'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
@@ -2592,7 +2596,7 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
                 return checkType(evalType, monthDiff);
             return checkType(evalType, dateOfMonthDiff);
         }
-        var hourDiff = ((_u = (_t = DateObject(date1)) === null || _t === void 0 ? void 0 : _t.getUTCHours()) !== null && _u !== void 0 ? _u : 0) - ((_w = (_v = DateObject(date2ToUse)) === null || _v === void 0 ? void 0 : _v.getUTCHours()) !== null && _w !== void 0 ? _w : 0);
+        var hourDiff = date1Object.getUTCHours() - date2Object.getUTCHours();
         if (['hour', 'hours'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
@@ -2602,7 +2606,7 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
                 return checkType(evalType, dateOfMonthDiff);
             return checkType(evalType, hourDiff);
         }
-        var minuteDiff = ((_y = (_x = DateObject(date1)) === null || _x === void 0 ? void 0 : _x.getUTCMinutes()) !== null && _y !== void 0 ? _y : 0) - ((_0 = (_z = DateObject(date2ToUse)) === null || _z === void 0 ? void 0 : _z.getUTCMinutes()) !== null && _0 !== void 0 ? _0 : 0);
+        var minuteDiff = date1Object.getUTCMinutes() - date2Object.getUTCMinutes();
         if (['minute', 'minutes'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
@@ -2614,7 +2618,7 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
                 return checkType(evalType, hourDiff);
             return checkType(evalType, minuteDiff);
         }
-        var secondDiff = ((_2 = (_1 = DateObject(date1)) === null || _1 === void 0 ? void 0 : _1.getUTCSeconds()) !== null && _2 !== void 0 ? _2 : 0) - ((_4 = (_3 = DateObject(date2ToUse)) === null || _3 === void 0 ? void 0 : _3.getUTCSeconds()) !== null && _4 !== void 0 ? _4 : 0);
+        var secondDiff = date1Object.getUTCSeconds() - date2Object.getUTCSeconds();
         if (['second', 'second'].includes(minInterval)) {
             if (yearDiff !== 0)
                 return checkType(evalType, yearDiff);
@@ -2689,7 +2693,7 @@ var DateOnly = function (date, adjustments) {
     }
 };
 var TimeOnly = function (time, adjustments) {
-    if (!time || (typeof time === 'string' && !StringHasTimeData(time)))
+    if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today')
         return null;
     try {
         var timeValue = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments));

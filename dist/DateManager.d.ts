@@ -37,6 +37,7 @@ export declare type TDateAny = Date | number | 'now' | 'today' | string | null |
 export declare const ManualParse: (date: string) => number | null;
 export declare type TDateParseOptions = TAdjustment & {
     timezoneSource?: string;
+    ignoreIANA?: boolean;
 };
 export declare const DateParseTS: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => number | null;
 export declare const DateISO: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => string | null;

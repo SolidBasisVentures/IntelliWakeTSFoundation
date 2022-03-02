@@ -54,7 +54,7 @@ export const NowISOString = (): string => new Date().toISOString()
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export const IANAOffset = (timeZone?: string, sourceDate?: TDateAny): number | null => {
-	if (!timeZone) return (DateObject(sourceDate ?? 'now') ?? new Date()).getTimezoneOffset()
+	if (!timeZone) return (DateObject(sourceDate ?? 'now', {ignoreIANA: true}) ?? new Date()).getTimezoneOffset()
 	
 	const sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null
 	
@@ -216,7 +216,7 @@ export const ManualParse = (date: string): number | null => {
 	
 	// console.log('Trying...', dateObj, offsetHours)
 	
-	const time = dateObj.valueOf() + (offsetHours * 60 * 60 * 1000)
+	const time = dateObj.valueOf() + (offsetHours * 3600000)
 	
 	let newDateObj = new Date(time)
 	
@@ -259,7 +259,7 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
 			// console.log(date, date.length)
 			// if (date.length > 10) {
-			result += ((IANAOffset(timezoneSource, date) ?? 0) * 60 * 1000)
+			result += ((IANAOffset(timezoneSource, date) ?? 0) * 60000)
 			// }
 			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
@@ -270,10 +270,10 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 	}
 }
 
-export type TDateParseOptions = TAdjustment & {timezoneSource?: string}
+export type TDateParseOptions = TAdjustment & {timezoneSource?: string, ignoreIANA?: boolean}
 
 export const DateParseTS = (date: TDateAny, adjustements?: TDateParseOptions): number | null => {
-	let newDate = DateParseTSInternal(date, adjustements?.timezoneSource)
+	let newDate = DateParseTSInternal(date, adjustements?.timezoneSource, adjustements?.ignoreIANA)
 	
 	if (!newDate || !adjustements) return newDate
 	
@@ -1116,31 +1116,36 @@ export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = fa
 	return text.trim()
 }
 
+const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
+	if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)
+	
+	if (diff > 0) return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck)
+	
+	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
+}
+
 export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny | TDateParseOptions, minInterval?: TDuration): boolean => {
-	const date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date)) ? DateParseTS('now', date2) : date2
+	const date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
+		? DateParseTS('now', date2)
+		: date2
 	
-	const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
-		if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)
-		
-		if (diff > 0) return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck)
-		
-		return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
-	}
-	
-	const msDifference = (DateParseTSInternal(date1) ?? 0) - (DateParseTSInternal(date2ToUse) ?? 0)
+	const msDifference = (DateParseTSInternal(date1, undefined, true) ?? 0) - (DateParseTSInternal(date2ToUse, undefined, true) ?? 0)
 	
 	if (msDifference === 0) {
 		return checkType(evalType, msDifference)
 	}
 	
 	if (!!minInterval) {
-		const yearDiff = (DateObject(date1)?.getUTCFullYear() ?? 0) - (DateObject(date2ToUse)?.getUTCFullYear() ?? 0)
+		const date1Object = DateObject(date1) ?? new Date()
+		const date2Object = DateObject(date2ToUse) ?? new Date()
+		
+		const yearDiff = date1Object.getUTCFullYear() - date2Object.getUTCFullYear()
 		
 		if (['year', 'years'].includes(minInterval)) {
 			return checkType(evalType, yearDiff)
 		}
 		
-		const monthDiff = (DateObject(date1)?.getUTCMonth() ?? 0) - (DateObject(date2ToUse)?.getUTCMonth() ?? 0)
+		const monthDiff = date1Object.getUTCMonth() - date2Object.getUTCMonth()
 		
 		if (['month', 'months'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
@@ -1158,7 +1163,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, weekDiff)
 		}
 		
-		const dateOfMonthDiff = (DateObject(date1)?.getUTCDate() ?? 0) - (DateObject(date2ToUse)?.getUTCDate() ?? 0)
+		const dateOfMonthDiff = date1Object.getUTCDate() - date2Object.getUTCDate()
 		
 		if (['day', 'days'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
@@ -1166,7 +1171,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, dateOfMonthDiff)
 		}
 		
-		const hourDiff = (DateObject(date1)?.getUTCHours() ?? 0) - (DateObject(date2ToUse)?.getUTCHours() ?? 0)
+		const hourDiff = date1Object.getUTCHours() - date2Object.getUTCHours()
 		
 		if (['hour', 'hours'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
@@ -1175,7 +1180,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, hourDiff)
 		}
 		
-		const minuteDiff = (DateObject(date1)?.getUTCMinutes() ?? 0) - (DateObject(date2ToUse)?.getUTCMinutes() ?? 0)
+		const minuteDiff = date1Object.getUTCMinutes() - date2Object.getUTCMinutes()
 		
 		if (['minute', 'minutes'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
@@ -1185,7 +1190,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, minuteDiff)
 		}
 		
-		const secondDiff = (DateObject(date1)?.getUTCSeconds() ?? 0) - (DateObject(date2ToUse)?.getUTCSeconds() ?? 0)
+		const secondDiff = date1Object.getUTCSeconds() - date2Object.getUTCSeconds()
 		
 		if (['second', 'second'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
@@ -1279,7 +1284,7 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 }
 
 export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string | null => {
-	if (!time || (typeof time === 'string' && !StringHasTimeData(time))) return null
+	if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today') return null
 	
 	try {
 		let timeValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments))

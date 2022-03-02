@@ -1,9 +1,28 @@
-import {DateOnly} from '../src/DateManager'
+import {DateCompare, DateOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
-console.log('Here', DateOnly('today'))
-console.log('Here 2', DateOnly('02/17/2022', {days: -1}))
+
+console.time('Consoles')
+
+// Array(100).fill(0)
+// 	.map((_item, idx) => console.log(idx,
+// 		DateObject('today', {months: idx}),
+// 		TimeOnly('now'),
+// 		DateFormat('DisplayDateDoWTimeLong', 'today'),
+// 		DateFormat('Local', 'today'),
+// 		DateCompare('today', 'IsSameOrBefore', DateOnly('today', {days: idx}))))
+
+
+Array(100).fill(0)
+	.map((_item, idx) => console.log(idx,
+		DateCompare('today', 'IsSameOrBefore', DateOnly('today', {days: idx}))))
+
+
+// console.log('Here', DateOnly('today'))
+// console.log('Here 2', DateOnly('02/17/2022', {days: -1}))
+
+console.timeEnd('Consoles')
 
 // const times = [
 // 	['20:00:00', '20:00:00'],
