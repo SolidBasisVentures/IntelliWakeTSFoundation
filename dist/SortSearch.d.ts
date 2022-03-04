@@ -18,15 +18,15 @@ export declare type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 
  *
  * Use SortColumnUpdate() to automatically move the primary sort to the secondary
  */
-export interface ISortColumn {
-    primarySort: string;
+export interface ISortColumn<T = object> {
+    primarySort: keyof T;
     primaryAscending: boolean;
     primaryEmptyToBottom: TSortColumnToBottom;
-    secondarySort: string | null;
+    secondarySort: keyof T | null;
     secondaryAscending: boolean;
     secondaryEmptyToBottom: TSortColumnToBottom;
 }
-export declare const initialSortColumn: ISortColumn;
+export declare const initialSortColumn: ISortColumn<any>;
 export declare type TFindIsActive = boolean | null;
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
@@ -45,7 +45,7 @@ export interface IPaginatorRequest<T = {
     page: number;
     countPerPage: number;
     search: string;
-    sortColumns: ISortColumn;
+    sortColumns: ISortColumn<T>;
     active: TFindIsActive;
     filterValues: T;
 }
@@ -82,7 +82,7 @@ export interface IPaginatorResponse<T = any> {
  * }
  * SortColumnUpdate('name', initialSortColumn)
  */
-export declare const SortColumnUpdate: (columnToSort: string, sortColumn: ISortColumn, firstClickAscending?: boolean, emptyToBottom?: TSortColumnToBottom) => ISortColumn;
+export declare const SortColumnUpdate: <T = object>(columnToSort: keyof T, sortColumn: ISortColumn<T>, firstClickAscending?: boolean, emptyToBottom?: TSortColumnToBottom) => ISortColumn<T>;
 /**
  * Accepts an array of data and a sort column object, and returns the sorted array of data.
  *
@@ -102,7 +102,7 @@ export declare const SortColumnUpdate: (columnToSort: string, sortColumn: ISortC
  * ]
  * SortColumns(data, sortColumn)
  */
-export declare const SortColumns: <T>(arrayTable: T[], sortColumn: ISortColumn) => T[];
+export declare const SortColumns: <T = object>(arrayTable: T[], sortColumn: ISortColumn<T>) => T[];
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
@@ -270,4 +270,4 @@ export declare const SearchRow: (searchItem: object, search: string) => boolean;
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export declare const SearchSort: <T>(arrayTable: T[], search: string, sortColumn: ISortColumn) => T[];
+export declare const SearchSort: <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>) => T[];

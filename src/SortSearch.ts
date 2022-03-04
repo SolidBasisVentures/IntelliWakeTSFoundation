@@ -55,16 +55,16 @@ export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timesta
  *
  * Use SortColumnUpdate() to automatically move the primary sort to the secondary
  */
-export interface ISortColumn {
-	primarySort: string
+export interface ISortColumn<T = object> {
+	primarySort: keyof T
 	primaryAscending: boolean
 	primaryEmptyToBottom: TSortColumnToBottom
-	secondarySort: string | null
+	secondarySort: keyof T | null
 	secondaryAscending: boolean
 	secondaryEmptyToBottom: TSortColumnToBottom
 }
 
-export const initialSortColumn: ISortColumn = {
+export const initialSortColumn: ISortColumn<any> = {
 	primarySort: '',
 	primaryAscending: true,
 	primaryEmptyToBottom: null,
@@ -90,7 +90,7 @@ export interface IPaginatorRequest<T = {[key: string]: any}> {
 	page: number
 	countPerPage: number
 	search: string
-	sortColumns: ISortColumn
+	sortColumns: ISortColumn<T>
 	active: TFindIsActive
 	filterValues: T
 }
@@ -137,12 +137,12 @@ export interface IPaginatorResponse<T = any> {
  * }
  * SortColumnUpdate('name', initialSortColumn)
  */
-export const SortColumnUpdate = (
-	columnToSort: string,
-	sortColumn: ISortColumn,
+export const SortColumnUpdate = <T = object>(
+	columnToSort: keyof T,
+	sortColumn: ISortColumn<T>,
 	firstClickAscending: boolean = true,
 	emptyToBottom: TSortColumnToBottom = null
-): ISortColumn => {
+): ISortColumn<T> => {
 	if (sortColumn.primarySort === columnToSort) {
 		return {
 			...sortColumn,
@@ -180,7 +180,7 @@ export const SortColumnUpdate = (
  * ]
  * SortColumns(data, sortColumn)
  */
-export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] => {
+export const SortColumns = <T = object>(arrayTable: T[], sortColumn: ISortColumn<T>): T[] => {
 	return arrayTable.sort((a: any, b: any) =>
 		!sortColumn.primarySort
 			? 0
@@ -193,8 +193,8 @@ export const SortColumns = <T>(arrayTable: T[], sortColumn: ISortColumn): T[] =>
 			(!sortColumn.secondarySort
 				? 0
 				: SortColumnResult(
-					a[sortColumn.secondarySort] ?? null,
-					b[sortColumn.secondarySort] ?? null,
+					a[sortColumn.secondarySort as any] ?? null,
+					b[sortColumn.secondarySort as any] ?? null,
 					sortColumn.secondaryAscending,
 					sortColumn.secondaryEmptyToBottom
 				))
@@ -565,6 +565,6 @@ export const SearchRow = (searchItem: object, search: string): boolean => {
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn): T[] => {
+export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>): T[] => {
 	return SortColumns(SearchRows(arrayTable, search), sortColumn)
 }
