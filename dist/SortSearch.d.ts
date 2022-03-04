@@ -39,9 +39,7 @@ export declare type TFindIsActive = boolean | null;
  *
  * IFilterSortPaginatorReturn should be in the RESPONSE of the API to tell the app about the data it received (e.g. how many pages there are, etc.)
  */
-export interface IPaginatorRequest<T = {
-    [key: string]: any;
-}> {
+export interface IPaginatorRequest<T = object> {
     page: number;
     countPerPage: number;
     search: string;
@@ -49,7 +47,7 @@ export interface IPaginatorRequest<T = {
     active: TFindIsActive;
     filterValues: T;
 }
-export declare const initialFilterSortPaginator: IPaginatorRequest;
+export declare const initialFilterSortPaginator: IPaginatorRequest<object>;
 /**
  * A structure returned in an API RESPONSE that tells the app what kind of data the counts found.
  *
