@@ -3909,7 +3909,7 @@ var SortPerArray = function (beforeValue, afterValue, order, emptyTo) {
         }
     }
 };
-var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? 'Bottom' : undefined); };
+var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom' : 'Top' : undefined); };
 // {
 // 	if (!!emptyToBottom) {
 // 		if (!valueA && !!valueB) return 1

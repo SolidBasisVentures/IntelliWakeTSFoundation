@@ -1,9 +1,20 @@
-import {DateCompare, DateOnly} from '../src/DateManager'
+import {initialSortColumn, ISortColumn, SortColumns} from '../src/SortSearch'
 
 require('source-map-support').install()
 
 
 console.time('Consoles')
+
+const values = [{id: 1}, {id: null}, {id: 0}, {id: null}, {id: 2}]
+
+const sort1: ISortColumn<{id: number | null}> = {
+	...initialSortColumn,
+	primarySort: 'id',
+	primaryAscending: true,
+	primaryEmptyToBottom: 'number'
+}
+
+console.log(SortColumns(values, sort1))
 
 // Array(100).fill(0)
 // 	.map((_item, idx) => console.log(idx,
@@ -14,9 +25,9 @@ console.time('Consoles')
 // 		DateCompare('today', 'IsSameOrBefore', DateOnly('today', {days: idx}))))
 
 
-Array(100).fill(0)
-	.map((_item, idx) => console.log(idx,
-		DateCompare('today', 'IsSameOrBefore', DateOnly('today', {days: idx}))))
+// Array(100).fill(0)
+// 	.map((_item, idx) => console.log(idx,
+// 		DateCompare('today', 'IsSameOrBefore', DateOnly('today', {days: idx}))))
 
 
 // console.log('Here', DateOnly('today'))

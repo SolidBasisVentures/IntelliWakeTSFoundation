@@ -353,7 +353,7 @@ const SortColumnResult = (
 	valueB: any,
 	isAscending: boolean,
 	emptyToBottom: TSortColumnToBottom
-): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? 'Bottom' : undefined)
+): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom' : 'Top' : undefined)
 // {
 // 	if (!!emptyToBottom) {
 // 		if (!valueA && !!valueB) return 1
