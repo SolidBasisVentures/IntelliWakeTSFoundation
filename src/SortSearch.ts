@@ -64,8 +64,7 @@ export interface ISortColumn<T = object> {
 	secondaryEmptyToBottom: TSortColumnToBottom
 }
 
-export const initialSortColumn: ISortColumn<any> = {
-	primarySort: '',
+export const initialSortColumn: Omit<ISortColumn, 'primarySort'> = {
 	primaryAscending: true,
 	primaryEmptyToBottom: null,
 	secondarySort: null,
@@ -95,11 +94,11 @@ export interface IPaginatorRequest<T = object> {
 	filterValues: T
 }
 
-export const initialFilterSortPaginator: IPaginatorRequest<object> = {
+export const initialFilterSortPaginator: IPaginatorRequest<any> = {
 	page: 1,
 	countPerPage: 50,
 	search: '',
-	sortColumns: initialSortColumn,
+	sortColumns: {...initialSortColumn, primarySort: ''},
 	active: true,
 	filterValues: {}
 }

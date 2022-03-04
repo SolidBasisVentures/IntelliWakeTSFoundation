@@ -3698,7 +3698,6 @@ function PagesForRange(current, length, spread) {
     return rangeWithNull;
 }
 var initialSortColumn = {
-    primarySort: '',
     primaryAscending: true,
     primaryEmptyToBottom: null,
     secondarySort: null,
@@ -3709,7 +3708,7 @@ var initialFilterSortPaginator = {
     page: 1,
     countPerPage: 50,
     search: '',
-    sortColumns: initialSortColumn,
+    sortColumns: __assign(__assign({}, initialSortColumn), { primarySort: '' }),
     active: true,
     filterValues: {}
 };

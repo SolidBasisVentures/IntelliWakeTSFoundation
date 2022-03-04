@@ -26,7 +26,7 @@ export interface ISortColumn<T = object> {
     secondaryAscending: boolean;
     secondaryEmptyToBottom: TSortColumnToBottom;
 }
-export declare const initialSortColumn: ISortColumn<any>;
+export declare const initialSortColumn: Omit<ISortColumn, 'primarySort'>;
 export declare type TFindIsActive = boolean | null;
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
@@ -47,7 +47,7 @@ export interface IPaginatorRequest<T = object> {
     active: TFindIsActive;
     filterValues: T;
 }
-export declare const initialFilterSortPaginator: IPaginatorRequest<object>;
+export declare const initialFilterSortPaginator: IPaginatorRequest<any>;
 /**
  * A structure returned in an API RESPONSE that tells the app what kind of data the counts found.
  *
