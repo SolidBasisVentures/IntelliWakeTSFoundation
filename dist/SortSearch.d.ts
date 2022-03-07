@@ -12,7 +12,7 @@
  * PagesForRange(1, 10, 3)
  */
 export declare function PagesForRange(current: number, length: number, spread?: number): (number | null)[];
-export declare type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz';
+export declare type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz' | 'date';
 /**
  * An interface that defines a primary and secondary sort.
  *

@@ -48,7 +48,7 @@ export function PagesForRange(current: number, length: number, spread: number = 
 	return rangeWithNull
 }
 
-export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz'
+export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz' | 'date'
 
 /**
  * An interface that defines a primary and secondary sort.
