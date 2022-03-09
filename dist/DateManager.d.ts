@@ -100,6 +100,12 @@ export interface IQuarter {
 }
 export declare const initialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
+/**
+ * 0 = Sunday
+ *
+ * @param date
+ * @constructor
+ */
 export declare const DateDayOfWeek: (date: TDateAny) => number | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;

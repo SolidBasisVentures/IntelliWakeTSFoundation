@@ -1258,6 +1258,12 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	}
 }
 
+/**
+ * 0 = Sunday
+ *
+ * @param date
+ * @constructor
+ */
 export const DateDayOfWeek = (date: TDateAny): number | null => {
 	const dateObj = DateObject(date)
 	

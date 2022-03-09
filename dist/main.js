@@ -2670,6 +2670,12 @@ var DateQuarter = function (date) {
         quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
     };
 };
+/**
+ * 0 = Sunday
+ *
+ * @param date
+ * @constructor
+ */
 var DateDayOfWeek = function (date) {
     var dateObj = DateObject(date);
     if (!dateObj)
