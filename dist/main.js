@@ -1156,7 +1156,7 @@ var ToDigits = function (value, decimals) {
  */
 var ToDigitsMax = function (value, decimals) {
     if (decimals === void 0) { decimals = 0; }
-    return CleanNumber(value).toLocaleString(undefined, {
+    return CleanNumber(value, decimals).toLocaleString(undefined, {
         maximumFractionDigits: decimals
     });
 };
@@ -1194,10 +1194,10 @@ var ToDigitsBlank = function (value, decimals) {
  */
 var ToDigitsBlankMax = function (value, decimals) {
     if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+    if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
         return '';
     }
-    return CleanNumber(value).toLocaleString(undefined, {
+    return CleanNumber(value, decimals).toLocaleString(undefined, {
         maximumFractionDigits: decimals
     });
 };
@@ -1235,10 +1235,10 @@ var ToDigitsDash = function (value, decimals) {
  */
 var ToDigitsDashMax = function (value, decimals) {
     if (decimals === void 0) { decimals = 0; }
-    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+    if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
         return '-';
     }
-    return CleanNumber(value).toLocaleString(undefined, {
+    return CleanNumber(value, decimals).toLocaleString(undefined, {
         maximumFractionDigits: decimals
     });
 };

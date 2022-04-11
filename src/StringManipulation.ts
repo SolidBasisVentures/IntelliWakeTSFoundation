@@ -318,7 +318,7 @@ export const ToDigits = function(value: any, decimals: number = 0): string {
  * ToDigits(10)
  */
 export const ToDigitsMax = function(value: any, decimals: number = 0): string {
-	return CleanNumber(value).toLocaleString(undefined, {
+	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals
 	})
 }
@@ -357,11 +357,11 @@ export const ToDigitsBlank = function(value: any, decimals: number = 0) {
  * ToDigits('')
  */
 export const ToDigitsBlankMax = function(value: any, decimals: number = 0) {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
 	
-	return CleanNumber(value).toLocaleString(undefined, {
+	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals
 	})
 }
@@ -400,11 +400,11 @@ export const ToDigitsDash = function(value: any, decimals: number = 0) {
  * ToDigits('')
  */
 export const ToDigitsDashMax = function(value: any, decimals: number = 0) {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
 	
-	return CleanNumber(value).toLocaleString(undefined, {
+	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals
 	})
 }
