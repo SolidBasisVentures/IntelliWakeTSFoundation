@@ -347,6 +347,27 @@ export const ToDigitsBlank = function(value: any, decimals: number = 0) {
 
 /**
  * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
+export const ToDigitsBlankMax = function(value: any, decimals: number = 0) {
+	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+		return ''
+	}
+	
+	return CleanNumber(value).toLocaleString(undefined, {
+		maximumFractionDigits: decimals
+	})
+}
+
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
  * returns dash.
  *
  * @example
@@ -364,6 +385,27 @@ export const ToDigitsDash = function(value: any, decimals: number = 0) {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: decimals
+	})
+}
+
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
+export const ToDigitsDashMax = function(value: any, decimals: number = 0) {
+	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+		return '-'
+	}
+	
+	return CleanNumber(value).toLocaleString(undefined, {
+		maximumFractionDigits: decimals
 	})
 }
 
