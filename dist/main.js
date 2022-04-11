@@ -1183,6 +1183,26 @@ var ToDigitsBlank = function (value, decimals) {
 };
 /**
  * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
+var ToDigitsBlankMax = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
  * returns dash.
  *
  * @example
@@ -1200,6 +1220,26 @@ var ToDigitsDash = function (value, decimals) {
     return CleanNumber(value).toLocaleString(undefined, {
         maximumFractionDigits: decimals,
         minimumFractionDigits: decimals
+    });
+};
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
+var ToDigitsDashMax = function (value, decimals) {
+    if (decimals === void 0) { decimals = 0; }
+    if (!value || isNaN(value) || CleanNumber(value) === 0) {
+        return '-';
+    }
+    return CleanNumber(value).toLocaleString(undefined, {
+        maximumFractionDigits: decimals
     });
 };
 var DigitsNth = function (value) {
@@ -4323,7 +4363,9 @@ exports.ToCurrencyDash = ToCurrencyDash;
 exports.ToCurrencyMax = ToCurrencyMax;
 exports.ToDigits = ToDigits;
 exports.ToDigitsBlank = ToDigitsBlank;
+exports.ToDigitsBlankMax = ToDigitsBlankMax;
 exports.ToDigitsDash = ToDigitsDash;
+exports.ToDigitsDashMax = ToDigitsDashMax;
 exports.ToDigitsMax = ToDigitsMax;
 exports.ToID = ToID;
 exports.ToKebabCase = ToKebabCase;

@@ -162,6 +162,18 @@ export declare const ToDigitsMax: (value: any, decimals?: number) => string;
 export declare const ToDigitsBlank: (value: any, decimals?: number) => string;
 /**
  * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns empty string.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns ''
+ * ToDigits('')
+ */
+export declare const ToDigitsBlankMax: (value: any, decimals?: number) => string;
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
  * returns dash.
  *
  * @example
@@ -172,6 +184,18 @@ export declare const ToDigitsBlank: (value: any, decimals?: number) => string;
  * ToDigits('')
  */
 export declare const ToDigitsDash: (value: any, decimals?: number) => string;
+/**
+ * Returns the given number with decimal places if not empty or 0. Otherwise,
+ * returns dash.
+ *
+ * @example
+ * // return 10.00
+ * ToDigits(10)
+ *
+ * // returns '-'
+ * ToDigits('')
+ */
+export declare const ToDigitsDashMax: (value: any, decimals?: number) => string;
 export declare const DigitsNth: (value: any) => string | null;
 /**
  * Converts a string to an array.
