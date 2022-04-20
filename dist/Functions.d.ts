@@ -262,3 +262,11 @@ export declare function PickProperty<T extends object, K extends Extract<keyof T
 export declare function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
 export declare function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
 export declare function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T;
+/**
+ * Inverts a hex color, use the BW flag to set it to black or white
+ *
+ * @param hex
+ * @param bw
+ * @constructor
+ */
+export declare function InvertColor(hex: string, bw?: boolean): string;

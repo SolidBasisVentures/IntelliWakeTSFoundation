@@ -234,648 +234,6 @@ var consoleLogTable = function (arrayData, tableDef) {
 };
 
 /**
- * Truncates a string and replaces the remaining characters with ellipsis.
- *
- * @example
- * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
- * Trunc('Welcome to TSFoundation', 11)
- */
-/**
- * Replace all occurences of a string.
- *
- * @example
- * // returns "john-doe-bob"
- * ReplaceAll(' ', '-', 'john doe bob')
- */
-var ReplaceAll = function (find, replace, subject) {
-    if (!subject)
-        return '';
-    if (Array.isArray(find)) {
-        var result = subject;
-        for (var _i = 0, find_1 = find; _i < find_1.length; _i++) {
-            var findItem = find_1[_i];
-            result = ReplaceAll(findItem, replace, result);
-        }
-        return result;
-    }
-    // eslint-disable-next-line no-useless-escape
-    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
-};
-/**
- * Cleans a number with a symbol like '$', ',' or '%'.
- *
- * @example
- * // return 100
- * CleanNumber('$100')
- *
- * // return 1000
- * CleanNumber('1,000')
- *
- * // return 50
- * CleanNumber('50%')
- *
- * Add a rounding to round to a certain number of digits:
- *
- * // return 100.1
- * CleanNumber('100.12', 1)
- */
-var CleanNumber = function (value, roundClean, allowNaN) {
-    if (!value)
-        return 0;
-    var str = value.toString();
-    str = ReplaceAll('$', '', str);
-    str = ReplaceAll(',', '', str);
-    str = ReplaceAll('%', '', str);
-    if (str.trim().length === 0 || isNaN(str))
-        return !!allowNaN ? NaN : 0;
-    if (roundClean !== undefined) {
-        return RoundTo(parseFloat(str), roundClean);
-    }
-    return parseFloat(str);
-};
-/**
- * Cleans a multiple numbers and rounds them
- *
- * @example
- * // return 112.23
- * CleanNumbers(2, '$100', 12.234)
- *
- * // return 1012.24
- * CleanNumbers(2, '$1,000', 12.236)
- *
- * // return 1012
- * CleanNumbers(0, '$1,000', 12.236)
- */
-var CleanNumbers = function (roundTo) {
-    var values = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        values[_i - 1] = arguments[_i];
-    }
-    var result = 0;
-    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-        var value = values_1[_a];
-        var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
-            var valueItem = valueArray_1[_b];
-            result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo);
-        }
-    }
-    return result;
-};
-/**
- * Cleans a number with a symbol like '$', ',' or '%'.
- *
- * @example
- * // return 100
- * CleanNumberNull('$100')
- *
- * // return 1000
- * CleanNumberNull('1,000')
- *
- * // return 50DataToCSVExport
- * CleanNumberNull('50%')
- *
- * Add a rounding to round to a certain number of digits:
- *
- * // return 100.1
- * CleanNumberNull('100.12', 1)
- */
-var CleanNumberNull = function (value, roundClean) {
-    var parsed = CleanNumber(value, roundClean, true);
-    if (isNaN(parsed))
-        return null;
-    return parsed;
-};
-/**
- * A wrapper function for JSON.parse with try/catch.
- */
-var JSONParse = function (json) {
-    if (!json) {
-        return null;
-    }
-    if (typeof json === 'object')
-        return json;
-    var returnObj = null;
-    try {
-        returnObj = JSON.parse(json);
-    }
-    catch (err) {
-        // console.log('JSONParse', err)
-        return null;
-    }
-    return returnObj;
-};
-var Trunc = function (subject, length) {
-    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
-};
-/**
- * Returns a google maps link with the given coordinates.
- *
- * @example
- * // returns "http://maps.google.com/maps?q=12345,12345"
- * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
- */
-var GoogleMapsGPSLink = function (dataArray, prefix) {
-    var _a, _b;
-    if (prefix === void 0) { prefix = ''; }
-    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
-    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
-    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
-};
-/**
- * Returns a google maps link with the given address
- *
- * @example
- * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
- *	GoogleMapsAddressLink({
- *		address1: 'Blk 1, Lot 2, Some Street',
- *		address2: 'Blk 2, Lot 3, Some Street',
- *		city: 'Burr Ridge',
- *		state: 'IL',
- *		zip: '61257',
- *	})
- */
-var GoogleMapsAddressLink = function (dataArray, prefix) {
-    var _a, _b, _c, _d, _e, _f;
-    if (prefix === void 0) { prefix = ''; }
-    var address = ((_b = (_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : dataArray[prefix + 'address_1']) !== null && _b !== void 0 ? _b : '') + ' ';
-    if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
-        address += ((_c = dataArray[prefix + 'address2']) !== null && _c !== void 0 ? _c : dataArray[prefix + 'address_2']) + ' ';
-    }
-    address += ((_d = dataArray[prefix + 'city']) !== null && _d !== void 0 ? _d : '') + ', ';
-    address += ((_e = dataArray[prefix + 'state']) !== null && _e !== void 0 ? _e : '') + ' ';
-    address += (_f = dataArray[prefix + 'zip']) !== null && _f !== void 0 ? _f : '';
-    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
-};
-/**
- * Determines whether a value is a valid input decimal.
- *
- * @example
- * // returns true
- * IsValidInputDecimal('1')
- *
- * // returns false
- * IsValidInputDecimal('1%')
- */
-var IsValidInputDecimal = function (value) {
-    // noinspection RegExpUnexpectedAnchor
-    var regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$');
-    return !value || regEx.test(value);
-};
-/**
- * Generates a unique UID
- */
-var GenerateUUID = function () {
-    var d = new Date().getTime(); //Timestamp
-    var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16; //random number between 0 and 16
-        if (d > 0) {
-            //Use timestamp until depleted
-            r = (d + r) % 16 | 0;
-            d = Math.floor(d / 16);
-        }
-        else {
-            //Use microseconds since page-load if supported
-            r = (d2 + r) % 16 | 0;
-            d2 = Math.floor(d2 / 16);
-        }
-        return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
-    });
-};
-/**
- * Determines a value is active or on. Returns true when the value
- * is one of the following:
- * 'true', 'active', 'on', 'yes', 'y'
- *
- * @example
- * // return true
- * IsOn('active')
- *
- * // return false
- * IsOn('inactive')
- */
-var IsOn = function (value) {
-    if (!value) {
-        return false;
-    }
-    if (value === true) {
-        return value;
-    }
-    var floatValue = parseFloat(value);
-    if (!isNaN(floatValue)) {
-        return floatValue > 0;
-    }
-    return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
-};
-/**
- * Copies an address object to another object.
- *
- * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
- *
- * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Blk 2, Lot 3, Some Street',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * let address2 = {}
- * AddressCopy(address1, '', address2, '')
- * // address2 is now a copy of address1
- * console.log(address2)
- */
-var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
-    if (includeName === void 0) { includeName = true; }
-    if (includePhone === void 0) { includePhone = true; }
-    if (includeTimeZone === void 0) { includeTimeZone = true; }
-    if (includeGPS === void 0) { includeGPS = true; }
-    if (includeName && !!fromObject[fromPrefix + 'name']) {
-        toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name'];
-    }
-    toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1'];
-    toObject[toPrefix + 'address_2'] = fromObject[fromPrefix + 'address_2'];
-    toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city'];
-    toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state'];
-    toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip'];
-    if (includePhone && !!fromObject[fromPrefix + 'phone']) {
-        toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone'];
-    }
-    if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
-        toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone'];
-    }
-    if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
-        toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude'];
-    }
-    if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
-        toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
-    }
-};
-/**
- * Determines whether an object has a property of "address_1".
- *
- * @example
- * // returns false
- * AddressValid({ address: 'Blk1, Lot1, Some street' })
- *
- * // returns false
- * AddressValid({ address_1: '' })
- *
- * // returns true
- * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
- */
-var AddressValid = function (address, prefix) {
-    return !!address[(prefix !== null && prefix !== void 0 ? prefix : '') + 'address_1'];
-};
-/**
- * Combines an address object into a single row string.
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Suite 100',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
- * AddressSingleRow(address1)
- */
-var AddressSingleRow = function (object, prefix) {
-    var _a, _b, _c, _d, _e;
-    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
-    var singleRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
-    if (!!((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : ''))
-        singleRow += ', ' + object[usePrefix + 'address_2'];
-    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
-        singleRow += ', ' + object[usePrefix + 'city'];
-    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
-        singleRow += ', ' + object[usePrefix + 'state'];
-    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
-        singleRow += '  ' + object[usePrefix + 'zip'];
-    return singleRow;
-};
-/**
- * Combines an address object into a multiline row string.
- *
- * @example
- * let address1 = {
- *   address_1: 'Blk 1, Lot 2, Some Street',
- *   address_2: 'Appt 1',
- *   city: 'Burr Ridge',
- *   state: 'IL',
- *   zip: '61257',
- * }
- *
- * // returns "
- * // Blk 1, Lot 2, Some Street
- * // Appt 1
- * // Burr Ridge, IL, 61257"
- * AddressMultiRow(address1)
- */
-var AddressMultiRow = function (object, prefix) {
-    var _a, _b, _c, _d, _e;
-    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
-    var multiRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
-    if (!!object[usePrefix + 'address_2']) {
-        multiRow += '\n' + ((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : '').trim();
-    }
-    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
-        multiRow += '\n' + object[usePrefix + 'city'];
-    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
-        multiRow += ', ' + object[usePrefix + 'state'];
-    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
-        multiRow += '  ' + object[usePrefix + 'zip'];
-    return multiRow;
-};
-var ArrayToGuidString = function (byteArray) {
-    return Array.from(byteArray, function (byte) {
-        return ('0' + (byte & 0xff).toString(16)).slice(-2);
-    })
-        .join('')
-        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
-};
-var StringToByteArray = function (str) {
-    var decoded = atob(str);
-    var i, il = decoded.length;
-    var array = new Uint8Array(il);
-    for (i = 0; i < il; ++i) {
-        array[i] = decoded.charCodeAt(i);
-    }
-    return array;
-};
-var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
-var RoundTo = function (num, decimalPlaces, roundDir) {
-    if (decimalPlaces === void 0) { decimalPlaces = 0; }
-    if (roundDir === void 0) { roundDir = 'round'; }
-    return roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces))
-        : roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces)) :
-            +Math.ceil((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
-};
-var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
-var JSONStringToObject = function (val) { return (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))); };
-// noinspection JSPotentiallyInvalidConstructorUsage
-/**
- * Is ArrayBuffer
- * @param buf
- */
-var isAB = function (buf) { return buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor; };
-/**
- * ArrayBuffer to String
- * @param buf
- */
-var ab2str = function (buf) { return isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf)) : buf; };
-/**
- * String to ArrayBuffer
- * @param str
- */
-var str2ab = function (str) {
-    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-    var bufView = new Uint16Array(buf);
-    for (var i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
-};
-/**
- * Async version of find
- * @param array
- * @param predicate
- */
-var findAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_1, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _i = 0, array_1 = array;
-                _a.label = 1;
-            case 1:
-                if (!(_i < array_1.length)) return [3 /*break*/, 4];
-                t = array_1[_i];
-                return [4 /*yield*/, predicate(t)];
-            case 2:
-                if (_a.sent()) {
-                    return [2 /*return*/, t];
-                }
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, undefined];
-        }
-    });
-}); };
-/**
- * Async version of some
- * @param array
- * @param predicate
- */
-var someAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_2, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _i = 0, array_2 = array;
-                _a.label = 1;
-            case 1:
-                if (!(_i < array_2.length)) return [3 /*break*/, 4];
-                t = array_2[_i];
-                return [4 /*yield*/, predicate(t)];
-            case 2:
-                if (_a.sent()) {
-                    return [2 /*return*/, true];
-                }
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, false];
-        }
-    });
-}); };
-/**
- * Async version of every
- * @param array
- * @param predicate
- */
-var everyAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_3, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _i = 0, array_3 = array;
-                _a.label = 1;
-            case 1:
-                if (!(_i < array_3.length)) return [3 /*break*/, 4];
-                t = array_3[_i];
-                return [4 /*yield*/, predicate(t)];
-            case 2:
-                if (!(_a.sent())) {
-                    return [2 /*return*/, false];
-                }
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, true];
-        }
-    });
-}); };
-/**
- * Async version of filter
- * @param array
- * @param predicate
- */
-var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var returnArray, _i, array_4, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                returnArray = [];
-                _i = 0, array_4 = array;
-                _a.label = 1;
-            case 1:
-                if (!(_i < array_4.length)) return [3 /*break*/, 4];
-                t = array_4[_i];
-                return [4 /*yield*/, predicate(t)];
-            case 2:
-                if (_a.sent()) {
-                    returnArray.push(t);
-                }
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, returnArray];
-        }
-    });
-}); };
-/**
- * Converts a single value or array of values to an array of values
- *
- * @example
- * ToArray([1, 2, 3]) = [1, 2, 3]
- * ToArray(1) = [1]
- *
- * @param value
- * @constructor
- */
-var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
-var PropertiesExist = function (data) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    return keys.every(function (key) { return key in data; });
-};
-var PropertiesNotFalsey = function (data) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    return keys.every(function (key) { return key in data && !!data[key]; });
-};
-function OmitProperty(obj) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    var ret = {};
-    var excludeSet = new Set(keys);
-    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
-    for (var key in obj) {
-        // noinspection JSUnfilteredForInLoop
-        if (!excludeSet.has(key)) {
-            // noinspection JSUnfilteredForInLoop
-            ret[key] = obj[key];
-        }
-    }
-    return ret;
-}
-function OmitFalsey(obj) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    var ret = __assign({}, obj);
-    var excludeSet = new Set(keys);
-    for (var key in obj) {
-        if (excludeSet.has(key) && !ret[key]) {
-            delete ret[key];
-        }
-    }
-    return ret;
-}
-function PickProperty(obj) {
-    var keys = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        keys[_i - 1] = arguments[_i];
-    }
-    var ret = {};
-    var includeSet = new Set(keys);
-    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
-    for (var key in obj) {
-        // noinspection JSUnfilteredForInLoop
-        if (includeSet.has(key)) {
-            // noinspection JSUnfilteredForInLoop
-            ret[key] = obj[key];
-        }
-    }
-    return ret;
-}
-function RemoveStarting(remove, value, recursive) {
-    if (recursive === void 0) { recursive = false; }
-    if (!value || !remove)
-        return '';
-    var arrayRemove = ToArray(remove);
-    var newValue = value;
-    do {
-        for (var _i = 0, arrayRemove_1 = arrayRemove; _i < arrayRemove_1.length; _i++) {
-            var aRemove = arrayRemove_1[_i];
-            if (newValue.startsWith(aRemove)) {
-                newValue = newValue.substring(aRemove.length);
-            }
-        }
-    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.startsWith(aRemove); }));
-    return newValue;
-}
-function RemoveEnding(remove, value, recursive) {
-    if (recursive === void 0) { recursive = false; }
-    if (!value || !remove)
-        return '';
-    var arrayRemove = ToArray(remove);
-    var newValue = value;
-    do {
-        for (var _i = 0, arrayRemove_2 = arrayRemove; _i < arrayRemove_2.length; _i++) {
-            var aRemove = arrayRemove_2[_i];
-            if (newValue.endsWith(aRemove)) {
-                newValue = newValue.substring(0, newValue.length - aRemove.length);
-            }
-        }
-    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.endsWith(aRemove); }));
-    return newValue;
-}
-function CoalesceFalsey(checkVal) {
-    var otherVals = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        otherVals[_i - 1] = arguments[_i];
-    }
-    if (!!checkVal || otherVals.length === 0)
-        return checkVal;
-    for (var _a = 0, otherVals_1 = otherVals; _a < otherVals_1.length; _a++) {
-        var otherVal = otherVals_1[_a];
-        if (!!otherVal)
-            return otherVal;
-    }
-    return otherVals[otherVals.length - 1];
-}
-
-/**
  * Converts a string to snake_case.
  *
  * @example
@@ -1597,6 +955,678 @@ var ShortNumber = function (value, decimals, round) {
     } while (calcValue > 999);
     return showValue(calcValue, trillions);
 };
+
+/**
+ * Truncates a string and replaces the remaining characters with ellipsis.
+ *
+ * @example
+ * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
+ * Trunc('Welcome to TSFoundation', 11)
+ */
+/**
+ * Replace all occurences of a string.
+ *
+ * @example
+ * // returns "john-doe-bob"
+ * ReplaceAll(' ', '-', 'john doe bob')
+ */
+var ReplaceAll = function (find, replace, subject) {
+    if (!subject)
+        return '';
+    if (Array.isArray(find)) {
+        var result = subject;
+        for (var _i = 0, find_1 = find; _i < find_1.length; _i++) {
+            var findItem = find_1[_i];
+            result = ReplaceAll(findItem, replace, result);
+        }
+        return result;
+    }
+    // eslint-disable-next-line no-useless-escape
+    return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace);
+};
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumber('$100')
+ *
+ * // return 1000
+ * CleanNumber('1,000')
+ *
+ * // return 50
+ * CleanNumber('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumber('100.12', 1)
+ */
+var CleanNumber = function (value, roundClean, allowNaN) {
+    if (!value)
+        return 0;
+    var str = value.toString();
+    str = ReplaceAll('$', '', str);
+    str = ReplaceAll(',', '', str);
+    str = ReplaceAll('%', '', str);
+    if (str.trim().length === 0 || isNaN(str))
+        return !!allowNaN ? NaN : 0;
+    if (roundClean !== undefined) {
+        return RoundTo(parseFloat(str), roundClean);
+    }
+    return parseFloat(str);
+};
+/**
+ * Cleans a multiple numbers and rounds them
+ *
+ * @example
+ * // return 112.23
+ * CleanNumbers(2, '$100', 12.234)
+ *
+ * // return 1012.24
+ * CleanNumbers(2, '$1,000', 12.236)
+ *
+ * // return 1012
+ * CleanNumbers(0, '$1,000', 12.236)
+ */
+var CleanNumbers = function (roundTo) {
+    var values = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
+    }
+    var result = 0;
+    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+        var value = values_1[_a];
+        var valueArray = ToArray(value);
+        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
+            var valueItem = valueArray_1[_b];
+            result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo);
+        }
+    }
+    return result;
+};
+/**
+ * Cleans a number with a symbol like '$', ',' or '%'.
+ *
+ * @example
+ * // return 100
+ * CleanNumberNull('$100')
+ *
+ * // return 1000
+ * CleanNumberNull('1,000')
+ *
+ * // return 50DataToCSVExport
+ * CleanNumberNull('50%')
+ *
+ * Add a rounding to round to a certain number of digits:
+ *
+ * // return 100.1
+ * CleanNumberNull('100.12', 1)
+ */
+var CleanNumberNull = function (value, roundClean) {
+    var parsed = CleanNumber(value, roundClean, true);
+    if (isNaN(parsed))
+        return null;
+    return parsed;
+};
+/**
+ * A wrapper function for JSON.parse with try/catch.
+ */
+var JSONParse = function (json) {
+    if (!json) {
+        return null;
+    }
+    if (typeof json === 'object')
+        return json;
+    var returnObj = null;
+    try {
+        returnObj = JSON.parse(json);
+    }
+    catch (err) {
+        // console.log('JSONParse', err)
+        return null;
+    }
+    return returnObj;
+};
+var Trunc = function (subject, length) {
+    return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject;
+};
+/**
+ * Returns a google maps link with the given coordinates.
+ *
+ * @example
+ * // returns "http://maps.google.com/maps?q=12345,12345"
+ * GoogleMapsGPSLink({latitude: '12345', longitude: '12345'})
+ */
+var GoogleMapsGPSLink = function (dataArray, prefix) {
+    var _a, _b;
+    if (prefix === void 0) { prefix = ''; }
+    var latitude = (_a = dataArray[prefix + 'latitude']) !== null && _a !== void 0 ? _a : '';
+    var longitude = (_b = dataArray[prefix + 'longitude']) !== null && _b !== void 0 ? _b : '';
+    return 'http://maps.google.com/maps?q=' + latitude + ',' + longitude;
+};
+/**
+ * Returns a google maps link with the given address
+ *
+ * @example
+ * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
+ *	GoogleMapsAddressLink({
+ *		address1: 'Blk 1, Lot 2, Some Street',
+ *		address2: 'Blk 2, Lot 3, Some Street',
+ *		city: 'Burr Ridge',
+ *		state: 'IL',
+ *		zip: '61257',
+ *	})
+ */
+var GoogleMapsAddressLink = function (dataArray, prefix) {
+    var _a, _b, _c, _d, _e, _f;
+    if (prefix === void 0) { prefix = ''; }
+    var address = ((_b = (_a = dataArray[prefix + 'address1']) !== null && _a !== void 0 ? _a : dataArray[prefix + 'address_1']) !== null && _b !== void 0 ? _b : '') + ' ';
+    if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
+        address += ((_c = dataArray[prefix + 'address2']) !== null && _c !== void 0 ? _c : dataArray[prefix + 'address_2']) + ' ';
+    }
+    address += ((_d = dataArray[prefix + 'city']) !== null && _d !== void 0 ? _d : '') + ', ';
+    address += ((_e = dataArray[prefix + 'state']) !== null && _e !== void 0 ? _e : '') + ' ';
+    address += (_f = dataArray[prefix + 'zip']) !== null && _f !== void 0 ? _f : '';
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address);
+};
+/**
+ * Determines whether a value is a valid input decimal.
+ *
+ * @example
+ * // returns true
+ * IsValidInputDecimal('1')
+ *
+ * // returns false
+ * IsValidInputDecimal('1%')
+ */
+var IsValidInputDecimal = function (value) {
+    // noinspection RegExpUnexpectedAnchor
+    var regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$');
+    return !value || regEx.test(value);
+};
+/**
+ * Generates a unique UID
+ */
+var GenerateUUID = function () {
+    var d = new Date().getTime(); //Timestamp
+    var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16; //random number between 0 and 16
+        if (d > 0) {
+            //Use timestamp until depleted
+            r = (d + r) % 16 | 0;
+            d = Math.floor(d / 16);
+        }
+        else {
+            //Use microseconds since page-load if supported
+            r = (d2 + r) % 16 | 0;
+            d2 = Math.floor(d2 / 16);
+        }
+        return (c === 'x' ? r : r & (0x3 | 0x8)).toString(16);
+    });
+};
+/**
+ * Determines a value is active or on. Returns true when the value
+ * is one of the following:
+ * 'true', 'active', 'on', 'yes', 'y'
+ *
+ * @example
+ * // return true
+ * IsOn('active')
+ *
+ * // return false
+ * IsOn('inactive')
+ */
+var IsOn = function (value) {
+    if (!value) {
+        return false;
+    }
+    if (value === true) {
+        return value;
+    }
+    var floatValue = parseFloat(value);
+    if (!isNaN(floatValue)) {
+        return floatValue > 0;
+    }
+    return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim());
+};
+/**
+ * Copies an address object to another object.
+ *
+ * Fields copied: address_1, address_2, city, state, zip, phone, timezone, latitude, longitude
+ *
+ * The "prefix" properties are simply appended: prefix: "employee_" results in "employee_address_1"
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Blk 2, Lot 3, Some Street',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * let address2 = {}
+ * AddressCopy(address1, '', address2, '')
+ * // address2 is now a copy of address1
+ * console.log(address2)
+ */
+var AddressCopy = function (fromObject, fromPrefix, toObject, toPrefix, includeName, includePhone, includeTimeZone, includeGPS) {
+    if (includeName === void 0) { includeName = true; }
+    if (includePhone === void 0) { includePhone = true; }
+    if (includeTimeZone === void 0) { includeTimeZone = true; }
+    if (includeGPS === void 0) { includeGPS = true; }
+    if (includeName && !!fromObject[fromPrefix + 'name']) {
+        toObject[toPrefix + 'name'] = fromObject[fromPrefix + 'name'];
+    }
+    toObject[toPrefix + 'address_1'] = fromObject[fromPrefix + 'address_1'];
+    toObject[toPrefix + 'address_2'] = fromObject[fromPrefix + 'address_2'];
+    toObject[toPrefix + 'city'] = fromObject[fromPrefix + 'city'];
+    toObject[toPrefix + 'state'] = fromObject[fromPrefix + 'state'];
+    toObject[toPrefix + 'zip'] = fromObject[fromPrefix + 'zip'];
+    if (includePhone && !!fromObject[fromPrefix + 'phone']) {
+        toObject[toPrefix + 'phone'] = fromObject[fromPrefix + 'phone'];
+    }
+    if (includeTimeZone && !!fromObject[fromPrefix + 'timezone']) {
+        toObject[toPrefix + 'timezone'] = fromObject[fromPrefix + 'timezone'];
+    }
+    if (includeGPS && !!fromObject[fromPrefix + 'latitude']) {
+        toObject[toPrefix + 'latitude'] = fromObject[fromPrefix + 'latitude'];
+    }
+    if (includeGPS && !!fromObject[fromPrefix + 'longitude']) {
+        toObject[toPrefix + 'longitude'] = fromObject[fromPrefix + 'longitude'];
+    }
+};
+/**
+ * Determines whether an object has a property of "address_1".
+ *
+ * @example
+ * // returns false
+ * AddressValid({ address: 'Blk1, Lot1, Some street' })
+ *
+ * // returns false
+ * AddressValid({ address_1: '' })
+ *
+ * // returns true
+ * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
+ */
+var AddressValid = function (address, prefix) {
+    return !!address[(prefix !== null && prefix !== void 0 ? prefix : '') + 'address_1'];
+};
+/**
+ * Combines an address object into a single row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Suite 100',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
+ * AddressSingleRow(address1)
+ */
+var AddressSingleRow = function (object, prefix) {
+    var _a, _b, _c, _d, _e;
+    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
+    var singleRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
+    if (!!((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : ''))
+        singleRow += ', ' + object[usePrefix + 'address_2'];
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
+        singleRow += ', ' + object[usePrefix + 'city'];
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
+        singleRow += ', ' + object[usePrefix + 'state'];
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
+        singleRow += '  ' + object[usePrefix + 'zip'];
+    return singleRow;
+};
+/**
+ * Combines an address object into a multiline row string.
+ *
+ * @example
+ * let address1 = {
+ *   address_1: 'Blk 1, Lot 2, Some Street',
+ *   address_2: 'Appt 1',
+ *   city: 'Burr Ridge',
+ *   state: 'IL',
+ *   zip: '61257',
+ * }
+ *
+ * // returns "
+ * // Blk 1, Lot 2, Some Street
+ * // Appt 1
+ * // Burr Ridge, IL, 61257"
+ * AddressMultiRow(address1)
+ */
+var AddressMultiRow = function (object, prefix) {
+    var _a, _b, _c, _d, _e;
+    var usePrefix = prefix !== null && prefix !== void 0 ? prefix : '';
+    var multiRow = ((_a = object[usePrefix + 'address_1']) !== null && _a !== void 0 ? _a : '').trim();
+    if (!!object[usePrefix + 'address_2']) {
+        multiRow += '\n' + ((_b = object[usePrefix + 'address_2']) !== null && _b !== void 0 ? _b : '').trim();
+    }
+    if (!!((_c = object[usePrefix + 'city']) !== null && _c !== void 0 ? _c : ''))
+        multiRow += '\n' + object[usePrefix + 'city'];
+    if (!!((_d = object[usePrefix + 'state']) !== null && _d !== void 0 ? _d : ''))
+        multiRow += ', ' + object[usePrefix + 'state'];
+    if (!!((_e = object[usePrefix + 'zip']) !== null && _e !== void 0 ? _e : ''))
+        multiRow += '  ' + object[usePrefix + 'zip'];
+    return multiRow;
+};
+var ArrayToGuidString = function (byteArray) {
+    return Array.from(byteArray, function (byte) {
+        return ('0' + (byte & 0xff).toString(16)).slice(-2);
+    })
+        .join('')
+        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+};
+var StringToByteArray = function (str) {
+    var decoded = atob(str);
+    var i, il = decoded.length;
+    var array = new Uint8Array(il);
+    for (i = 0; i < il; ++i) {
+        array[i] = decoded.charCodeAt(i);
+    }
+    return array;
+};
+var FormUrlEncoded = function (x) { return Object.keys(x).reduce(function (p, c) { return p + ("&" + c + "=" + encodeURIComponent(x[c])); }, ''); };
+var RoundTo = function (num, decimalPlaces, roundDir) {
+    if (decimalPlaces === void 0) { decimalPlaces = 0; }
+    if (roundDir === void 0) { roundDir = 'round'; }
+    return roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces))
+        : roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces)) :
+            +Math.ceil((CleanNumber(num) + Number.EPSILON) * (Math.pow(10, decimalPlaces))) / (Math.pow(10, decimalPlaces));
+};
+var ObjectToJSONString = function (val) { return "json:" + JSON.stringify(val); };
+var JSONStringToObject = function (val) { return (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))); };
+// noinspection JSPotentiallyInvalidConstructorUsage
+/**
+ * Is ArrayBuffer
+ * @param buf
+ */
+var isAB = function (buf) { return buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor; };
+/**
+ * ArrayBuffer to String
+ * @param buf
+ */
+var ab2str = function (buf) { return isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf)) : buf; };
+/**
+ * String to ArrayBuffer
+ * @param str
+ */
+var str2ab = function (str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+};
+/**
+ * Async version of find
+ * @param array
+ * @param predicate
+ */
+var findAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, array_1, t;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _i = 0, array_1 = array;
+                _a.label = 1;
+            case 1:
+                if (!(_i < array_1.length)) return [3 /*break*/, 4];
+                t = array_1[_i];
+                return [4 /*yield*/, predicate(t)];
+            case 2:
+                if (_a.sent()) {
+                    return [2 /*return*/, t];
+                }
+                _a.label = 3;
+            case 3:
+                _i++;
+                return [3 /*break*/, 1];
+            case 4: return [2 /*return*/, undefined];
+        }
+    });
+}); };
+/**
+ * Async version of some
+ * @param array
+ * @param predicate
+ */
+var someAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, array_2, t;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _i = 0, array_2 = array;
+                _a.label = 1;
+            case 1:
+                if (!(_i < array_2.length)) return [3 /*break*/, 4];
+                t = array_2[_i];
+                return [4 /*yield*/, predicate(t)];
+            case 2:
+                if (_a.sent()) {
+                    return [2 /*return*/, true];
+                }
+                _a.label = 3;
+            case 3:
+                _i++;
+                return [3 /*break*/, 1];
+            case 4: return [2 /*return*/, false];
+        }
+    });
+}); };
+/**
+ * Async version of every
+ * @param array
+ * @param predicate
+ */
+var everyAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, array_3, t;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _i = 0, array_3 = array;
+                _a.label = 1;
+            case 1:
+                if (!(_i < array_3.length)) return [3 /*break*/, 4];
+                t = array_3[_i];
+                return [4 /*yield*/, predicate(t)];
+            case 2:
+                if (!(_a.sent())) {
+                    return [2 /*return*/, false];
+                }
+                _a.label = 3;
+            case 3:
+                _i++;
+                return [3 /*break*/, 1];
+            case 4: return [2 /*return*/, true];
+        }
+    });
+}); };
+/**
+ * Async version of filter
+ * @param array
+ * @param predicate
+ */
+var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
+    var returnArray, _i, array_4, t;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                returnArray = [];
+                _i = 0, array_4 = array;
+                _a.label = 1;
+            case 1:
+                if (!(_i < array_4.length)) return [3 /*break*/, 4];
+                t = array_4[_i];
+                return [4 /*yield*/, predicate(t)];
+            case 2:
+                if (_a.sent()) {
+                    returnArray.push(t);
+                }
+                _a.label = 3;
+            case 3:
+                _i++;
+                return [3 /*break*/, 1];
+            case 4: return [2 /*return*/, returnArray];
+        }
+    });
+}); };
+/**
+ * Converts a single value or array of values to an array of values
+ *
+ * @example
+ * ToArray([1, 2, 3]) = [1, 2, 3]
+ * ToArray(1) = [1]
+ *
+ * @param value
+ * @constructor
+ */
+var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
+var PropertiesExist = function (data) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    return keys.every(function (key) { return key in data; });
+};
+var PropertiesNotFalsey = function (data) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    return keys.every(function (key) { return key in data && !!data[key]; });
+};
+function OmitProperty(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    var ret = {};
+    var excludeSet = new Set(keys);
+    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+    for (var key in obj) {
+        // noinspection JSUnfilteredForInLoop
+        if (!excludeSet.has(key)) {
+            // noinspection JSUnfilteredForInLoop
+            ret[key] = obj[key];
+        }
+    }
+    return ret;
+}
+function OmitFalsey(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    var ret = __assign({}, obj);
+    var excludeSet = new Set(keys);
+    for (var key in obj) {
+        if (excludeSet.has(key) && !ret[key]) {
+            delete ret[key];
+        }
+    }
+    return ret;
+}
+function PickProperty(obj) {
+    var keys = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        keys[_i - 1] = arguments[_i];
+    }
+    var ret = {};
+    var includeSet = new Set(keys);
+    // TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+    for (var key in obj) {
+        // noinspection JSUnfilteredForInLoop
+        if (includeSet.has(key)) {
+            // noinspection JSUnfilteredForInLoop
+            ret[key] = obj[key];
+        }
+    }
+    return ret;
+}
+function RemoveStarting(remove, value, recursive) {
+    if (recursive === void 0) { recursive = false; }
+    if (!value || !remove)
+        return '';
+    var arrayRemove = ToArray(remove);
+    var newValue = value;
+    do {
+        for (var _i = 0, arrayRemove_1 = arrayRemove; _i < arrayRemove_1.length; _i++) {
+            var aRemove = arrayRemove_1[_i];
+            if (newValue.startsWith(aRemove)) {
+                newValue = newValue.substring(aRemove.length);
+            }
+        }
+    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.startsWith(aRemove); }));
+    return newValue;
+}
+function RemoveEnding(remove, value, recursive) {
+    if (recursive === void 0) { recursive = false; }
+    if (!value || !remove)
+        return '';
+    var arrayRemove = ToArray(remove);
+    var newValue = value;
+    do {
+        for (var _i = 0, arrayRemove_2 = arrayRemove; _i < arrayRemove_2.length; _i++) {
+            var aRemove = arrayRemove_2[_i];
+            if (newValue.endsWith(aRemove)) {
+                newValue = newValue.substring(0, newValue.length - aRemove.length);
+            }
+        }
+    } while (recursive && arrayRemove.some(function (aRemove) { return newValue.endsWith(aRemove); }));
+    return newValue;
+}
+function CoalesceFalsey(checkVal) {
+    var otherVals = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        otherVals[_i - 1] = arguments[_i];
+    }
+    if (!!checkVal || otherVals.length === 0)
+        return checkVal;
+    for (var _a = 0, otherVals_1 = otherVals; _a < otherVals_1.length; _a++) {
+        var otherVal = otherVals_1[_a];
+        if (!!otherVal)
+            return otherVal;
+    }
+    return otherVals[otherVals.length - 1];
+}
+/**
+ * Inverts a hex color, use the BW flag to set it to black or white
+ *
+ * @param hex
+ * @param bw
+ * @constructor
+ */
+function InvertColor(hex, bw) {
+    if (bw === void 0) { bw = false; }
+    if (hex.indexOf('#') === 0) {
+        hex = hex.slice(1);
+    }
+    // convert 3-digit hex to 6-digits.
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    if (hex.length !== 6) {
+        throw new Error('Invalid HEX color.');
+    }
+    var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
+    if (bw) {
+        return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+            ? '#000000'
+            : '#FFFFFF';
+    }
+    // invert color components
+    var rs = (255 - r).toString(16), gs = (255 - g).toString(16), bs = (255 - b).toString(16);
+    // pad each with zeros and return
+    return '#' + LeftPad(rs, 2, '0') + LeftPad(gs, 2, '0') + LeftPad(bs, 2, '0');
+}
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -4286,6 +4316,7 @@ exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IANAOffset = IANAOffset;
+exports.InvertColor = InvertColor;
 exports.IsDateString = IsDateString;
 exports.IsEqual = IsEqual;
 exports.IsJSON = IsJSON;
