@@ -618,13 +618,22 @@ export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
 }
 
 /**
- * Inverts a hex color, use the BW flag to set it to black or white
+ * Get color brightness from RGB
  *
- * @param hex
- * @param bw
+ * @param r
+ * @param g
+ * @param b
  * @constructor
  */
-export function InvertColor(hex: string, bw = false) {
+export const ColorBrightnessRGB = (r: number, g: number, b: number): number => (r * 0.299 + g * 0.587 + b * 0.114)
+
+/**
+ * Get RGB from hex
+ *
+ * @param hex
+ * @constructor
+ */
+export const RBGFromHex = (hex: string): [r: number, g: number, b: number] => {
 	if (hex.indexOf('#') === 0) {
 		hex = hex.slice(1)
 	}
@@ -635,18 +644,58 @@ export function InvertColor(hex: string, bw = false) {
 	if (hex.length !== 6) {
 		throw new Error('Invalid HEX color.')
 	}
-	const r = parseInt(hex.slice(0, 2), 16),
-		g = parseInt(hex.slice(2, 4), 16),
-		b = parseInt(hex.slice(4, 6), 16)
+	return [
+		parseInt(hex.slice(0, 2), 16),
+		parseInt(hex.slice(2, 4), 16),
+		parseInt(hex.slice(4, 6), 16)
+	]
+}
+
+/**
+ * Get brightness from Hex color
+ *
+ * @param hex
+ * @constructor
+ */
+export const ColorBrightnessHex = (hex: string): number => {
+	const [r, g, b] = RBGFromHex(hex)
+	
+	return ColorBrightnessRGB(r, g, b)
+}
+
+/**
+ * Inverts a RBG color, use the BW flag to set it to black or white
+ *
+ * @param r
+ * @param g
+ * @param b
+ * @param bw
+ * @constructor
+ */
+export function InvertColorRGB(r: number, g: number, b: number, bw = false) {
 	if (bw) {
-		return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+		return ColorBrightnessRGB(r, g, b) > 186
 			? '#000000'
 			: '#FFFFFF'
 	}
+	
 	// invert color components
 	const rs = (255 - r).toString(16),
 		gs = (255 - g).toString(16),
 		bs = (255 - b).toString(16)
 	// pad each with zeros and return
 	return '#' + LeftPad(rs, 2, '0') + LeftPad(gs, 2, '0') + LeftPad(bs, 2, '0')
+}
+
+/**
+ * Inverts a hex color, use the BW flag to set it to black or white
+ *
+ * @param hex
+ * @param bw
+ * @constructor
+ */
+export function InvertColorHex(hex: string, bw = false) {
+	const [r, g, b] = RBGFromHex(hex)
+	
+	return InvertColorRGB(r, g, b, bw)
 }

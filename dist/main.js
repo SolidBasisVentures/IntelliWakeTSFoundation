@@ -1598,14 +1598,21 @@ function CoalesceFalsey(checkVal) {
     return otherVals[otherVals.length - 1];
 }
 /**
- * Inverts a hex color, use the BW flag to set it to black or white
+ * Get color brightness from RGB
  *
- * @param hex
- * @param bw
+ * @param r
+ * @param g
+ * @param b
  * @constructor
  */
-function InvertColor(hex, bw) {
-    if (bw === void 0) { bw = false; }
+var ColorBrightnessRGB = function (r, g, b) { return (r * 0.299 + g * 0.587 + b * 0.114); };
+/**
+ * Get RGB from hex
+ *
+ * @param hex
+ * @constructor
+ */
+var RBGFromHex = function (hex) {
     if (hex.indexOf('#') === 0) {
         hex = hex.slice(1);
     }
@@ -1616,9 +1623,35 @@ function InvertColor(hex, bw) {
     if (hex.length !== 6) {
         throw new Error('Invalid HEX color.');
     }
-    var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
+    return [
+        parseInt(hex.slice(0, 2), 16),
+        parseInt(hex.slice(2, 4), 16),
+        parseInt(hex.slice(4, 6), 16)
+    ];
+};
+/**
+ * Get brightness from Hex color
+ *
+ * @param hex
+ * @constructor
+ */
+var ColorBrightnessHex = function (hex) {
+    var _a = RBGFromHex(hex), r = _a[0], g = _a[1], b = _a[2];
+    return ColorBrightnessRGB(r, g, b);
+};
+/**
+ * Inverts a RBG color, use the BW flag to set it to black or white
+ *
+ * @param r
+ * @param g
+ * @param b
+ * @param bw
+ * @constructor
+ */
+function InvertColorRGB(r, g, b, bw) {
+    if (bw === void 0) { bw = false; }
     if (bw) {
-        return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+        return ColorBrightnessRGB(r, g, b) > 186
             ? '#000000'
             : '#FFFFFF';
     }
@@ -1626,6 +1659,18 @@ function InvertColor(hex, bw) {
     var rs = (255 - r).toString(16), gs = (255 - g).toString(16), bs = (255 - b).toString(16);
     // pad each with zeros and return
     return '#' + LeftPad(rs, 2, '0') + LeftPad(gs, 2, '0') + LeftPad(bs, 2, '0');
+}
+/**
+ * Inverts a hex color, use the BW flag to set it to black or white
+ *
+ * @param hex
+ * @param bw
+ * @constructor
+ */
+function InvertColorHex(hex, bw) {
+    if (bw === void 0) { bw = false; }
+    var _a = RBGFromHex(hex), r = _a[0], g = _a[1], b = _a[2];
+    return InvertColorRGB(r, g, b, bw);
 }
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
@@ -4260,6 +4305,8 @@ exports.CleanNumberNull = CleanNumberNull;
 exports.CleanNumbers = CleanNumbers;
 exports.CleanScripts = CleanScripts;
 exports.CoalesceFalsey = CoalesceFalsey;
+exports.ColorBrightnessHex = ColorBrightnessHex;
+exports.ColorBrightnessRGB = ColorBrightnessRGB;
 exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
 exports.ConsoleColor = ConsoleColor;
 exports.CurrentTimeZone = CurrentTimeZone;
@@ -4316,7 +4363,8 @@ exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IANAOffset = IANAOffset;
-exports.InvertColor = InvertColor;
+exports.InvertColorHex = InvertColorHex;
+exports.InvertColorRGB = InvertColorRGB;
 exports.IsDateString = IsDateString;
 exports.IsEqual = IsEqual;
 exports.IsJSON = IsJSON;
@@ -4344,6 +4392,7 @@ exports.PhoneComponents = PhoneComponents;
 exports.PickProperty = PickProperty;
 exports.PropertiesExist = PropertiesExist;
 exports.PropertiesNotFalsey = PropertiesNotFalsey;
+exports.RBGFromHex = RBGFromHex;
 exports.RandomKey = RandomKey;
 exports.RandomString = RandomString;
 exports.ReSortOrder = ReSortOrder;

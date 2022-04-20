@@ -263,10 +263,43 @@ export declare function RemoveStarting(remove: string | string[] | null | undefi
 export declare function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
 export declare function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T;
 /**
+ * Get color brightness from RGB
+ *
+ * @param r
+ * @param g
+ * @param b
+ * @constructor
+ */
+export declare const ColorBrightnessRGB: (r: number, g: number, b: number) => number;
+/**
+ * Get RGB from hex
+ *
+ * @param hex
+ * @constructor
+ */
+export declare const RBGFromHex: (hex: string) => [r: number, g: number, b: number];
+/**
+ * Get brightness from Hex color
+ *
+ * @param hex
+ * @constructor
+ */
+export declare const ColorBrightnessHex: (hex: string) => number;
+/**
+ * Inverts a RBG color, use the BW flag to set it to black or white
+ *
+ * @param r
+ * @param g
+ * @param b
+ * @param bw
+ * @constructor
+ */
+export declare function InvertColorRGB(r: number, g: number, b: number, bw?: boolean): string;
+/**
  * Inverts a hex color, use the BW flag to set it to black or white
  *
  * @param hex
  * @param bw
  * @constructor
  */
-export declare function InvertColor(hex: string, bw?: boolean): string;
+export declare function InvertColorHex(hex: string, bw?: boolean): string;
