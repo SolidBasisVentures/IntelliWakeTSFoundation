@@ -642,7 +642,7 @@ export const RBGFromHex = (hex: string): [r: number, g: number, b: number] => {
 		hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
 	}
 	if (hex.length !== 6) {
-		throw new Error('Invalid HEX color.')
+		return [0, 0, 0]
 	}
 	return [
 		parseInt(hex.slice(0, 2), 16),
