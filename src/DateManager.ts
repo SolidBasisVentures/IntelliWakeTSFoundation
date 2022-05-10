@@ -272,31 +272,31 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 
 export type TDateParseOptions = TAdjustment & {timezoneSource?: string, ignoreIANA?: boolean}
 
-export const DateParseTS = (date: TDateAny, adjustements?: TDateParseOptions): number | null => {
-	let newDate = DateParseTSInternal(date, adjustements?.timezoneSource, adjustements?.ignoreIANA)
+export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): number | null => {
+	let newDate = DateParseTSInternal(date, adjustments?.timezoneSource, adjustments?.ignoreIANA)
 	
-	if (!newDate || !adjustements) return newDate
+	if (!newDate || !adjustments) return newDate
 	
-	return DateAdjustTS(newDate, adjustements)
+	return DateAdjustTS(newDate, adjustments)
 }
 
-export const DateISO = (date: TDateAny, adjustements?: TDateParseOptions): string | null => {
-	const parsed = DateParseTS(date, adjustements)
+export const DateISO = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
+	const parsed = DateParseTS(date, adjustments)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed).toISOString()
 }
-export const DateObject = (date: TDateAny, adjustements?: TDateParseOptions): Date | null => {
-	const parsed = DateParseTS(date, adjustements)
+export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Date | null => {
+	const parsed = DateParseTS(date, adjustments)
 	
 	if (!parsed) return null
 	
 	return new Date(parsed)
 }
 
-export const DateICS = (date: TDateAny, adjustements?: TDateParseOptions): string | null => {
-	const dateISO = DateISO(date, adjustements)
+export const DateICS = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
+	const dateISO = DateISO(date, adjustments)
 	
 	if (!dateISO) return null
 	
@@ -1289,6 +1289,12 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 	}
 }
 
+/**
+ * Convert a date and/or time value to a time
+ * @param time
+ * @param adjustments
+ * @constructor
+ */
 export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string | null => {
 	if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today') return null
 	
@@ -1369,7 +1375,7 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 		dateObj.setMilliseconds(0)
 		dateObj.setSeconds(0)
 		dateObj.setMinutes(dateObj.getMinutes() - (dateObj.getMinutes() % minuteIncrement))
-		return DateFormat('DateTime', dateObj)
+		return DateISO(dateObj)
 	} else {
 		const cleanTime = TimeOnly(time)
 		if (!cleanTime) return null
