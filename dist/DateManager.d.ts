@@ -121,4 +121,12 @@ export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustme
  * @param endTimeNotInclusive
  * @constructor
  */
-export declare const TimeSeries: (minuteIntervals: number, startTimeInclusive?: string, endTimeNotInclusive?: string) => string[];
+export declare const TimeSeries: (minuteIntervals: number, startTimeInclusive?: TDateAny, endTimeNotInclusive?: TDateAny) => string[];
+/**
+ * Adjusts a time or date/time to the floor of minutes specified in the increment
+ *
+ * @param time
+ * @param minuteIncrement
+ * @constructor
+ */
+export declare const TimeFloorMinute: (time: TDateAny, minuteIncrement?: number) => string | null;

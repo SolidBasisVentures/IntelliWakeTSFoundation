@@ -1335,7 +1335,7 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
  * @param endTimeNotInclusive
  * @constructor
  */
-export const TimeSeries = (minuteIntervals: number, startTimeInclusive = '00:00', endTimeNotInclusive = '24:00'): string[] => {
+export const TimeSeries = (minuteIntervals: number, startTimeInclusive: TDateAny = '00:00', endTimeNotInclusive: TDateAny = '24:00'): string[] => {
 	let currentTime = TimeOnly(startTimeInclusive)
 	
 	if (!currentTime) return []
@@ -1353,4 +1353,26 @@ export const TimeSeries = (minuteIntervals: number, startTimeInclusive = '00:00'
 	}
 	
 	return results
+}
+
+/**
+ * Adjusts a time or date/time to the floor of minutes specified in the increment
+ *
+ * @param time
+ * @param minuteIncrement
+ * @constructor
+ */
+export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): string | null => {
+	if (typeof time !== 'string' || StringHasDateData(time)) {
+		const dateObj = DateObject(time)
+		if (!dateObj) return null
+		dateObj.setMilliseconds(0)
+		dateObj.setSeconds(0)
+		dateObj.setMinutes(dateObj.getMinutes() - (dateObj.getMinutes() % minuteIncrement))
+		return DateFormat('DateTime', dateObj)
+	} else {
+		const cleanTime = TimeOnly(time)
+		if (!cleanTime) return null
+		return TimeOnly(TimeFloorMinute(DateObject(`${DateOnly('now')} ${cleanTime}`), minuteIncrement))
+	}
 }

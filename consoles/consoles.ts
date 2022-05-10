@@ -1,11 +1,18 @@
-import {TimeSeries} from '../src/DateManager'
+import {TimeFloorMinute} from '../src/DateManager'
 
 require('source-map-support').install()
 
 
 console.time('Consoles')
 
-console.log(TimeSeries(30, '08:00', '10:00'))
+const minutes: number[] = [1, 5, 10, 15, 30, 60]
+
+minutes.forEach(minute => console.log('08:28', minute, TimeFloorMinute('08:28', minute)))
+minutes.forEach(minute => console.log('2022-05-10 08:28', minute, TimeFloorMinute('2022-05-10 08:28', minute)))
+
+console.timeEnd('Consoles')
+
+// console.log(TimeSeries(30, '08:00', '10:00'))
 
 // const values = [{id: 1}, {id: null}, {id: 0}, {id: null}, {id: 2}]
 //
@@ -34,8 +41,6 @@ console.log(TimeSeries(30, '08:00', '10:00'))
 
 // console.log('Here', DateOnly('today'))
 // console.log('Here 2', DateOnly('02/17/2022', {days: -1}))
-
-console.timeEnd('Consoles')
 
 // const times = [
 // 	['20:00:00', '20:00:00'],

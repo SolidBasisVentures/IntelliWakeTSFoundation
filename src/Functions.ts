@@ -6,8 +6,6 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
-import {LeftPad} from './StringManipulation'
-
 /**
  * Replace all occurences of a string.
  *
@@ -684,7 +682,7 @@ export function InvertColorRGB(r: number, g: number, b: number, bw = false) {
 		gs = (255 - g).toString(16),
 		bs = (255 - b).toString(16)
 	// pad each with zeros and return
-	return '#' + LeftPad(rs, 2, '0') + LeftPad(gs, 2, '0') + LeftPad(bs, 2, '0')
+	return '#' + rs.padStart(2, '0') + gs.padStart(2, '0') + bs.padStart(2, '0')
 }
 
 /**
