@@ -39,10 +39,10 @@ export declare type TDateParseOptions = TAdjustment & {
     timezoneSource?: string;
     ignoreIANA?: boolean;
 };
-export declare const DateParseTS: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => number | null;
-export declare const DateISO: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => string | null;
-export declare const DateObject: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => Date | null;
-export declare const DateICS: (date: TDateAny, adjustements?: TDateParseOptions | undefined) => string | null;
+export declare const DateParseTS: (date: TDateAny, adjustments?: TDateParseOptions | undefined) => number | null;
+export declare const DateISO: (date: TDateAny, adjustments?: TDateParseOptions | undefined) => string | null;
+export declare const DateObject: (date: TDateAny, adjustments?: TDateParseOptions | undefined) => Date | null;
+export declare const DateICS: (date: TDateAny, adjustments?: TDateParseOptions | undefined) => string | null;
 export declare type TDateFormat = 'Local' | 'LocalDoW' | 'LocalDateTime' | 'LocalDoWTime' | 'Date' | 'DateTime' | 'DisplayDate' | 'DisplayTime' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
 export declare const DateFormatAny: (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
 export declare const DateFormat: (format: TDateFormat, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
@@ -110,6 +110,12 @@ export declare const DateDayOfWeek: (date: TDateAny) => number | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;
+/**
+ * Convert a date and/or time value to a time
+ * @param time
+ * @param adjustments
+ * @constructor
+ */
 export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string | null;

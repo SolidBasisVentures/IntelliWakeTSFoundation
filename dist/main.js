@@ -1874,26 +1874,26 @@ var DateParseTSInternal = function (date, timezoneSource, ignoreIANA) {
         return null;
     }
 };
-var DateParseTS = function (date, adjustements) {
-    var newDate = DateParseTSInternal(date, adjustements === null || adjustements === void 0 ? void 0 : adjustements.timezoneSource, adjustements === null || adjustements === void 0 ? void 0 : adjustements.ignoreIANA);
-    if (!newDate || !adjustements)
+var DateParseTS = function (date, adjustments) {
+    var newDate = DateParseTSInternal(date, adjustments === null || adjustments === void 0 ? void 0 : adjustments.timezoneSource, adjustments === null || adjustments === void 0 ? void 0 : adjustments.ignoreIANA);
+    if (!newDate || !adjustments)
         return newDate;
-    return DateAdjustTS(newDate, adjustements);
+    return DateAdjustTS(newDate, adjustments);
 };
-var DateISO = function (date, adjustements) {
-    var parsed = DateParseTS(date, adjustements);
+var DateISO = function (date, adjustments) {
+    var parsed = DateParseTS(date, adjustments);
     if (!parsed)
         return null;
     return new Date(parsed).toISOString();
 };
-var DateObject = function (date, adjustements) {
-    var parsed = DateParseTS(date, adjustements);
+var DateObject = function (date, adjustments) {
+    var parsed = DateParseTS(date, adjustments);
     if (!parsed)
         return null;
     return new Date(parsed);
 };
-var DateICS = function (date, adjustements) {
-    var dateISO = DateISO(date, adjustements);
+var DateICS = function (date, adjustments) {
+    var dateISO = DateISO(date, adjustments);
     if (!dateISO)
         return null;
     var dateICS = dateISO;
@@ -2813,6 +2813,12 @@ var DateOnly = function (date, adjustments) {
         return new Date().toISOString().substring(0, 10);
     }
 };
+/**
+ * Convert a date and/or time value to a time
+ * @param time
+ * @param adjustments
+ * @constructor
+ */
 var TimeOnly = function (time, adjustments) {
     if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today')
         return null;
@@ -2890,7 +2896,7 @@ var TimeFloorMinute = function (time, minuteIncrement) {
         dateObj.setMilliseconds(0);
         dateObj.setSeconds(0);
         dateObj.setMinutes(dateObj.getMinutes() - (dateObj.getMinutes() % minuteIncrement));
-        return DateFormat('DateTime', dateObj);
+        return DateISO(dateObj);
     }
     else {
         var cleanTime = TimeOnly(time);
