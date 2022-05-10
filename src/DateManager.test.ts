@@ -3,15 +3,19 @@ import {
 	DateCompare,
 	DateDiff,
 	DateDiffComponents,
-	DateFormat, DateFormatAny,
-	DateISO, DateOnly,
+	DateFormat,
+	DateFormatAny,
+	DateISO,
+	DateOnly,
 	DateParseTS,
 	DateQuarter,
 	DatesQuarter,
 	DateWeekNumber,
 	ManualParse,
 	SortCompareDate,
-	SortCompareDateNull, TimeOnly
+	SortCompareDateNull,
+	TimeOnly,
+	TimeSeries
 } from './DateManager'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
@@ -286,6 +290,7 @@ test('Date Managers', () => {
 	} else {
 		delete process.env.TZ
 	}
+	expect(TimeSeries(30, '08:00', '10:00')).toEqual(['08:00:00', '08:30:00', '09:00:00', '09:30:00'])
 })
 
 // '2021-12-22T14:41:24Z'

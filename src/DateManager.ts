@@ -1326,3 +1326,31 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
 	
 	return null
 }
+
+/**
+ * Generates a series of times, starting with the first time (default '00:00') and ending BEFORE the end time (default: '24:00')
+ *
+ * @param minuteIntervals
+ * @param startTimeInclusive
+ * @param endTimeNotInclusive
+ * @constructor
+ */
+export const TimeSeries = (minuteIntervals: number, startTimeInclusive = '00:00', endTimeNotInclusive = '24:00'): string[] => {
+	let currentTime = TimeOnly(startTimeInclusive)
+	
+	if (!currentTime) return []
+	
+	const results = [currentTime]
+	
+	const endTimeCompute = TimeOnly(endTimeNotInclusive, {minutes: minuteIntervals * -1})
+	
+	if (!endTimeCompute || minuteIntervals <= 0) return results
+	
+	while (currentTime < endTimeCompute) {
+		currentTime = TimeOnly(currentTime, {minutes: minuteIntervals})
+		if (!currentTime) break
+		results.push(currentTime)
+	}
+	
+	return results
+}

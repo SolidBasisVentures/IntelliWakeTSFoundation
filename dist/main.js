@@ -2848,6 +2848,32 @@ var TimeOnly = function (time, adjustments) {
     }
     return null;
 };
+/**
+ * Generates a series of times, starting with the first time (default '00:00') and ending BEFORE the end time (default: '24:00')
+ *
+ * @param minuteIntervals
+ * @param startTimeInclusive
+ * @param endTimeNotInclusive
+ * @constructor
+ */
+var TimeSeries = function (minuteIntervals, startTimeInclusive, endTimeNotInclusive) {
+    if (startTimeInclusive === void 0) { startTimeInclusive = '00:00'; }
+    if (endTimeNotInclusive === void 0) { endTimeNotInclusive = '24:00'; }
+    var currentTime = TimeOnly(startTimeInclusive);
+    if (!currentTime)
+        return [];
+    var results = [currentTime];
+    var endTimeCompute = TimeOnly(endTimeNotInclusive, { minutes: minuteIntervals * -1 });
+    if (!endTimeCompute || minuteIntervals <= 0)
+        return results;
+    while (currentTime < endTimeCompute) {
+        currentTime = TimeOnly(currentTime, { minutes: minuteIntervals });
+        if (!currentTime)
+            break;
+        results.push(currentTime);
+    }
+    return results;
+};
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4435,6 +4461,7 @@ exports.TSYearsEstimate = TSYearsEstimate;
 exports.TermsToSearch = TermsToSearch;
 exports.TextToHTML = TextToHTML;
 exports.TimeOnly = TimeOnly;
+exports.TimeSeries = TimeSeries;
 exports.ToArray = ToArray;
 exports.ToCamelCase = ToCamelCase;
 exports.ToCurrency = ToCurrency;

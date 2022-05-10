@@ -113,3 +113,12 @@ export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustme
 export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string | null;
+/**
+ * Generates a series of times, starting with the first time (default '00:00') and ending BEFORE the end time (default: '24:00')
+ *
+ * @param minuteIntervals
+ * @param startTimeInclusive
+ * @param endTimeNotInclusive
+ * @constructor
+ */
+export declare const TimeSeries: (minuteIntervals: number, startTimeInclusive?: string, endTimeNotInclusive?: string) => string[];
