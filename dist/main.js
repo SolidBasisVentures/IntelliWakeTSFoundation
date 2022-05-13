@@ -1689,7 +1689,7 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
 /**
  * Current time in ISO string format
  */
-var NowISOString = function () { return new Date().toISOString(); };
+var NowISOString = function (adjustment) { var _a; return (_a = DateISO('now', adjustment)) !== null && _a !== void 0 ? _a : new Date().toISOString(); };
 var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
 var IANAOffset = function (timeZone, sourceDate) {
     var _a;
