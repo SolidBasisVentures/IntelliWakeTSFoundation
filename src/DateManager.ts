@@ -50,7 +50,7 @@ export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 /**
  * Current time in ISO string format
  */
-export const NowISOString = (adjustment: TAdjustment): string => DateISO('now', adjustment) ?? new Date().toISOString()
+export const NowISOString = (adjustment?: TAdjustment): string => !adjustment ? new Date().toISOString() : (DateISO('now', adjustment) ?? new Date().toISOString())
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export const IANAOffset = (timeZone?: string, sourceDate?: TDateAny): number | null => {
