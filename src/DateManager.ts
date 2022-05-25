@@ -378,9 +378,9 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 	const applyCommand = (command: string, dateApply: Date): string => {
 		switch (command) {
 			case 'YYYY':
-				return dateApply.getFullYear().toString()
+				return dateApply.getFullYear().toString().padStart(4, '0')
 			case 'YY':
-				return dateApply.getFullYear().toString().substr(2)
+				return dateApply.getFullYear().toString().substr(2).padStart(2, '0')
 			case 'Q':
 				return (Math.ceil((dateApply.getMonth() + 1) / 3)).toString()
 			case 'Qo':
@@ -1272,9 +1272,12 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	return dateObj.getUTCDay()
 }
 
-export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => {
+export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string | null => {
+	if (!date) return null
 	try {
-		const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date ?? 'today', CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
+		const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date, CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
+		
+		if (!date) return null
 		
 		let dateObj = new Date(useDate)
 		
@@ -1283,11 +1286,13 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
 			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 		}
 		
-		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC') ?? dateObj.toISOString().substring(0, 10)
+		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
 	} catch (err) {
-		return new Date().toISOString().substring(0, 10)
+		return null
 	}
 }
+
+export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => DateOnlyNull(date, adjustments) ?? new Date().toISOString().substring(0, 10)
 
 /**
  * Convert a date and/or time value to a time

@@ -107,6 +107,9 @@ export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
  * @constructor
  */
 export declare const DateDayOfWeek: (date: TDateAny) => number | null;
+export declare const DateOnlyNull: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
+    formatLocale?: boolean | undefined;
+}) | undefined) => string | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: (TDateOnlyAdjustment & {
     formatLocale?: boolean | undefined;
 }) | undefined) => string;

@@ -176,6 +176,7 @@ test('Date Managers', () => {
 	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 13:00:00.00', {
 		timezoneSource: 'America/New_York'
 	}), 'America/New_York')).toEqual('11/12/2021 1:00 pm')
+	expect(DateFormat('Date', DateISO('0021-01-24 01:00:00.00'))).toEqual('0021-01-24')
 	expect(SortCompareDateNull('2021-01-01', '2021-01-02')).toEqual(-1)
 	expect(SortCompareDateNull('2021-01-02', '2021-01-01')).toEqual(1)
 	expect(SortCompareDateNull('2021-01-01', '2021-01-01')).toEqual(null)

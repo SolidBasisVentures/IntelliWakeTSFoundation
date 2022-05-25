@@ -1944,9 +1944,9 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         switch (command) {
             case 'YYYY':
-                return dateApply.getFullYear().toString();
+                return dateApply.getFullYear().toString().padStart(4, '0');
             case 'YY':
-                return dateApply.getFullYear().toString().substr(2);
+                return dateApply.getFullYear().toString().substr(2).padStart(2, '0');
             case 'Q':
                 return (Math.ceil((dateApply.getMonth() + 1) / 3)).toString();
             case 'Qo':
@@ -2797,22 +2797,27 @@ var DateDayOfWeek = function (date) {
         return null;
     return dateObj.getUTCDay();
 };
-var DateOnly = function (date, adjustments) {
-    var _a, _b, _c;
+var DateOnlyNull = function (date, adjustments) {
+    var _a, _b;
+    if (!date)
+        return null;
     try {
-        var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date !== null && date !== void 0 ? date : 'today', CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+        var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date, CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+        if (!date)
+            return null;
         var dateObj = new Date(useDate);
         if (!!adjustments) {
             dateObj = (_b = DateObject(dateObj, adjustments)) !== null && _b !== void 0 ? _b : dateObj;
             if (Object.values(adjustments).includes('EndOf'))
                 dateObj.setUTCHours(10);
         }
-        return (_c = DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC')) !== null && _c !== void 0 ? _c : dateObj.toISOString().substring(0, 10);
+        return DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC');
     }
     catch (err) {
-        return new Date().toISOString().substring(0, 10);
+        return null;
     }
 };
+var DateOnly = function (date, adjustments) { var _a; return (_a = DateOnlyNull(date, adjustments)) !== null && _a !== void 0 ? _a : new Date().toISOString().substring(0, 10); };
 /**
  * Convert a date and/or time value to a time
  * @param time
@@ -4394,6 +4399,7 @@ exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateObject = DateObject;
 exports.DateOnly = DateOnly;
+exports.DateOnlyNull = DateOnlyNull;
 exports.DateParseTS = DateParseTS;
 exports.DateQuarter = DateQuarter;
 exports.DateWeekNumber = DateWeekNumber;
