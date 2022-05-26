@@ -3957,6 +3957,24 @@ var SortColumns = function (arrayTable, sortColumn) {
     });
 };
 var isEmpty = function (val) { return val === null || val === undefined || val === ''; };
+var SortIndexNull = function (beforeValue, afterValue, indexes, emptyTo) {
+    if (emptyTo === void 0) { emptyTo = 'Top'; }
+    if ((beforeValue !== null && beforeValue !== void 0 ? beforeValue : null) === (afterValue !== null && afterValue !== void 0 ? afterValue : null)) {
+        return null;
+    }
+    if (!afterValue) {
+        return emptyTo === 'Top' ? -1 : 1;
+    }
+    if (!beforeValue) {
+        return emptyTo === 'Top' ? 1 : -1;
+    }
+    return indexes.indexOf(beforeValue) - indexes.indexOf(afterValue);
+};
+var SortIndex = function (beforeValue, afterValue, indexes, emptyTo) {
+    var _a;
+    if (emptyTo === void 0) { emptyTo = 'Top'; }
+    return (_a = SortIndexNull(beforeValue, afterValue, indexes, emptyTo)) !== null && _a !== void 0 ? _a : 0;
+};
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *
@@ -4481,6 +4499,8 @@ exports.SortCompare = SortCompare;
 exports.SortCompareDate = SortCompareDate;
 exports.SortCompareDateNull = SortCompareDateNull;
 exports.SortCompareNull = SortCompareNull;
+exports.SortIndex = SortIndex;
+exports.SortIndexNull = SortIndexNull;
 exports.SortPerArray = SortPerArray;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;

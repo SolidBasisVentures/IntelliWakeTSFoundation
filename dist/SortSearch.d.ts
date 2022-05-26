@@ -101,6 +101,8 @@ export declare const SortColumnUpdate: <T = object>(columnToSort: keyof T, sortC
  * SortColumns(data, sortColumn)
  */
 export declare const SortColumns: <T = object>(arrayTable: T[], sortColumn: ISortColumn<T>) => T[];
+export declare const SortIndexNull: <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo?: 'Top' | 'Bottom') => number | null;
+export declare const SortIndex: <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo?: 'Top' | 'Bottom') => number;
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
  *

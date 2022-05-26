@@ -1,4 +1,4 @@
-import {SortCompare, SortCompareNull, SortPerArray} from './SortSearch'
+import {SortCompare, SortCompareNull, SortIndex, SortPerArray} from './SortSearch'
 
 test('SortCompare', () => {
 	expect([
@@ -7,11 +7,11 @@ test('SortCompare', () => {
 		{id: 3, name: 'CCC', prioritized: true},
 		{id: 4, name: 'BBB', prioritized: false}
 	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized) ?? SortCompare(a.name, b.name))).toEqual([
-		{ id: 3, name: 'CCC', prioritized: true },
-		{ id: 1, name: 'AAA', prioritized: false },
-		{ id: 4, name: 'BBB', prioritized: false },
-		{ id: 2, name: 'ZZZ', prioritized: false }
-	]);
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false}
+	])
 })
 
 test('SortCompare Empty Bottom', () => {
@@ -21,11 +21,11 @@ test('SortCompare Empty Bottom', () => {
 		{id: 4, name: 'BBB', prioritized: false},
 		{id: 2, name: 'ZZZ', prioritized: undefined}
 	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Bottom') ?? SortCompare(a.name, b.name))).toEqual([
-		{ id: 3, name: 'CCC', prioritized: true },
-		{ id: 4, name: 'BBB', prioritized: false },
-		{ id: 1, name: 'AAA', prioritized: undefined },
-		{ id: 2, name: 'ZZZ', prioritized: undefined }
-	]);
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 1, name: 'AAA', prioritized: undefined},
+		{id: 2, name: 'ZZZ', prioritized: undefined}
+	])
 })
 
 test('SortCompare Empty Top', () => {
@@ -35,11 +35,11 @@ test('SortCompare Empty Top', () => {
 		{id: 2, name: 'ZZZ', prioritized: undefined},
 		{id: 4, name: 'BBB', prioritized: false}
 	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Top') ?? SortCompare(a.name, b.name))).toEqual([
-		{ id: 1, name: 'AAA', prioritized: undefined },
-		{ id: 2, name: 'ZZZ', prioritized: undefined },
-		{ id: 3, name: 'CCC', prioritized: true },
-		{ id: 4, name: 'BBB', prioritized: false }
-	]);
+		{id: 1, name: 'AAA', prioritized: undefined},
+		{id: 2, name: 'ZZZ', prioritized: undefined},
+		{id: 3, name: 'CCC', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false}
+	])
 })
 
 test('SortCompare Empty ID Bottom', () => {
@@ -49,11 +49,11 @@ test('SortCompare Empty ID Bottom', () => {
 		{id: null, name: 'CCC'},
 		{id: 4, name: 'BBB'}
 	].sort((a, b) => SortCompareNull(a.id, b.id, 'Bottom') ?? SortCompare(a.name, b.name))).toEqual([
-		{ id: 1, name: 'AAA'},
-		{ id: 4, name: 'BBB'},
-		{ id: null, name: 'CCC'},
-		{ id: null, name: 'ZZZ'}
-	]);
+		{id: 1, name: 'AAA'},
+		{id: 4, name: 'BBB'},
+		{id: null, name: 'CCC'},
+		{id: null, name: 'ZZZ'}
+	])
 })
 
 test('SortCompare Empty ID Top', () => {
@@ -63,11 +63,11 @@ test('SortCompare Empty ID Top', () => {
 		{id: null, name: 'CCC'},
 		{id: 4, name: 'BBB'}
 	].sort((a, b) => SortCompareNull(a.id, b.id, 'Top') ?? SortCompare(a.name, b.name))).toEqual([
-		{ id: null, name: 'CCC'},
-		{ id: null, name: 'ZZZ'},
-		{ id: 1, name: 'AAA'},
-		{ id: 4, name: 'BBB'}
-	]);
+		{id: null, name: 'CCC'},
+		{id: null, name: 'ZZZ'},
+		{id: 1, name: 'AAA'},
+		{id: 4, name: 'BBB'}
+	])
 })
 
 test('Sort Array', () => {
@@ -89,5 +89,21 @@ test('Sort Array', () => {
 		{id: null, name: 'Empty'},
 		{id: 6, name: 'Six'},
 		{id: 7, name: 'Seven'}
-	]);
+	])
+})
+
+test('Sort Index Numeric', () => {
+	expect([2, 4, 3, 1, 4]
+		.sort((a, b) => SortIndex(a, b, [4, 3, 2, 1])))
+		.toEqual([
+			4, 4, 3, 2, 1
+		])
+})
+
+test('Sort Index String', () => {
+	expect(['Three', 'One', 'Four', 'One', 'Two']
+		.sort((a, b) => SortIndex(a, b, ['One', 'Two', 'Three', 'Four'])))
+		.toEqual([
+			'One', 'One', 'Two', 'Three', 'Four'
+		])
 })

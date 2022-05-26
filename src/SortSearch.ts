@@ -184,10 +184,10 @@ export const SortColumns = <T = object>(arrayTable: T[], sortColumn: ISortColumn
 		!sortColumn.primarySort
 			? 0
 			: SortColumnResult(
-			a[sortColumn.primarySort] ?? null,
-			b[sortColumn.primarySort] ?? null,
-			sortColumn.primaryAscending,
-			sortColumn.primaryEmptyToBottom
+				a[sortColumn.primarySort] ?? null,
+				b[sortColumn.primarySort] ?? null,
+				sortColumn.primaryAscending,
+				sortColumn.primaryEmptyToBottom
 			) ??
 			(!sortColumn.secondarySort
 				? 0
@@ -201,6 +201,31 @@ export const SortColumns = <T = object>(arrayTable: T[], sortColumn: ISortColumn
 }
 
 const isEmpty = (val: any) => val === null || val === undefined || val === ''
+
+export const SortIndexNull = <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number | null => {
+	const verboseConsole = false //!!emptyTo
+	
+	if ((beforeValue ?? null) === (afterValue ?? null)) {
+		if (verboseConsole) console.log('Sames', beforeValue, afterValue)
+		return null
+	}
+	
+	if (!afterValue) {
+		if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
+		
+		return emptyTo === 'Top' ? -1 : 1
+	}
+	if (!beforeValue) {
+		if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
+		
+		return emptyTo === 'Top' ? 1 : -1
+	}
+	
+	return indexes.indexOf(beforeValue) - indexes.indexOf(afterValue)
+}
+
+export const SortIndex = <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number =>
+	SortIndexNull(beforeValue, afterValue, indexes, emptyTo) ?? 0
 
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
@@ -294,7 +319,10 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
 export const ReSortOrder = <T extends {[key: string]: any, sort_order: number}>(items: T[], sortIncrement = 10): T[] => {
 	let newSort = 0
 	
-	return items.sort((a, b) => SortCompare(a.sort_order, b.sort_order)).map(item => ({...item, sort_order: newSort += sortIncrement}), [])
+	return items.sort((a, b) => SortCompare(a.sort_order, b.sort_order)).map(item => ({
+		...item,
+		sort_order: newSort += sortIncrement
+	}), [])
 }
 
 
