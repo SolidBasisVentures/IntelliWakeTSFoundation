@@ -1,16 +1,20 @@
-import {TimeFloorMinute} from '../src/DateManager'
+import {SortCompare} from '../src/SortSearch'
 
 require('source-map-support').install()
 
 
 console.time('Consoles')
 
-const minutes: number[] = [1, 5, 10, 15, 30, 60]
-
-minutes.forEach(minute => console.log('08:28', minute, TimeFloorMinute('08:28', minute)))
-minutes.forEach(minute => console.log('2022-05-10 08:28', minute, TimeFloorMinute('2022-05-10 08:28', minute)))
+console.log([1.1, 1.100, 1.2].sort(SortCompare))
+const strings = ['1', '100', '2']
+console.log(strings.sort(SortCompare))
 
 console.timeEnd('Consoles')
+
+// const minutes: number[] = [1, 5, 10, 15, 30, 60]
+//
+// minutes.forEach(minute => console.log('08:28', minute, TimeFloorMinute('08:28', minute)))
+// minutes.forEach(minute => console.log('2022-05-10 08:28', minute, TimeFloorMinute('2022-05-10 08:28', minute)))
 
 // console.log(TimeSeries(30, '08:00', '10:00'))
 
