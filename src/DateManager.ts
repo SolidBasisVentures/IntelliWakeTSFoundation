@@ -86,9 +86,9 @@ export const IANAOffset = (timeZone?: string, sourceDate?: TDateAny): number | n
 	let myLocaleOffset = (myLocale.day * 1440) + (myLocale.hour * 60) + myLocale.minute
 	// if (myLocaleOffset < amsterdamOffset) myLocaleOffset += amsterdamOffset
 	// 	console.log('Here', process.env.TZ, timeZone, sourceDate, other.day, amsterdamOffset, myLocale.day, myLocaleOffset, date.getTimezoneOffset())
-	// if (other.day > myLocale.day) {
-	// 	myLocaleOffset += other.day * 1440
-	// }
+	if (other.day > myLocale.day) {
+		myLocaleOffset += other.day * 1440
+	}
 	
 		// console.log('There', other.day, amsterdamOffset, myLocale.day, myLocaleOffset)
 		// } else if (other.day < myLocale.day) {
