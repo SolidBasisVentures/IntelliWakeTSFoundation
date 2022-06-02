@@ -53,7 +53,7 @@ export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
 export const NowISOString = (adjustment?: TAdjustment): string => !adjustment ? new Date().toISOString() : (DateISO('now', adjustment) ?? new Date().toISOString())
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export const IANAOffset = (timeZone?: string, sourceDate?: TDateAny): number | null => {
+export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): number | null => {
 	if (!timeZone) return (DateObject(sourceDate ?? 'now', {ignoreIANA: true}) ?? new Date()).getTimezoneOffset()
 	
 	const sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null
