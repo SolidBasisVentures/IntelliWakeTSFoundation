@@ -15,9 +15,13 @@ process.env.TZ = 'America/Chicago'
 console.log('2022-06-01 00:14:33.903000 +00:00'
 	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
 
-// process.env.TZ = 'Europe/Guernsey'
-// console.log('2022-06-01 00:14:33.903000 +00:00'
-// 	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
+process.env.TZ = 'Europe/London'
+console.log('2022-06-01 00:14:33.903000 +00:00'
+	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
+
+process.env.TZ = 'GMT'
+console.log('2022-06-01 00:14:33.903000 +00:00'
+	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
 
 console.timeEnd('Consoles')
 
