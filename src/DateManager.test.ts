@@ -223,6 +223,7 @@ test('Date Managers', () => {
 	expect(TimeOnly(null)).toEqual(null)
 	expect(TimeOnly('blah')).toEqual(null)
 	const otz = process.env.TZ
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
@@ -239,6 +240,7 @@ test('Date Managers', () => {
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'Asia/Tehran'
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
@@ -255,6 +257,7 @@ test('Date Managers', () => {
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/New_York'
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
 	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00')).toEqual('2/1/2022 3:18 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
@@ -272,6 +275,7 @@ test('Date Managers', () => {
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/Las_Angeles'
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
