@@ -1621,6 +1621,8 @@ var RandomString = function (length, validChars) {
 var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789'); };
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
  * @param text
  * @param count
  * @param showNumber
@@ -1628,7 +1630,9 @@ var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmno
  */
 var AddS = function (text, count, showNumber) {
     if (showNumber === void 0) { showNumber = false; }
-    return !text ? '' : ((showNumber ? ToDigits(count !== null && count !== void 0 ? count : 0) : '') + " " + text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? 's' : '')).trim();
+    var checkText = (text !== null && text !== void 0 ? text : '').toLowerCase();
+    var addValue = !text ? 's' : (checkText.endsWith('s') || checkText.endsWith('z') || checkText.endsWith('ch') || checkText.endsWith('sh') || checkText.endsWith('x')) ? 'es' : 's';
+    return !text ? '' : ((showNumber ? ToDigits(count !== null && count !== void 0 ? count : 0) : '') + " " + text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? addValue : '')).trim();
 };
 var ShortNumber = function (value, decimals, round) {
     if (decimals === void 0) { decimals = 0; }

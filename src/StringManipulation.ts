@@ -736,12 +736,12 @@ export const UCWords = (str: string | null): string | null => {
 export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789') => {
 	let result = ''
 	
-	const charactersLength = validChars.length;
-	for ( let i = 0; i < length; i++ ) {
+	const charactersLength = validChars.length
+	for (let i = 0; i < length; i++) {
 		result += validChars.charAt(Math.floor(Math.random() *
-			charactersLength));
+			charactersLength))
 	}
-	return result;
+	return result
 	
 	// const validCharLength = validChars.length - 1
 	//
@@ -765,13 +765,18 @@ export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklm
 
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
  * @param text
  * @param count
  * @param showNumber
  * @constructor
  */
-export const AddS = (text?: string | null, count?: number | null, showNumber = false): string =>
-	!text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? 's' : '')}`.trim()
+export const AddS = (text?: string | null, count?: number | null, showNumber = false): string => {
+	const checkText = (text ?? '').toLowerCase()
+	let addValue = !text ? 's' : (checkText.endsWith('s') || checkText.endsWith('z') || checkText.endsWith('ch') || checkText.endsWith('sh') || checkText.endsWith('x')) ? 'es' : 's'
+	return !text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? addValue : '')}`.trim()
+}
 
 
 export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'down' = 'round'): string | null => {

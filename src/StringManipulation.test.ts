@@ -174,6 +174,9 @@ test('AddS', () => {
 	expect(AddS('Row', 0)).toBe('Rows')
 	expect(AddS('Row', 1)).toBe('Row')
 	expect(AddS('Row', 2)).toBe('Rows')
+	expect(AddS('Patch', 0)).toBe('Patches')
+	expect(AddS('Patch', 1)).toBe('Patch')
+	expect(AddS('Patch', 2)).toBe('Patches')
 })
 
 test('ShortNumber', () => {

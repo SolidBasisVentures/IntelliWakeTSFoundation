@@ -301,6 +301,8 @@ export declare const RandomString: (length: number, validChars?: string) => stri
 export declare const RandomKey: (length: number) => string;
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
  * @param text
  * @param count
  * @param showNumber
