@@ -303,10 +303,10 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
  * // return 10.00
  * ToDigits(10)
  */
-export const ToDigits = function(value: any, decimals: number = 0): string {
+export const ToDigits = function(value: any, decimals: number = 0, minDecimals: number | null = null): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
-		minimumFractionDigits: decimals
+		minimumFractionDigits: minDecimals ?? decimals
 	})
 }
 
@@ -770,12 +770,15 @@ export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklm
  * @param text
  * @param count
  * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
  * @constructor
  */
-export const AddS = (text?: string | null, count?: number | null, showNumber = false): string => {
+export const AddS = (text?: string | null, count?: number | null, showNumber = false, maxDecimals = 0, minDecimals: number | null = null): string => {
 	const checkText = (text ?? '').toLowerCase()
+	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
 	let addValue = !text ? 's' : (checkText.endsWith('s') || checkText.endsWith('z') || checkText.endsWith('ch') || checkText.endsWith('sh') || checkText.endsWith('x')) ? 'es' : 's'
-	return !text ? '' : `${showNumber ? ToDigits(count ?? 0) : ''} ${text}${(CleanNumber(count ?? 0) !== 1 ? addValue : '')}`.trim()
+	return !text ? '' : `${showNumber ? numericText : ''} ${text}${(CleanNumber(numericText) !== 1 ? addValue : '')}`.trim()
 }
 
 
