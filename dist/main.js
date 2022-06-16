@@ -1215,11 +1215,12 @@ var ToPercentDash = function (value, decimals) {
  * // return 10.00
  * ToDigits(10)
  */
-var ToDigits = function (value, decimals) {
+var ToDigits = function (value, decimals, minDecimals) {
     if (decimals === void 0) { decimals = 0; }
+    if (minDecimals === void 0) { minDecimals = null; }
     return CleanNumber(value).toLocaleString(undefined, {
         maximumFractionDigits: decimals,
-        minimumFractionDigits: decimals
+        minimumFractionDigits: minDecimals !== null && minDecimals !== void 0 ? minDecimals : decimals
     });
 };
 /**
@@ -1626,13 +1627,18 @@ var RandomKey = function (length) { return RandomString(length, 'abcdefghijklmno
  * @param text
  * @param count
  * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
  * @constructor
  */
-var AddS = function (text, count, showNumber) {
+var AddS = function (text, count, showNumber, maxDecimals, minDecimals) {
     if (showNumber === void 0) { showNumber = false; }
+    if (maxDecimals === void 0) { maxDecimals = 0; }
+    if (minDecimals === void 0) { minDecimals = null; }
     var checkText = (text !== null && text !== void 0 ? text : '').toLowerCase();
+    var numericText = ToDigits(count !== null && count !== void 0 ? count : 0, maxDecimals, minDecimals);
     var addValue = !text ? 's' : (checkText.endsWith('s') || checkText.endsWith('z') || checkText.endsWith('ch') || checkText.endsWith('sh') || checkText.endsWith('x')) ? 'es' : 's';
-    return !text ? '' : ((showNumber ? ToDigits(count !== null && count !== void 0 ? count : 0) : '') + " " + text + (CleanNumber(count !== null && count !== void 0 ? count : 0) !== 1 ? addValue : '')).trim();
+    return !text ? '' : ((showNumber ? numericText : '') + " " + text + (CleanNumber(numericText) !== 1 ? addValue : '')).trim();
 };
 var ShortNumber = function (value, decimals, round) {
     if (decimals === void 0) { decimals = 0; }

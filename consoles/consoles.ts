@@ -1,11 +1,15 @@
-import {AddS} from '../src/StringManipulation'
+import {DateCompare} from '../src/DateManager'
 
 require('source-map-support').install()
 
 
 console.time('Consoles')
 
-console.log(AddS('Hour', 1.111, true))
+console.log('True?', DateCompare('2022-06-16', 'IsSame', 'now', 'day'))
+console.log('False?', DateCompare('2022-05-16', 'IsSame', 'now', 'day'))
+
+
+// console.log(AddS('Hour', 1.111, true))
 
 // console.log(process.env.TZ)
 //

@@ -139,7 +139,7 @@ export declare const ToPercentDash: (value: any, decimals?: number) => string;
  * // return 10.00
  * ToDigits(10)
  */
-export declare const ToDigits: (value: any, decimals?: number) => string;
+export declare const ToDigits: (value: any, decimals?: number, minDecimals?: number | null) => string;
 /**
  * Returns the given number with decimal places.
  *
@@ -306,7 +306,9 @@ export declare const RandomKey: (length: number) => string;
  * @param text
  * @param count
  * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
  * @constructor
  */
-export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean) => string;
+export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean, maxDecimals?: number, minDecimals?: number | null) => string;
 export declare const ShortNumber: (value: any, decimals?: number, round?: 'round' | 'up' | 'down') => string | null;
