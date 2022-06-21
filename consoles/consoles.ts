@@ -1,4 +1,3 @@
-import {DateCompare} from '../src/DateManager'
 import {DataToTabDelim} from '../src/DataConstructs'
 
 require('source-map-support').install()
