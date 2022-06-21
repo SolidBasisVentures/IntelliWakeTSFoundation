@@ -3169,20 +3169,21 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
  * @param includeHeaders
  * @constructor
  */
-var DataToTabDelim = function (datasets, includeHeaders) {
+var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
     if (includeHeaders === void 0) { includeHeaders = true; }
+    if (headerToWords === void 0) { headerToWords = true; }
     var headers = datasets
         .reduce(function (results, dataset) { return __spreadArrays(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
     var tabDelim = '';
     if (includeHeaders) {
-        tabDelim += headers.map(function (header) { return "\"" + header + "\""; }).join('\t');
+        tabDelim += headers.map(function (header) { return "\"" + (headerToWords ? ToUpperCaseWords(header) : header) + "\""; }).join('\t');
     }
     var _loop_1 = function (dataset) {
         if (tabDelim)
             tabDelim += "\r\n";
         tabDelim += headers.map(function (header) {
             var numberValue = CleanNumberNull(dataset[header]);
-            if (numberValue === 0)
+            if (numberValue === 0 && !(typeof dataset[header] === 'string' && dataset[header].trim() !== ''))
                 return '0';
             if (!dataset[header])
                 return '';

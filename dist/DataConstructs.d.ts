@@ -144,7 +144,7 @@ export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) =
  * @param includeHeaders
  * @constructor
  */
-export declare const DataToTabDelim: <T = Record<string, any>>(datasets: T[], includeHeaders?: boolean) => string;
+export declare const DataToTabDelim: <T = Record<string, any>>(datasets: T[], includeHeaders?: boolean, headerToWords?: boolean) => string;
 /**
  * Checks if a string is a valid JSON structure
  */

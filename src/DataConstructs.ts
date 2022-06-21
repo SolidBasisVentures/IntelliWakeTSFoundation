@@ -1,6 +1,7 @@
 import {CleanNumberNull, GenerateUUID, ReplaceAll} from './Functions'
 import {DATE_FORMAT_DATE, DateFormat, IsDateString} from './DateManager'
 import {DeepEqual} from './DeepEqual'
+import {ToUpperCaseWords} from './StringManipulation'
 
 /**
  * IChanges provides a structure for tracking changes for an object.
@@ -231,16 +232,17 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
  *
  * @param datasets
  * @param includeHeaders
+ * @param headerToWords
  * @constructor
  */
-export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHeaders = true): string => {
+export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHeaders = true, headerToWords = true): string => {
 	const headers: (keyof T)[] = datasets
 		.reduce<(keyof T)[]>((results, dataset) => [...results, ...(Object.keys(dataset) as (keyof T)[]).filter(ds => !results.includes(ds))], [])
 	
 	let tabDelim = ''
 	
 	if (includeHeaders) {
-		tabDelim += headers.map(header => `"${header}"`).join('\t')
+		tabDelim += headers.map(header => `"${headerToWords ? ToUpperCaseWords(header as string) : header}"`).join('\t')
 	}
 	
 	for (const dataset of datasets) {
@@ -248,7 +250,8 @@ export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHe
 		
 		tabDelim += headers.map(header => {
 			const numberValue = CleanNumberNull(dataset[header])
-			if (numberValue === 0) return '0'
+			
+			if (numberValue === 0 && !(typeof dataset[header] === 'string' && (dataset[header] as any).trim() !== '')) return '0'
 			
 			if (!dataset[header]) return ''
 			
