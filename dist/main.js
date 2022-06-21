@@ -3163,6 +3163,41 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
     pom.click();
 };
 /**
+ * Converts an array of records into a tab-delimited string, usable by Excel
+ *
+ * @param datasets
+ * @param includeHeaders
+ * @constructor
+ */
+var DataToTabDelim = function (datasets, includeHeaders) {
+    if (includeHeaders === void 0) { includeHeaders = true; }
+    var headers = datasets
+        .reduce(function (results, dataset) { return __spreadArrays(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
+    var tabDelim = '';
+    if (includeHeaders) {
+        tabDelim += headers.map(function (header) { return "\"" + header + "\""; }).join('\t');
+    }
+    var _loop_1 = function (dataset) {
+        if (tabDelim)
+            tabDelim += "\r\n";
+        tabDelim += headers.map(function (header) {
+            var numberValue = CleanNumberNull(dataset[header]);
+            if (numberValue === 0)
+                return '0';
+            if (!dataset[header])
+                return '';
+            if (numberValue !== null)
+                return numberValue.toString();
+            return "\"" + dataset[header] + "\"";
+        }).join('\t');
+    };
+    for (var _i = 0, datasets_1 = datasets; _i < datasets_1.length; _i++) {
+        var dataset = datasets_1[_i];
+        _loop_1(dataset);
+    }
+    return tabDelim;
+};
+/**
  * Checks if a string is a valid JSON structure
  */
 var IsJSON = function (json) {
@@ -3367,7 +3402,7 @@ var RemoveDupPropertiesByID = function (original, propsToRemove) {
  */
 var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
     var result = __assign({}, original);
-    var _loop_1 = function (key) {
+    var _loop_2 = function (key) {
         if (original.hasOwnProperty(key)) {
             var propsToRemove = propsToRemoveArray.find(function (propsToRemove) { return propsToRemove.id == key; });
             if (!!propsToRemove) {
@@ -3382,7 +3417,7 @@ var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
         }
     };
     for (var key in original) {
-        _loop_1(key);
+        _loop_2(key);
     }
     return result;
 };
@@ -4428,6 +4463,7 @@ exports.DATE_FORMAT_TIME_NO_SECONDS = DATE_FORMAT_TIME_NO_SECONDS;
 exports.DATE_FORMAT_TIME_SECONDS = DATE_FORMAT_TIME_SECONDS;
 exports.DataToCSVExport = DataToCSVExport;
 exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DataToTabDelim = DataToTabDelim;
 exports.DateAdjustTS = DateAdjustTS;
 exports.DateCompare = DateCompare;
 exports.DateDayOfWeek = DateDayOfWeek;

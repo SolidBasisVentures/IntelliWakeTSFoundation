@@ -138,6 +138,14 @@ export declare const DataToCSVExport: (filename: string, csvData: any, blankZero
  */
 export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) => void;
 /**
+ * Converts an array of records into a tab-delimited string, usable by Excel
+ *
+ * @param datasets
+ * @param includeHeaders
+ * @constructor
+ */
+export declare const DataToTabDelim: <T = Record<string, any>>(datasets: T[], includeHeaders?: boolean) => string;
+/**
  * Checks if a string is a valid JSON structure
  */
 export declare const IsJSON: (json: any) => boolean;

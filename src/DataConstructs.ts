@@ -227,6 +227,41 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
 }
 
 /**
+ * Converts an array of records into a tab-delimited string, usable by Excel
+ *
+ * @param datasets
+ * @param includeHeaders
+ * @constructor
+ */
+export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHeaders = true): string => {
+	const headers: (keyof T)[] = datasets
+		.reduce<(keyof T)[]>((results, dataset) => [...results, ...(Object.keys(dataset) as (keyof T)[]).filter(ds => !results.includes(ds))], [])
+	
+	let tabDelim = ''
+	
+	if (includeHeaders) {
+		tabDelim += headers.map(header => `"${header}"`).join('\t')
+	}
+	
+	for (const dataset of datasets) {
+		if (tabDelim) tabDelim += `\r\n`
+		
+		tabDelim += headers.map(header => {
+			const numberValue = CleanNumberNull(dataset[header])
+			if (numberValue === 0) return '0'
+			
+			if (!dataset[header]) return ''
+			
+			if (numberValue !== null) return numberValue.toString()
+			
+			return `"${dataset[header]}"`
+		}).join('\t')
+	}
+	
+	return tabDelim
+}
+
+/**
  * Checks if a string is a valid JSON structure
  */
 export const IsJSON = (json: any): boolean => {
@@ -287,7 +322,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 			if (consoleLog) console.log('Object Keys', val1, val2)
 			return false
 		}
-	
+		
 		const idx = keys1.findIndex(key1 => !IsEqual(val1[key1], val2[key1]))
 		
 		if (idx === -1) return true
@@ -306,7 +341,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 				return true
 			}
 			if (consoleLog) console.log('Numbers1', val1, val2)
-		} else if(CleanNumberNull(val2) !== null) {
+		} else if (CleanNumberNull(val2) !== null) {
 			if (consoleLog) console.log('Numbers2', val1, val2)
 			return false
 		}
