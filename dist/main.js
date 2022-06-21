@@ -3167,6 +3167,7 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
  *
  * @param datasets
  * @param includeHeaders
+ * @param headerToWords
  * @constructor
  */
 var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
@@ -3182,13 +3183,14 @@ var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
         if (tabDelim)
             tabDelim += "\r\n";
         tabDelim += headers.map(function (header) {
-            var numberValue = CleanNumberNull(dataset[header]);
-            if (numberValue === 0 && !(typeof dataset[header] === 'string' && dataset[header].trim() !== ''))
-                return '0';
-            if (!dataset[header])
+            if (dataset[header] === undefined ||
+                dataset[header] === null ||
+                (typeof dataset[header] === 'string' && dataset[header].trim() === ''))
                 return '';
-            if (numberValue !== null)
+            var numberValue = CleanNumberNull(dataset[header]);
+            if (numberValue !== null) {
                 return numberValue.toString();
+            }
             return "\"" + dataset[header] + "\"";
         }).join('\t');
     };

@@ -1,12 +1,23 @@
 import {DateCompare} from '../src/DateManager'
+import {DataToTabDelim} from '../src/DataConstructs'
 
 require('source-map-support').install()
 
 
 console.time('Consoles')
 
-console.log('True?', DateCompare('2022-06-16', 'IsSame', 'now', 'day'))
-console.log('False?', DateCompare('2022-05-16', 'IsSame', 'now', 'day'))
+const data = [
+	{id: 0, name: 'Zero', description: 'Zero...'},
+	{id: 1, name: 'One', description: ''},
+	{id: 2, name: 'Two'}
+]
+
+console.log('Tab', DataToTabDelim(data))
+
+console.timeEnd('Consoles')
+
+// console.log('True?', DateCompare('2022-06-16', 'IsSame', 'now', 'day'))
+// console.log('False?', DateCompare('2022-05-16', 'IsSame', 'now', 'day'))
 
 
 // console.log(AddS('Hour', 1.111, true))
@@ -28,7 +39,6 @@ console.log('False?', DateCompare('2022-05-16', 'IsSame', 'now', 'day'))
 // console.log('2022-06-01 00:14:33.903000 +00:00'
 // 	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
 
-console.timeEnd('Consoles')
 
 // console.log([1.1, 1.100, 1.2].sort(SortCompare))
 // const strings = ['1', '100', '2']

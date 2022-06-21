@@ -142,6 +142,7 @@ export declare const DataToCSVExportNoQuotes: (filename: string, csvData: any) =
  *
  * @param datasets
  * @param includeHeaders
+ * @param headerToWords
  * @constructor
  */
 export declare const DataToTabDelim: <T = Record<string, any>>(datasets: T[], includeHeaders?: boolean, headerToWords?: boolean) => string;

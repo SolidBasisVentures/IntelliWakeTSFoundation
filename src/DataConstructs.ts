@@ -249,13 +249,15 @@ export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHe
 		if (tabDelim) tabDelim += `\r\n`
 		
 		tabDelim += headers.map(header => {
+			if (dataset[header] === undefined ||
+				dataset[header] === null ||
+				(typeof dataset[header] === 'string' && (dataset[header] as any).trim() === '')) return ''
+			
 			const numberValue = CleanNumberNull(dataset[header])
 			
-			if (numberValue === 0 && !(typeof dataset[header] === 'string' && (dataset[header] as any).trim() !== '')) return '0'
-			
-			if (!dataset[header]) return ''
-			
-			if (numberValue !== null) return numberValue.toString()
+			if (numberValue !== null) {
+				return numberValue.toString()
+			}
 			
 			return `"${dataset[header]}"`
 		}).join('\t')
