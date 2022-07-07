@@ -1,25 +1,20 @@
-import {DataToTabDelim} from '../src/DataConstructs'
+import {DateOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
-
 console.time('Consoles')
 
-const data = [
-	{id: 0, name: 'Zero', description: 'Zero...'},
-	{id: 1, name: 'One', description: ''},
-	{id: 2, name: 'Two'}
-]
+console.log('Sat to Sun', DateOnly('2022-07-02', {week: 'StartOf'}))
+console.log('Sun to Sun', DateOnly('2022-07-03', {week: 'StartOf'}))
+console.log('Mon to Sun', DateOnly('2022-07-04', {week: 'StartOf'}))
+console.log('Tue to Sun', DateOnly('2022-07-05', {week: 'StartOf'}))
 
-console.log('Tab', DataToTabDelim(data))
+console.log('Mon to Mon', DateOnly('2022-07-03', {days: 1, weeks: 'StartOfMon'}))
+console.log('Sun to P Mon', DateOnly('2022-07-03', {weeks: 'StartOfMon'}))
+console.log('Mon to Mon', DateOnly('2022-07-04', {week: 'StartOfMon'}))
+console.log('Tue to Mon', DateOnly('2022-07-05', {week: 'StartOfMon'}))
 
 console.timeEnd('Consoles')
-
-// console.log('True?', DateCompare('2022-06-16', 'IsSame', 'now', 'day'))
-// console.log('False?', DateCompare('2022-05-16', 'IsSame', 'now', 'day'))
-
-
-// console.log(AddS('Hour', 1.111, true))
 
 // console.log(process.env.TZ)
 //
@@ -37,7 +32,6 @@ console.timeEnd('Consoles')
 // process.env.TZ = 'GMT'
 // console.log('2022-06-01 00:14:33.903000 +00:00'
 // 	, DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles'))
-
 
 // console.log([1.1, 1.100, 1.2].sort(SortCompare))
 // const strings = ['1', '100', '2']

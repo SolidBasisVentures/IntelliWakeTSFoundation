@@ -42,10 +42,15 @@ export type TTimeOnlyDuration =
 export type TDuration = TDateOnlyDuration | TTimeOnlyDuration
 
 export type TDateOnlyAdjustment = { [key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf' }
+	| {week?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
+	| {weeks?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 
 export type TTimeOnlyAdjustment = { [key in TTimeOnlyDuration]?: number | 'StartOf' | 'EndOf' }
 
-export type TAdjustment = { [key in TDuration]?: number | 'StartOf' | 'EndOf' }
+export type TAdjustment =
+	{ [key in TDuration]?: number | 'StartOf' | 'EndOf' }
+	| {week?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
+	| {weeks?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 
 /**
  * Current time in ISO string format
@@ -90,10 +95,10 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 		myLocaleOffset += other.day * 1440
 	}
 	
-		// console.log('There', other.day, amsterdamOffset, myLocale.day, myLocaleOffset)
-		// } else if (other.day < myLocale.day) {
-		// console.log('There')
-		// myLocaleOffset -= other.day * 1440
+	// console.log('There', other.day, amsterdamOffset, myLocale.day, myLocaleOffset)
+	// } else if (other.day < myLocale.day) {
+	// console.log('There')
+	// myLocaleOffset -= other.day * 1440
 	let result = myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
 	// console.log('Here', str, result, amsterdamOffset, myLocaleOffset, date.getTimezoneOffset())
 	// if (result >= 1440 || result <= -1440) result = result % 1440
@@ -774,6 +779,32 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 									day: dateObj.getUTCDay() * -1,
 									days: 'StartOf'
 								}) ?? 0
+							}
+								break
+							case 'StartOfMon': {
+								const dateObj = DateObject(dateTS) ?? new Date()
+								switch (dateObj.getUTCDay()) {
+									case 0:
+										//Sunday
+										dateTS = DateAdjustTS(dateTS, {
+											day: -6,
+											days: 'StartOf'
+										}) ?? 0
+										break
+									case 1:
+										// Monday
+										dateTS = DateAdjustTS(dateTS, {
+											days: 'StartOf'
+										}) ?? 0
+										break
+									default:
+										// All other days
+										dateTS = DateAdjustTS(dateTS, {
+											day: (dateObj.getUTCDay() - 1) * -1,
+											days: 'StartOf'
+										}) ?? 0
+										break
+								}
 							}
 								break
 							case 'EndOf': {
