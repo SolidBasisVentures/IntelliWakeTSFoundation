@@ -60,6 +60,39 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	return parseFloat(str)
 }
 
+export const GreaterNumberNull = (...values: (any | any[])[]): number | null => {
+	let returnValue: number | null = null
+	
+	for (const value of values) {
+		const valueArray = ToArray(value)
+		for (const valueItem of valueArray) {
+			const currentNumber = CleanNumberNull(valueItem)
+			
+			if (currentNumber !== null && (returnValue === null || currentNumber > returnValue)) returnValue = currentNumber
+		}
+	}
+	
+	return returnValue
+}
+
+export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
+
+export const LeastNumberNull = (...values: (any | any[])[]): number | null => {
+	let returnValue: number | null = null
+	
+	for (const value of values) {
+		const valueArray = ToArray(value)
+		for (const valueItem of valueArray) {
+			const currentNumber = CleanNumberNull(valueItem)
+			
+			if (currentNumber !== null && (returnValue === null || currentNumber < returnValue)) returnValue = currentNumber
+		}
+	}
+	
+	return returnValue
+}
+
+export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
 
 /**
  * Cleans a multiple numbers and rounds them

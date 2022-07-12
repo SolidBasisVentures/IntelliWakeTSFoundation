@@ -32,6 +32,10 @@ export declare const ReplaceAll: (find: string | string[], replace: string, subj
  * CleanNumber('100.12', 1)
  */
 export declare const CleanNumber: (value: any, roundClean?: number | undefined, allowNaN?: boolean | undefined) => number;
+export declare const GreaterNumberNull: (...values: (any | any[])[]) => number | null;
+export declare const GreaterNumber: (...values: (any | any[])[]) => number;
+export declare const LeastNumberNull: (...values: (any | any[])[]) => number | null;
+export declare const LeastNumber: (...values: (any | any[])[]) => number;
 /**
  * Cleans a multiple numbers and rounds them
  *

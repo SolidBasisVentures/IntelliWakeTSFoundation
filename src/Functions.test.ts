@@ -1,7 +1,8 @@
 import {
-	CleanNumber, CleanNumbers, CoalesceFalsey,
+	CleanNumber, CleanNumbers, CoalesceFalsey, GreaterNumber, GreaterNumberNull,
 	IsOn,
-	JSONParse, JSONStringToObject,
+	JSONParse, JSONStringToObject, LeastNumber,
+	LeastNumberNull,
 	ObjectToJSONString, OmitFalsey,
 	OmitProperty, PickProperty, RemoveEnding, RemoveStarting,
 	ReplaceAll,
@@ -138,4 +139,28 @@ test('Other', () => {
 	expect(CoalesceFalsey('Original', null, 'Other')).toEqual('Original')
 	expect(CoalesceFalsey(null, 'Original', null, 'Other')).toEqual('Original')
 	expect(CoalesceFalsey(null, null, null, 'Other')).toEqual('Other')
+	expect(GreaterNumberNull('asdf', ['qwer', 'zxcv'])).toEqual(null)
+	expect(GreaterNumberNull('asdf', ['5', 'zxcv'])).toEqual(5)
+	expect(GreaterNumberNull(2, ['5', 'zxcv'])).toEqual(5)
+	expect(GreaterNumberNull('2', ['qwer', 'zxcv'])).toEqual(2)
+	expect(GreaterNumberNull('2', 5)).toEqual(5)
+	expect(GreaterNumberNull(5, 2)).toEqual(5)
+	expect(GreaterNumber('asdf', ['qwer', 'zxcv'])).toEqual(0)
+	expect(GreaterNumber('asdf', ['5', 'zxcv'])).toEqual(5)
+	expect(GreaterNumber(2, ['5', 'zxcv'])).toEqual(5)
+	expect(GreaterNumber('2', ['qwer', 'zxcv'])).toEqual(2)
+	expect(GreaterNumber('2', 5)).toEqual(5)
+	expect(GreaterNumber(5, 2)).toEqual(5)
+	expect(LeastNumberNull('asdf', ['qwer', 'zxcv'])).toEqual(null)
+	expect(LeastNumberNull('asdf', ['5', 'zxcv'])).toEqual(5)
+	expect(LeastNumberNull(2, ['5', 'zxcv'])).toEqual(2)
+	expect(LeastNumberNull('2', ['qwer', 'zxcv'])).toEqual(2)
+	expect(LeastNumberNull('2', 5)).toEqual(2)
+	expect(LeastNumberNull(5, 2)).toEqual(2)
+	expect(LeastNumber('asdf', ['qwer', 'zxcv'])).toEqual(0)
+	expect(LeastNumber('asdf', ['5', 'zxcv'])).toEqual(5)
+	expect(LeastNumber(2, ['5', 'zxcv'])).toEqual(2)
+	expect(LeastNumber('2', ['qwer', 'zxcv'])).toEqual(2)
+	expect(LeastNumber('2', 5)).toEqual(2)
+	expect(LeastNumber(5, 2)).toEqual(2)
 })

@@ -1,20 +1,25 @@
-import {DateOnly} from '../src/DateManager'
+import {GreaterNumber, GreaterNumberNull} from '../src/Functions'
 
 require('source-map-support').install()
 
 console.time('Consoles')
 
-console.log('Sat to Sun', DateOnly('2022-07-02', {week: 'StartOf'}))
-console.log('Sun to Sun', DateOnly('2022-07-03', {week: 'StartOf'}))
-console.log('Mon to Sun', DateOnly('2022-07-04', {week: 'StartOf'}))
-console.log('Tue to Sun', DateOnly('2022-07-05', {week: 'StartOf'}))
-
-console.log('Mon to Mon', DateOnly('2022-07-03', {days: 1, weeks: 'StartOfMon'}))
-console.log('Sun to P Mon', DateOnly('2022-07-03', {weeks: 'StartOfMon'}))
-console.log('Mon to Mon', DateOnly('2022-07-04', {week: 'StartOfMon'}))
-console.log('Tue to Mon', DateOnly('2022-07-05', {week: 'StartOfMon'}))
+console.log(GreaterNumberNull('asdf', ['5', 'zxcv']))
+console.log(GreaterNumberNull('asdf', ['5', 'zxcv']) ?? 0)
+console.log(GreaterNumber('asdf', ['5', 'zxcv']))
 
 console.timeEnd('Consoles')
+
+// console.log('Sat to Sun', DateOnly('2022-07-02', {week: 'StartOf'}))
+// console.log('Sun to Sun', DateOnly('2022-07-03', {week: 'StartOf'}))
+// console.log('Mon to Sun', DateOnly('2022-07-04', {week: 'StartOf'}))
+// console.log('Tue to Sun', DateOnly('2022-07-05', {week: 'StartOf'}))
+//
+// console.log('Mon to Mon', DateOnly('2022-07-03', {days: 1, weeks: 'StartOfMon'}))
+// console.log('Sun to P Mon', DateOnly('2022-07-03', {weeks: 'StartOfMon'}))
+// console.log('Mon to Mon', DateOnly('2022-07-04', {week: 'StartOfMon'}))
+// console.log('Tue to Mon', DateOnly('2022-07-05', {week: 'StartOfMon'}))
+
 
 // console.log(process.env.TZ)
 //

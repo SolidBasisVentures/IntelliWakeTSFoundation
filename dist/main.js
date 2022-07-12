@@ -293,6 +293,58 @@ var CleanNumber = function (value, roundClean, allowNaN) {
     }
     return parseFloat(str);
 };
+var GreaterNumberNull = function () {
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    var returnValue = null;
+    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+        var value = values_1[_a];
+        var valueArray = ToArray(value);
+        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
+            var valueItem = valueArray_1[_b];
+            var currentNumber = CleanNumberNull(valueItem);
+            if (currentNumber !== null && (returnValue === null || currentNumber > returnValue))
+                returnValue = currentNumber;
+        }
+    }
+    return returnValue;
+};
+var GreaterNumber = function () {
+    var _a;
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    return (_a = GreaterNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
+};
+var LeastNumberNull = function () {
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    var returnValue = null;
+    for (var _a = 0, values_2 = values; _a < values_2.length; _a++) {
+        var value = values_2[_a];
+        var valueArray = ToArray(value);
+        for (var _b = 0, valueArray_2 = valueArray; _b < valueArray_2.length; _b++) {
+            var valueItem = valueArray_2[_b];
+            var currentNumber = CleanNumberNull(valueItem);
+            if (currentNumber !== null && (returnValue === null || currentNumber < returnValue))
+                returnValue = currentNumber;
+        }
+    }
+    return returnValue;
+};
+var LeastNumber = function () {
+    var _a;
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    return (_a = LeastNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
+};
 /**
  * Cleans a multiple numbers and rounds them
  *
@@ -312,11 +364,11 @@ var CleanNumbers = function (roundTo) {
         values[_i - 1] = arguments[_i];
     }
     var result = 0;
-    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-        var value = values_1[_a];
+    for (var _a = 0, values_3 = values; _a < values_3.length; _a++) {
+        var value = values_3[_a];
         var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
-            var valueItem = valueArray_1[_b];
+        for (var _b = 0, valueArray_3 = valueArray; _b < valueArray_3.length; _b++) {
+            var valueItem = valueArray_3[_b];
             result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo);
         }
     }
@@ -4530,6 +4582,8 @@ exports.GetStage = GetStage;
 exports.GetStageName = GetStageName;
 exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
 exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.GreaterNumber = GreaterNumber;
+exports.GreaterNumberNull = GreaterNumberNull;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IANAOffset = IANAOffset;
@@ -4546,6 +4600,8 @@ exports.IsStageTestFocused = IsStageTestFocused;
 exports.IsValidInputDecimal = IsValidInputDecimal;
 exports.JSONParse = JSONParse;
 exports.JSONStringToObject = JSONStringToObject;
+exports.LeastNumber = LeastNumber;
+exports.LeastNumberNull = LeastNumberNull;
 exports.LeftPad = LeftPad;
 exports.ManualParse = ManualParse;
 exports.MonthNames = MonthNames;
