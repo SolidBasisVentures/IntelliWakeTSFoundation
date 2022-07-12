@@ -345,6 +345,15 @@ var LeastNumber = function () {
     }
     return (_a = LeastNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
 };
+var CleanDivideNull = function (numerator, denominator) {
+    if (numerator === undefined || numerator === null)
+        return null;
+    var useDenominator = CleanNumber(denominator);
+    if (useDenominator === 0)
+        return null;
+    return CleanNumber(numerator) / useDenominator;
+};
+var CleanDivide = function (numerator, denominator) { var _a; return (_a = CleanDivideNull(numerator, denominator)) !== null && _a !== void 0 ? _a : 0; };
 /**
  * Cleans a multiple numbers and rounds them
  *
@@ -4520,6 +4529,8 @@ exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
+exports.CleanDivide = CleanDivide;
+exports.CleanDivideNull = CleanDivideNull;
 exports.CleanNumber = CleanNumber;
 exports.CleanNumberNull = CleanNumberNull;
 exports.CleanNumbers = CleanNumbers;

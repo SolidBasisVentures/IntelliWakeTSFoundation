@@ -36,6 +36,8 @@ export declare const GreaterNumberNull: (...values: (any | any[])[]) => number |
 export declare const GreaterNumber: (...values: (any | any[])[]) => number;
 export declare const LeastNumberNull: (...values: (any | any[])[]) => number | null;
 export declare const LeastNumber: (...values: (any | any[])[]) => number;
+export declare const CleanDivideNull: (numerator: any, denominator: any) => number | null;
+export declare const CleanDivide: (numerator: any, denominator: any) => number;
 /**
  * Cleans a multiple numbers and rounds them
  *

@@ -1,4 +1,6 @@
 import {
+	CleanDivide,
+	CleanDivideNull,
 	CleanNumber, CleanNumbers, CoalesceFalsey, GreaterNumber, GreaterNumberNull,
 	IsOn,
 	JSONParse, JSONStringToObject, LeastNumber,
@@ -163,4 +165,14 @@ test('Other', () => {
 	expect(LeastNumber('2', ['qwer', 'zxcv'])).toEqual(2)
 	expect(LeastNumber('2', 5)).toEqual(2)
 	expect(LeastNumber(5, 2)).toEqual(2)
+	expect(CleanDivideNull(1, 2)).toEqual(0.5)
+	expect(CleanDivideNull(1, 0)).toEqual(null)
+	expect(CleanDivideNull(1, null)).toEqual(null)
+	expect(CleanDivideNull(null, 2)).toEqual(null)
+	expect(CleanDivideNull(0, 2)).toEqual(0)
+	expect(CleanDivide(1, 2)).toEqual(0.5)
+	expect(CleanDivide(1, 0)).toEqual(0)
+	expect(CleanDivide(1, null)).toEqual(0)
+	expect(CleanDivide(null, 2)).toEqual(0)
+	expect(CleanDivide(0, 2)).toEqual(0)
 })

@@ -94,6 +94,18 @@ export const LeastNumberNull = (...values: (any | any[])[]): number | null => {
 
 export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
 
+export const CleanDivideNull = (numerator: any, denominator: any): number | null => {
+	if (numerator === undefined || numerator === null) return null
+	
+	const useDenominator = CleanNumber(denominator)
+	
+	if (useDenominator === 0) return null
+	
+	return CleanNumber(numerator) / useDenominator
+}
+
+export const CleanDivide = (numerator: any, denominator: any): number => CleanDivideNull(numerator, denominator) ?? 0
+
 /**
  * Cleans a multiple numbers and rounds them
  *
