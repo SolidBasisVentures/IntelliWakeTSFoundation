@@ -55,7 +55,7 @@ export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timesta
  *
  * Use SortColumnUpdate() to automatically move the primary sort to the secondary
  */
-export interface ISortColumn<T = object> {
+export interface ISortColumn<T = Record<string, any>> {
 	primarySort: keyof T
 	primaryAscending: boolean
 	primaryEmptyToBottom: TSortColumnToBottom
@@ -85,7 +85,7 @@ export type TFindIsActive = boolean | null
  *
  * IFilterSortPaginatorReturn should be in the RESPONSE of the API to tell the app about the data it received (e.g. how many pages there are, etc.)
  */
-export interface IPaginatorRequest<T = object> {
+export interface IPaginatorRequest<T = Record<string, any>> {
 	page: number
 	countPerPage: number
 	search: string
@@ -112,7 +112,7 @@ export const initialFilterSortPaginator: IPaginatorRequest<any> = {
  * countPerPage = How many rows make up a page
  * currentOffset = More used by the database, but this would be the offset (e.g. 51 on the second page of a set that had CountPerPage = 50 and RowCount > 50)
  */
-export interface IPaginatorResponse<T = any> {
+export interface IPaginatorResponse<T = Record<string, any>> {
 	page: number
 	pageCount: number
 	rowCount: number
@@ -136,7 +136,7 @@ export interface IPaginatorResponse<T = any> {
  * }
  * SortColumnUpdate('name', initialSortColumn)
  */
-export const SortColumnUpdate = <T = object>(
+export const SortColumnUpdate = <T = Record<string, any>>(
 	columnToSort: keyof T,
 	sortColumn: ISortColumn<T>,
 	firstClickAscending: boolean = true,
@@ -179,7 +179,7 @@ export const SortColumnUpdate = <T = object>(
  * ]
  * SortColumns(data, sortColumn)
  */
-export const SortColumns = <T = object>(arrayTable: T[], sortColumn: ISortColumn<T>): T[] => {
+export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn: ISortColumn<T>): T[] => {
 	return arrayTable.sort((a: any, b: any) =>
 		!sortColumn.primarySort
 			? 0
