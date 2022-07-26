@@ -64,13 +64,13 @@ export interface ISortColumn<T = Record<string, any>> {
 	secondaryEmptyToBottom: TSortColumnToBottom
 }
 
-export const initialSortColumn: Omit<ISortColumn<any>, 'primarySort'> = {
+export const initialSortColumn: Omit<ISortColumn, 'primarySort'> = {
 	primaryAscending: true,
 	primaryEmptyToBottom: null,
-	secondarySort: null,
+	secondarySort: null as any,
 	secondaryAscending: true,
 	secondaryEmptyToBottom: null
-}
+} as any
 
 export type TFindIsActive = boolean | null
 
