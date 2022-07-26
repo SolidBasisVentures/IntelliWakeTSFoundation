@@ -18,7 +18,7 @@ export declare type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 
  *
  * Use SortColumnUpdate() to automatically move the primary sort to the secondary
  */
-export interface ISortColumn<T = object> {
+export interface ISortColumn<T = Record<string, any>> {
     primarySort: keyof T;
     primaryAscending: boolean;
     primaryEmptyToBottom: TSortColumnToBottom;
@@ -39,7 +39,7 @@ export declare type TFindIsActive = boolean | null;
  *
  * IFilterSortPaginatorReturn should be in the RESPONSE of the API to tell the app about the data it received (e.g. how many pages there are, etc.)
  */
-export interface IPaginatorRequest<T = object> {
+export interface IPaginatorRequest<T = Record<string, any>> {
     page: number;
     countPerPage: number;
     search: string;
@@ -57,7 +57,7 @@ export declare const initialFilterSortPaginator: IPaginatorRequest<any>;
  * countPerPage = How many rows make up a page
  * currentOffset = More used by the database, but this would be the offset (e.g. 51 on the second page of a set that had CountPerPage = 50 and RowCount > 50)
  */
-export interface IPaginatorResponse<T = any> {
+export interface IPaginatorResponse<T = Record<string, any>> {
     page: number;
     pageCount: number;
     rowCount: number;
@@ -80,7 +80,7 @@ export interface IPaginatorResponse<T = any> {
  * }
  * SortColumnUpdate('name', initialSortColumn)
  */
-export declare const SortColumnUpdate: <T = object>(columnToSort: keyof T, sortColumn: ISortColumn<T>, firstClickAscending?: boolean, emptyToBottom?: TSortColumnToBottom) => ISortColumn<T>;
+export declare const SortColumnUpdate: <T = Record<string, any>>(columnToSort: keyof T, sortColumn: ISortColumn<T>, firstClickAscending?: boolean, emptyToBottom?: TSortColumnToBottom) => ISortColumn<T>;
 /**
  * Accepts an array of data and a sort column object, and returns the sorted array of data.
  *
@@ -100,7 +100,7 @@ export declare const SortColumnUpdate: <T = object>(columnToSort: keyof T, sortC
  * ]
  * SortColumns(data, sortColumn)
  */
-export declare const SortColumns: <T = object>(arrayTable: T[], sortColumn: ISortColumn<T>) => T[];
+export declare const SortColumns: <T = Record<string, any>>(arrayTable: T[], sortColumn: ISortColumn<T>) => T[];
 export declare const SortIndexNull: <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo?: 'Top' | 'Bottom') => number | null;
 export declare const SortIndex: <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo?: 'Top' | 'Bottom') => number;
 /**
