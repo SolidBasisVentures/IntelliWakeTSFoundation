@@ -4029,6 +4029,9 @@ function PagesForRange(current, length, spread) {
     }
     return rangeWithNull;
 }
+/**
+ * Omit<ISortColumn, 'primarySort'>
+ */
 var initialSortColumn = {
     primaryAscending: true,
     primaryEmptyToBottom: null,
