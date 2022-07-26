@@ -64,7 +64,7 @@ export interface ISortColumn<T = Record<string, any>> {
 	secondaryEmptyToBottom: TSortColumnToBottom
 }
 
-export const initialSortColumn: Omit<ISortColumn, 'primarySort'> = {
+export const initialSortColumn: Omit<ISortColumn<any>, 'primarySort'> = {
 	primaryAscending: true,
 	primaryEmptyToBottom: null,
 	secondarySort: null,

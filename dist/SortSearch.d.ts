@@ -26,7 +26,7 @@ export interface ISortColumn<T = Record<string, any>> {
     secondaryAscending: boolean;
     secondaryEmptyToBottom: TSortColumnToBottom;
 }
-export declare const initialSortColumn: Omit<ISortColumn, 'primarySort'>;
+export declare const initialSortColumn: Omit<ISortColumn<any>, 'primarySort'>;
 export declare type TFindIsActive = boolean | null;
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
