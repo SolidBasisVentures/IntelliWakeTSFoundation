@@ -4362,7 +4362,7 @@ var StringContainsSearch = function (value, search) {
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
+var ObjectContainsSearchTerms = function (checkObject, searchTerms, options) {
     var _a;
     if (searchTerms.length === 0)
         return true;
@@ -4370,7 +4370,7 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
         return false;
     if (typeof checkObject === 'object' && ((_a = checkObject.type) === null || _a === void 0 ? void 0 : _a.toString().includes('react.')))
         return false;
-    return searchTerms.every(function (term) {
+    var match = function (term) {
         return Object.keys(checkObject).some(function (column) {
             var columnValue = checkObject[column];
             var typeofColumn = typeof columnValue;
@@ -4380,16 +4380,33 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
             if (Array.isArray(columnValue)) {
                 for (var _i = 0, columnValue_1 = columnValue; _i < columnValue_1.length; _i++) {
                     var obj = columnValue_1[_i];
-                    if (ObjectContainsSearchTerms(obj, [term]))
+                    if (ObjectContainsSearchTerms(obj, [term], options))
                         return true;
                 }
             }
             if (typeofColumn === 'object') {
-                return ObjectContainsSearchTerms(columnValue, [term]);
+                return ObjectContainsSearchTerms(columnValue, [term], options);
             }
             return false;
         });
-    });
+    };
+    var useSearchTerms = searchTerms;
+    if ((options === null || options === void 0 ? void 0 : options.matchUntilTerm) !== undefined) {
+        if ((options === null || options === void 0 ? void 0 : options.matchFromTerm) !== undefined) {
+            if (options.matchFromTerm < options.matchUntilTerm)
+                throw new Error("Could not match terms from " + options.matchFromTerm + " to " + options.matchUntilTerm);
+            useSearchTerms = useSearchTerms.slice(options.matchFromTerm, options.matchUntilTerm + 1);
+        }
+        else {
+            useSearchTerms = useSearchTerms.slice(0, options.matchUntilTerm + 1);
+        }
+    }
+    else {
+        if ((options === null || options === void 0 ? void 0 : options.matchFromTerm) !== undefined) {
+            useSearchTerms = useSearchTerms.slice(options.matchFromTerm);
+        }
+    }
+    return (options === null || options === void 0 ? void 0 : options.matchSomeTerm) ? useSearchTerms.some(match) : useSearchTerms.every(match);
 };
 /**
  * Determines whether an object contains search string.
@@ -4401,13 +4418,13 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms) {
  * // returns true
  * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
  */
-var ObjectContainsSearch = function (object, search) {
+var ObjectContainsSearch = function (object, search, options) {
     if (!search)
         return true;
     if (!object)
         return false;
     var searchTerms = SearchTerms(search);
-    return ObjectContainsSearchTerms(object, searchTerms);
+    return ObjectContainsSearchTerms(object, searchTerms, options);
 };
 /**
  * Searches an array of objects with a given search string, and returns the list of objects that match.
@@ -4421,12 +4438,12 @@ var ObjectContainsSearch = function (object, search) {
  * // returns [{id: 2, user: 'john smith'}]
  * SearchRows(data, 'smith')
  */
-var SearchRows = function (arrayTable, search) {
+var SearchRows = function (arrayTable, search, options) {
     var searchTerms = SearchTerms(search);
     if (searchTerms.length === 0) {
         return arrayTable;
     }
-    return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms); });
+    return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms, options); });
 };
 /**
  * Determines whether a search item object contains value from the search string.
@@ -4435,12 +4452,12 @@ var SearchRows = function (arrayTable, search) {
  * // returns true
  * SearchRow({user: 'john doe', age: '24'}, 'john 24')
  */
-var SearchRow = function (searchItem, search) {
+var SearchRow = function (searchItem, search, options) {
     var searchTerms = SearchTerms(search);
     if (searchTerms.length === 0) {
         return true;
     }
-    return ObjectContainsSearchTerms(searchItem, searchTerms);
+    return ObjectContainsSearchTerms(searchItem, searchTerms, options);
 };
 /**
  * Accepts an array of data, a search string, and a sort column object. Returns the
@@ -4460,8 +4477,8 @@ var SearchRow = function (searchItem, search) {
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-var SearchSort = function (arrayTable, search, sortColumn) {
-    return SortColumns(SearchRows(arrayTable, search), sortColumn);
+var SearchSort = function (arrayTable, search, sortColumn, options) {
+    return SortColumns(SearchRows(arrayTable, search, options), sortColumn);
 };
 
 var ToID = function (item) { return typeof item === 'number' ? item : item.id; };

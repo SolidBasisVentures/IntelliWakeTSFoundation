@@ -212,6 +212,11 @@ export declare const StringContainsSearchTerms: (value: string | null | undefine
  * StringContainsSearch('user age', 'address')
  */
 export declare const StringContainsSearch: (value: string | null | undefined, search: string | null | undefined) => boolean;
+export interface ISearchOptions {
+    matchSomeTerm?: boolean;
+    matchFromTerm?: number;
+    matchUntilTerm?: number;
+}
 /**
  * Determines whether an object contains search terms.
  *
@@ -222,7 +227,7 @@ export declare const StringContainsSearch: (value: string | null | undefined, se
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export declare const ObjectContainsSearchTerms: (checkObject: object | null | undefined | object[], searchTerms: string[]) => boolean;
+export declare const ObjectContainsSearchTerms: (checkObject: object | null | undefined | object[], searchTerms: string[], options?: ISearchOptions | undefined) => boolean;
 /**
  * Determines whether an object contains search string.
  *
@@ -233,7 +238,7 @@ export declare const ObjectContainsSearchTerms: (checkObject: object | null | un
  * // returns true
  * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
  */
-export declare const ObjectContainsSearch: (object: any | null | undefined, search: string | null | undefined) => boolean;
+export declare const ObjectContainsSearch: (object: any | null | undefined, search: string | null | undefined, options?: ISearchOptions | undefined) => boolean;
 /**
  * Searches an array of objects with a given search string, and returns the list of objects that match.
  *
@@ -246,7 +251,7 @@ export declare const ObjectContainsSearch: (object: any | null | undefined, sear
  * // returns [{id: 2, user: 'john smith'}]
  * SearchRows(data, 'smith')
  */
-export declare const SearchRows: <T>(arrayTable: T[], search: string) => T[];
+export declare const SearchRows: <T>(arrayTable: T[], search: string, options?: ISearchOptions | undefined) => T[];
 /**
  * Determines whether a search item object contains value from the search string.
  *
@@ -254,7 +259,7 @@ export declare const SearchRows: <T>(arrayTable: T[], search: string) => T[];
  * // returns true
  * SearchRow({user: 'john doe', age: '24'}, 'john 24')
  */
-export declare const SearchRow: (searchItem: object, search: string) => boolean;
+export declare const SearchRow: (searchItem: object, search: string, options?: ISearchOptions | undefined) => boolean;
 /**
  * Accepts an array of data, a search string, and a sort column object. Returns the
  * sorted search results array.
@@ -273,4 +278,4 @@ export declare const SearchRow: (searchItem: object, search: string) => boolean;
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export declare const SearchSort: <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>) => T[];
+export declare const SearchSort: <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>, options?: ISearchOptions | undefined) => T[];

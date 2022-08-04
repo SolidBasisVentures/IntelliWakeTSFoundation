@@ -479,8 +479,8 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
 
 export interface ISearchOptions {
 	matchSomeTerm?: boolean
+	matchFromTerm?: number
 	matchUntilTerm?: number
-	matchAfterTerm?: number
 }
 
 /**
@@ -523,7 +523,22 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 		})
 	}
 	
-	return options?.matchSomeTerm ? searchTerms.some(match) : searchTerms.every(match)
+	let useSearchTerms = searchTerms
+	
+	if (options?.matchUntilTerm !== undefined) {
+		if (options?.matchFromTerm !== undefined) {
+			if (options.matchFromTerm < options.matchUntilTerm) throw new Error(`Could not match terms from ${options.matchFromTerm} to ${options.matchUntilTerm}`)
+			useSearchTerms = useSearchTerms.slice(options.matchFromTerm, options.matchUntilTerm + 1)
+		} else {
+			useSearchTerms = useSearchTerms.slice(0, options.matchUntilTerm + 1)
+		}
+	} else {
+		if (options?.matchFromTerm !== undefined) {
+			useSearchTerms = useSearchTerms.slice(options.matchFromTerm)
+		}
+	}
+	
+	return options?.matchSomeTerm ? useSearchTerms.some(match) : useSearchTerms.every(match)
 }
 
 /**
@@ -536,14 +551,14 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
  * // returns true
  * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
  */
-export const ObjectContainsSearch = (object: any | null | undefined, search: string | null | undefined): boolean => {
+export const ObjectContainsSearch = (object: any | null | undefined, search: string | null | undefined, options?: ISearchOptions): boolean => {
 	if (!search) return true
 	
 	if (!object) return false
 	
 	const searchTerms = SearchTerms(search)
 	
-	return ObjectContainsSearchTerms(object, searchTerms)
+	return ObjectContainsSearchTerms(object, searchTerms, options)
 }
 
 /**
@@ -558,14 +573,14 @@ export const ObjectContainsSearch = (object: any | null | undefined, search: str
  * // returns [{id: 2, user: 'john smith'}]
  * SearchRows(data, 'smith')
  */
-export const SearchRows = <T>(arrayTable: T[], search: string): T[] => {
+export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearchOptions): T[] => {
 	const searchTerms = SearchTerms(search)
 	
 	if (searchTerms.length === 0) {
 		return arrayTable
 	}
 	
-	return (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms))
+	return (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
 }
 
 /**
@@ -575,14 +590,14 @@ export const SearchRows = <T>(arrayTable: T[], search: string): T[] => {
  * // returns true
  * SearchRow({user: 'john doe', age: '24'}, 'john 24')
  */
-export const SearchRow = (searchItem: object, search: string): boolean => {
+export const SearchRow = (searchItem: object, search: string, options?: ISearchOptions): boolean => {
 	const searchTerms = SearchTerms(search)
 	
 	if (searchTerms.length === 0) {
 		return true
 	}
 	
-	return ObjectContainsSearchTerms(searchItem, searchTerms)
+	return ObjectContainsSearchTerms(searchItem, searchTerms, options)
 }
 
 /**
@@ -603,6 +618,6 @@ export const SearchRow = (searchItem: object, search: string): boolean => {
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>): T[] => {
-	return SortColumns(SearchRows(arrayTable, search), sortColumn)
+export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>, options?: ISearchOptions): T[] => {
+	return SortColumns(SearchRows(arrayTable, search, options), sortColumn)
 }
