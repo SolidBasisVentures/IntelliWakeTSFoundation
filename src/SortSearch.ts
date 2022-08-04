@@ -477,6 +477,12 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
 	return StringContainsSearchTerms(value, searchTerms)
 }
 
+export interface ISearchOptions {
+	matchSomeTerm?: boolean
+	matchUntilTerm?: number
+	matchAfterTerm?: number
+}
+
 /**
  * Determines whether an object contains search terms.
  *
@@ -487,14 +493,14 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export const ObjectContainsSearchTerms = (checkObject: object | null | undefined | object[], searchTerms: string[]): boolean => {
+export const ObjectContainsSearchTerms = (checkObject: object | null | undefined | object[], searchTerms: string[], options?: ISearchOptions): boolean => {
 	if (searchTerms.length === 0) return true
 	
 	if (!checkObject) return false
 	
 	if (typeof checkObject === 'object' && (checkObject as any).type?.toString().includes('react.')) return false
 	
-	return searchTerms.every((term: string) => {
+	const match = (term: string) => {
 		return Object.keys(checkObject).some((column) => {
 			const columnValue = (checkObject as any)[column]
 			const typeofColumn = typeof columnValue
@@ -505,17 +511,19 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 			
 			if (Array.isArray(columnValue)) {
 				for (const obj of columnValue) {
-					if (ObjectContainsSearchTerms(obj, [term])) return true
+					if (ObjectContainsSearchTerms(obj, [term], options)) return true
 				}
 			}
 			
 			if (typeofColumn === 'object') {
-				return ObjectContainsSearchTerms(columnValue, [term])
+				return ObjectContainsSearchTerms(columnValue, [term], options)
 			}
 			
 			return false
 		})
-	})
+	}
+	
+	return options?.matchSomeTerm ? searchTerms.some(match) : searchTerms.every(match)
 }
 
 /**
