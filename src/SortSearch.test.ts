@@ -132,4 +132,5 @@ test('Search', () => {
 	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchUntilTerm: 0})).toEqual(false)
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 1})).toEqual(false)
 	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchFromTerm: 1})).toEqual(true)
+	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 2})).toEqual(false)
 })

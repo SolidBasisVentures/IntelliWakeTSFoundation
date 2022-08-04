@@ -4395,6 +4395,8 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms, options) {
         if ((options === null || options === void 0 ? void 0 : options.matchFromTerm) !== undefined) {
             if (options.matchFromTerm < options.matchUntilTerm)
                 throw new Error("Could not match terms from " + options.matchFromTerm + " to " + options.matchUntilTerm);
+            if (options.matchFromTerm + 1 > searchTerms.length)
+                return false;
             useSearchTerms = useSearchTerms.slice(options.matchFromTerm, options.matchUntilTerm + 1);
         }
         else {
@@ -4403,6 +4405,8 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms, options) {
     }
     else {
         if ((options === null || options === void 0 ? void 0 : options.matchFromTerm) !== undefined) {
+            if (options.matchFromTerm + 1 > searchTerms.length)
+                return false;
             useSearchTerms = useSearchTerms.slice(options.matchFromTerm);
         }
     }

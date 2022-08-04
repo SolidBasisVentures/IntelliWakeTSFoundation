@@ -528,12 +528,14 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 	if (options?.matchUntilTerm !== undefined) {
 		if (options?.matchFromTerm !== undefined) {
 			if (options.matchFromTerm < options.matchUntilTerm) throw new Error(`Could not match terms from ${options.matchFromTerm} to ${options.matchUntilTerm}`)
+			if (options.matchFromTerm + 1 > searchTerms.length) return false
 			useSearchTerms = useSearchTerms.slice(options.matchFromTerm, options.matchUntilTerm + 1)
 		} else {
 			useSearchTerms = useSearchTerms.slice(0, options.matchUntilTerm + 1)
 		}
 	} else {
 		if (options?.matchFromTerm !== undefined) {
+			if (options.matchFromTerm + 1 > searchTerms.length) return false
 			useSearchTerms = useSearchTerms.slice(options.matchFromTerm)
 		}
 	}
