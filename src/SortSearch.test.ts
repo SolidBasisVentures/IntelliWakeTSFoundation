@@ -1,4 +1,4 @@
-import {ObjectContainsSearchTerms, SortCompare, SortCompareNull, SortIndex, SortPerArray} from './SortSearch'
+import {ObjectContainsSearchTerms, SearchRow, SortCompare, SortCompareNull, SortIndex, SortPerArray} from './SortSearch'
 
 test('SortCompare', () => {
 	expect([
@@ -116,6 +116,7 @@ test('Search', () => {
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred'])).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24'], {matchSomeTerm: true})).toEqual(true)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24'], {matchFromTerm: 1})).toEqual(true)
+	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchFromTerm: 1})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24'], {matchUntilTerm: 0})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24', 'Sally'], {
 		matchFromTerm: 1,
@@ -127,4 +128,8 @@ test('Search', () => {
 	})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchFromTerm: 1})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchUntilTerm: 0})).toEqual(true)
+	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchUntilTerm: 0})).toEqual(true)
+	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchUntilTerm: 0})).toEqual(false)
+	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 1})).toEqual(false)
+	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchFromTerm: 1})).toEqual(true)
 })
