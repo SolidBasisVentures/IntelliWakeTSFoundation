@@ -402,6 +402,8 @@ var CleanNumbers = function (roundTo) {
  * CleanNumberNull('100.12', 1)
  */
 var CleanNumberNull = function (value, roundClean) {
+    if (value === undefined || value === null)
+        return null;
     var parsed = CleanNumber(value, roundClean, true);
     if (isNaN(parsed))
         return null;

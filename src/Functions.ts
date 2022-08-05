@@ -151,6 +151,8 @@ export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): numbe
  * CleanNumberNull('100.12', 1)
  */
 export const CleanNumberNull = (value: any, roundClean?: number): number | null => {
+	if (value === undefined || value === null) return null
+	
 	let parsed = CleanNumber(value, roundClean, true)
 	
 	if (isNaN(parsed)) return null
