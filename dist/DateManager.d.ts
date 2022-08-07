@@ -336,3 +336,4 @@ export declare const TimeSeries: (minuteIntervals: number, startTimeInclusive?: 
  * @constructor
  */
 export declare const TimeFloorMinute: (time: TDateAny, minuteIncrement?: number) => string | null;
+export declare const ESTTodayDateTimeLabel: () => string;

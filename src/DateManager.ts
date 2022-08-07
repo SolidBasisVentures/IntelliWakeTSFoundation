@@ -1434,3 +1434,5 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 		return TimeOnly(TimeFloorMinute(DateObject(`${DateOnly('now')} ${cleanTime}`), minuteIncrement))
 	}
 }
+
+export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
