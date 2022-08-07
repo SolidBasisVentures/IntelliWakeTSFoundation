@@ -3024,6 +3024,7 @@ var TimeFloorMinute = function (time, minuteIncrement) {
     }
 };
 var ESTTodayDateTimeLabel = function () { return new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }); };
+var ESTTodayDate = function () { var _a; return (_a = DateFormat('Date', 'now', 'America/New_York')) !== null && _a !== void 0 ? _a : DateOnly('now'); };
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4606,6 +4607,7 @@ exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;
 exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DurationLongDescription = DurationLongDescription;
+exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
