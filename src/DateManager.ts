@@ -1436,3 +1436,4 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 }
 
 export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
+export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') ?? DateOnly('now')
