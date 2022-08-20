@@ -239,3 +239,9 @@ export declare const ObjectDiffs: (compare: any, comparedTo: any, excludeKeys?: 
  * ReduceObjectToOtherKeys(data, data2, ['age'])
  */
 export declare const ReduceObjectToOtherKeys: (main: any, reduceTo: any, excludeKeys?: string[]) => any;
+export declare type Nullable<T> = {
+    [K in keyof T]: T[K] | null;
+};
+export declare type DeepNullable<T> = {
+    [K in keyof T]: DeepNullable<T[K]> | null;
+};

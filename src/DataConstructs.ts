@@ -536,3 +536,9 @@ export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: s
 	
 	return results
 }
+
+export type Nullable<T> = { [K in keyof T]: T[K] | null }
+
+export type DeepNullable<T> = {
+	[K in keyof T]: DeepNullable<T[K]> | null
+}
