@@ -1012,6 +1012,25 @@ function InvertColorHex(hex, bw) {
     var _a = RBGFromHex(hex), r = _a[0], g = _a[1], b = _a[2];
     return InvertColorRGB(r, g, b, bw);
 }
+function Sleep(ms) {
+    return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+}
+function SleepUntil(condition, msBetween) {
+    if (msBetween === void 0) { msBetween = 200; }
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!!condition) return [3 /*break*/, 2];
+                    return [4 /*yield*/, Sleep(msBetween)];
+                case 1:
+                    _a.sent();
+                    return [3 /*break*/, 0];
+                case 2: return [2 /*return*/];
+            }
+        });
+    });
+}
 
 /**
  * Converts a string to snake_case.
@@ -4679,6 +4698,8 @@ exports.SearchSort = SearchSort;
 exports.SearchTerms = SearchTerms;
 exports.SelectBetweenIDs = SelectBetweenIDs;
 exports.ShortNumber = ShortNumber;
+exports.Sleep = Sleep;
+exports.SleepUntil = SleepUntil;
 exports.SortColumnUpdate = SortColumnUpdate;
 exports.SortColumns = SortColumns;
 exports.SortCompare = SortCompare;

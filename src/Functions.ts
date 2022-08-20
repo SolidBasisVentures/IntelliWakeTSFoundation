@@ -748,3 +748,9 @@ export function InvertColorHex(hex: string, bw = false) {
 export function Sleep(ms: number) {
 	return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export async function SleepUntil(condition: boolean, msBetween = 200) {
+	while (!condition) {
+		await Sleep(msBetween)
+	}
+}
