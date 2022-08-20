@@ -1013,6 +1013,7 @@ function InvertColorHex(hex, bw) {
     return InvertColorRGB(r, g, b, bw);
 }
 function Sleep(ms) {
+    if (ms === void 0) { ms = 200; }
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
 
