@@ -744,3 +744,7 @@ export function InvertColorHex(hex: string, bw = false) {
 	
 	return InvertColorRGB(r, g, b, bw)
 }
+
+export function Sleep(ms: number) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
