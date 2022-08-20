@@ -310,4 +310,3 @@ export declare function InvertColorRGB(r: number, g: number, b: number, bw?: boo
  */
 export declare function InvertColorHex(hex: string, bw?: boolean): string;
 export declare function Sleep(ms: number): Promise<unknown>;
-export declare function SleepUntil(condition: boolean, msBetween?: number): Promise<void>;
