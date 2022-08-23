@@ -78,7 +78,7 @@ export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T => ({
 
 export type IIDObject = {
 	id: number
-}
+} & Record<string, any>
 
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
