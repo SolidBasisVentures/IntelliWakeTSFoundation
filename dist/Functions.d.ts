@@ -32,13 +32,13 @@ export declare const ReplaceAll: (find: string | string[], replace: string, subj
  * CleanNumber('100.12', 1)
  */
 export declare const CleanNumber: (value: any, roundClean?: number | undefined, allowNaN?: boolean | undefined) => number;
-export declare const GreaterNumberNull: (...values: any | any[]) => number | null;
-export declare const GreaterNumber: (...values: any | any[]) => number;
-export declare const LeastNumberNull: (...values: any | any[]) => number | null;
-export declare const LeastNumber: (...values: any | any[]) => number;
-export declare const ValidNumbers: (...values: any | any[]) => number[];
-export declare const AverageNumberNull: (decimals: number, ...values: any | any[]) => number | null;
-export declare const AverageNumber: (decimals: number, ...values: any | any[]) => number;
+export declare const GreaterNumberNull: (...values: (any | any[])[]) => number | null;
+export declare const GreaterNumber: (...values: (any | any[])[]) => number;
+export declare const LeastNumberNull: (...values: (any | any[])[]) => number | null;
+export declare const LeastNumber: (...values: (any | any[])[]) => number;
+export declare const ValidNumbers: (...values: (any | any[])[]) => number[];
+export declare const AverageNumberNull: (decimals: number, ...values: (any | any[])[]) => number | null;
+export declare const AverageNumber: (decimals: number, ...values: (any | any[])[]) => number;
 export declare const CleanDivideNull: (numerator: any, denominator: any) => number | null;
 export declare const CleanDivide: (numerator: any, denominator: any) => number;
 /**
@@ -54,7 +54,7 @@ export declare const CleanDivide: (numerator: any, denominator: any) => number;
  * // return 1012
  * CleanNumbers(0, '$1,000', 12.236)
  */
-export declare const CleanNumbers: (roundTo: number, ...values: any | any[]) => number;
+export declare const CleanNumbers: (roundTo: number, ...values: (any | any[])[]) => number;
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
