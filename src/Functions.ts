@@ -60,39 +60,44 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	return parseFloat(str)
 }
 
-export const GreaterNumberNull = (...values: (any | any[])[]): number | null => {
-	let returnValue: number | null = null
+export const GreaterNumberNull = (...values: any | any[]): number | null => ValidNumbers(values)
+	.reduce<number | null>((result, value) => (result === null || value > result) ? value: result, null)
+
+export const GreaterNumber = (...values: any | any[]): number => GreaterNumberNull(...values) ?? 0
+
+export const LeastNumberNull = (...values: any | any[]): number | null => ValidNumbers(values)
+	.reduce<number | null>((result, value) => (result === null || value < result) ? value: result, null)
+
+export const LeastNumber = (...values: any | any[]): number => LeastNumberNull(...values) ?? 0
+
+export const ValidNumbers = (...values: any | any[]): number[] => {
+	let returnValues: number[] = []
 	
 	for (const value of values) {
 		const valueArray = ToArray(value)
 		for (const valueItem of valueArray) {
-			const currentNumber = CleanNumberNull(valueItem)
-			
-			if (currentNumber !== null && (returnValue === null || currentNumber > returnValue)) returnValue = currentNumber
+			const subArray = ToArray(valueItem)
+			for (const subItem of subArray) {
+				const calc = CleanNumberNull(subItem)
+				if (calc !== null) {
+					returnValues = [...returnValues, calc]
+				}
+			}
 		}
 	}
 	
-	return returnValue
+	return returnValues
 }
 
-export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
-
-export const LeastNumberNull = (...values: (any | any[])[]): number | null => {
-	let returnValue: number | null = null
+export const AverageNumberNull = (decimals: number, ...values: any | any[]): number | null => {
+	const valids = ValidNumbers(values)
 	
-	for (const value of values) {
-		const valueArray = ToArray(value)
-		for (const valueItem of valueArray) {
-			const currentNumber = CleanNumberNull(valueItem)
-			
-			if (currentNumber !== null && (returnValue === null || currentNumber < returnValue)) returnValue = currentNumber
-		}
-	}
+	if (valids.length === 0) return null
 	
-	return returnValue
+	return CleanNumber(CleanNumbers(decimals, valids) / valids.length, decimals)
 }
 
-export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
+export const AverageNumber = (decimals: number, ...values: any | any[]): number => AverageNumberNull(decimals, values) ?? 0
 
 export const CleanDivideNull = (numerator: any, denominator: any): number | null => {
 	if (numerator === undefined || numerator === null) return null
@@ -119,18 +124,9 @@ export const CleanDivide = (numerator: any, denominator: any): number => CleanDi
  * // return 1012
  * CleanNumbers(0, '$1,000', 12.236)
  */
-export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): number => {
-	let result = 0
-	
-	for (const value of values) {
-		const valueArray = ToArray(value)
-		for (const valueItem of valueArray) {
-			result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo)
-		}
-	}
-	
-	return result
-}
+export const CleanNumbers = (roundTo: number, ...values: any | any[]): number =>
+	ValidNumbers(values)
+		.reduce<number>((result, value) => CleanNumber(result + value, roundTo), 0)
 
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
@@ -746,5 +742,5 @@ export function InvertColorHex(hex: string, bw = false) {
 }
 
 export function Sleep(ms = 200) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise(resolve => setTimeout(resolve, ms))
 }

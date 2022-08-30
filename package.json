@@ -1,6 +1,6 @@
 {
   "name": "@solidbasisventures/intelliwaketsfoundation",
-  "version": "5.0.208",
+  "version": "5.0.209",
   "description": "NPM package for IntelliWake TypeScript Foundation Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",

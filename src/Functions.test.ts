@@ -1,12 +1,23 @@
 import {
+	AverageNumberNull,
 	CleanDivide,
 	CleanDivideNull,
-	CleanNumber, CleanNumbers, CoalesceFalsey, GreaterNumber, GreaterNumberNull,
+	CleanNumber,
+	CleanNumbers,
+	CoalesceFalsey,
+	GreaterNumber,
+	GreaterNumberNull,
 	IsOn,
-	JSONParse, JSONStringToObject, LeastNumber,
+	JSONParse,
+	JSONStringToObject,
+	LeastNumber,
 	LeastNumberNull,
-	ObjectToJSONString, OmitFalsey,
-	OmitProperty, PickProperty, RemoveEnding, RemoveStarting,
+	ObjectToJSONString,
+	OmitFalsey,
+	OmitProperty,
+	PickProperty,
+	RemoveEnding,
+	RemoveStarting,
 	ReplaceAll,
 	RoundTo,
 	ToArray
@@ -54,7 +65,7 @@ test('Deep Equal', () => {
 	expect(DeepEqual(item, {...item, val4: {...item.val4, valA: 2}})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['Two', 'One']})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
-	expect(DeepEqual("2021-12-20T17:12:36.370Z", "2021-12-20 12:12:36.37-05")).toBe(true)
+	expect(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
 	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
 })
 
@@ -82,7 +93,7 @@ test('Omits', () => {
 		id: 1,
 		name: 'My Name',
 		is_active: true
-	}, 'id',  'is_active')).toEqual({name: 'My Name'})
+	}, 'id', 'is_active')).toEqual({name: 'My Name'})
 })
 
 test('Picks', () => {
@@ -100,10 +111,10 @@ test('JSONParse', () => {
 })
 
 test('JSONString', () => {
-	expect(ObjectToJSONString({"id": 1})).toEqual('json:{"id":1}')
+	expect(ObjectToJSONString({'id': 1})).toEqual('json:{"id":1}')
 	expect(ObjectToJSONString(null)).toEqual('json:null')
 	expect(ObjectToJSONString(undefined)).toEqual('json:undefined')
-	expect(JSONStringToObject(ObjectToJSONString({"id": 1}))).toEqual({"id": 1})
+	expect(JSONStringToObject(ObjectToJSONString({'id': 1}))).toEqual({'id': 1})
 	expect(JSONStringToObject(ObjectToJSONString(null))).toEqual(null)
 	expect(JSONStringToObject(ObjectToJSONString(undefined))).toEqual(undefined)
 })
@@ -175,4 +186,10 @@ test('Other', () => {
 	expect(CleanDivide(1, null)).toEqual(0)
 	expect(CleanDivide(null, 2)).toEqual(0)
 	expect(CleanDivide(0, 2)).toEqual(0)
+	expect(CleanNumbers(0, [1, 2, 3, null])).toEqual(6)
+	expect(CleanNumbers(0, 1, [1, 2, 3, null])).toEqual(7)
+	expect(CleanNumbers(0, null)).toEqual(0)
+	expect(AverageNumberNull(0, [1, 2, '3', null])).toEqual(2)
+	expect(AverageNumberNull(1, [1, '2', 4, null])).toEqual(2.3)
+	expect(AverageNumberNull(1, 5, ['6', null])).toEqual(5.5)
 })

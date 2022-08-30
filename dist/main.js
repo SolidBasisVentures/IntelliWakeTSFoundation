@@ -298,18 +298,8 @@ var GreaterNumberNull = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
     }
-    var returnValue = null;
-    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-        var value = values_1[_a];
-        var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
-            var valueItem = valueArray_1[_b];
-            var currentNumber = CleanNumberNull(valueItem);
-            if (currentNumber !== null && (returnValue === null || currentNumber > returnValue))
-                returnValue = currentNumber;
-        }
-    }
-    return returnValue;
+    return ValidNumbers(values)
+        .reduce(function (result, value) { return (result === null || value > result) ? value : result; }, null);
 };
 var GreaterNumber = function () {
     var _a;
@@ -324,18 +314,8 @@ var LeastNumberNull = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
     }
-    var returnValue = null;
-    for (var _a = 0, values_2 = values; _a < values_2.length; _a++) {
-        var value = values_2[_a];
-        var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_2 = valueArray; _b < valueArray_2.length; _b++) {
-            var valueItem = valueArray_2[_b];
-            var currentNumber = CleanNumberNull(valueItem);
-            if (currentNumber !== null && (returnValue === null || currentNumber < returnValue))
-                returnValue = currentNumber;
-        }
-    }
-    return returnValue;
+    return ValidNumbers(values)
+        .reduce(function (result, value) { return (result === null || value < result) ? value : result; }, null);
 };
 var LeastNumber = function () {
     var _a;
@@ -344,6 +324,47 @@ var LeastNumber = function () {
         values[_i] = arguments[_i];
     }
     return (_a = LeastNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
+};
+var ValidNumbers = function () {
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    var returnValues = [];
+    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+        var value = values_1[_a];
+        var valueArray = ToArray(value);
+        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
+            var valueItem = valueArray_1[_b];
+            var subArray = ToArray(valueItem);
+            for (var _c = 0, subArray_1 = subArray; _c < subArray_1.length; _c++) {
+                var subItem = subArray_1[_c];
+                var calc = CleanNumberNull(subItem);
+                if (calc !== null) {
+                    returnValues = __spreadArrays(returnValues, [calc]);
+                }
+            }
+        }
+    }
+    return returnValues;
+};
+var AverageNumberNull = function (decimals) {
+    var values = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
+    }
+    var valids = ValidNumbers(values);
+    if (valids.length === 0)
+        return null;
+    return CleanNumber(CleanNumbers(decimals, valids) / valids.length, decimals);
+};
+var AverageNumber = function (decimals) {
+    var _a;
+    var values = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
+    }
+    return (_a = AverageNumberNull(decimals, values)) !== null && _a !== void 0 ? _a : 0;
 };
 var CleanDivideNull = function (numerator, denominator) {
     if (numerator === undefined || numerator === null)
@@ -372,16 +393,8 @@ var CleanNumbers = function (roundTo) {
     for (var _i = 1; _i < arguments.length; _i++) {
         values[_i - 1] = arguments[_i];
     }
-    var result = 0;
-    for (var _a = 0, values_3 = values; _a < values_3.length; _a++) {
-        var value = values_3[_a];
-        var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_3 = valueArray; _b < valueArray_3.length; _b++) {
-            var valueItem = valueArray_3[_b];
-            result = CleanNumber(CleanNumber(result, roundTo) + CleanNumber(valueItem, roundTo), roundTo);
-        }
-    }
-    return result;
+    return ValidNumbers(values)
+        .reduce(function (result, value) { return CleanNumber(result + value, roundTo); }, 0);
 };
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
@@ -4559,6 +4572,8 @@ exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
+exports.AverageNumber = AverageNumber;
+exports.AverageNumberNull = AverageNumberNull;
 exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanDivide = CleanDivide;
@@ -4735,6 +4750,7 @@ exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
+exports.ValidNumbers = ValidNumbers;
 exports.WeekDays = WeekDays;
 exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
 exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;

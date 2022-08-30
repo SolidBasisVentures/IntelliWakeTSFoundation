@@ -1,12 +1,12 @@
-import {GreaterNumber, GreaterNumberNull} from '../src/Functions'
+import {AverageNumberNull, CleanNumbers, LeastNumber} from '../src/Functions'
 
 require('source-map-support').install()
 
 console.time('Consoles')
 
-console.log(GreaterNumberNull('asdf', ['5', 'zxcv']))
-console.log(GreaterNumberNull('asdf', ['5', 'zxcv']) ?? 0)
-console.log(GreaterNumber('asdf', ['5', 'zxcv']))
+console.log(CleanNumbers(1, 4, [1, 2, 4, 0, null]))
+console.log(LeastNumber(1, 4, [1, 2, 4, -1, null]))
+console.log(AverageNumberNull(1, 5, [6, null]))
 
 console.timeEnd('Consoles')
 
