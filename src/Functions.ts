@@ -6,6 +6,8 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
+import {exec, ExecException} from 'child_process'
+
 /**
  * Replace all occurences of a string.
  *
@@ -744,3 +746,18 @@ export function InvertColorHex(hex: string, bw = false) {
 export function Sleep(ms = 200) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+export const ExecuteScript = async (script: string): Promise<string> =>
+	new Promise<string>((resolve, reject) => {
+		exec(script, async (error: ExecException | null, stdout: string, stderr: string) => {
+			if (error) {
+				reject(error)
+			} else {
+				if (stderr) {
+					console.log(`stderr: ${stderr}`)
+				}
+				
+				resolve(stdout)
+			}
+		})
+	})

@@ -2,6 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var child_process = require('child_process');
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -1029,6 +1031,26 @@ function Sleep(ms) {
     if (ms === void 0) { ms = 200; }
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
+var ExecuteScript = function (script) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, new Promise(function (resolve, reject) {
+                child_process.exec(script, function (error, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        if (error) {
+                            reject(error);
+                        }
+                        else {
+                            if (stderr) {
+                                console.log("stderr: " + stderr);
+                            }
+                            resolve(stdout);
+                        }
+                        return [2 /*return*/];
+                    });
+                }); });
+            })];
+    });
+}); };
 
 /**
  * Converts a string to snake_case.
@@ -4630,6 +4652,7 @@ exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
+exports.ExecuteScript = ExecuteScript;
 exports.FormUrlEncoded = FormUrlEncoded;
 exports.FormatExternalURL = FormatExternalURL;
 exports.FormatPhoneNumber = FormatPhoneNumber;
