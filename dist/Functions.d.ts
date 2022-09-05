@@ -267,6 +267,7 @@ export declare const PropertiesExist: <T extends object, K extends Extract<keyof
 export declare const PropertiesNotFalsey: <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => boolean;
 export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;
 export declare function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> & Partial<K>;
+export declare function OmitUndefined<T extends object>(obj: T): Partial<T>;
 export declare function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K>;
 export declare function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;
 export declare function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive?: boolean): string;

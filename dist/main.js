@@ -889,6 +889,15 @@ function OmitFalsey(obj) {
     }
     return ret;
 }
+function OmitUndefined(obj) {
+    var ret = __assign({}, obj);
+    for (var key in obj) {
+        if (key in obj && ret[key] === undefined) {
+            delete ret[key];
+        }
+    }
+    return ret;
+}
 function PickProperty(obj) {
     var keys = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -4696,6 +4705,7 @@ exports.ObjectToJSONString = ObjectToJSONString;
 exports.ObjectWithChanges = ObjectWithChanges;
 exports.OmitFalsey = OmitFalsey;
 exports.OmitProperty = OmitProperty;
+exports.OmitUndefined = OmitUndefined;
 exports.PagesForRange = PagesForRange;
 exports.PhoneComponents = PhoneComponents;
 exports.PickProperty = PickProperty;
