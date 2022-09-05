@@ -599,6 +599,18 @@ export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>
 	return ret
 }
 
+export function OmitUndefined<T extends object>(obj: T): Partial<T> {
+	let ret: Partial<T> = {...obj}
+	
+	for (let key in obj) {
+		if (key in obj && (ret as any)[key] === undefined) {
+			delete (ret as any)[key]
+		}
+	}
+	
+	return ret
+}
+
 export function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K> {
 	let ret: any = {}
 	const includeSet: Set<string> = new Set(keys)

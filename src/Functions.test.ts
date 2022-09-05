@@ -14,7 +14,7 @@ import {
 	LeastNumberNull,
 	ObjectToJSONString,
 	OmitFalsey,
-	OmitProperty,
+	OmitProperty, OmitUndefined,
 	PickProperty,
 	RemoveEnding,
 	RemoveStarting,
@@ -102,6 +102,11 @@ test('Picks', () => {
 		name: 'My Name',
 		is_active: true
 	}, 'name')).toEqual({name: 'My Name'})
+	expect(OmitUndefined({
+		id: 1,
+		name: undefined,
+		is_active: false
+	})).toEqual({id: 1, is_active: false})
 })
 
 test('JSONParse', () => {
