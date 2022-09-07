@@ -88,5 +88,11 @@ test('Data Contructs', () => {
 		.toEqual({id: 1, sts: '2021-12-20T17:28:01.130Z'})
 	expect(RemoveDupProperties({id: 1, sts: '2021'}, {id: 2, sts: '2022'}))
 		.toEqual({id: 1, sts: '2021'})
+	expect(RemoveDupProperties({is_item: false}, {is_item: false}))
+		.toEqual({})
+	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: false}, {is_item: null}))
+		.toEqual({is_item: false})
+	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: null}, {is_item: false}))
+		.toEqual({is_item: null})
 	
 })
