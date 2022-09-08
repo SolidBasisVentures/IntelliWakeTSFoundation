@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var child_process = require('child_process');
+var promisifyChildProcess = require('promisify-child-process');
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1041,23 +1041,20 @@ function Sleep(ms) {
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
 var ExecuteScript = function (script) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, new Promise(function (resolve, reject) {
-                child_process.exec(script, function (error, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        if (error) {
-                            reject(error);
-                        }
-                        else {
-                            if (stderr) {
-                                console.log("stderr: " + stderr);
-                            }
-                            resolve(stdout);
-                        }
-                        return [2 /*return*/];
-                    });
-                }); });
-            })];
+    var _a, stdout, stderr;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0: return [4 /*yield*/, promisifyChildProcess.exec(script)];
+            case 1:
+                _a = _c.sent(), stdout = _a.stdout, stderr = _a.stderr;
+                if (stderr) {
+                    throw new Error(stderr.toString());
+                }
+                else {
+                    return [2 /*return*/, (_b = stdout === null || stdout === void 0 ? void 0 : stdout.toString()) !== null && _b !== void 0 ? _b : ''];
+                }
+        }
     });
 }); };
 
