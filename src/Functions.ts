@@ -6,8 +6,6 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
-import {exec} from 'promisify-child-process'
-
 /**
  * Replace all occurences of a string.
  *
@@ -757,14 +755,4 @@ export function InvertColorHex(hex: string, bw = false) {
 
 export function Sleep(ms = 200) {
 	return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-export const ExecuteScript = async (script: string): Promise<string> => {
-	const {stdout, stderr} = await exec(script)
-	
-	if (stderr) {
-		throw new Error(stderr.toString())
-	} else {
-		return stdout?.toString() ?? ''
-	}
 }

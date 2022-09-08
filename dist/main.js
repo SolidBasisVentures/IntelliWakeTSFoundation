@@ -2,8 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var promisifyChildProcess = require('promisify-child-process');
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -1040,23 +1038,6 @@ function Sleep(ms) {
     if (ms === void 0) { ms = 200; }
     return new Promise(function (resolve) { return setTimeout(resolve, ms); });
 }
-var ExecuteScript = function (script) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, stdout, stderr;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0: return [4 /*yield*/, promisifyChildProcess.exec(script)];
-            case 1:
-                _a = _c.sent(), stdout = _a.stdout, stderr = _a.stderr;
-                if (stderr) {
-                    throw new Error(stderr.toString());
-                }
-                else {
-                    return [2 /*return*/, (_b = stdout === null || stdout === void 0 ? void 0 : stdout.toString()) !== null && _b !== void 0 ? _b : ''];
-                }
-        }
-    });
-}); };
 
 /**
  * Converts a string to snake_case.
@@ -4658,7 +4639,6 @@ exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
-exports.ExecuteScript = ExecuteScript;
 exports.FormUrlEncoded = FormUrlEncoded;
 exports.FormatExternalURL = FormatExternalURL;
 exports.FormatPhoneNumber = FormatPhoneNumber;
