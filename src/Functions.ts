@@ -6,7 +6,7 @@
  * Trunc('Welcome to TSFoundation', 11)
  */
 
-import {exec, ExecException} from 'child_process'
+import {exec} from 'promisify-child-process'
 
 /**
  * Replace all occurences of a string.
@@ -63,12 +63,12 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 }
 
 export const GreaterNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
-	.reduce<number | null>((result, value) => (result === null || value > result) ? value: result, null)
+	.reduce<number | null>((result, value) => (result === null || value > result) ? value : result, null)
 
 export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
 
 export const LeastNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
-	.reduce<number | null>((result, value) => (result === null || value < result) ? value: result, null)
+	.reduce<number | null>((result, value) => (result === null || value < result) ? value : result, null)
 
 export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
 
@@ -759,17 +759,12 @@ export function Sleep(ms = 200) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export const ExecuteScript = async (script: string): Promise<string> =>
-	new Promise<string>((resolve, reject) => {
-		exec(script, async (error: ExecException | null, stdout: string, stderr: string) => {
-			if (error) {
-				reject(error)
-			} else {
-				if (stderr) {
-					console.log(`stderr: ${stderr}`)
-				}
-				
-				resolve(stdout)
-			}
-		})
-	})
+export const ExecuteScript = async (script: string): Promise<string> => {
+	const {stdout, stderr} = await exec(script)
+	
+	if (stderr) {
+		throw new Error(stderr.toString())
+	} else {
+		return stdout?.toString() ?? ''
+	}
+}
