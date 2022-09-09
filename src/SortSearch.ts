@@ -77,6 +77,11 @@ export const initialSortColumn: any = {
 
 export type TFindIsActive = boolean | null
 
+/**
+ * Converts Find Is Active type to a string
+ * @param findIsActive
+ * @constructor
+ */
 export const FindIsActiveString = (findIsActive: TFindIsActive): string => {
 	switch (findIsActive) {
 		case true:
@@ -88,8 +93,13 @@ export const FindIsActiveString = (findIsActive: TFindIsActive): string => {
 	}
 }
 
-export const StringFindIsActive = (findIsActive: string): TFindIsActive => {
-	switch (findIsActive) {
+/**
+ * Converts string to Find Is Active type
+ * @param findIsActiveString
+ * @constructor
+ */
+export const StringFindIsActive = (findIsActiveString: string): TFindIsActive => {
+	switch (findIsActiveString) {
 		case 'true':
 			return true
 		case 'false':

@@ -4069,6 +4069,11 @@ var initialSortColumn = {
     secondaryAscending: true,
     secondaryEmptyToBottom: null
 };
+/**
+ * Converts Find Is Active type to a string
+ * @param findIsActive
+ * @constructor
+ */
 var FindIsActiveString = function (findIsActive) {
     switch (findIsActive) {
         case true:
@@ -4079,8 +4084,13 @@ var FindIsActiveString = function (findIsActive) {
             return 'null';
     }
 };
-var StringFindIsActive = function (findIsActive) {
-    switch (findIsActive) {
+/**
+ * Converts string to Find Is Active type
+ * @param findIsActiveString
+ * @constructor
+ */
+var StringFindIsActive = function (findIsActiveString) {
+    switch (findIsActiveString) {
         case 'true':
             return true;
         case 'false':

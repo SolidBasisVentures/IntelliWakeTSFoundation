@@ -31,8 +31,18 @@ export interface ISortColumn<T = Record<string, any>> {
  */
 export declare const initialSortColumn: any;
 export declare type TFindIsActive = boolean | null;
+/**
+ * Converts Find Is Active type to a string
+ * @param findIsActive
+ * @constructor
+ */
 export declare const FindIsActiveString: (findIsActive: TFindIsActive) => string;
-export declare const StringFindIsActive: (findIsActive: string) => TFindIsActive;
+/**
+ * Converts string to Find Is Active type
+ * @param findIsActiveString
+ * @constructor
+ */
+export declare const StringFindIsActive: (findIsActiveString: string) => TFindIsActive;
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
  *
