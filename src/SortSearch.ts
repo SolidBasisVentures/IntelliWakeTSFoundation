@@ -77,6 +77,28 @@ export const initialSortColumn: any = {
 
 export type TFindIsActive = boolean | null
 
+export const FindIsActiveString = (findIsActive: TFindIsActive): string => {
+	switch (findIsActive) {
+		case true:
+			return 'true'
+		case false:
+			return 'false'
+		default:
+			return 'null'
+	}
+}
+
+export const StringFindIsActive = (findIsActive: string): TFindIsActive => {
+	switch (findIsActive) {
+		case 'true':
+			return true
+		case 'false':
+			return false
+		default:
+			return null
+	}
+}
+
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
  *

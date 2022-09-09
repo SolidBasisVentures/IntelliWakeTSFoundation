@@ -31,6 +31,8 @@ export interface ISortColumn<T = Record<string, any>> {
  */
 export declare const initialSortColumn: any;
 export declare type TFindIsActive = boolean | null;
+export declare const FindIsActiveString: (findIsActive: TFindIsActive) => string;
+export declare const StringFindIsActive: (findIsActive: string) => TFindIsActive;
 /**
  * A structure to pass to the server in an API REQUEST to tell it how to walk through pages of data.
  *

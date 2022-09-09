@@ -4069,6 +4069,26 @@ var initialSortColumn = {
     secondaryAscending: true,
     secondaryEmptyToBottom: null
 };
+var FindIsActiveString = function (findIsActive) {
+    switch (findIsActive) {
+        case true:
+            return 'true';
+        case false:
+            return 'false';
+        default:
+            return 'null';
+    }
+};
+var StringFindIsActive = function (findIsActive) {
+    switch (findIsActive) {
+        case 'true':
+            return true;
+        case 'false':
+            return false;
+        default:
+            return null;
+    }
+};
 var initialFilterSortPaginator = {
     page: 1,
     countPerPage: 50,
@@ -4639,6 +4659,7 @@ exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
+exports.FindIsActiveString = FindIsActiveString;
 exports.FormUrlEncoded = FormUrlEncoded;
 exports.FormatExternalURL = FormatExternalURL;
 exports.FormatPhoneNumber = FormatPhoneNumber;
@@ -4720,6 +4741,7 @@ exports.SortIndexNull = SortIndexNull;
 exports.SortPerArray = SortPerArray;
 exports.StringContainsSearch = StringContainsSearch;
 exports.StringContainsSearchTerms = StringContainsSearchTerms;
+exports.StringFindIsActive = StringFindIsActive;
 exports.StringHasDateData = StringHasDateData;
 exports.StringHasTimeData = StringHasTimeData;
 exports.StringHasTimeZoneData = StringHasTimeZoneData;
