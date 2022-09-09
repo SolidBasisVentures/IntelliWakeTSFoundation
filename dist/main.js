@@ -4098,7 +4098,7 @@ var initialFilterSortPaginator = {
     filterValues: {}
 };
 /**
- * Updates a the primary sort key of a sort column object, and returns the updated object.
+ * Updates the primary sort key of a sort column object, and returns the updated object.
  *
  * @example
  * // returns the updated object:

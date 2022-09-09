@@ -56,7 +56,7 @@ export declare const initialFilterSortPaginator: IPaginatorRequest<any>;
 /**
  * A structure returned in an API RESPONSE that tells the app what kind of data the counts found.
  *
- * page = The actual page returned, which may be different than the page requested if fewer pages exist than the page that was requested.
+ * page = The actual page returned, which may be different from the page requested if fewer pages exist than the page that was requested.
  * pageCount = The total number of pages there would be based on the count of rows found
  * rowCount = The total number of rows found
  * countPerPage = How many rows make up a page
@@ -71,7 +71,7 @@ export interface IPaginatorResponse<T = Record<string, any>> {
     rows: T[];
 }
 /**
- * Updates a the primary sort key of a sort column object, and returns the updated object.
+ * Updates the primary sort key of a sort column object, and returns the updated object.
  *
  * @example
  * // returns the updated object:
