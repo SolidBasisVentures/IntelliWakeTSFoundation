@@ -338,3 +338,4 @@ export declare const TimeSeries: (minuteIntervals: number, startTimeInclusive?: 
 export declare const TimeFloorMinute: (time: TDateAny, minuteIncrement?: number) => string | null;
 export declare const ESTTodayDateTimeLabel: () => string;
 export declare const ESTTodayDate: () => string;
+export declare const WeeksFromLabel: (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate?: string) => string;

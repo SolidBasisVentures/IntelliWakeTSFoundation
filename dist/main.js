@@ -3051,6 +3051,23 @@ var TimeFloorMinute = function (time, minuteIncrement) {
 };
 var ESTTodayDateTimeLabel = function () { return new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }); };
 var ESTTodayDate = function () { var _a; return (_a = DateFormat('Date', 'now', 'America/New_York')) !== null && _a !== void 0 ? _a : DateOnly('now'); };
+var WeeksFromLabel = function (date, startOf, compareDate) {
+    var _a;
+    if (compareDate === void 0) { compareDate = 'now'; }
+    if (!date)
+        return '';
+    var weeksFrom = (_a = DateDiff(DateOnly(compareDate, { week: startOf }), DateOnly(date, { week: startOf }), 'weeks')) !== null && _a !== void 0 ? _a : 0;
+    switch (weeksFrom) {
+        case 0:
+            return 'This Week';
+        case -1:
+            return 'Last Week';
+        case 1:
+            return 'Next Week';
+        default:
+            return ToDigits(Math.abs(weeksFrom)) + " Weeks " + (weeksFrom < 0 ? 'Ago' : 'from Now');
+    }
+};
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4794,6 +4811,7 @@ exports.Trunc = Trunc;
 exports.UCWords = UCWords;
 exports.ValidNumbers = ValidNumbers;
 exports.WeekDays = WeekDays;
+exports.WeeksFromLabel = WeeksFromLabel;
 exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
 exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
 exports.YYYYsMMsDD = YYYYsMMsDD;

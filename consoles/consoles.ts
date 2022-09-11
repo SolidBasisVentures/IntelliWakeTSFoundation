@@ -1,12 +1,10 @@
-import {AverageNumberNull, CleanNumbers, LeastNumber} from '../src/Functions'
+import {DateOnly, WeeksFromLabel} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.time('Consoles')
 
-console.log(CleanNumbers(1, 4, [1, 2, 4, 0, null]))
-console.log(LeastNumber(1, 4, [1, 2, 4, -1, null]))
-console.log(AverageNumberNull(1, 5, [6, null]))
+console.log(WeeksFromLabel(DateOnly('now', {weeks: 'StartOf', week: -1}), 'StartOf'))
 
 console.timeEnd('Consoles')
 

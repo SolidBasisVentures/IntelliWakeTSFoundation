@@ -1437,3 +1437,20 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 
 export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
 export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') ?? DateOnly('now')
+
+export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate = 'now'): string => {
+	if (!date) return ''
+	
+	const weeksFrom = DateDiff(DateOnly(compareDate, {week: startOf}), DateOnly(date, {week: startOf}), 'weeks') ?? 0
+	
+	switch (weeksFrom) {
+		case 0:
+			return 'This Week'
+		case -1:
+			return 'Last Week'
+		case 1:
+			return 'Next Week'
+		default:
+			return `${ToDigits(Math.abs(weeksFrom))} Weeks ${weeksFrom < 0 ? 'Ago' : 'from Now'}`
+	}
+}
