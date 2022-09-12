@@ -339,3 +339,5 @@ export declare const TimeFloorMinute: (time: TDateAny, minuteIncrement?: number)
 export declare const ESTTodayDateTimeLabel: () => string;
 export declare const ESTTodayDate: () => string;
 export declare const WeeksFromLabel: (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate?: string) => string;
+export declare const DateDoWSundayZero: (date?: TDateAny) => number | null;
+export declare const DateIsWeekend: (date?: TDateAny) => boolean;

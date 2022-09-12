@@ -1,10 +1,11 @@
-import {DateOnly, WeeksFromLabel} from '../src/DateManager'
+import {DateIsWeekend, DateOnly, WeeksFromLabel} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.time('Consoles')
 
 console.log(WeeksFromLabel(DateOnly('now', {weeks: 'StartOf', week: -1}), 'StartOf'))
+console.log('2022-09-12', DateIsWeekend('2022-09-12'))
 
 console.timeEnd('Consoles')
 

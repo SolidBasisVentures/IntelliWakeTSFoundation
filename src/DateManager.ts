@@ -1,4 +1,4 @@
-import {CleanNumber, ReplaceAll} from './Functions'
+import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
 
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
@@ -1453,4 +1453,14 @@ export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', 
 		default:
 			return `${ToDigits(Math.abs(weeksFrom))} Weeks ${weeksFrom < 0 ? 'Ago' : 'from Now'}`
 	}
+}
+
+export const DateDoWSundayZero = (date: TDateAny = 'now'): number | null => CleanNumberNull(DateFormatAny('d', DateOnly(date)))
+
+export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
+	const dow = DateDoWSundayZero(date)
+	
+	if (dow === null) return false
+	
+	return dow === 0 || dow === 6
 }

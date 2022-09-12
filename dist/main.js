@@ -3068,6 +3068,17 @@ var WeeksFromLabel = function (date, startOf, compareDate) {
             return ToDigits(Math.abs(weeksFrom)) + " Weeks " + (weeksFrom < 0 ? 'Ago' : 'from Now');
     }
 };
+var DateDoWSundayZero = function (date) {
+    if (date === void 0) { date = 'now'; }
+    return CleanNumberNull(DateFormatAny('d', DateOnly(date)));
+};
+var DateIsWeekend = function (date) {
+    if (date === void 0) { date = 'now'; }
+    var dow = DateDoWSundayZero(date);
+    if (dow === null)
+        return false;
+    return dow === 0 || dow === 6;
+};
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4666,10 +4677,12 @@ exports.DateDayOfWeek = DateDayOfWeek;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
 exports.DateDiffLongDescription = DateDiffLongDescription;
+exports.DateDoWSundayZero = DateDoWSundayZero;
 exports.DateFormat = DateFormat;
 exports.DateFormatAny = DateFormatAny;
 exports.DateICS = DateICS;
 exports.DateISO = DateISO;
+exports.DateIsWeekend = DateIsWeekend;
 exports.DateObject = DateObject;
 exports.DateOnly = DateOnly;
 exports.DateOnlyNull = DateOnlyNull;

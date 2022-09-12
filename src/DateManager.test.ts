@@ -5,7 +5,7 @@ import {
 	DateDiffComponents,
 	DateFormat,
 	DateFormatAny,
-	DateISO,
+	DateISO, DateIsWeekend,
 	DateOnly,
 	DateParseTS,
 	DateQuarter,
@@ -307,6 +307,10 @@ test('Date Managers', () => {
 	expect(TimeSeries(30, '08:00', '10:00')).toEqual(['08:00:00', '08:30:00', '09:00:00', '09:30:00'])
 	expect(TimeFloorMinute('08:28', 15)).toEqual('08:15:00')
 	expect(TimeFloorMinute('2022-05-10T12:28:00Z', 15)).toEqual('2022-05-10T12:15:00.000Z')
+	expect(DateIsWeekend('2022-09-12')).toEqual(false)
+	expect(DateIsWeekend('2022-09-11')).toEqual(true)
+	expect(DateIsWeekend('2022-09-10')).toEqual(true)
+	expect(DateIsWeekend('2022-09-09')).toEqual(false)
 })
 
 // '2021-12-22T14:41:24Z'
