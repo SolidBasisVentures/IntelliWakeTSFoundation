@@ -312,5 +312,3 @@ test('Date Managers', () => {
 	expect(DateIsWeekend('2022-09-10')).toEqual(true)
 	expect(DateIsWeekend('2022-09-09')).toEqual(false)
 })
-
-// '2021-12-22T14:41:24Z'
