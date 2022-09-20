@@ -221,7 +221,31 @@ export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) =
 export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
 export declare const DateDiff: (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration) => number | null;
-export declare const DateWeekNumber: (date: TDateAny) => number | null;
+export declare const DateWeekNumber: (date?: TDateAny, adjustments?: {
+    year?: number | "StartOf" | "EndOf" | undefined;
+    years?: number | "StartOf" | "EndOf" | undefined;
+    quarter?: number | "StartOf" | "EndOf" | undefined;
+    quarters?: number | "StartOf" | "EndOf" | undefined;
+    month?: number | "StartOf" | "EndOf" | undefined;
+    months?: number | "StartOf" | "EndOf" | undefined;
+    week?: number | "StartOf" | "EndOf" | undefined;
+    weeks?: number | "StartOf" | "EndOf" | undefined;
+    day?: number | "StartOf" | "EndOf" | undefined;
+    days?: number | "StartOf" | "EndOf" | undefined;
+    hour?: number | "StartOf" | "EndOf" | undefined;
+    hours?: number | "StartOf" | "EndOf" | undefined;
+    minute?: number | "StartOf" | "EndOf" | undefined;
+    minutes?: number | "StartOf" | "EndOf" | undefined;
+    second?: number | "StartOf" | "EndOf" | undefined;
+    seconds?: number | "StartOf" | "EndOf" | undefined;
+    millisecond?: number | "StartOf" | "EndOf" | undefined;
+    milliseconds?: number | "StartOf" | "EndOf" | undefined;
+} | {
+    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
+} | {
+    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
+} | undefined) => number | null;
+export declare const DateFromWeekNumber: (year: number, weekNumber: number, startOf?: 'StartOf' | 'StartOfMon') => string;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;
     month: number;

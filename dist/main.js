@@ -2643,39 +2643,19 @@ var DateDiff = function (dateFrom, dateTo, duration) {
     }
     return null;
 };
-var DateWeekNumber = function (date) {
-    var _a;
-    var currentdate = DateObject(date, { timezoneSource: 'UTC' });
-    if (!currentdate)
+var DateWeekNumber = function (date, adjustments) {
+    var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
+    if (!currentDate)
         return null;
-    // console.log(date, currentdate, currentdate.getUTCFullYear())
-    var oneJan = DateObject(currentdate.getUTCFullYear() + "-01-01T00:00:00Z");
-    if (!oneJan)
-        return null;
-    // console.log(oneJan)
-    var numberOfDays = (_a = DateDiff(oneJan, currentdate, 'days')) !== null && _a !== void 0 ? _a : 0;
-    // console.log('nOD', numberOfDays, currentdate.getDay())
-    var weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7);
-    if (weekNumber > 52)
-        return 1;
-    return weekNumber;
+    var startDate = new Date(currentDate.getFullYear(), 0, 1);
+    var days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000));
+    return Math.ceil(days / 7);
 };
-// export const DateWeekNumber = (date: TDateAny): number | null => {
-// 	let dateObject = DateObject(date)
-// 	if (!dateObject) return null
-//
-// 	dateObject.setHours(0, 0, 0, 0)
-// 	// Thursday in current week decides the year.
-// 	dateObject.setDate((dateObject.getDate() + 3 - (dateObject.getDay() + 6) % 7) + 1)
-// 	// January 4 is always in week 1.
-// 	const week1 = new Date(dateObject.getFullYear(), 0, 4)
-// 	// Adjust to Thursday in week 1 and count number of weeks from date to week1.
-// 	const weekNumber = 1 + (Math.round(((dateObject.getTime() - week1.getTime()) / 86400000)
-// 		- 3 + (week1.getDay() + 6) % 7) / 7)
-//
-// 	if (weekNumber > 52) return 1
-// 	return weekNumber
-// }
+var DateFromWeekNumber = function (year, weekNumber, startOf) {
+    if (startOf === void 0) { startOf = 'StartOf'; }
+    var days = weekNumber * 7;
+    return DateOnly(new Date(year, 0, days), { week: startOf });
+};
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     var returnComponents = {
@@ -4680,6 +4660,7 @@ exports.DateDiffLongDescription = DateDiffLongDescription;
 exports.DateDoWSundayZero = DateDoWSundayZero;
 exports.DateFormat = DateFormat;
 exports.DateFormatAny = DateFormatAny;
+exports.DateFromWeekNumber = DateFromWeekNumber;
 exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateIsWeekend = DateIsWeekend;
