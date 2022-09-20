@@ -990,43 +990,23 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
-export const DateWeekNumber = (date: TDateAny): number | null => {
-	const currentdate = DateObject(date, {timezoneSource: 'UTC'})
+export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): number | null => {
+	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
+	if (!currentDate) return null
 	
-	if (!currentdate) return null
+	const startDate = new Date(currentDate.getFullYear(), 0, 1)
 	
-	// console.log(date, currentdate, currentdate.getUTCFullYear())
+	const days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000))
 	
-	const oneJan = DateObject(`${currentdate.getUTCFullYear()}-01-01T00:00:00Z`)
-	if (!oneJan) return null
-	
-	// console.log(oneJan)
-	
-	const numberOfDays = DateDiff(oneJan, currentdate, 'days') ?? 0
-	
-	// console.log('nOD', numberOfDays, currentdate.getDay())
-	
-	const weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7)
-	if (weekNumber > 52) return 1
-	return weekNumber
+	return Math.ceil(days / 7)
 }
 
-// export const DateWeekNumber = (date: TDateAny): number | null => {
-// 	let dateObject = DateObject(date)
-// 	if (!dateObject) return null
-//
-// 	dateObject.setHours(0, 0, 0, 0)
-// 	// Thursday in current week decides the year.
-// 	dateObject.setDate((dateObject.getDate() + 3 - (dateObject.getDay() + 6) % 7) + 1)
-// 	// January 4 is always in week 1.
-// 	const week1 = new Date(dateObject.getFullYear(), 0, 4)
-// 	// Adjust to Thursday in week 1 and count number of weeks from date to week1.
-// 	const weekNumber = 1 + (Math.round(((dateObject.getTime() - week1.getTime()) / 86400000)
-// 		- 3 + (week1.getDay() + 6) % 7) / 7)
-//
-// 	if (weekNumber > 52) return 1
-// 	return weekNumber
-// }
+
+export const DateFromWeekNumber = (year: number, weekNumber: number, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
+	const days = weekNumber * 7
+	
+	return DateOnly(new Date(year, 0, days), {week: startOf})
+}
 
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 	year: number
