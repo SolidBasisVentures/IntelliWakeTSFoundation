@@ -996,14 +996,14 @@ export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): numb
 	
 	const startDate = new Date(currentDate.getFullYear(), 0, 1)
 	
-	const days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000))
+	const days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7
 	
 	return Math.ceil(days / 7)
 }
 
 
 export const DateFromWeekNumber = (year: number, weekNumber: number, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
-	const days = weekNumber * 7
+	const days = (weekNumber - 1) * 7
 	
 	return DateOnly(new Date(year, 0, days), {week: startOf})
 }
@@ -1269,7 +1269,7 @@ export interface IQuarter {
 	quarter: EQuarter
 }
 
-export const initialDateQuarter = (): IQuarter => ({
+export const InitialDateQuarter = (): IQuarter => ({
 	year: new Date().getFullYear(),
 	quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
 })
