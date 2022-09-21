@@ -221,6 +221,10 @@ export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) =
 export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
 export declare const DateDiff: (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration) => number | null;
+export interface IWeekNumber {
+    year: number;
+    week: number;
+}
 export declare const DateWeekNumber: (date?: TDateAny, adjustments?: {
     year?: number | "StartOf" | "EndOf" | undefined;
     years?: number | "StartOf" | "EndOf" | undefined;
@@ -244,8 +248,8 @@ export declare const DateWeekNumber: (date?: TDateAny, adjustments?: {
     week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } | {
     weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | undefined) => number | null;
-export declare const DateFromWeekNumber: (year: number, weekNumber: number, startOf?: 'StartOf' | 'StartOfMon') => string;
+} | undefined) => IWeekNumber | null;
+export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;
     month: number;

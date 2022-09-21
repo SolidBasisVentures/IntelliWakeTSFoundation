@@ -2647,14 +2647,16 @@ var DateWeekNumber = function (date, adjustments) {
     var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
     if (!currentDate)
         return null;
-    var startDate = new Date(currentDate.getFullYear(), 0, 1);
+    var year = CleanNumber(DateFormatAny('YYYY', date));
+    var startDate = new Date(year, 0, 1);
     var days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7;
-    return Math.ceil(days / 7);
+    var week = Math.ceil(days / 7);
+    return { year: year, week: week };
 };
-var DateFromWeekNumber = function (year, weekNumber, startOf) {
+var DateFromWeekNumber = function (weekNumber, startOf) {
     if (startOf === void 0) { startOf = 'StartOf'; }
-    var days = (weekNumber - 1) * 7;
-    return DateOnly(new Date(year, 0, days), { week: startOf });
+    var days = (weekNumber.week - 1) * 7;
+    return DateOnly(new Date(weekNumber.year, 0, days), { week: startOf });
 };
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
@@ -2790,7 +2792,7 @@ var checkType = function (evalCheck, diff) {
     return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
 };
 var DateCompare = function (date1, evalType, date2, minInterval) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     var date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
         ? DateParseTS('now', date2)
         : date2;
@@ -2814,9 +2816,9 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
         if (['week', 'weeks'].includes(minInterval)) {
             if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000)
                 return checkType(evalType, msDifference);
-            var weekDiff = ((_e = DateWeekNumber(date1)) !== null && _e !== void 0 ? _e : 0) - ((_f = DateWeekNumber(date2ToUse)) !== null && _f !== void 0 ? _f : 0);
+            var weekDiff = ((_f = (_e = DateWeekNumber(date1)) === null || _e === void 0 ? void 0 : _e.week) !== null && _f !== void 0 ? _f : 0) - ((_h = (_g = DateWeekNumber(date2ToUse)) === null || _g === void 0 ? void 0 : _g.week) !== null && _h !== void 0 ? _h : 0);
             // Check if in the same week that spans years
-            if (weekDiff === 0 && ((_g = DateWeekNumber(date1)) !== null && _g !== void 0 ? _g : 0) === 1 && Math.abs(yearDiff) > 1) {
+            if (weekDiff === 0 && ((_k = (_j = DateWeekNumber(date1)) === null || _j === void 0 ? void 0 : _j.week) !== null && _k !== void 0 ? _k : 0) === 1 && Math.abs(yearDiff) > 1) {
                 if (yearDiff !== 0)
                     return checkType(evalType, yearDiff);
             }

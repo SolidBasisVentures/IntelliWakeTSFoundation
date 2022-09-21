@@ -990,22 +990,30 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
-export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): number | null => {
+export interface IWeekNumber {
+	year: number
+	week: number
+}
+
+export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
 	if (!currentDate) return null
 	
-	const startDate = new Date(currentDate.getFullYear(), 0, 1)
+	const year = CleanNumber(DateFormatAny('YYYY', date))
+	
+	const startDate = new Date(year, 0, 1)
 	
 	const days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7
 	
-	return Math.ceil(days / 7)
+	const week = Math.ceil(days / 7)
+	
+	return {year: year, week: week}
 }
 
-
-export const DateFromWeekNumber = (year: number, weekNumber: number, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
-	const days = (weekNumber - 1) * 7
+export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
+	const days = (weekNumber.week - 1) * 7
 	
-	return DateOnly(new Date(year, 0, days), {week: startOf})
+	return DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
 }
 
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
@@ -1181,9 +1189,9 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 		
 		if (['week', 'weeks'].includes(minInterval)) {
 			if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000) return checkType(evalType, msDifference)
-			const weekDiff = (DateWeekNumber(date1) ?? 0) - (DateWeekNumber(date2ToUse) ?? 0)
+			const weekDiff = (DateWeekNumber(date1)?.week ?? 0) - (DateWeekNumber(date2ToUse)?.week ?? 0)
 			// Check if in the same week that spans years
-			if (weekDiff === 0 && (DateWeekNumber(date1) ?? 0) === 1 && Math.abs(yearDiff) > 1) {
+			if (weekDiff === 0 && (DateWeekNumber(date1)?.week ?? 0) === 1 && Math.abs(yearDiff) > 1) {
 				if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			}
 			

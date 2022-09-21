@@ -4,7 +4,7 @@ import {
 	DateDiff,
 	DateDiffComponents,
 	DateFormat,
-	DateFormatAny,
+	DateFormatAny, DateFromWeekNumber,
 	DateISO, DateIsWeekend,
 	DateOnly,
 	DateParseTS,
@@ -104,11 +104,14 @@ test('Date Managers', () => {
 		second: -1,
 		millisecond: 0
 	})
-	expect(DateWeekNumber('2021-01-01')).toEqual(1)
-	expect(DateWeekNumber('2021-01-02')).toEqual(1)
-	expect(DateWeekNumber('2021-01-03')).toEqual(2)
-	expect(DateWeekNumber('2021-01-09')).toEqual(2)
-	expect(DateWeekNumber('2021-01-10')).toEqual(3)
+	expect(DateWeekNumber('2021-01-01')).toEqual({year: 2021, week: 1})
+	expect(DateWeekNumber('2021-01-02')).toEqual({year: 2021, week: 1})
+	expect(DateWeekNumber('2021-01-03')).toEqual({year: 2021, week: 2})
+	expect(DateWeekNumber('2021-01-09')).toEqual({year: 2021, week: 2})
+	expect(DateWeekNumber('2021-01-10')).toEqual({year: 2021, week: 3})
+	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2020-12-27')
+	expect(DateFromWeekNumber({year: 2021, week: 2})).toEqual('2021-01-03')
+	expect(DateFromWeekNumber({year: 2021, week: 3})).toEqual('2021-01-10')
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T10:00:00Z', 'day')).toEqual(true)
