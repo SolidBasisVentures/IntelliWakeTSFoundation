@@ -2648,12 +2648,12 @@ var DateWeekNumber = function (date, adjustments) {
     if (!currentDate)
         return null;
     var startDate = new Date(currentDate.getFullYear(), 0, 1);
-    var days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000));
+    var days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7;
     return Math.ceil(days / 7);
 };
 var DateFromWeekNumber = function (year, weekNumber, startOf) {
     if (startOf === void 0) { startOf = 'StartOf'; }
-    var days = weekNumber * 7;
+    var days = (weekNumber - 1) * 7;
     return DateOnly(new Date(year, 0, days), { week: startOf });
 };
 var DateDiffComponents = function (dateFrom, dateTo) {
@@ -2891,7 +2891,7 @@ var DatesQuarter = function (year, quarter) {
         end: ((_b = DateISO(baseDate, { quarter: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10)
     };
 };
-var initialDateQuarter = function () { return ({
+var InitialDateQuarter = function () { return ({
     year: new Date().getFullYear(),
     quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
 }); };
@@ -4698,6 +4698,7 @@ exports.GreaterNumberNull = GreaterNumberNull;
 exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IANAOffset = IANAOffset;
+exports.InitialDateQuarter = InitialDateQuarter;
 exports.InvertColorHex = InvertColorHex;
 exports.InvertColorRGB = InvertColorRGB;
 exports.IsDateString = IsDateString;
@@ -4817,7 +4818,6 @@ exports.filterAsync = filterAsync;
 exports.findAsync = findAsync;
 exports.initialChanges = initialChanges;
 exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
-exports.initialDateQuarter = initialDateQuarter;
 exports.initialFilterSortPaginator = initialFilterSortPaginator;
 exports.initialIDChanges = initialIDChanges;
 exports.initialSortColumn = initialSortColumn;
