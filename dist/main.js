@@ -1771,6 +1771,12 @@ var ShortNumber = function (value, decimals, round) {
     } while (calcValue > 999);
     return showValue(calcValue, trillions);
 };
+var EllipsesAtMax = function (value, maxCharacters) {
+    if (maxCharacters === void 0) { maxCharacters = 15; }
+    if (!value || value.length <= maxCharacters)
+        return value;
+    return value.substring(0, maxCharacters) + "...";
+};
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -4680,6 +4686,7 @@ exports.DisplayNameFromObject = DisplayNameFromObject;
 exports.DurationLongDescription = DurationLongDescription;
 exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
+exports.EllipsesAtMax = EllipsesAtMax;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FindIsActiveString = FindIsActiveString;

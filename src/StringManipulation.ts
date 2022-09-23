@@ -831,3 +831,9 @@ export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'd
 	
 	return showValue(calcValue, trillions)
 }
+
+export const EllipsesAtMax = (value: string | null | undefined, maxCharacters: number = 15): string | null | undefined => {
+	if (!value || value.length <= maxCharacters) return value
+	
+	return `${value.substring(0, maxCharacters)}...`
+}
