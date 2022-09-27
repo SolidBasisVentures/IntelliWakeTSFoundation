@@ -3070,6 +3070,21 @@ var DateIsWeekend = function (date) {
         return false;
     return dow === 0 || dow === 6;
 };
+var DatesBetween = function (start, end, adjustments, limit) {
+    if (adjustments === void 0) { adjustments = { day: 1 }; }
+    if (limit === void 0) { limit = 1000; }
+    if (!Object.values(adjustments).some(function (val) { return CleanNumber(val) > 0; }))
+        return [];
+    var addDate = DateOnly(start);
+    var dates = [];
+    while (DateCompare(addDate, 'IsSameOrBefore', end, 'day')) {
+        dates.push(addDate);
+        addDate = DateOnly(addDate, adjustments);
+        if (dates.length >= limit)
+            break;
+    }
+    return dates;
+};
 
 function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
@@ -4682,6 +4697,7 @@ exports.DateOnlyNull = DateOnlyNull;
 exports.DateParseTS = DateParseTS;
 exports.DateQuarter = DateQuarter;
 exports.DateWeekNumber = DateWeekNumber;
+exports.DatesBetween = DatesBetween;
 exports.DatesQuarter = DatesQuarter;
 exports.DeepEqual = DeepEqual;
 exports.DigitsNth = DigitsNth;

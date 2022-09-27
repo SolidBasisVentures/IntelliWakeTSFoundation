@@ -995,7 +995,7 @@ export interface IWeekNumber {
 	week: number
 }
 
-export const DateComponent = (component: 'YYYY'| 'MM'| 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: TAdjustment): number =>
+export const DateComponent = (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: TAdjustment): number =>
 	CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)))
 
 export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
@@ -1454,4 +1454,19 @@ export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 	if (dow === null) return false
 	
 	return dow === 0 || dow === 6
+}
+
+export const DatesBetween = (start: TDateAny, end: TDateAny, adjustments: TDateOnlyAdjustment = {day: 1}, limit = 1000): string[] => {
+	if (!Object.values(adjustments).some(val => CleanNumber(val) > 0)) return []
+	
+	let addDate = DateOnly(start)
+	let dates: string[] = []
+	
+	while (DateCompare(addDate, 'IsSameOrBefore', end, 'day')) {
+		dates.push(addDate)
+		addDate = DateOnly(addDate, adjustments)
+		if (dates.length >= limit) break
+	}
+	
+	return dates
 }
