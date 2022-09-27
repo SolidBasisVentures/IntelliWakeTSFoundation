@@ -995,6 +995,9 @@ export interface IWeekNumber {
 	week: number
 }
 
+export const DateComponent = (component: 'YYYY'| 'MM'| 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: TAdjustment): number =>
+	CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)))
+
 export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
 	if (!currentDate) return null

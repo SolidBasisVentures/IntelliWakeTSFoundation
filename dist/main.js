@@ -2649,6 +2649,9 @@ var DateDiff = function (dateFrom, dateTo, duration) {
     }
     return null;
 };
+var DateComponent = function (component, date, adjustments) {
+    return CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)));
+};
 var DateWeekNumber = function (date, adjustments) {
     var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
     if (!currentDate)
@@ -4661,6 +4664,7 @@ exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
 exports.DataToTabDelim = DataToTabDelim;
 exports.DateAdjustTS = DateAdjustTS;
 exports.DateCompare = DateCompare;
+exports.DateComponent = DateComponent;
 exports.DateDayOfWeek = DateDayOfWeek;
 exports.DateDiff = DateDiff;
 exports.DateDiffComponents = DateDiffComponents;
