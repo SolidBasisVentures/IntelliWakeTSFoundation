@@ -611,17 +611,17 @@ export const ObjectContainsSearch = (object: any | null | undefined, search: str
 export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearchOptions): T[] => {
 	const searchTerms = SearchTerms(search)
 	
-	if (searchTerms.length === 0) {
+	const limit = CleanNumber(options?.limit)
+	
+	if (searchTerms.length === 0 && !limit) {
 		return arrayTable
 	}
-	
-	const limit = CleanNumber(options?.limit)
 	
 	return !limit ?
 		(arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
 		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any) => {
 			if (results.length >= limit) return results
-			if (ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
+			if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
 				return [...results, arrayRow]
 			} else {
 				return results

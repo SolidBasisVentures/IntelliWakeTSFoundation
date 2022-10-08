@@ -4538,10 +4538,22 @@ var ObjectContainsSearch = function (object, search, options) {
  */
 var SearchRows = function (arrayTable, search, options) {
     var searchTerms = SearchTerms(search);
-    if (searchTerms.length === 0) {
+    var limit = CleanNumber(options === null || options === void 0 ? void 0 : options.limit);
+    if (searchTerms.length === 0 && !limit) {
         return arrayTable;
     }
-    return (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms, options); });
+    return !limit ?
+        (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).filter(function (arrayRow) { return ObjectContainsSearchTerms(arrayRow, searchTerms, options); })
+        : (arrayTable !== null && arrayTable !== void 0 ? arrayTable : []).reduce(function (results, arrayRow) {
+            if (results.length >= limit)
+                return results;
+            if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
+                return __spreadArrays(results, [arrayRow]);
+            }
+            else {
+                return results;
+            }
+        }, []);
 };
 /**
  * Determines whether a search item object contains value from the search string.

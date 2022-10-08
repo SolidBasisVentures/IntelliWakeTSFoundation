@@ -228,6 +228,7 @@ export interface ISearchOptions {
     matchSomeTerm?: boolean;
     matchFromTerm?: number;
     matchUntilTerm?: number;
+    limit?: number;
 }
 /**
  * Determines whether an object contains search terms.
