@@ -1,4 +1,12 @@
-import {ObjectContainsSearchTerms, SearchRow, SortCompare, SortCompareNull, SortIndex, SortPerArray} from './SortSearch'
+import {
+	ObjectContainsSearchTerms,
+	SearchRow,
+	SearchRows,
+	SortCompare,
+	SortCompareNull,
+	SortIndex,
+	SortPerArray
+} from './SortSearch'
 
 test('SortCompare', () => {
 	expect([
@@ -133,4 +141,14 @@ test('Search', () => {
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 1})).toEqual(false)
 	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchFromTerm: 1})).toEqual(true)
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 2})).toEqual(false)
+	expect(SearchRows([
+		{user: 'john doe', age: 1},
+		{user: 'john doe', age: 2},
+		{user: 'john doe', age: 3},
+		{user: 'john doe', age: 4},
+		{user: 'john doe', age: 5}
+	], 'john', {limit: 2})).toEqual([
+		{user: 'john doe', age: 1},
+		{user: 'john doe', age: 2}
+	])
 })

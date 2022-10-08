@@ -513,6 +513,7 @@ export interface ISearchOptions {
 	matchSomeTerm?: boolean
 	matchFromTerm?: number
 	matchUntilTerm?: number
+	limit?: number
 }
 
 /**
@@ -614,7 +615,18 @@ export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearch
 		return arrayTable
 	}
 	
-	return (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
+	const limit = CleanNumber(options?.limit)
+	
+	return !limit ?
+		(arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
+		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any) => {
+			if (results.length >= limit) return results
+			if (ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
+				return [...results, arrayRow]
+			} else {
+				return results
+			}
+		}, [])
 }
 
 /**
