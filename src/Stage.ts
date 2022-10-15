@@ -33,7 +33,7 @@ export const IsStage = (stages: Stages | Stages[]): boolean => {
 /**
  */
 export const GetStage = (): Stages => {
-	return (process.env.REACT_APP_STAGE ?? process.env.STAGE ?? Stages.Local) as Stages
+	return (process.env.REACT_APP_STAGE ?? process.env.STAGE ?? process.env.VITE_APP_STAGE ?? Stages.Local) as Stages
 }
 
 /**
