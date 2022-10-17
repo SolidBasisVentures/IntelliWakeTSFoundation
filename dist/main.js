@@ -4588,7 +4588,9 @@ var SearchRow = function (searchItem, search, options) {
  * SearchSort(data, 'john 24', sortColumn)
  */
 var SearchSort = function (arrayTable, search, sortColumn, options) {
-    return SortColumns(SearchRows(arrayTable, search, options), sortColumn);
+    return !!(options === null || options === void 0 ? void 0 : options.limit) ?
+        SearchRows(SortColumns(arrayTable, sortColumn), search, options) :
+        SortColumns(SearchRows(arrayTable, search, options), sortColumn);
 };
 
 var ToID = function (item) { return typeof item === 'number' ? item : item.id; };

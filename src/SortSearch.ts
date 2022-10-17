@@ -665,5 +665,7 @@ export const SearchRow = (searchItem: object, search: string, options?: ISearchO
  * SearchSort(data, 'john 24', sortColumn)
  */
 export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>, options?: ISearchOptions): T[] => {
-	return SortColumns(SearchRows(arrayTable, search, options), sortColumn)
+	return !!options?.limit ?
+		SearchRows(SortColumns(arrayTable, sortColumn), search, options) :
+		SortColumns(SearchRows(arrayTable, search, options), sortColumn)
 }
