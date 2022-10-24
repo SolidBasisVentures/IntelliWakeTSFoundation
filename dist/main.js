@@ -4246,15 +4246,29 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
         return null;
     }
     if (!!emptyTo) {
-        if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
-            if (typeof afterValue === 'boolean')
-                return emptyTo === 'Top' ? 1 : -1;
-            return emptyTo === 'Top' ? -1 : 1;
+        if (emptyTo.endsWith('0')) {
+            if (!beforeValue && !afterValue) {
+                if (typeof afterValue === 'boolean')
+                    return emptyTo === 'Top0' ? 1 : -1;
+                return emptyTo === 'Top0' ? -1 : 1;
+            }
+            if (!afterValue && !beforeValue) {
+                if (typeof beforeValue === 'boolean')
+                    return emptyTo === 'Top0' ? -1 : 1;
+                return emptyTo === 'Top0' ? 1 : -1;
+            }
         }
-        if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
-            if (typeof beforeValue === 'boolean')
+        else {
+            if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
+                if (typeof afterValue === 'boolean')
+                    return emptyTo === 'Top' ? 1 : -1;
                 return emptyTo === 'Top' ? -1 : 1;
-            return emptyTo === 'Top' ? 1 : -1;
+            }
+            if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
+                if (typeof beforeValue === 'boolean')
+                    return emptyTo === 'Top' ? -1 : 1;
+                return emptyTo === 'Top' ? 1 : -1;
+            }
         }
     }
     if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {

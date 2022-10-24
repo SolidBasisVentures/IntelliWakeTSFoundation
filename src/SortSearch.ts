@@ -17,22 +17,22 @@ export function PagesForRange(current: number, length: number, spread: number = 
 	if (!(+length > 0)) {
 		return []
 	}
-	
+
 	const current_adjusted = +current < 1 ? 1 : +current > +length ? +length : +current
 	const spread_adjusted = +current < +spread || +current > +length - +spread ? +spread : Math.ceil(+spread / 2)
-	
+
 	let left = +current_adjusted - +spread_adjusted,
 		right = +current_adjusted + +spread_adjusted,
 		range: number[] = [],
 		rangeWithNull: (number | null)[] = [],
 		l
-	
+
 	for (let i = 1; i <= +length; i++) {
 		if (i === 1 || i === +length || (i >= left && i <= right)) {
 			range.push(i)
 		}
 	}
-	
+
 	for (let i of range) {
 		if (l) {
 			if (i - l === 2) {
@@ -44,7 +44,7 @@ export function PagesForRange(current: number, length: number, spread: number = 
 		rangeWithNull.push(i)
 		l = i
 	}
-	
+
 	return rangeWithNull
 }
 
@@ -239,23 +239,23 @@ const isEmpty = (val: any) => val === null || val === undefined || val === ''
 
 export const SortIndexNull = <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number | null => {
 	const verboseConsole = false //!!emptyTo
-	
+
 	if ((beforeValue ?? null) === (afterValue ?? null)) {
 		if (verboseConsole) console.log('Sames', beforeValue, afterValue)
 		return null
 	}
-	
+
 	if (!afterValue) {
 		if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
-		
+
 		return emptyTo === 'Top' ? -1 : 1
 	}
 	if (!beforeValue) {
 		if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
-		
+
 		return emptyTo === 'Top' ? 1 : -1
 	}
-	
+
 	return indexes.indexOf(beforeValue) - indexes.indexOf(afterValue)
 }
 
@@ -281,44 +281,59 @@ export const SortIndex = <T>(beforeValue: T | null | undefined, afterValue: T | 
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number | null => {
+export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null): number | null => {
 	const verboseConsole = false //!!emptyTo
-	
+
 	if (beforeValue === afterValue) {
 		if (verboseConsole) console.log('Sames', beforeValue, afterValue)
 		return null
 	}
-	
+
 	if (!!emptyTo) {
-		if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
-			if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
-			
-			if (typeof afterValue === 'boolean') return emptyTo === 'Top' ? 1 : -1
-			return emptyTo === 'Top' ? -1 : 1
-		}
-		if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
-			if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
-			
-			if (typeof beforeValue === 'boolean') return emptyTo === 'Top' ? -1 : 1
-			return emptyTo === 'Top' ? 1 : -1
+		if (emptyTo.endsWith('0')) {
+			if (!beforeValue && !afterValue) {
+				if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
+
+				if (typeof afterValue === 'boolean') return emptyTo === 'Top0' ? 1 : -1
+				return emptyTo === 'Top0' ? -1 : 1
+			}
+			if (!afterValue && !beforeValue) {
+				if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
+
+				if (typeof beforeValue === 'boolean') return emptyTo === 'Top0' ? -1 : 1
+				return emptyTo === 'Top0' ? 1 : -1
+			}
+		} else {
+			if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
+				if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
+
+				if (typeof afterValue === 'boolean') return emptyTo === 'Top' ? 1 : -1
+				return emptyTo === 'Top' ? -1 : 1
+			}
+			if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
+				if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
+
+				if (typeof beforeValue === 'boolean') return emptyTo === 'Top' ? -1 : 1
+				return emptyTo === 'Top' ? 1 : -1
+			}
 		}
 	}
-	
+
 	if (typeof beforeValue === 'boolean' && typeof afterValue === 'boolean') {
 		return (beforeValue ? 1 : 0) - (afterValue ? 1 : 0)
 	}
-	
+
 	const beforeNumber = CleanNumber(beforeValue, undefined, true)
 	const afterNumber = CleanNumber(afterValue, undefined, true)
-	
+
 	if (!isNaN(beforeNumber) && !isNaN(afterNumber)) {
 		if (verboseConsole) console.log('Numbers', beforeValue, beforeNumber, afterValue, afterNumber)
-		
+
 		return beforeNumber - afterNumber
 	}
-	
+
 	if (verboseConsole) console.log('Strings', beforeValue, afterValue, ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'}))
-	
+
 	return ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
 }
 
@@ -351,9 +366,9 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
  * @param sortIncrement
  * @constructor
  */
-export const ReSortOrder = <T extends {[key: string]: any, sort_order: number}>(items: T[], sortIncrement = 10): T[] => {
+export const ReSortOrder = <T extends { [key: string]: any, sort_order: number }>(items: T[], sortIncrement = 10): T[] => {
 	let newSort = 0
-	
+
 	return items.sort((a, b) => SortCompare(a.sort_order, b.sort_order)).map(item => ({
 		...item,
 		sort_order: newSort += sortIncrement
@@ -393,7 +408,7 @@ export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], empty
 			return emptyTo === 'Top' ? 1 : -1
 		}
 	}
-	
+
 	if (isEmpty(beforeValue)) {
 		if (isEmpty(afterValue)) {
 			return 0
@@ -405,7 +420,7 @@ export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], empty
 			return emptyTo === 'Top' ? 1 : -1
 		} else {
 			if (beforeValue === afterValue) return 0
-			
+
 			return order.indexOf(beforeValue) - order.indexOf(afterValue)
 		}
 	}
@@ -456,9 +471,9 @@ export const SearchTerms = (search: string | null | undefined, toLowerCase = tru
  */
 export const TermsToSearch = (terms: string | (string | null | undefined)[] | null | undefined, spacer = ' ', toLowerCase = true): string => {
 	if (!terms) return ''
-	
+
 	let search: string
-	
+
 	if (!Array.isArray(terms)) {
 		search = terms.trim()
 	} else {
@@ -468,9 +483,9 @@ export const TermsToSearch = (terms: string | (string | null | undefined)[] | nu
 			.join(spacer)
 			.trim()
 	}
-	
+
 	if (toLowerCase) return search.toLowerCase()
-	
+
 	return search
 }
 
@@ -483,9 +498,9 @@ export const TermsToSearch = (terms: string | (string | null | undefined)[] | nu
  */
 export const StringContainsSearchTerms = (value: string | null | undefined, searchTerms: string[]): boolean => {
 	if (searchTerms.length === 0) return true
-	
+
 	if (!value) return false
-	
+
 	return searchTerms.every((term) => value.includes(term))
 }
 
@@ -501,11 +516,11 @@ export const StringContainsSearchTerms = (value: string | null | undefined, sear
  */
 export const StringContainsSearch = (value: string | null | undefined, search: string | null | undefined): boolean => {
 	if (!search) return true
-	
+
 	if (!value) return false
-	
+
 	const searchTerms = SearchTerms(search)
-	
+
 	return StringContainsSearchTerms(value, searchTerms)
 }
 
@@ -528,36 +543,36 @@ export interface ISearchOptions {
  */
 export const ObjectContainsSearchTerms = (checkObject: object | null | undefined | object[], searchTerms: string[], options?: ISearchOptions): boolean => {
 	if (searchTerms.length === 0) return true
-	
+
 	if (!checkObject) return false
-	
+
 	if (typeof checkObject === 'object' && (checkObject as any).type?.toString().includes('react.')) return false
-	
+
 	const match = (term: string) => {
 		return Object.keys(checkObject).some((column) => {
 			const columnValue = (checkObject as any)[column]
 			const typeofColumn = typeof columnValue
-			
+
 			if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
 				return columnValue.toString().toLowerCase().includes(term.toLowerCase())
 			}
-			
+
 			if (Array.isArray(columnValue)) {
 				for (const obj of columnValue) {
 					if (ObjectContainsSearchTerms(obj, [term], options)) return true
 				}
 			}
-			
+
 			if (typeofColumn === 'object') {
 				return ObjectContainsSearchTerms(columnValue, [term], options)
 			}
-			
+
 			return false
 		})
 	}
-	
+
 	let useSearchTerms = searchTerms
-	
+
 	if (options?.matchUntilTerm !== undefined) {
 		if (options?.matchFromTerm !== undefined) {
 			if (options.matchFromTerm < options.matchUntilTerm) throw new Error(`Could not match terms from ${options.matchFromTerm} to ${options.matchUntilTerm}`)
@@ -572,7 +587,7 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 			useSearchTerms = useSearchTerms.slice(options.matchFromTerm)
 		}
 	}
-	
+
 	return options?.matchSomeTerm ? useSearchTerms.some(match) : useSearchTerms.every(match)
 }
 
@@ -588,11 +603,11 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
  */
 export const ObjectContainsSearch = (object: any | null | undefined, search: string | null | undefined, options?: ISearchOptions): boolean => {
 	if (!search) return true
-	
+
 	if (!object) return false
-	
+
 	const searchTerms = SearchTerms(search)
-	
+
 	return ObjectContainsSearchTerms(object, searchTerms, options)
 }
 
@@ -610,13 +625,13 @@ export const ObjectContainsSearch = (object: any | null | undefined, search: str
  */
 export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearchOptions): T[] => {
 	const searchTerms = SearchTerms(search)
-	
+
 	const limit = CleanNumber(options?.limit)
-	
+
 	if (searchTerms.length === 0 && !limit) {
 		return arrayTable
 	}
-	
+
 	return !limit ?
 		(arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
 		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any) => {
@@ -638,11 +653,11 @@ export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearch
  */
 export const SearchRow = (searchItem: object, search: string, options?: ISearchOptions): boolean => {
 	const searchTerms = SearchTerms(search)
-	
+
 	if (searchTerms.length === 0) {
 		return true
 	}
-	
+
 	return ObjectContainsSearchTerms(searchItem, searchTerms, options)
 }
 

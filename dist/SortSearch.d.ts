@@ -137,7 +137,7 @@ export declare const SortIndex: <T>(beforeValue: T | null | undefined, afterValu
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number | null;
+export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0') => number | null;
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
  *
