@@ -355,7 +355,7 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' = null): number => {
+export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null): number => {
 	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
 }
 
@@ -431,7 +431,7 @@ const SortColumnResult = (
 	valueB: any,
 	isAscending: boolean,
 	emptyToBottom: TSortColumnToBottom
-): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom' : 'Top' : undefined)
+): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom0' : 'Top0' : undefined)
 // {
 // 	if (!!emptyToBottom) {
 // 		if (!valueA && !!valueB) return 1

@@ -4370,7 +4370,7 @@ var SortPerArray = function (beforeValue, afterValue, order, emptyTo) {
         }
     }
 };
-var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom' : 'Top' : undefined); };
+var SortColumnResult = function (valueA, valueB, isAscending, emptyToBottom) { return SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom0' : 'Top0' : undefined); };
 // {
 // 	if (!!emptyToBottom) {
 // 		if (!valueA && !!valueB) return 1

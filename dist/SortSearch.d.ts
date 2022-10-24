@@ -156,7 +156,7 @@ export declare const SortCompareNull: (beforeValue: any, afterValue: any, emptyT
         { id: 2, name: 'ZZZ', prioritized: false }
     ]
  */
-export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom') => number;
+export declare const SortCompare: (beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0') => number;
 /**
  * Sorts the provided array with a "sort_order" column and re-defines the increments
  *
