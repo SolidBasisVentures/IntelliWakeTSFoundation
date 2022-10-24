@@ -4247,12 +4247,12 @@ var SortCompareNull = function (beforeValue, afterValue, emptyTo) {
     }
     if (!!emptyTo) {
         if (emptyTo.endsWith('0')) {
-            if (!beforeValue && !afterValue) {
+            if (!beforeValue && !!afterValue) {
                 if (typeof afterValue === 'boolean')
                     return emptyTo === 'Top0' ? 1 : -1;
                 return emptyTo === 'Top0' ? -1 : 1;
             }
-            if (!afterValue && !beforeValue) {
+            if (!afterValue && !!beforeValue) {
                 if (typeof beforeValue === 'boolean')
                     return emptyTo === 'Top0' ? -1 : 1;
                 return emptyTo === 'Top0' ? 1 : -1;
