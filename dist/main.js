@@ -3918,6 +3918,11 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
+var EnumValues = function (enumumerator) { return Object.values(enumumerator); };
+var EnumKeys = function (enumerator) { return Object.keys(enumerator); };
+var EnumKeyFromValue = function (enumumerator, value) { return Object.keys(enumumerator)[Object.values(enumumerator).indexOf(value)]; };
+var EnumValueFromKey = function (enumumerator, value) { return Object.values(enumumerator)[Object.keys(enumumerator).indexOf(value)]; };
+
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
         if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
@@ -4735,6 +4740,10 @@ exports.DurationLongDescription = DurationLongDescription;
 exports.ESTTodayDate = ESTTodayDate;
 exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
 exports.EllipsesAtMax = EllipsesAtMax;
+exports.EnumKeyFromValue = EnumKeyFromValue;
+exports.EnumKeys = EnumKeys;
+exports.EnumValueFromKey = EnumValueFromKey;
+exports.EnumValues = EnumValues;
 exports.EvaluateCondition = EvaluateCondition;
 exports.EvaluateString = EvaluateString;
 exports.FindIsActiveString = FindIsActiveString;
