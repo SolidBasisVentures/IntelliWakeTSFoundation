@@ -66,12 +66,39 @@ function __generator(thisArg, body) {
     }
 }
 
-function __spreadArrays() {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+function __values(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
+
+function __read(o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+}
+
+function __spread() {
+    for (var ar = [], i = 0; i < arguments.length; i++)
+        ar = ar.concat(__read(arguments[i]));
+    return ar;
 }
 
 var initialConsoleLogTableDef = {
@@ -130,6 +157,7 @@ var ConsoleColor = {
  * consoleLogTable(data)
  */
 var consoleLogTable = function (arrayData, tableDef) {
+    var e_1, _a;
     if (tableDef === void 0) { tableDef = initialConsoleLogTableDef; }
     var nullIndicator = '(null)';
     if (arrayData.length === 0)
@@ -174,43 +202,52 @@ var consoleLogTable = function (arrayData, tableDef) {
         })
             .join('---'));
     }
-    for (var _i = 0, arrayData_1 = arrayData; _i < arrayData_1.length; _i++) {
-        var dataItem = arrayData_1[_i];
-        console.log(dataItem
-            .map(function (columnValue, idx) {
-            var _a, _b, _c;
-            var text = (columnValue !== null && columnValue !== void 0 ? columnValue : '(null)').toString();
-            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
-            if (!!columnDef) {
-                if (columnDef.justify === 'L') {
-                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : ' ');
-                }
-                else {
-                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : ' ');
-                }
-            }
-            return text;
-        })
-            .join('   '));
-        if (useTableDef.firstRowIsHeader && firstRow) {
+    try {
+        for (var arrayData_1 = __values(arrayData), arrayData_1_1 = arrayData_1.next(); !arrayData_1_1.done; arrayData_1_1 = arrayData_1.next()) {
+            var dataItem = arrayData_1_1.value;
             console.log(dataItem
-                .map(function (_columnValue, idx) {
+                .map(function (columnValue, idx) {
                 var _a, _b, _c;
-                var text = '';
+                var text = (columnValue !== null && columnValue !== void 0 ? columnValue : '(null)').toString();
                 var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
                 if (!!columnDef) {
                     if (columnDef.justify === 'L') {
-                        text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
+                        text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : ' ');
                     }
                     else {
-                        text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
+                        text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : ' ');
                     }
                 }
                 return text;
             })
-                .join('---'));
+                .join('   '));
+            if (useTableDef.firstRowIsHeader && firstRow) {
+                console.log(dataItem
+                    .map(function (_columnValue, idx) {
+                    var _a, _b, _c;
+                    var text = '';
+                    var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
+                    if (!!columnDef) {
+                        if (columnDef.justify === 'L') {
+                            text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
+                        }
+                        else {
+                            text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
+                        }
+                    }
+                    return text;
+                })
+                    .join('---'));
+            }
+            firstRow = false;
         }
-        firstRow = false;
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (arrayData_1_1 && !arrayData_1_1.done && (_a = arrayData_1.return)) _a.call(arrayData_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     if (useTableDef.surroundingLines) {
         console.log(arrayData[0]
@@ -248,13 +285,23 @@ var consoleLogTable = function (arrayData, tableDef) {
  * ReplaceAll(' ', '-', 'john doe bob')
  */
 var ReplaceAll = function (find, replace, subject) {
+    var e_1, _a;
     if (!subject)
         return '';
     if (Array.isArray(find)) {
         var result = subject;
-        for (var _i = 0, find_1 = find; _i < find_1.length; _i++) {
-            var findItem = find_1[_i];
-            result = ReplaceAll(findItem, replace, result);
+        try {
+            for (var find_1 = __values(find), find_1_1 = find_1.next(); !find_1_1.done; find_1_1 = find_1.next()) {
+                var findItem = find_1_1.value;
+                result = ReplaceAll(findItem, replace, result);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (find_1_1 && !find_1_1.done && (_a = find_1.return)) _a.call(find_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         return result;
     }
@@ -307,7 +354,7 @@ var GreaterNumber = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
     }
-    return (_a = GreaterNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
+    return (_a = GreaterNumberNull.apply(void 0, __spread(values))) !== null && _a !== void 0 ? _a : 0;
 };
 var LeastNumberNull = function () {
     var values = [];
@@ -323,28 +370,56 @@ var LeastNumber = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
     }
-    return (_a = LeastNumberNull.apply(void 0, values)) !== null && _a !== void 0 ? _a : 0;
+    return (_a = LeastNumberNull.apply(void 0, __spread(values))) !== null && _a !== void 0 ? _a : 0;
 };
 var ValidNumbers = function () {
+    var e_2, _a, e_3, _b, e_4, _c;
     var values = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         values[_i] = arguments[_i];
     }
     var returnValues = [];
-    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
-        var value = values_1[_a];
-        var valueArray = ToArray(value);
-        for (var _b = 0, valueArray_1 = valueArray; _b < valueArray_1.length; _b++) {
-            var valueItem = valueArray_1[_b];
-            var subArray = ToArray(valueItem);
-            for (var _c = 0, subArray_1 = subArray; _c < subArray_1.length; _c++) {
-                var subItem = subArray_1[_c];
-                var calc = CleanNumberNull(subItem);
-                if (calc !== null) {
-                    returnValues = __spreadArrays(returnValues, [calc]);
+    try {
+        for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
+            var value = values_1_1.value;
+            var valueArray = ToArray(value);
+            try {
+                for (var valueArray_1 = (e_3 = void 0, __values(valueArray)), valueArray_1_1 = valueArray_1.next(); !valueArray_1_1.done; valueArray_1_1 = valueArray_1.next()) {
+                    var valueItem = valueArray_1_1.value;
+                    var subArray = ToArray(valueItem);
+                    try {
+                        for (var subArray_1 = (e_4 = void 0, __values(subArray)), subArray_1_1 = subArray_1.next(); !subArray_1_1.done; subArray_1_1 = subArray_1.next()) {
+                            var subItem = subArray_1_1.value;
+                            var calc = CleanNumberNull(subItem);
+                            if (calc !== null) {
+                                returnValues = __spread(returnValues, [calc]);
+                            }
+                        }
+                    }
+                    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+                    finally {
+                        try {
+                            if (subArray_1_1 && !subArray_1_1.done && (_c = subArray_1.return)) _c.call(subArray_1);
+                        }
+                        finally { if (e_4) throw e_4.error; }
+                    }
                 }
             }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (valueArray_1_1 && !valueArray_1_1.done && (_b = valueArray_1.return)) _b.call(valueArray_1);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
         }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (values_1_1 && !values_1_1.done && (_a = values_1.return)) _a.call(values_1);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     return returnValues;
 };
@@ -724,25 +799,38 @@ var str2ab = function (str) {
  * @param predicate
  */
 var findAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_1, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var array_1, array_1_1, t, e_5_1;
+    var e_5, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _i = 0, array_1 = array;
-                _a.label = 1;
+                _b.trys.push([0, 5, 6, 7]);
+                array_1 = __values(array), array_1_1 = array_1.next();
+                _b.label = 1;
             case 1:
-                if (!(_i < array_1.length)) return [3 /*break*/, 4];
-                t = array_1[_i];
+                if (!!array_1_1.done) return [3 /*break*/, 4];
+                t = array_1_1.value;
                 return [4 /*yield*/, predicate(t)];
             case 2:
-                if (_a.sent()) {
+                if (_b.sent()) {
                     return [2 /*return*/, t];
                 }
-                _a.label = 3;
+                _b.label = 3;
             case 3:
-                _i++;
+                array_1_1 = array_1.next();
                 return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, undefined];
+            case 4: return [3 /*break*/, 7];
+            case 5:
+                e_5_1 = _b.sent();
+                e_5 = { error: e_5_1 };
+                return [3 /*break*/, 7];
+            case 6:
+                try {
+                    if (array_1_1 && !array_1_1.done && (_a = array_1.return)) _a.call(array_1);
+                }
+                finally { if (e_5) throw e_5.error; }
+                return [7 /*endfinally*/];
+            case 7: return [2 /*return*/, undefined];
         }
     });
 }); };
@@ -752,25 +840,38 @@ var findAsync = function (array, predicate) { return __awaiter(void 0, void 0, v
  * @param predicate
  */
 var someAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_2, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var array_2, array_2_1, t, e_6_1;
+    var e_6, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _i = 0, array_2 = array;
-                _a.label = 1;
+                _b.trys.push([0, 5, 6, 7]);
+                array_2 = __values(array), array_2_1 = array_2.next();
+                _b.label = 1;
             case 1:
-                if (!(_i < array_2.length)) return [3 /*break*/, 4];
-                t = array_2[_i];
+                if (!!array_2_1.done) return [3 /*break*/, 4];
+                t = array_2_1.value;
                 return [4 /*yield*/, predicate(t)];
             case 2:
-                if (_a.sent()) {
+                if (_b.sent()) {
                     return [2 /*return*/, true];
                 }
-                _a.label = 3;
+                _b.label = 3;
             case 3:
-                _i++;
+                array_2_1 = array_2.next();
                 return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, false];
+            case 4: return [3 /*break*/, 7];
+            case 5:
+                e_6_1 = _b.sent();
+                e_6 = { error: e_6_1 };
+                return [3 /*break*/, 7];
+            case 6:
+                try {
+                    if (array_2_1 && !array_2_1.done && (_a = array_2.return)) _a.call(array_2);
+                }
+                finally { if (e_6) throw e_6.error; }
+                return [7 /*endfinally*/];
+            case 7: return [2 /*return*/, false];
         }
     });
 }); };
@@ -780,25 +881,38 @@ var someAsync = function (array, predicate) { return __awaiter(void 0, void 0, v
  * @param predicate
  */
 var everyAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var _i, array_3, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var array_3, array_3_1, t, e_7_1;
+    var e_7, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _i = 0, array_3 = array;
-                _a.label = 1;
+                _b.trys.push([0, 5, 6, 7]);
+                array_3 = __values(array), array_3_1 = array_3.next();
+                _b.label = 1;
             case 1:
-                if (!(_i < array_3.length)) return [3 /*break*/, 4];
-                t = array_3[_i];
+                if (!!array_3_1.done) return [3 /*break*/, 4];
+                t = array_3_1.value;
                 return [4 /*yield*/, predicate(t)];
             case 2:
-                if (!(_a.sent())) {
+                if (!(_b.sent())) {
                     return [2 /*return*/, false];
                 }
-                _a.label = 3;
+                _b.label = 3;
             case 3:
-                _i++;
+                array_3_1 = array_3.next();
                 return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, true];
+            case 4: return [3 /*break*/, 7];
+            case 5:
+                e_7_1 = _b.sent();
+                e_7 = { error: e_7_1 };
+                return [3 /*break*/, 7];
+            case 6:
+                try {
+                    if (array_3_1 && !array_3_1.done && (_a = array_3.return)) _a.call(array_3);
+                }
+                finally { if (e_7) throw e_7.error; }
+                return [7 /*endfinally*/];
+            case 7: return [2 /*return*/, true];
         }
     });
 }); };
@@ -808,26 +922,41 @@ var everyAsync = function (array, predicate) { return __awaiter(void 0, void 0, 
  * @param predicate
  */
 var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0, void 0, function () {
-    var returnArray, _i, array_4, t;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var returnArray, array_4, array_4_1, t, e_8_1;
+    var e_8, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 returnArray = [];
-                _i = 0, array_4 = array;
-                _a.label = 1;
+                _b.label = 1;
             case 1:
-                if (!(_i < array_4.length)) return [3 /*break*/, 4];
-                t = array_4[_i];
-                return [4 /*yield*/, predicate(t)];
+                _b.trys.push([1, 6, 7, 8]);
+                array_4 = __values(array), array_4_1 = array_4.next();
+                _b.label = 2;
             case 2:
-                if (_a.sent()) {
+                if (!!array_4_1.done) return [3 /*break*/, 5];
+                t = array_4_1.value;
+                return [4 /*yield*/, predicate(t)];
+            case 3:
+                if (_b.sent()) {
                     returnArray.push(t);
                 }
-                _a.label = 3;
-            case 3:
-                _i++;
-                return [3 /*break*/, 1];
-            case 4: return [2 /*return*/, returnArray];
+                _b.label = 4;
+            case 4:
+                array_4_1 = array_4.next();
+                return [3 /*break*/, 2];
+            case 5: return [3 /*break*/, 8];
+            case 6:
+                e_8_1 = _b.sent();
+                e_8 = { error: e_8_1 };
+                return [3 /*break*/, 8];
+            case 7:
+                try {
+                    if (array_4_1 && !array_4_1.done && (_a = array_4.return)) _a.call(array_4);
+                }
+                finally { if (e_8) throw e_8.error; }
+                return [7 /*endfinally*/];
+            case 8: return [2 /*return*/, returnArray];
         }
     });
 }); };
@@ -914,48 +1043,78 @@ function PickProperty(obj) {
     return ret;
 }
 function RemoveStarting(remove, value, recursive) {
+    var e_9, _a;
     if (recursive === void 0) { recursive = false; }
     if (!value || !remove)
         return '';
     var arrayRemove = ToArray(remove);
     var newValue = value;
     do {
-        for (var _i = 0, arrayRemove_1 = arrayRemove; _i < arrayRemove_1.length; _i++) {
-            var aRemove = arrayRemove_1[_i];
-            if (newValue.startsWith(aRemove)) {
-                newValue = newValue.substring(aRemove.length);
+        try {
+            for (var arrayRemove_1 = (e_9 = void 0, __values(arrayRemove)), arrayRemove_1_1 = arrayRemove_1.next(); !arrayRemove_1_1.done; arrayRemove_1_1 = arrayRemove_1.next()) {
+                var aRemove = arrayRemove_1_1.value;
+                if (newValue.startsWith(aRemove)) {
+                    newValue = newValue.substring(aRemove.length);
+                }
             }
+        }
+        catch (e_9_1) { e_9 = { error: e_9_1 }; }
+        finally {
+            try {
+                if (arrayRemove_1_1 && !arrayRemove_1_1.done && (_a = arrayRemove_1.return)) _a.call(arrayRemove_1);
+            }
+            finally { if (e_9) throw e_9.error; }
         }
     } while (recursive && arrayRemove.some(function (aRemove) { return newValue.startsWith(aRemove); }));
     return newValue;
 }
 function RemoveEnding(remove, value, recursive) {
+    var e_10, _a;
     if (recursive === void 0) { recursive = false; }
     if (!value || !remove)
         return '';
     var arrayRemove = ToArray(remove);
     var newValue = value;
     do {
-        for (var _i = 0, arrayRemove_2 = arrayRemove; _i < arrayRemove_2.length; _i++) {
-            var aRemove = arrayRemove_2[_i];
-            if (newValue.endsWith(aRemove)) {
-                newValue = newValue.substring(0, newValue.length - aRemove.length);
+        try {
+            for (var arrayRemove_2 = (e_10 = void 0, __values(arrayRemove)), arrayRemove_2_1 = arrayRemove_2.next(); !arrayRemove_2_1.done; arrayRemove_2_1 = arrayRemove_2.next()) {
+                var aRemove = arrayRemove_2_1.value;
+                if (newValue.endsWith(aRemove)) {
+                    newValue = newValue.substring(0, newValue.length - aRemove.length);
+                }
             }
+        }
+        catch (e_10_1) { e_10 = { error: e_10_1 }; }
+        finally {
+            try {
+                if (arrayRemove_2_1 && !arrayRemove_2_1.done && (_a = arrayRemove_2.return)) _a.call(arrayRemove_2);
+            }
+            finally { if (e_10) throw e_10.error; }
         }
     } while (recursive && arrayRemove.some(function (aRemove) { return newValue.endsWith(aRemove); }));
     return newValue;
 }
 function CoalesceFalsey(checkVal) {
+    var e_11, _a;
     var otherVals = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         otherVals[_i - 1] = arguments[_i];
     }
     if (!!checkVal || otherVals.length === 0)
         return checkVal;
-    for (var _a = 0, otherVals_1 = otherVals; _a < otherVals_1.length; _a++) {
-        var otherVal = otherVals_1[_a];
-        if (!!otherVal)
-            return otherVal;
+    try {
+        for (var otherVals_1 = __values(otherVals), otherVals_1_1 = otherVals_1.next(); !otherVals_1_1.done; otherVals_1_1 = otherVals_1.next()) {
+            var otherVal = otherVals_1_1.value;
+            if (!!otherVal)
+                return otherVal;
+        }
+    }
+    catch (e_11_1) { e_11 = { error: e_11_1 }; }
+    finally {
+        try {
+            if (otherVals_1_1 && !otherVals_1_1.done && (_a = otherVals_1.return)) _a.call(otherVals_1);
+        }
+        finally { if (e_11) throw e_11.error; }
     }
     return otherVals[otherVals.length - 1];
 }
@@ -998,7 +1157,7 @@ var RBGFromHex = function (hex) {
  * @constructor
  */
 var ColorBrightnessHex = function (hex) {
-    var _a = RBGFromHex(hex), r = _a[0], g = _a[1], b = _a[2];
+    var _a = __read(RBGFromHex(hex), 3), r = _a[0], g = _a[1], b = _a[2];
     return ColorBrightnessRGB(r, g, b);
 };
 /**
@@ -1031,7 +1190,7 @@ function InvertColorRGB(r, g, b, bw) {
  */
 function InvertColorHex(hex, bw) {
     if (bw === void 0) { bw = false; }
-    var _a = RBGFromHex(hex), r = _a[0], g = _a[1], b = _a[2];
+    var _a = __read(RBGFromHex(hex), 3), r = _a[0], g = _a[1], b = _a[2];
     return InvertColorRGB(r, g, b, bw);
 }
 function Sleep(ms) {
@@ -2024,7 +2183,8 @@ var DateICS = function (date, adjustments) {
     return dateICS;
 };
 var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
-    var _a, _b, _c;
+    var e_1, _a;
+    var _b, _c, _d;
     var noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date);
     var dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined));
     // console.log('DFA', date, dateObject)
@@ -2034,12 +2194,12 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
             var sourceDate = (!!date && date !== 'now' && date !== 'today') ? dateObject : undefined;
-            var sourceOffset = (_a = IANAOffset(timezoneSource, sourceDate)) !== null && _a !== void 0 ? _a : 0; // Chic 5
-            var displayOffset = (_b = IANAOffset(timezoneDisplay, sourceDate)) !== null && _b !== void 0 ? _b : 0; // Chic 6
+            var sourceOffset = (_b = IANAOffset(timezoneSource, sourceDate)) !== null && _b !== void 0 ? _b : 0; // Chic 5
+            var displayOffset = (_c = IANAOffset(timezoneDisplay, sourceDate)) !== null && _c !== void 0 ? _c : 0; // Chic 6
             var offset = noTZInfo ?
                 !timezoneSource ?
                     (displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
-                    (((_c = IANAOffset(undefined, sourceDate)) !== null && _c !== void 0 ? _c : 0) - sourceOffset) - (displayOffset - sourceOffset) :
+                    (((_d = IANAOffset(undefined, sourceDate)) !== null && _d !== void 0 ? _d : 0) - sourceOffset) - (displayOffset - sourceOffset) :
                 (sourceOffset - displayOffset);
             // console.log('DFA', date, noTZInfo, timezoneSource, sourceOffset, timezoneDisplay, displayOffset, offset)
             // if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
@@ -2218,9 +2378,18 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             previousChar = formatChar;
         }
     };
-    for (var _i = 0, formatArray_1 = formatArray; _i < formatArray_1.length; _i++) {
-        var formatChar = formatArray_1[_i];
-        _loop_1(formatChar);
+    try {
+        for (var formatArray_1 = __values(formatArray), formatArray_1_1 = formatArray_1.next(); !formatArray_1_1.done; formatArray_1_1 = formatArray_1.next()) {
+            var formatChar = formatArray_1_1.value;
+            _loop_1(formatChar);
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (formatArray_1_1 && !formatArray_1_1.done && (_a = formatArray_1.return)) _a.call(formatArray_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     result += applyCommand(command, dateObject);
     return result;
@@ -2337,257 +2506,267 @@ var DateAdjustMonthTS = function (date, months) {
     return dateTS;
 };
 var DateAdjustTS = function (date, adjustments) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11;
+    var e_2, _a;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12;
     var dateTS = DateParseTSInternal(date);
-    for (var _i = 0, _12 = Object.keys(adjustments); _i < _12.length; _i++) {
-        var key = _12[_i];
-        if (!dateTS)
-            return null;
-        switch (key) {
-            case 'year':
-            case 'years':
-                switch (adjustments[key]) {
-                    case 'StartOf':
-                        {
-                            var dateObj = (_a = DateObject(dateTS)) !== null && _a !== void 0 ? _a : new Date();
-                            dateTS = (_b = DateAdjustTS(dateTS, {
-                                month: dateObj.getUTCMonth() * -1,
-                                months: 'StartOf'
-                            })) !== null && _b !== void 0 ? _b : 0;
-                        }
-                        break;
-                    case 'EndOf':
-                        {
-                            var dateObj = (_c = DateObject(dateTS)) !== null && _c !== void 0 ? _c : new Date();
-                            dateTS = (_d = DateAdjustTS(dateTS, {
-                                month: 11 - dateObj.getUTCMonth(),
-                                months: 'EndOf'
-                            })) !== null && _d !== void 0 ? _d : 0;
-                        }
-                        break;
-                    default:
-                        dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12);
-                        break;
-                }
-                break;
-            case 'month':
-            case 'months':
-                switch (adjustments[key]) {
-                    case 'StartOf':
-                        {
-                            var dateObj = (_e = DateObject(dateTS)) !== null && _e !== void 0 ? _e : new Date();
-                            dateTS = (_f = DateAdjustTS(dateTS, {
-                                day: (dateObj.getUTCDate() - 1) * -1,
-                                days: 'StartOf'
-                            })) !== null && _f !== void 0 ? _f : 0;
-                        }
-                        break;
-                    case 'EndOf':
-                        {
-                            var dateObj = (_g = DateObject(dateTS)) !== null && _g !== void 0 ? _g : new Date();
-                            dateTS = (_h = DateAdjustTS(dateTS, {
-                                day: DateDaysInMonth(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
-                                days: 'EndOf'
-                            })) !== null && _h !== void 0 ? _h : 0;
-                        }
-                        break;
-                    default:
-                        dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]));
-                        break;
-                }
-                break;
-            case 'quarter':
-            case 'quarters':
-                switch (adjustments[key]) {
-                    case 'StartOf':
-                        {
-                            var dateObj = (_j = DateObject(dateTS)) !== null && _j !== void 0 ? _j : new Date();
-                            dateTS = (_k = DateAdjustTS(dateTS, {
-                                month: (dateObj.getUTCMonth() % 3) * -1,
-                                months: 'StartOf'
-                            })) !== null && _k !== void 0 ? _k : 0;
-                        }
-                        break;
-                    case 'EndOf':
-                        {
-                            var dateObj = (_l = DateObject(dateTS)) !== null && _l !== void 0 ? _l : new Date();
-                            dateTS = (_m = DateAdjustTS(dateTS, {
-                                month: 2 - (dateObj.getUTCMonth() % 3),
-                                months: 'EndOf'
-                            })) !== null && _m !== void 0 ? _m : 0;
-                        }
-                        break;
-                    default:
-                        dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 3);
-                        break;
-                }
-                break;
-            default:
-                if (!dateTS)
-                    return null;
-                switch (key) {
-                    case 'week':
-                    case 'weeks':
-                        switch (adjustments[key]) {
-                            case 'StartOf':
-                                {
-                                    var dateObj = (_o = DateObject(dateTS)) !== null && _o !== void 0 ? _o : new Date();
-                                    dateTS = (_p = DateAdjustTS(dateTS, {
-                                        day: dateObj.getUTCDay() * -1,
-                                        days: 'StartOf'
-                                    })) !== null && _p !== void 0 ? _p : 0;
-                                }
-                                break;
-                            case 'StartOfMon':
-                                {
-                                    var dateObj = (_q = DateObject(dateTS)) !== null && _q !== void 0 ? _q : new Date();
-                                    switch (dateObj.getUTCDay()) {
-                                        case 0:
-                                            //Sunday
-                                            dateTS = (_r = DateAdjustTS(dateTS, {
-                                                day: -6,
-                                                days: 'StartOf'
-                                            })) !== null && _r !== void 0 ? _r : 0;
-                                            break;
-                                        case 1:
-                                            // Monday
-                                            dateTS = (_s = DateAdjustTS(dateTS, {
-                                                days: 'StartOf'
-                                            })) !== null && _s !== void 0 ? _s : 0;
-                                            break;
-                                        default:
-                                            // All other days
-                                            dateTS = (_t = DateAdjustTS(dateTS, {
-                                                day: (dateObj.getUTCDay() - 1) * -1,
-                                                days: 'StartOf'
-                                            })) !== null && _t !== void 0 ? _t : 0;
-                                            break;
+    try {
+        for (var _13 = __values(Object.keys(adjustments)), _14 = _13.next(); !_14.done; _14 = _13.next()) {
+            var key = _14.value;
+            if (!dateTS)
+                return null;
+            switch (key) {
+                case 'year':
+                case 'years':
+                    switch (adjustments[key]) {
+                        case 'StartOf':
+                            {
+                                var dateObj = (_b = DateObject(dateTS)) !== null && _b !== void 0 ? _b : new Date();
+                                dateTS = (_c = DateAdjustTS(dateTS, {
+                                    month: dateObj.getUTCMonth() * -1,
+                                    months: 'StartOf'
+                                })) !== null && _c !== void 0 ? _c : 0;
+                            }
+                            break;
+                        case 'EndOf':
+                            {
+                                var dateObj = (_d = DateObject(dateTS)) !== null && _d !== void 0 ? _d : new Date();
+                                dateTS = (_e = DateAdjustTS(dateTS, {
+                                    month: 11 - dateObj.getUTCMonth(),
+                                    months: 'EndOf'
+                                })) !== null && _e !== void 0 ? _e : 0;
+                            }
+                            break;
+                        default:
+                            dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12);
+                            break;
+                    }
+                    break;
+                case 'month':
+                case 'months':
+                    switch (adjustments[key]) {
+                        case 'StartOf':
+                            {
+                                var dateObj = (_f = DateObject(dateTS)) !== null && _f !== void 0 ? _f : new Date();
+                                dateTS = (_g = DateAdjustTS(dateTS, {
+                                    day: (dateObj.getUTCDate() - 1) * -1,
+                                    days: 'StartOf'
+                                })) !== null && _g !== void 0 ? _g : 0;
+                            }
+                            break;
+                        case 'EndOf':
+                            {
+                                var dateObj = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
+                                dateTS = (_j = DateAdjustTS(dateTS, {
+                                    day: DateDaysInMonth(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
+                                    days: 'EndOf'
+                                })) !== null && _j !== void 0 ? _j : 0;
+                            }
+                            break;
+                        default:
+                            dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]));
+                            break;
+                    }
+                    break;
+                case 'quarter':
+                case 'quarters':
+                    switch (adjustments[key]) {
+                        case 'StartOf':
+                            {
+                                var dateObj = (_k = DateObject(dateTS)) !== null && _k !== void 0 ? _k : new Date();
+                                dateTS = (_l = DateAdjustTS(dateTS, {
+                                    month: (dateObj.getUTCMonth() % 3) * -1,
+                                    months: 'StartOf'
+                                })) !== null && _l !== void 0 ? _l : 0;
+                            }
+                            break;
+                        case 'EndOf':
+                            {
+                                var dateObj = (_m = DateObject(dateTS)) !== null && _m !== void 0 ? _m : new Date();
+                                dateTS = (_o = DateAdjustTS(dateTS, {
+                                    month: 2 - (dateObj.getUTCMonth() % 3),
+                                    months: 'EndOf'
+                                })) !== null && _o !== void 0 ? _o : 0;
+                            }
+                            break;
+                        default:
+                            dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 3);
+                            break;
+                    }
+                    break;
+                default:
+                    if (!dateTS)
+                        return null;
+                    switch (key) {
+                        case 'week':
+                        case 'weeks':
+                            switch (adjustments[key]) {
+                                case 'StartOf':
+                                    {
+                                        var dateObj = (_p = DateObject(dateTS)) !== null && _p !== void 0 ? _p : new Date();
+                                        dateTS = (_q = DateAdjustTS(dateTS, {
+                                            day: dateObj.getUTCDay() * -1,
+                                            days: 'StartOf'
+                                        })) !== null && _q !== void 0 ? _q : 0;
                                     }
-                                }
-                                break;
-                            case 'EndOf':
-                                {
-                                    var dateObj = (_u = DateObject(dateTS)) !== null && _u !== void 0 ? _u : new Date();
-                                    dateTS = (_v = DateAdjustTS(dateTS, {
-                                        day: 6 - dateObj.getUTCDay(),
-                                        days: 'EndOf'
-                                    })) !== null && _v !== void 0 ? _v : 0;
-                                }
-                                break;
-                            default:
-                                dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000;
-                                break;
-                        }
-                        break;
-                    case 'day':
-                    case 'days':
-                        switch (adjustments[key]) {
-                            case 'StartOf':
-                                {
-                                    var dateObj = (_w = DateObject(dateTS)) !== null && _w !== void 0 ? _w : new Date();
-                                    dateTS = (_x = DateAdjustTS(dateTS, {
-                                        hour: dateObj.getUTCHours() * -1,
-                                        hours: 'StartOf'
-                                    })) !== null && _x !== void 0 ? _x : 0;
-                                }
-                                break;
-                            case 'EndOf':
-                                {
-                                    var dateObj = (_y = DateObject(dateTS)) !== null && _y !== void 0 ? _y : new Date();
-                                    dateTS = (_z = DateAdjustTS(dateTS, {
-                                        hour: 23 - dateObj.getUTCHours(),
-                                        hours: 'EndOf'
-                                    })) !== null && _z !== void 0 ? _z : 0;
-                                }
-                                break;
-                            default:
-                                dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000;
-                                break;
-                        }
-                        break;
-                    case 'hour':
-                    case 'hours':
-                        switch (adjustments[key]) {
-                            case 'StartOf':
-                                {
-                                    var dateObj = (_0 = DateObject(dateTS)) !== null && _0 !== void 0 ? _0 : new Date();
-                                    dateTS = (_1 = DateAdjustTS(dateTS, {
-                                        minute: dateObj.getUTCMinutes() * -1,
-                                        minutes: 'StartOf'
-                                    })) !== null && _1 !== void 0 ? _1 : 0;
-                                }
-                                break;
-                            case 'EndOf':
-                                {
-                                    var dateObj = (_2 = DateObject(dateTS)) !== null && _2 !== void 0 ? _2 : new Date();
-                                    dateTS = (_3 = DateAdjustTS(dateTS, {
-                                        minute: 59 - dateObj.getUTCMinutes(),
-                                        minutes: 'EndOf'
-                                    })) !== null && _3 !== void 0 ? _3 : 0;
-                                }
-                                break;
-                            default:
-                                dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000;
-                                break;
-                        }
-                        break;
-                    case 'minute':
-                    case 'minutes':
-                        switch (adjustments[key]) {
-                            case 'StartOf':
-                                {
-                                    var dateObj = (_4 = DateObject(dateTS)) !== null && _4 !== void 0 ? _4 : new Date();
-                                    dateTS = (_5 = DateAdjustTS(dateTS, {
-                                        second: dateObj.getUTCSeconds() * -1,
-                                        seconds: 'StartOf'
-                                    })) !== null && _5 !== void 0 ? _5 : 0;
-                                }
-                                break;
-                            case 'EndOf':
-                                {
-                                    var dateObj = (_6 = DateObject(dateTS)) !== null && _6 !== void 0 ? _6 : new Date();
-                                    dateTS = (_7 = DateAdjustTS(dateTS, {
-                                        second: 59 - dateObj.getUTCSeconds(),
-                                        seconds: 'EndOf'
-                                    })) !== null && _7 !== void 0 ? _7 : 0;
-                                }
-                                break;
-                            default:
-                                dateTS += CleanNumber(adjustments[key]) * 60 * 1000;
-                                break;
-                        }
-                        break;
-                    case 'second':
-                    case 'seconds':
-                        switch (adjustments[key]) {
-                            case 'StartOf':
-                                {
-                                    var dateObj = (_8 = DateObject(dateTS)) !== null && _8 !== void 0 ? _8 : new Date();
-                                    dateTS = (_9 = DateAdjustTS(dateTS, {
-                                        millisecond: dateObj.getUTCMilliseconds() * -1
-                                    })) !== null && _9 !== void 0 ? _9 : 0;
-                                }
-                                break;
-                            case 'EndOf':
-                                {
-                                    var dateObj = (_10 = DateObject(dateTS)) !== null && _10 !== void 0 ? _10 : new Date();
-                                    dateTS = (_11 = DateAdjustTS(dateTS, {
-                                        millisecond: 999 - dateObj.getUTCMilliseconds()
-                                    })) !== null && _11 !== void 0 ? _11 : 0;
-                                }
-                                break;
-                            default:
-                                dateTS += CleanNumber(adjustments[key]) * 1000;
-                                break;
-                        }
-                        break;
-                    case 'millisecond':
-                    case 'milliseconds':
-                        dateTS += CleanNumber(adjustments[key]);
-                        break;
-                }
-                break;
+                                    break;
+                                case 'StartOfMon':
+                                    {
+                                        var dateObj = (_r = DateObject(dateTS)) !== null && _r !== void 0 ? _r : new Date();
+                                        switch (dateObj.getUTCDay()) {
+                                            case 0:
+                                                //Sunday
+                                                dateTS = (_s = DateAdjustTS(dateTS, {
+                                                    day: -6,
+                                                    days: 'StartOf'
+                                                })) !== null && _s !== void 0 ? _s : 0;
+                                                break;
+                                            case 1:
+                                                // Monday
+                                                dateTS = (_t = DateAdjustTS(dateTS, {
+                                                    days: 'StartOf'
+                                                })) !== null && _t !== void 0 ? _t : 0;
+                                                break;
+                                            default:
+                                                // All other days
+                                                dateTS = (_u = DateAdjustTS(dateTS, {
+                                                    day: (dateObj.getUTCDay() - 1) * -1,
+                                                    days: 'StartOf'
+                                                })) !== null && _u !== void 0 ? _u : 0;
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case 'EndOf':
+                                    {
+                                        var dateObj = (_v = DateObject(dateTS)) !== null && _v !== void 0 ? _v : new Date();
+                                        dateTS = (_w = DateAdjustTS(dateTS, {
+                                            day: 6 - dateObj.getUTCDay(),
+                                            days: 'EndOf'
+                                        })) !== null && _w !== void 0 ? _w : 0;
+                                    }
+                                    break;
+                                default:
+                                    dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000;
+                                    break;
+                            }
+                            break;
+                        case 'day':
+                        case 'days':
+                            switch (adjustments[key]) {
+                                case 'StartOf':
+                                    {
+                                        var dateObj = (_x = DateObject(dateTS)) !== null && _x !== void 0 ? _x : new Date();
+                                        dateTS = (_y = DateAdjustTS(dateTS, {
+                                            hour: dateObj.getUTCHours() * -1,
+                                            hours: 'StartOf'
+                                        })) !== null && _y !== void 0 ? _y : 0;
+                                    }
+                                    break;
+                                case 'EndOf':
+                                    {
+                                        var dateObj = (_z = DateObject(dateTS)) !== null && _z !== void 0 ? _z : new Date();
+                                        dateTS = (_0 = DateAdjustTS(dateTS, {
+                                            hour: 23 - dateObj.getUTCHours(),
+                                            hours: 'EndOf'
+                                        })) !== null && _0 !== void 0 ? _0 : 0;
+                                    }
+                                    break;
+                                default:
+                                    dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000;
+                                    break;
+                            }
+                            break;
+                        case 'hour':
+                        case 'hours':
+                            switch (adjustments[key]) {
+                                case 'StartOf':
+                                    {
+                                        var dateObj = (_1 = DateObject(dateTS)) !== null && _1 !== void 0 ? _1 : new Date();
+                                        dateTS = (_2 = DateAdjustTS(dateTS, {
+                                            minute: dateObj.getUTCMinutes() * -1,
+                                            minutes: 'StartOf'
+                                        })) !== null && _2 !== void 0 ? _2 : 0;
+                                    }
+                                    break;
+                                case 'EndOf':
+                                    {
+                                        var dateObj = (_3 = DateObject(dateTS)) !== null && _3 !== void 0 ? _3 : new Date();
+                                        dateTS = (_4 = DateAdjustTS(dateTS, {
+                                            minute: 59 - dateObj.getUTCMinutes(),
+                                            minutes: 'EndOf'
+                                        })) !== null && _4 !== void 0 ? _4 : 0;
+                                    }
+                                    break;
+                                default:
+                                    dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000;
+                                    break;
+                            }
+                            break;
+                        case 'minute':
+                        case 'minutes':
+                            switch (adjustments[key]) {
+                                case 'StartOf':
+                                    {
+                                        var dateObj = (_5 = DateObject(dateTS)) !== null && _5 !== void 0 ? _5 : new Date();
+                                        dateTS = (_6 = DateAdjustTS(dateTS, {
+                                            second: dateObj.getUTCSeconds() * -1,
+                                            seconds: 'StartOf'
+                                        })) !== null && _6 !== void 0 ? _6 : 0;
+                                    }
+                                    break;
+                                case 'EndOf':
+                                    {
+                                        var dateObj = (_7 = DateObject(dateTS)) !== null && _7 !== void 0 ? _7 : new Date();
+                                        dateTS = (_8 = DateAdjustTS(dateTS, {
+                                            second: 59 - dateObj.getUTCSeconds(),
+                                            seconds: 'EndOf'
+                                        })) !== null && _8 !== void 0 ? _8 : 0;
+                                    }
+                                    break;
+                                default:
+                                    dateTS += CleanNumber(adjustments[key]) * 60 * 1000;
+                                    break;
+                            }
+                            break;
+                        case 'second':
+                        case 'seconds':
+                            switch (adjustments[key]) {
+                                case 'StartOf':
+                                    {
+                                        var dateObj = (_9 = DateObject(dateTS)) !== null && _9 !== void 0 ? _9 : new Date();
+                                        dateTS = (_10 = DateAdjustTS(dateTS, {
+                                            millisecond: dateObj.getUTCMilliseconds() * -1
+                                        })) !== null && _10 !== void 0 ? _10 : 0;
+                                    }
+                                    break;
+                                case 'EndOf':
+                                    {
+                                        var dateObj = (_11 = DateObject(dateTS)) !== null && _11 !== void 0 ? _11 : new Date();
+                                        dateTS = (_12 = DateAdjustTS(dateTS, {
+                                            millisecond: 999 - dateObj.getUTCMilliseconds()
+                                        })) !== null && _12 !== void 0 ? _12 : 0;
+                                    }
+                                    break;
+                                default:
+                                    dateTS += CleanNumber(adjustments[key]) * 1000;
+                                    break;
+                            }
+                            break;
+                        case 'millisecond':
+                        case 'milliseconds':
+                            dateTS += CleanNumber(adjustments[key]);
+                            break;
+                    }
+                    break;
+            }
         }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_14 && !_14.done && (_a = _13.return)) _a.call(_13);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     return dateTS;
 };
@@ -3090,7 +3269,8 @@ function isObject(object) {
     return object !== null && object !== undefined && typeof object === 'object';
 }
 var DeepEqual = function (object1, object2) {
-    var _a, _b;
+    var e_1, _a;
+    var _b, _c;
     if (object1 === undefined && object2 === undefined)
         return true;
     if (object1 === null && object2 === null)
@@ -3110,26 +3290,35 @@ var DeepEqual = function (object1, object2) {
         case 'function':
             return true;
         case 'object':
-            if (typeof object1 === 'object' && ((_a = object1.type) === null || _a === void 0 ? void 0 : _a.toString().includes('react.')))
+            if (typeof object1 === 'object' && ((_b = object1.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
                 return true;
-            if (typeof object2 === 'object' && ((_b = object2.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+            if (typeof object2 === 'object' && ((_c = object2.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
                 return true;
             var keys1 = Object.keys(object1);
             var keys2 = Object.keys(object2);
             if (keys1.length !== keys2.length) {
                 return false;
             }
-            for (var _i = 0, keys1_1 = keys1; _i < keys1_1.length; _i++) {
-                var key = keys1_1[_i];
-                var val1 = object1[key];
-                var val2 = object2[key];
-                if (typeof val1 !== typeof val2)
-                    return false;
-                var areObjects = isObject(val1) && isObject(val2);
-                if ((areObjects && !DeepEqual(val1, val2)) ||
-                    (!areObjects && val1 !== val2)) {
-                    return false;
+            try {
+                for (var keys1_1 = __values(keys1), keys1_1_1 = keys1_1.next(); !keys1_1_1.done; keys1_1_1 = keys1_1.next()) {
+                    var key = keys1_1_1.value;
+                    var val1 = object1[key];
+                    var val2 = object2[key];
+                    if (typeof val1 !== typeof val2)
+                        return false;
+                    var areObjects = isObject(val1) && isObject(val2);
+                    if ((areObjects && !DeepEqual(val1, val2)) ||
+                        (!areObjects && val1 !== val2)) {
+                        return false;
+                    }
                 }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (keys1_1_1 && !keys1_1_1.done && (_a = keys1_1.return)) _a.call(keys1_1);
+                }
+                finally { if (e_1) throw e_1.error; }
             }
             return true;
         case 'string':
@@ -3235,7 +3424,7 @@ var AddIDChanges = function (id, changes, idChanges) {
  * @constructor
  */
 var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
-    var newState = __spreadArrays(prevState);
+    var newState = __spread(prevState);
     var idx = newState.findIndex(function (nS) { return (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid); });
     if (idx >= 0) {
         newState[idx] = __assign(__assign({}, newState[idx]), change);
@@ -3244,7 +3433,7 @@ var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
     var newVal = __assign(__assign({}, initial), change);
     if (!newVal.id && !newVal.uuid)
         newVal.uuid = GenerateUUID();
-    return __spreadArrays(newState, [__assign({}, newVal)]);
+    return __spread(newState, [__assign({}, newVal)]);
 };
 /**
  * Combines original value arrays with changed values, and produces a new set, in order
@@ -3323,10 +3512,11 @@ var DataToCSVExportNoQuotes = function (filename, csvData) {
  * @constructor
  */
 var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
+    var e_1, _a;
     if (includeHeaders === void 0) { includeHeaders = true; }
     if (headerToWords === void 0) { headerToWords = true; }
     var headers = datasets
-        .reduce(function (results, dataset) { return __spreadArrays(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
+        .reduce(function (results, dataset) { return __spread(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
     var tabDelim = '';
     if (includeHeaders) {
         tabDelim += headers.map(function (header) { return "\"" + (headerToWords ? ToUpperCaseWords(header) : header) + "\""; }).join('\t');
@@ -3346,9 +3536,18 @@ var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
             return "\"" + dataset[header] + "\"";
         }).join('\t');
     };
-    for (var _i = 0, datasets_1 = datasets; _i < datasets_1.length; _i++) {
-        var dataset = datasets_1[_i];
-        _loop_1(dataset);
+    try {
+        for (var datasets_1 = __values(datasets), datasets_1_1 = datasets_1.next(); !datasets_1_1.done; datasets_1_1 = datasets_1.next()) {
+            var dataset = datasets_1_1.value;
+            _loop_1(dataset);
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (datasets_1_1 && !datasets_1_1.done && (_a = datasets_1.return)) _a.call(datasets_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     return tabDelim;
 };
@@ -3590,15 +3789,25 @@ var RemoveDupPropertiesByIDArray = function (original, propsToRemoveArray) {
  * ObjectDiffs(data, data2, 'id')
  */
 var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
+    var e_2, _a;
     if (excludeKeys === void 0) { excludeKeys = []; }
     var results = {};
-    for (var _i = 0, _a = Object.keys(compare); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key)) {
-            if (compare[key] !== comparedTo[key]) {
-                results[key] = compare[key];
+    try {
+        for (var _b = __values(Object.keys(compare)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var key = _c.value;
+            if (!excludeKeys.includes(key)) {
+                if (compare[key] !== comparedTo[key]) {
+                    results[key] = compare[key];
+                }
             }
         }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     return results;
 };
@@ -3616,13 +3825,23 @@ var ObjectDiffs = function (compare, comparedTo, excludeKeys) {
  * ReduceObjectToOtherKeys(data, data2, ['age'])
  */
 var ReduceObjectToOtherKeys = function (main, reduceTo, excludeKeys) {
+    var e_3, _a;
     if (excludeKeys === void 0) { excludeKeys = []; }
     var results = {};
-    for (var _i = 0, _a = Object.keys(main); _i < _a.length; _i++) {
-        var key = _a[_i];
-        if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
-            results[key] = main[key];
+    try {
+        for (var _b = __values(Object.keys(main)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var key = _c.value;
+            if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
+                results[key] = main[key];
+            }
         }
+    }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_3) throw e_3.error; }
     }
     return results;
 };
@@ -3640,19 +3859,29 @@ var EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesina
  * EvaluateString("1 + SomeValue = [1 + [SomeValue]]", {SomeValue: 2})
  */
 var EvaluateString = function (expression, variables) {
-    var _a, _b, _c;
+    var e_1, _a;
+    var _b, _c, _d;
     var returnValue = expression;
     if (!!variables) {
-        for (var _i = 0, _d = Object.keys(variables); _i < _d.length; _i++) {
-            var key = _d[_i];
-            returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
+        try {
+            for (var _e = __values(Object.keys(variables)), _f = _e.next(); !_f.done; _f = _e.next()) {
+                var key = _f.value;
+                returnValue = ReplaceAll("[" + key + "]", variables[key], returnValue);
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_f && !_f.done && (_a = _e.return)) _a.call(_e);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
     }
     var innerSet = FindInnerSetLocations(returnValue, '[', ']');
     while (!!innerSet) {
-        var beforeValue = (_a = returnValue.substring(0, innerSet[0])) !== null && _a !== void 0 ? _a : '';
-        var replaceValue = (_b = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _b !== void 0 ? _b : '';
-        var afterValue = (_c = returnValue.substring(innerSet[1] + 1)) !== null && _c !== void 0 ? _c : '';
+        var beforeValue = (_b = returnValue.substring(0, innerSet[0])) !== null && _b !== void 0 ? _b : '';
+        var replaceValue = (_c = ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[1]))) !== null && _c !== void 0 ? _c : '';
+        var afterValue = (_d = returnValue.substring(innerSet[1] + 1)) !== null && _d !== void 0 ? _d : '';
         returnValue = "" + beforeValue + replaceValue + afterValue;
         innerSet = FindInnerSetLocations(returnValue, '[', ']');
     }
@@ -3690,10 +3919,11 @@ var FindInnerSetLocations = function (stringItem, setStart, setEnd) {
 };
 var ProcessPMDAS = function (expression) {
     // console.log(expression);
+    var e_2, _a;
     var returnValue = ExecuteFunctions(expression);
     returnValue = ReplaceAll(' ', '', returnValue);
-    var preOperators = __spreadArrays(EvaluatorOperators, ['(']);
-    var postOperators = __spreadArrays(EvaluatorOperators, [')']);
+    var preOperators = __spread(EvaluatorOperators, ['(']);
+    var postOperators = __spread(EvaluatorOperators, [')']);
     var innerSet = FindInnerSetLocations(returnValue, '(', ')');
     while (!!innerSet) {
         var newExpression = returnValue.substr(0, innerSet[0]);
@@ -3712,150 +3942,169 @@ var ProcessPMDAS = function (expression) {
         returnValue = newExpression.concat(lastSegment);
         innerSet = FindInnerSetLocations(returnValue, '(', ')');
     }
-    for (var _i = 0, EvaluatorOperators_1 = EvaluatorOperators; _i < EvaluatorOperators_1.length; _i++) {
-        var operator = EvaluatorOperators_1[_i];
-        var processOperator = operator;
-        var nextOperator = operator;
-        var items = returnValue.split(operator);
-        if (items.length > 1) {
-            if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
-                processOperator = items[0].substr(-1);
-                items[0] = items[0].substr(0, items[0].length - 1);
-                items[1] = '-' + items[1];
-            }
-            var result = ProcessPMDAS(items[0]);
-            for (var itempos = 1; itempos < items.length; itempos++) {
-                nextOperator = operator;
-                if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
-                    nextOperator = items[itempos].substr(-1);
-                    items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
-                    items[itempos + 1] = '-' + items[itempos + 1];
+    try {
+        for (var EvaluatorOperators_1 = __values(EvaluatorOperators), EvaluatorOperators_1_1 = EvaluatorOperators_1.next(); !EvaluatorOperators_1_1.done; EvaluatorOperators_1_1 = EvaluatorOperators_1.next()) {
+            var operator = EvaluatorOperators_1_1.value;
+            var processOperator = operator;
+            var nextOperator = operator;
+            var items = returnValue.split(operator);
+            if (items.length > 1) {
+                if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
+                    processOperator = items[0].substr(-1);
+                    items[0] = items[0].substr(0, items[0].length - 1);
+                    items[1] = '-' + items[1];
                 }
-                var itemposValue = ProcessPMDAS(items[itempos]);
-                var floatResult = parseFloat(result);
-                var floatItemPosValue = parseFloat(itemposValue);
-                var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
-                switch (processOperator) {
-                    case '^':
-                        if (bothNumeric) {
-                            result = Math.pow(floatResult, floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '*':
-                        if (bothNumeric) {
-                            result = (floatResult * floatItemPosValue).toString();
-                        }
-                        else {
-                            result = itemposValue;
-                        }
-                        break;
-                    case '/':
-                        if (bothNumeric) {
-                            if (floatItemPosValue === 0) {
-                                result = '0';
+                var result = ProcessPMDAS(items[0]);
+                for (var itempos = 1; itempos < items.length; itempos++) {
+                    nextOperator = operator;
+                    if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
+                        nextOperator = items[itempos].substr(-1);
+                        items[itempos] = items[itempos].substr(0, items[itempos].length - 1);
+                        items[itempos + 1] = '-' + items[itempos + 1];
+                    }
+                    var itemposValue = ProcessPMDAS(items[itempos]);
+                    var floatResult = parseFloat(result);
+                    var floatItemPosValue = parseFloat(itemposValue);
+                    var bothNumeric = !isNaN(floatResult) && !isNaN(floatItemPosValue);
+                    switch (processOperator) {
+                        case '^':
+                            if (bothNumeric) {
+                                result = Math.pow(floatResult, floatItemPosValue).toString();
                             }
                             else {
-                                result = (floatResult / floatItemPosValue).toString();
+                                result = itemposValue;
                             }
-                        }
-                        break;
-                    case '+':
-                        if (bothNumeric) {
-                            result = (floatResult + floatItemPosValue).toString();
-                        }
-                        else {
+                            break;
+                        case '*':
+                            if (bothNumeric) {
+                                result = (floatResult * floatItemPosValue).toString();
+                            }
+                            else {
+                                result = itemposValue;
+                            }
+                            break;
+                        case '/':
+                            if (bothNumeric) {
+                                if (floatItemPosValue === 0) {
+                                    result = '0';
+                                }
+                                else {
+                                    result = (floatResult / floatItemPosValue).toString();
+                                }
+                            }
+                            break;
+                        case '+':
+                            if (bothNumeric) {
+                                result = (floatResult + floatItemPosValue).toString();
+                            }
+                            else {
+                                result = itemposValue;
+                            }
+                            break;
+                        case '-':
+                            if (bothNumeric) {
+                                result = (floatResult - floatItemPosValue).toString();
+                            }
+                            else {
+                                result = "-" + itemposValue;
+                            }
+                            break;
+                        case '<=':
+                            if (bothNumeric) {
+                                result = floatResult <= floatItemPosValue ? '1' : '0';
+                            }
+                            else {
+                                result = result <= itemposValue ? '1' : '0';
+                            }
+                            break;
+                        case '>=':
+                            if (bothNumeric) {
+                                result = floatResult >= floatItemPosValue ? '1' : '0';
+                            }
+                            else {
+                                result = result >= itemposValue ? '1' : '0';
+                            }
+                            break;
+                        case '<':
+                            if (bothNumeric) {
+                                result = floatResult < floatItemPosValue ? '1' : '0';
+                            }
+                            else {
+                                result = result < itemposValue ? '1' : '0';
+                            }
+                            break;
+                        case '>':
+                            if (bothNumeric) {
+                                result = floatResult > floatItemPosValue ? '1' : '0';
+                            }
+                            else {
+                                result = result > itemposValue ? '1' : '0';
+                            }
+                            break;
+                        case '=':
+                            result = result === itemposValue ? '1' : '0';
+                            break;
+                        case '!=':
+                            result = result !== itemposValue ? '1' : '0';
+                            break;
+                        case '||':
+                            result = result || itemposValue;
+                            break;
+                        case '&&':
+                            result = result && itemposValue;
+                            break;
+                        default:
                             result = itemposValue;
-                        }
-                        break;
-                    case '-':
-                        if (bothNumeric) {
-                            result = (floatResult - floatItemPosValue).toString();
-                        }
-                        else {
-                            result = "-" + itemposValue;
-                        }
-                        break;
-                    case '<=':
-                        if (bothNumeric) {
-                            result = floatResult <= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result <= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>=':
-                        if (bothNumeric) {
-                            result = floatResult >= floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result >= itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '<':
-                        if (bothNumeric) {
-                            result = floatResult < floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result < itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '>':
-                        if (bothNumeric) {
-                            result = floatResult > floatItemPosValue ? '1' : '0';
-                        }
-                        else {
-                            result = result > itemposValue ? '1' : '0';
-                        }
-                        break;
-                    case '=':
-                        result = result === itemposValue ? '1' : '0';
-                        break;
-                    case '!=':
-                        result = result !== itemposValue ? '1' : '0';
-                        break;
-                    case '||':
-                        result = result || itemposValue;
-                        break;
-                    case '&&':
-                        result = result && itemposValue;
-                        break;
-                    default:
-                        result = itemposValue;
+                    }
+                    processOperator = nextOperator;
                 }
-                processOperator = nextOperator;
+                // result = ExecuteFunctions(result);
+                return result;
             }
-            // result = ExecuteFunctions(result);
-            return result;
         }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (EvaluatorOperators_1_1 && !EvaluatorOperators_1_1.done && (_a = EvaluatorOperators_1.return)) _a.call(EvaluatorOperators_1);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
     // returnValue = ExecuteFunctions(returnValue);
     return returnValue;
 };
 var FindFunction = function (expression, startPosition) {
+    var e_3, _a;
     if (!expression)
         return null;
-    for (var _i = 0, EvaluatorFunctions_1 = EvaluatorFunctions; _i < EvaluatorFunctions_1.length; _i++) {
-        var evaluatorFunction = EvaluatorFunctions_1[_i];
-        var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
-        if (pos >= 0) {
-            var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
-            var parens = FindInnerSetLocations(postFunctionName, '(', ')');
-            if (!!parens) {
-                var argumentText = postFunctionName.substr(1, parens[1] - 1);
-                return {
-                    expression: expression,
-                    pos: pos,
-                    pre: expression.substr(0, pos).trim(),
-                    post: postFunctionName.substr(parens[1] + 1).trim(),
-                    function: evaluatorFunction,
-                    argumentText: argumentText,
-                    arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
-                };
+    try {
+        for (var EvaluatorFunctions_1 = __values(EvaluatorFunctions), EvaluatorFunctions_1_1 = EvaluatorFunctions_1.next(); !EvaluatorFunctions_1_1.done; EvaluatorFunctions_1_1 = EvaluatorFunctions_1.next()) {
+            var evaluatorFunction = EvaluatorFunctions_1_1.value;
+            var pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition);
+            if (pos >= 0) {
+                var postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase();
+                var parens = FindInnerSetLocations(postFunctionName, '(', ')');
+                if (!!parens) {
+                    var argumentText = postFunctionName.substr(1, parens[1] - 1);
+                    return {
+                        expression: expression,
+                        pos: pos,
+                        pre: expression.substr(0, pos).trim(),
+                        post: postFunctionName.substr(parens[1] + 1).trim(),
+                        function: evaluatorFunction,
+                        argumentText: argumentText,
+                        arguments: argumentText.split(',').map(function (arg) { return arg.trim(); })
+                    };
+                }
             }
         }
+    }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    finally {
+        try {
+            if (EvaluatorFunctions_1_1 && !EvaluatorFunctions_1_1.done && (_a = EvaluatorFunctions_1.return)) _a.call(EvaluatorFunctions_1);
+        }
+        finally { if (e_3) throw e_3.error; }
     }
     return null;
 };
@@ -3918,10 +4167,19 @@ var ExecuteFunctions = function (expression) {
     return updatedExpression;
 };
 
-var EnumValues = function (enumumerator) { return Object.values(enumumerator); };
-var EnumKeys = function (enumerator) { return Object.keys(enumerator); };
-var EnumKeyFromValue = function (enumumerator, value) { return !value ? undefined : Object.keys(enumumerator)[Object.values(enumumerator).indexOf(value)]; };
-var EnumValueFromKey = function (enumumerator, key) { return !key ? undefined : Object.values(enumumerator)[Object.keys(enumumerator).indexOf(key)]; };
+var enumObject = function (e) {
+    var copy = __assign({}, e);
+    Object.values(e).forEach(function (value) { return typeof value === 'number' && delete copy[value]; });
+    return copy;
+};
+var EnumKeys = function (e) {
+    return Object.keys(enumObject(e));
+};
+var EnumValues = function (e) {
+    return __spread((new Set(Object.values(enumObject(e)))));
+};
+var EnumKeyFromValue = function (e, value) { return !value ? undefined : Object.keys(e)[Object.values(e).indexOf(value)]; };
+var EnumValueFromKey = function (e, key) { return !key ? undefined : Object.values(e)[Object.keys(e).indexOf(key)]; };
 
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
@@ -4071,6 +4329,7 @@ var IsStageDevTestFocused = function () {
  * PagesForRange(1, 10, 3)
  */
 function PagesForRange(current, length, spread) {
+    var e_1, _a;
     if (spread === void 0) { spread = 2; }
     if (!(+length > 0)) {
         return [];
@@ -4083,18 +4342,27 @@ function PagesForRange(current, length, spread) {
             range.push(i);
         }
     }
-    for (var _i = 0, range_1 = range; _i < range_1.length; _i++) {
-        var i = range_1[_i];
-        if (l) {
-            if (i - l === 2) {
-                rangeWithNull.push(l + 1);
+    try {
+        for (var range_1 = __values(range), range_1_1 = range_1.next(); !range_1_1.done; range_1_1 = range_1.next()) {
+            var i = range_1_1.value;
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithNull.push(l + 1);
+                }
+                else if (i - l !== 1) {
+                    rangeWithNull.push(null);
+                }
             }
-            else if (i - l !== 1) {
-                rangeWithNull.push(null);
-            }
+            rangeWithNull.push(i);
+            l = i;
         }
-        rangeWithNull.push(i);
-        l = i;
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (range_1_1 && !range_1_1.done && (_a = range_1.return)) _a.call(range_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     return rangeWithNull;
 }
@@ -4485,16 +4753,26 @@ var ObjectContainsSearchTerms = function (checkObject, searchTerms, options) {
         return false;
     var match = function (term) {
         return Object.keys(checkObject).some(function (column) {
+            var e_2, _a;
             var columnValue = checkObject[column];
             var typeofColumn = typeof columnValue;
             if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
                 return columnValue.toString().toLowerCase().includes(term.toLowerCase());
             }
             if (Array.isArray(columnValue)) {
-                for (var _i = 0, columnValue_1 = columnValue; _i < columnValue_1.length; _i++) {
-                    var obj = columnValue_1[_i];
-                    if (ObjectContainsSearchTerms(obj, [term], options))
-                        return true;
+                try {
+                    for (var columnValue_1 = __values(columnValue), columnValue_1_1 = columnValue_1.next(); !columnValue_1_1.done; columnValue_1_1 = columnValue_1.next()) {
+                        var obj = columnValue_1_1.value;
+                        if (ObjectContainsSearchTerms(obj, [term], options))
+                            return true;
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (columnValue_1_1 && !columnValue_1_1.done && (_a = columnValue_1.return)) _a.call(columnValue_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
                 }
             }
             if (typeofColumn === 'object') {
@@ -4567,7 +4845,7 @@ var SearchRows = function (arrayTable, search, options) {
             if (results.length >= limit)
                 return results;
             if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
-                return __spreadArrays(results, [arrayRow]);
+                return __spread(results, [arrayRow]);
             }
             else {
                 return results;
@@ -4617,24 +4895,57 @@ var ToID = function (item) { return typeof item === 'number' ? item : item.id; }
     UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
         var curID = ToID(cur);
-        return (!unselectedIDs.find(function (id) { return id === curID; }) ? __spreadArrays(result, [curID]) : result);
+        return (!unselectedIDs.find(function (id) { return id === curID; }) ? __spread(result, [curID]) : result);
     }, []); };
-    UnselectedIDList.ToggleUnSelectedID = function (toggleID, unselectedIDs) { return unselectedIDs.includes(toggleID) ? unselectedIDs.filter(function (id) { return id !== toggleID; }) : __spreadArrays(unselectedIDs, [toggleID]); };
+    UnselectedIDList.ToggleUnSelectedID = function (toggleID, unselectedIDs) { return unselectedIDs.includes(toggleID) ? unselectedIDs.filter(function (id) { return id !== toggleID; }) : __spread(unselectedIDs, [toggleID]); };
     UnselectedIDList.SelectIDs = function (ids, unselectedIDs) {
         return unselectedIDs.filter(function (unselectedID) { return !ids.find(function (id) { return unselectedID === ToID(id); }); });
     };
     UnselectedIDList.UnSelectIDs = function (ids, unselectedIDs) {
-        return __spreadArrays(unselectedIDs, (ids.map(function (id) { return ToID(id); })));
+        return __spread(unselectedIDs, (ids.map(function (id) { return ToID(id); })));
     };
     UnselectedIDList.SelectedBetween = function (allIDs, lastID, nextID, unselectedIDs) {
+        var e_1, _a;
         var allNumbers = allIDs.map(function (allID) { return ToID(allID); });
         var select = !UnselectedIDList.IsSelected(nextID, unselectedIDs);
         var betweenIDs = [];
         var firstFound = false;
-        for (var _i = 0, allNumbers_1 = allNumbers; _i < allNumbers_1.length; _i++) {
-            var checkID = allNumbers_1[_i];
+        try {
+            for (var allNumbers_1 = __values(allNumbers), allNumbers_1_1 = allNumbers_1.next(); !allNumbers_1_1.done; allNumbers_1_1 = allNumbers_1.next()) {
+                var checkID = allNumbers_1_1.value;
+                if (checkID === lastID || checkID === nextID) {
+                    betweenIDs.push(checkID);
+                    if (firstFound) {
+                        break;
+                    }
+                    firstFound = true;
+                }
+                else if (firstFound) {
+                    betweenIDs.push(checkID);
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (allNumbers_1_1 && !allNumbers_1_1.done && (_a = allNumbers_1.return)) _a.call(allNumbers_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return select ? UnselectedIDList.SelectIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
+    };
+})(exports.UnselectedIDList || (exports.UnselectedIDList = {}));
+var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
+    var e_2, _a;
+    if (inclusive === void 0) { inclusive = true; }
+    var betweenIDs = [];
+    var firstFound = false;
+    try {
+        for (var allIDs_1 = __values(allIDs), allIDs_1_1 = allIDs_1.next(); !allIDs_1_1.done; allIDs_1_1 = allIDs_1.next()) {
+            var checkID = allIDs_1_1.value;
             if (checkID === lastID || checkID === nextID) {
-                betweenIDs.push(checkID);
+                if (inclusive)
+                    betweenIDs.push(checkID);
                 if (firstFound) {
                     break;
                 }
@@ -4644,26 +4955,13 @@ var ToID = function (item) { return typeof item === 'number' ? item : item.id; }
                 betweenIDs.push(checkID);
             }
         }
-        return select ? UnselectedIDList.SelectIDs(betweenIDs, unselectedIDs) : UnselectedIDList.UnSelectIDs(betweenIDs, unselectedIDs);
-    };
-})(exports.UnselectedIDList || (exports.UnselectedIDList = {}));
-var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
-    if (inclusive === void 0) { inclusive = true; }
-    var betweenIDs = [];
-    var firstFound = false;
-    for (var _i = 0, allIDs_1 = allIDs; _i < allIDs_1.length; _i++) {
-        var checkID = allIDs_1[_i];
-        if (checkID === lastID || checkID === nextID) {
-            if (inclusive)
-                betweenIDs.push(checkID);
-            if (firstFound) {
-                break;
-            }
-            firstFound = true;
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (allIDs_1_1 && !allIDs_1_1.done && (_a = allIDs_1.return)) _a.call(allIDs_1);
         }
-        else if (firstFound) {
-            betweenIDs.push(checkID);
-        }
+        finally { if (e_2) throw e_2.error; }
     }
     return betweenIDs;
 };

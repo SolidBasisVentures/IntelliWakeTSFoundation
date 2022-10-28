@@ -1,4 +1,6 @@
-export declare const EnumValues: <T extends object>(enumumerator: T) => T[];
-export declare const EnumKeys: <T extends object>(enumerator: T) => string[];
-export declare const EnumKeyFromValue: <T extends object>(enumumerator: T, value: string | T | null | undefined) => string | undefined;
-export declare const EnumValueFromKey: <T extends object>(enumumerator: T, key: string | null | undefined) => T | undefined;
+declare type EnumKeys<Enum> = Exclude<keyof Enum, number>;
+export declare const EnumKeys: <Enum extends Record<string, string | number>>(e: Enum) => Exclude<keyof Enum, number>[];
+export declare const EnumValues: <Enum extends Record<string, string | number>>(e: Enum) => Enum[Exclude<keyof Enum, number>][];
+export declare const EnumKeyFromValue: <Enum extends Record<string, string | number>>(e: Enum, value: string | Enum[Exclude<keyof Enum, number>] | null | undefined) => string | undefined;
+export declare const EnumValueFromKey: <Enum extends Record<string, string | number>>(e: Enum, key: string | null | undefined) => Enum[Exclude<keyof Enum, number>] | undefined;
+export {};

@@ -1,7 +1,19 @@
-export const EnumValues = <T extends object>(enumumerator: T): T[] => Object.values(enumumerator) as T[]
+type EnumKeys<Enum> = Exclude<keyof Enum, number>
 
-export const EnumKeys = <T extends object>(enumerator: T) => Object.keys(enumerator)
+const enumObject = <Enum extends Record<string, number | string>>(e: Enum) => {
+	const copy = {...e} as { [K in EnumKeys<Enum>]: Enum[K] }
+	Object.values(e).forEach(value => typeof value === 'number' && delete copy[value])
+	return copy
+}
 
-export const EnumKeyFromValue = <T extends object>(enumumerator: T, value: T | string | null | undefined): string | undefined => !value ? undefined : Object.keys(enumumerator)[Object.values(enumumerator).indexOf(value as any)] as unknown as string
+export const EnumKeys = <Enum extends Record<string, number | string>>(e: Enum) => {
+	return Object.keys(enumObject(e)) as EnumKeys<Enum>[]
+}
 
-export const EnumValueFromKey = <T extends object>(enumumerator: T, key: string | null | undefined): T | undefined => !key ? undefined : Object.values(enumumerator)[Object.keys(enumumerator).indexOf(key as any)] as unknown as T
+export const EnumValues = <Enum extends Record<string, number | string>>(e: Enum) => {
+	return [...(new Set(Object.values(enumObject(e))))] as Enum[EnumKeys<Enum>][]
+}
+
+export const EnumKeyFromValue = <Enum extends Record<string, number | string>>(e: Enum, value: Enum[EnumKeys<Enum>] | string | null | undefined): string | undefined => !value ? undefined : Object.keys(e)[Object.values(e).indexOf(value as any)] as unknown as string
+
+export const EnumValueFromKey = <Enum extends Record<string, number | string>>(e: Enum, key: string | null | undefined): Enum[EnumKeys<Enum>] | undefined => !key ? undefined : Object.values(e)[Object.keys(e).indexOf(key as any)] as unknown as Enum[EnumKeys<Enum>]

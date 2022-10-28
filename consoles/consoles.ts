@@ -11,10 +11,10 @@ enum ETest {
 	TestTwo = 'Test 2'
 }
 
-const keys = EnumKeys(ETest)
-const values = EnumValues(ETest)
-const key1 = EnumKeyFromValue(ETest, 'Test 1')
-const value2 = EnumValueFromKey(ETest, 'TestTwo')
+const keys: string[] = EnumKeys(ETest)
+const values: ETest[] = EnumValues(ETest)
+const key1: string | undefined = EnumKeyFromValue(ETest, 'Test 1')
+const value2: ETest | undefined = EnumValueFromKey(ETest, 'TestTwo')
 
 console.log('Keys', keys)
 console.log('Values', values)
