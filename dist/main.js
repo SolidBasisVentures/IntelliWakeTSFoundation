@@ -3920,8 +3920,8 @@ var ExecuteFunctions = function (expression) {
 
 var EnumValues = function (enumumerator) { return Object.values(enumumerator); };
 var EnumKeys = function (enumerator) { return Object.keys(enumerator); };
-var EnumKeyFromValue = function (enumumerator, value) { return Object.keys(enumumerator)[Object.values(enumumerator).indexOf(value)]; };
-var EnumValueFromKey = function (enumumerator, value) { return Object.values(enumumerator)[Object.keys(enumumerator).indexOf(value)]; };
+var EnumKeyFromValue = function (enumumerator, value) { return !value ? undefined : Object.keys(enumumerator)[Object.values(enumumerator).indexOf(value)]; };
+var EnumValueFromKey = function (enumumerator, key) { return !key ? undefined : Object.values(enumumerator)[Object.keys(enumumerator).indexOf(key)]; };
 
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
