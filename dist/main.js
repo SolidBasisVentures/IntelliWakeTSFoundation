@@ -4178,8 +4178,12 @@ var EnumKeys = function (e) {
 var EnumValues = function (e) {
     return __spread((new Set(Object.values(enumObject(e)))));
 };
-var EnumKeyFromValue = function (e, value) { return !value ? undefined : Object.keys(e)[Object.values(e).indexOf(value)]; };
-var EnumValueFromKey = function (e, key) { return !key ? undefined : Object.values(e)[Object.keys(e).indexOf(key)]; };
+var EnumKeyFromValue = function (e, value) {
+    return (value === null || value === undefined) ? undefined : Object.keys(e)[Object.values(e).indexOf(value)];
+};
+var EnumValueFromKey = function (e, key) {
+    return (key === null || key === undefined) ? undefined : Object.values(e)[Object.keys(e).indexOf(key)];
+};
 
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {

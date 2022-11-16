@@ -21,4 +21,16 @@ console.log('Values', values)
 console.log('Key 1', key1)
 console.log('Value 2', value2)
 
+export enum EDispatcherPriority {
+	TimeSensitive = 0,
+	High = 1,
+	Medium = 2,
+	Low = 3
+}
+
+console.log('Keys', EnumKeys(EDispatcherPriority))
+console.log('Values', EnumValues(EDispatcherPriority))
+console.log('Key 1', EnumKeyFromValue(EDispatcherPriority, EDispatcherPriority.TimeSensitive))
+console.log('Value 1', EnumValueFromKey(EDispatcherPriority, 'TimeSensitive'))
+
 console.timeEnd('Consoles')

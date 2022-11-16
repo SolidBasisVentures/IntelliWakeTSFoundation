@@ -14,6 +14,8 @@ export const EnumValues = <Enum extends Record<string, number | string>>(e: Enum
 	return [...(new Set(Object.values(enumObject(e))))] as Enum[EnumKeys<Enum>][]
 }
 
-export const EnumKeyFromValue = <Enum extends Record<string, number | string>>(e: Enum, value: Enum[EnumKeys<Enum>] | string | null | undefined): string | undefined => !value ? undefined : Object.keys(e)[Object.values(e).indexOf(value as any)] as unknown as string
+export const EnumKeyFromValue = <Enum extends Record<string, number | string>>(e: Enum, value: Enum[EnumKeys<Enum>] | string | null | undefined): string | undefined =>
+	(value === null || value === undefined) ? undefined : Object.keys(e)[Object.values(e).indexOf(value as any)] as unknown as string
 
-export const EnumValueFromKey = <Enum extends Record<string, number | string>>(e: Enum, key: string | null | undefined): Enum[EnumKeys<Enum>] | undefined => !key ? undefined : Object.values(e)[Object.keys(e).indexOf(key as any)] as unknown as Enum[EnumKeys<Enum>]
+export const EnumValueFromKey = <Enum extends Record<string, number | string>>(e: Enum, key: string | null | undefined): Enum[EnumKeys<Enum>] | undefined =>
+	(key === null || key === undefined) ? undefined : Object.values(e)[Object.keys(e).indexOf(key as any)] as unknown as Enum[EnumKeys<Enum>]
