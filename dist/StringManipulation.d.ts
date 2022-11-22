@@ -1,26 +1,49 @@
-export declare const ToSnakeCase: (str: string | undefined | null) => string;
 /**
- * Converts a string to kebab-case.
- *
+ * Splits a string into its component words
+ * @param str
+ * @constructor
+ */
+export declare const ToWords: (str: string | string[] | undefined | null) => string[];
+export declare const ToFirstLetterUpper: (str: string | undefined | null) => string;
+export declare const ToFirstLetterUpperSmart: (str: string | undefined | null) => string;
+/**
+ * To Snake Case ('To Snake Case' = 'to_snake_case')
+ * @param str
+ * @constructor
+ */
+export declare const ToSnakeCase: (str: string | string[] | undefined | null) => string;
+/**
+ * Converts a string to kebab-case. *
  * @example
  * ToSnakeCase('UserToken')  // returns "user-token"
  */
-export declare const ToKebabCase: (str: string | undefined | null) => string;
+export declare const ToKebabCase: (str: string | string[] | undefined | null) => string;
 /**
  * Converts a string to camelCase.
  *
  * @example
  * ToCamelCase('user_token') //  returns "userToken
  */
-export declare const ToCamelCase: (str: string | undefined | null) => string;
-export declare const ToUpperCaseWords: (str: string | undefined | null) => string;
+export declare const ToCamelCase: (str: string | string[] | undefined | null) => string;
+/**
+ * To Upper Case Words
+ * @param str
+ * @constructor
+ */
+export declare const ToUpperCaseWords: (str: string | string[] | undefined | null) => string;
 /**
  * Converts a string to PascalCase.
  *
  * @example
  * ToPascalCase('user_token') //  returns "UserToken
  */
-export declare const ToPascalCase: (str: string | undefined | null) => string;
+export declare const ToPascalCase: (str: string | string[] | undefined | null) => string;
+/**
+ * Takes a string and returns the initials, like "Dennis J Peters" = "DJP"
+ * @param str
+ * @constructor
+ */
+export declare const ToInitials: (str: string | string[] | undefined | null) => string;
 /**
  * Replaces links to an anchor tag.
  *

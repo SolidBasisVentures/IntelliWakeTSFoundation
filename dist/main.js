@@ -1199,27 +1199,78 @@ function Sleep(ms) {
 }
 
 /**
- * Converts a string to snake_case.
- *
- * @example
- * ToSnakeCase('UserToken')  // returns "user_token"
+ * Splits a string into its component words
+ * @param str
+ * @constructor
  */
-var ToSnakeCase = function (str) {
+var ToWords = function (str) {
+    var e_1, _a, e_2, _b;
+    if (!str)
+        return [];
+    var strArray = ToArray(str);
+    var results = [];
+    var separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}'];
+    try {
+        loop_array: for (var strArray_1 = __values(strArray), strArray_1_1 = strArray_1.next(); !strArray_1_1.done; strArray_1_1 = strArray_1.next()) {
+            var strItem = strArray_1_1.value;
+            try {
+                for (var separators_1 = (e_2 = void 0, __values(separators)), separators_1_1 = separators_1.next(); !separators_1_1.done; separators_1_1 = separators_1.next()) {
+                    var separator = separators_1_1.value;
+                    if (strItem.includes(separator)) {
+                        results = ToWords(__spread(results, strItem.split(separator).filter(function (strText) { return !!strText; })));
+                        continue loop_array;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (separators_1_1 && !separators_1_1.done && (_b = separators_1.return)) _b.call(separators_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            results = __spread(results, strItem.replace(/([A-Z]+|[A-Z]?[a-z]+)(?=[A-Z]|\b)/g, '!$&').split('!')).filter(function (strText) { return !!strText; });
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (strArray_1_1 && !strArray_1_1.done && (_a = strArray_1.return)) _a.call(strArray_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    return results.filter(function (strText) { return !!strText; });
+};
+var ToFirstLetterUpper = function (str) {
     if (!str)
         return '';
-    if (str === 'ID')
-        return 'id';
-    var calcStr = ReplaceAll('-', '_', str.replace('ID', '_id'));
-    return (calcStr[0].toLowerCase() +
-        calcStr.slice(1, calcStr.length).replace(/[A-Z1-9]/g, function (letter) { return "_" + letter.toLowerCase(); }));
+    return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+};
+var ToFirstLetterUpperSmart = function (str) {
+    if (!str)
+        return '';
+    if (str === str.toUpperCase())
+        return str;
+    if (str.toLowerCase() === 'id')
+        return 'ID';
+    return ToFirstLetterUpper(str);
 };
 /**
- * Converts a string to kebab-case.
- *
+ * To Snake Case ('To Snake Case' = 'to_snake_case')
+ * @param str
+ * @constructor
+ */
+var ToSnakeCase = function (str) {
+    return ToWords(str).map(function (st) { return st.toLowerCase(); }).join('_');
+};
+/**
+ * Converts a string to kebab-case. *
  * @example
  * ToSnakeCase('UserToken')  // returns "user-token"
  */
-var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str)); };
+var ToKebabCase = function (str) {
+    return ToWords(str).map(function (st) { return st.toLowerCase(); }).join('-');
+};
 /**
  * Converts a string to camelCase.
  *
@@ -1227,22 +1278,15 @@ var ToKebabCase = function (str) { return ReplaceAll('_', '-', ToSnakeCase(str))
  * ToCamelCase('user_token') //  returns "userToken
  */
 var ToCamelCase = function (str) {
-    if (!str)
-        return '';
-    if (str === 'id')
-        return 'ID';
-    var calcStr = ToSnakeCase(str).replace('_id', 'ID');
-    return ReplaceAll('_', '', ReplaceAll(' ', '', calcStr.replace(/([-_ ][a-z])/gi, function ($1) {
-        return $1.toUpperCase().replace('-', '').replace('_', '').replace(' ', '');
-    })));
+    return ToWords(str).map(function (st, idx) { return !idx ? st.toLowerCase() : st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st); }).join('');
 };
+/**
+ * To Upper Case Words
+ * @param str
+ * @constructor
+ */
 var ToUpperCaseWords = function (str) {
-    var _a, _b, _c;
-    var result = (_c = UCWords((_b = ReplaceAll('_', ' ', (_a = ToSnakeCase(str)) !== null && _a !== void 0 ? _a : '')) !== null && _b !== void 0 ? _b : '')) !== null && _c !== void 0 ? _c : '';
-    if (result.endsWith(' Id')) {
-        return result.substr(0, result.length - 1) + 'D';
-    }
-    return result;
+    return ToWords(str).map(function (st) { return st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st); }).join(' ');
 };
 /**
  * Converts a string to PascalCase.
@@ -1251,8 +1295,15 @@ var ToUpperCaseWords = function (str) {
  * ToPascalCase('user_token') //  returns "UserToken
  */
 var ToPascalCase = function (str) {
-    var calcStr = ToCamelCase(str);
-    return calcStr.substr(0, 1).toUpperCase() + calcStr.substr(1);
+    return ToWords(str).map(function (st) { return st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st); }).join('');
+};
+/**
+ * Takes a string and returns the initials, like "Dennis J Peters" = "DJP"
+ * @param str
+ * @constructor
+ */
+var ToInitials = function (str) {
+    return ToWords(str).map(function (st) { return st.substring(0, 1).toUpperCase(); }).join('');
 };
 /**
  * Replaces links to an anchor tag.
@@ -5160,7 +5211,10 @@ exports.ToDigitsBlankMax = ToDigitsBlankMax;
 exports.ToDigitsDash = ToDigitsDash;
 exports.ToDigitsDashMax = ToDigitsDashMax;
 exports.ToDigitsMax = ToDigitsMax;
+exports.ToFirstLetterUpper = ToFirstLetterUpper;
+exports.ToFirstLetterUpperSmart = ToFirstLetterUpperSmart;
 exports.ToID = ToID;
+exports.ToInitials = ToInitials;
 exports.ToKebabCase = ToKebabCase;
 exports.ToPascalCase = ToPascalCase;
 exports.ToPercent = ToPercent;
@@ -5170,6 +5224,7 @@ exports.ToPercentMax = ToPercentMax;
 exports.ToSnakeCase = ToSnakeCase;
 exports.ToStringArray = ToStringArray;
 exports.ToUpperCaseWords = ToUpperCaseWords;
+exports.ToWords = ToWords;
 exports.Trunc = Trunc;
 exports.UCWords = UCWords;
 exports.ValidNumbers = ValidNumbers;
