@@ -60,11 +60,11 @@ export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptio
 
 export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): number | null => {
 	if (!timeZone) return (DateObject(sourceDate ?? 'now', {ignoreIANA: true}) ?? new Date()).getTimezoneOffset()
-	
+
 	const sourceTS = !!sourceDate ? DateParseTSInternal(sourceDate, undefined, true) : null
-	
+
 	let date = !sourceTS ? new Date() : new Date(sourceTS)
-	
+
 	function objFromStr(str: string) {
 		const array = str.replace(':', ' ').split(' ')
 		return {
@@ -73,7 +73,7 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 			minute: parseInt(array[2])
 		}
 	}
-	
+
 	let str = date.toLocaleString(['nl-NL'], {
 		timeZone: timeZone,
 		day: 'numeric',
@@ -81,7 +81,7 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 		minute: 'numeric',
 		hour12: false
 	})
-	
+
 	const other = objFromStr(str)
 	// console.log('Other', str, other)
 	const amsterdamOffset = (other.day * 1440) + (other.hour * 60) + other.minute
@@ -94,7 +94,7 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 	if (other.day > myLocale.day) {
 		myLocaleOffset += other.day * 1440
 	}
-	
+
 	// console.log('There', other.day, amsterdamOffset, myLocale.day, myLocaleOffset)
 	// } else if (other.day < myLocale.day) {
 	// console.log('There')
@@ -111,7 +111,7 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 	// if (!!sourceDate) result += 0
 	return result % 1440
 	// return myLocaleOffset - amsterdamOffset + date.getTimezoneOffset()
-	
+
 	// const timeZoneName = Intl.DateTimeFormat('ia', {
 	// 	timeZoneName: 'short',
 	// 	timeZone: timeZone ?? CurrentTimeZone()
@@ -141,10 +141,10 @@ export const StringHasTimeZoneData = (value: string): boolean => value === 'now'
 
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
-	
+
 	if (!StringHasDateData(value))
 		return false
-	
+
 	return !!DateParseTSInternal(value)
 }
 
@@ -155,60 +155,60 @@ export const ManualParse = (date: string): number | null => {
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
 	]
-	
+
 	let d = regexps.reduce<RegExpMatchArray | null>((result, regexp) => {
 		const nextMatch = (date.length === 16 ? date + ':00' : date).match(new RegExp(regexp))
-		
+
 		if (!result) return nextMatch
-		
+
 		if (!nextMatch) return result
-		
+
 		if (!!nextMatch[10] && !result[10]) return nextMatch
-		
+
 		return result
 	}, null as RegExpMatchArray | null)
-	
+
 	if (d === null) {
 		return null
 	}
-	
+
 	// console.log(d)
-	
+
 	let dateObj = new Date(CleanNumber(d[1]), 0, 1)
-	
+
 	if (d[1]) {
 		dateObj.setUTCFullYear(CleanNumber(d[1]))
 	}
-	
+
 	if (d[3]) {
 		dateObj.setUTCMonth(CleanNumber(d[3]) - 1)
 	}
-	
+
 	if (d[5]) {
 		dateObj.setUTCDate(CleanNumber(d[5]))
 	}
-	
+
 	// if (d[7]) {
 	dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
 	// }
-	
+
 	// if (d[8]) {
 	dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
 	// }
-	
+
 	// if (d[10]) {
 	dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
 	// }
-	
+
 	// if (d[12]) {
 	dateObj.setUTCMilliseconds((CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3))))
 	// }
-	
+
 	let offsetHours = 0
-	
+
 	if (d[14]) {
 		offsetHours = (CleanNumber(d[16])) + parseInt(d[17], 10)
-		
+
 		offsetHours *= ((d[15] === '-') ? 1 : -1)
 		// console.log('o off', dateObj.getTime(), offset)
 		// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
@@ -228,50 +228,50 @@ export const ManualParse = (date: string): number | null => {
 			// console.log('Offset', dateObj, offset)
 		}
 	}
-	
+
 	// console.log(date, d, dateObj, offset)
-	
+
 	// console.log('offset', dateObj, offset, dateObj.getTime())
-	
+
 	// console.log('Trying...', dateObj, offsetHours)
-	
+
 	const time = dateObj.valueOf() + (offsetHours * 3600000)
-	
+
 	let newDateObj = new Date(time)
-	
+
 	if (!newDateObj) return null
-	
+
 	return newDateObj.valueOf()
 }
 
 const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA?: boolean): number | null => {
 	if (!date) return null // new Date().valueOf() // Date.parse(new Date().toString())
-	
+
 	if (typeof date === 'number') return date
-	
+
 	if (typeof date === 'object') return date.valueOf()
-	
+
 	if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today') return new Date().valueOf()
-	
+
 	try {
 		let result = ManualParse(date)
-		
+
 		if (!result) {
 			result = Date.parse(date.toString())
-			
+
 			if (isNaN(result)) {
 				const check = new Date(date)
-				
+
 				if (!check.valueOf()) {
 					result = ManualParse(date) ?? 0
 				}
 			}
 		}
-		
+
 		if (!result) return null
-		
+
 		// console.log('hasTZ', StringHasTimeZoneData(date))
-		
+
 		// Set a time string with no other timezone data to the current timezone
 		if (!ignoreIANA && !StringHasTimeZoneData(date)) {
 			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
@@ -282,7 +282,7 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 			// }
 			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
 		}
-		
+
 		return result
 	} catch {
 		return null
@@ -293,44 +293,44 @@ export type TDateParseOptions = TAdjustment & {timezoneSource?: string, ignoreIA
 
 export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): number | null => {
 	let newDate = DateParseTSInternal(date, adjustments?.timezoneSource, adjustments?.ignoreIANA)
-	
+
 	if (!newDate || !adjustments) return newDate
-	
+
 	return DateAdjustTS(newDate, adjustments)
 }
 
 export const DateISO = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
 	const parsed = DateParseTS(date, adjustments)
-	
+
 	if (!parsed) return null
-	
+
 	return new Date(parsed).toISOString()
 }
 export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Date | null => {
 	const parsed = DateParseTS(date, adjustments)
-	
+
 	if (!parsed) return null
-	
+
 	return new Date(parsed)
 }
 
 export const DateICS = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
 	const dateISO = DateISO(date, adjustments)
-	
+
 	if (!dateISO) return null
-	
+
 	let dateICS = dateISO
-	
+
 	let decimal = dateICS.indexOf('.')
 	let zed = dateICS.indexOf('Z')
-	
+
 	if (decimal > 0 && zed > decimal) {
 		dateICS = dateICS.substring(0, decimal) + dateICS.substring(zed)
 	}
-	
+
 	dateICS = ReplaceAll('-', '', dateICS)
 	dateICS = ReplaceAll(':', '', dateICS)
-	
+
 	return dateICS
 }
 
@@ -353,19 +353,19 @@ export type TDateFormat =
 
 export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
-	
+
 	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined))
-	
+
 	// console.log('DFA', date, dateObject)
-	
+
 	// const objectUTC = false //(typeof date === 'object' && timezoneDisplay === 'UTC')
-	
+
 	if (timezoneDisplay) {
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
-			
+
 			const sourceDate = (!!date && date !== 'now' && date !== 'today') ? dateObject : undefined
-			
+
 			const sourceOffset = IANAOffset(timezoneSource, sourceDate) ?? 0 // Chic 5
 			const displayOffset = IANAOffset(timezoneDisplay, sourceDate) ?? 0 // Chic 6
 			const offset = noTZInfo ?
@@ -373,19 +373,19 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 					(displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
 					((IANAOffset(undefined, sourceDate) ?? 0) - sourceOffset) - (displayOffset - sourceOffset) :
 				(sourceOffset - displayOffset)
-			
+
 			// console.log('DFA', date, noTZInfo, timezoneSource, sourceOffset, timezoneDisplay, displayOffset, offset)
-			
+
 			// if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
 			// console.log('---')
 			// 	console.log(noTZInfo, date, dateObject, sourceOffset/60, displayOffset/60, (IANAOffset() ?? 0) / 60, offset / 60)
-			
+
 			// console.log('offset', sourceDate, sourceOffset, displayOffset, offset)
-			
+
 			dateObject = DateObject(dateObject, {minutes: offset})
-			
+
 			// console.log(dateObject)
-			
+
 			// console.log('New', dateObject)
 			// dateObject = DateObject(dateObject, {minutes: toOffset})
 		} catch (err) {
@@ -393,9 +393,9 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			return null
 		}
 	}
-	
+
 	if (!dateObject || dateObject.valueOf() === 0) return null
-	
+
 	const applyCommand = (command: string, dateApply: Date): string => {
 		switch (command) {
 			case 'YYYY':
@@ -471,9 +471,9 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 				return command
 		}
 	}
-	
+
 	let useFormat: string
-	
+
 	switch (format) {
 		case 'Local':
 			useFormat = 'M/D/YYYY'
@@ -524,16 +524,16 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			useFormat = format ?? 'YYYY-MM-DD h:mm:ss a'
 			break
 	}
-	
+
 	const formatArray = useFormat.split('')
 	let result = ''
-	
+
 	let previousChar = ''
 	let command = ''
 	let inEscape = false
-	
+
 	const patterns = ['Mo', 'Qo', 'Do', 'do']
-	
+
 	for (const formatChar of formatArray) {
 		if (inEscape) {
 			if (formatChar === ']') {
@@ -543,11 +543,11 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 			}
 		} else if (formatChar === '[') {
 			result += applyCommand(command, dateObject)
-			
+
 			command = ''
-			
+
 			previousChar = ''
-			
+
 			inEscape = true
 		} else {
 			if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
@@ -555,16 +555,16 @@ export const DateFormatAny = (format: TDateFormat | string, date: TDateAny, time
 				command += formatChar
 			} else {
 				result += applyCommand(command, dateObject)
-				
+
 				command = formatChar
 			}
-			
+
 			previousChar = formatChar
 		}
 	}
-	
+
 	result += applyCommand(command, dateObject)
-	
+
 	return result
 }
 
@@ -630,36 +630,36 @@ const DateIsLeapYear = (year: number): boolean => (((year % 4 === 0) && (year % 
 const DateDaysInMonth = (year: number, month: number): number => {
 	let monthCalc = month
 	let yearCalc = year
-	
+
 	while (monthCalc < 0) {
 		monthCalc += 12
 		yearCalc -= 1
 	}
-	
+
 	while (monthCalc > 11) {
 		monthCalc -= 12
 		yearCalc += 1
 	}
-	
+
 	return [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]
 }
 
 const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 	let dateTS = DateParseTSInternal(date)
-	
+
 	if (!dateTS) return null
-	
+
 	const isNegative = months < 0
-	
+
 	const originalDateObject = DateObject(date) ?? new Date()
 	const originalDate = originalDateObject.getUTCDate()
 	const isLastDayOfMonth = originalDate === DateDaysInMonth(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth())
-	
+
 	for (let i = 0; i < Math.abs(months); i++) {
 		const dateObj = DateObject(dateTS) ?? new Date()
 		const year = dateObj.getUTCFullYear()
 		const month = dateObj.getUTCMonth()
-		
+
 		if (isLastDayOfMonth) {
 			if (isNegative) {
 				dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
@@ -672,27 +672,27 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 			} else {
 				dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
 			}
-			
+
 			let currentDate = DateObject(dateTS) ?? new Date()
 			if (currentDate.getUTCDate() < 15 && currentDate.getUTCDate() < originalDate)
 				dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate()
-			
+
 			currentDate = DateObject(dateTS) ?? new Date()
 			const currentDaysInMonth = DateDaysInMonth(currentDate.getUTCFullYear(), currentDate.getUTCMonth())
 			if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
 				dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate())
 		}
 	}
-	
+
 	return dateTS
 }
 
 export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number | null => {
 	let dateTS = DateParseTSInternal(date)
-	
+
 	for (const key of Object.keys(adjustments)) {
 		if (!dateTS) return null
-		
+
 		switch (key) {
 			case 'year':
 			case 'years':
@@ -768,7 +768,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 				break
 			default:
 				if (!dateTS) return null
-				
+
 				switch (key) {
 					case 'week':
 					case 'weeks':
@@ -922,7 +922,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 				break
 		}
 	}
-	
+
 	return dateTS
 }
 
@@ -937,15 +937,15 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	// 										 , 'weeks'
 	// 										 , 'day'
 	// 										 , 'days'].includes(duration)
-	
-	
+
+
 	let date1 = DateParseTSInternal(dateFrom)
 	let date2 = DateParseTSInternal(dateTo)
-	
+
 	if (!date1 || !date2) return null
-	
+
 	if (date1 === date2) return 0
-	
+
 	switch (duration) {
 		case 'year':
 		case 'years':
@@ -955,12 +955,12 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 			const increment = (['year', 'years'].includes(duration) ? 12 : 1) * (isNegative ? -1 : 1)
 			let count = 0
 			let newTS = DateAdjustMonthTS(date2, increment) ?? 0
-			
+
 			while (isNegative ? date1 <= newTS : date1 >= newTS) {
 				count -= isNegative ? -1 : 1
 				newTS = DateAdjustMonthTS(newTS, increment) ?? 0
 			}
-			
+
 			return count
 		default: {
 			const diff = date2 - date1
@@ -986,7 +986,7 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 			}
 		}
 	}
-	
+
 	return null
 }
 
@@ -1001,21 +1001,21 @@ export const DateComponent = (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 's
 export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
 	if (!currentDate) return null
-	
+
 	const year = CleanNumber(DateFormatAny('YYYY', date))
-	
+
 	const startDate = new Date(year, 0, 1)
-	
+
 	const days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7
-	
+
 	const week = Math.ceil(days / 7)
-	
+
 	return {year: year, week: week}
 }
 
 export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
 	const days = (weekNumber.week - 1) * 7
-	
+
 	return DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
 }
 
@@ -1037,38 +1037,38 @@ export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
 		second: 0,
 		millisecond: 0
 	}
-	
+
 	const dateFromTS = DateParseTSInternal(dateFrom) ?? 0
 	let checkTo = DateParseTSInternal(dateTo) ?? 0
-	
+
 	returnComponents.year = DateDiff(dateFromTS, checkTo, 'year') ?? 0
 	if (returnComponents.year) checkTo = DateParseTS(checkTo, {year: returnComponents.year * -1}) ?? 0
-	
+
 	returnComponents.month = DateDiff(dateFromTS, checkTo, 'month') ?? 0
 	if (returnComponents.month) checkTo = DateParseTS(checkTo, {month: returnComponents.month * -1}) ?? 0
-	
+
 	returnComponents.day = DateDiff(dateFromTS, checkTo, 'day') ?? 0
 	if (returnComponents.day) checkTo = DateParseTS(checkTo, {day: returnComponents.day * -1}) ?? 0
-	
+
 	returnComponents.hour = DateDiff(dateFromTS, checkTo, 'hour') ?? 0
 	if (returnComponents.hour) checkTo = DateParseTS(checkTo, {hour: returnComponents.hour * -1}) ?? 0
-	
+
 	returnComponents.minute = DateDiff(dateFromTS, checkTo, 'minute') ?? 0
 	if (returnComponents.minute) checkTo = DateParseTS(checkTo, {minute: returnComponents.minute * -1}) ?? 0
-	
+
 	returnComponents.second = DateDiff(dateFromTS, checkTo, 'second') ?? 0
 	if (returnComponents.second) checkTo = DateParseTS(checkTo, {second: returnComponents.second * -1}) ?? 0
-	
+
 	returnComponents.millisecond = DateDiff(dateFromTS, checkTo, 'millisecond') ?? 0
-	
+
 	return returnComponents
 }
 
 export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, tripToSecondsOrTwo = false, abbreviated = false): string => {
 	const components = DateDiffComponents(dateFrom, dateTo)
-	
+
 	let text = ''
-	
+
 	if (components.year) {
 		text += ` ${ToDigits(components.year)}${abbreviated ? 'Y' : (' ' + AddS('Year', components.year))}`
 		text += ` ${ToDigits(components.month)}${abbreviated ? 'Mo' : (' ' + AddS('Month', components.month))}`
@@ -1077,7 +1077,7 @@ export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, tr
 		}
 	} else if (components.month) {
 		text += ` ${ToDigits(components.month)}${abbreviated ? 'Mo' : (' ' + AddS('Month', components.month))}`
-		
+
 		if (components.day) {
 			text += ` ${ToDigits(components.day)}${abbreviated ? 'D' : (' ' + AddS('Day', components.day))}`
 		}
@@ -1102,7 +1102,7 @@ export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, tr
 			text += ` ${ToDigits(components.second)}${abbreviated ? 's' : (' ' + AddS('Second', components.second))}`
 		}
 	}
-	
+
 	return text.trim()
 }
 
@@ -1114,9 +1114,9 @@ export const DateDiffLongDescription = (dateFrom: TDateAny, dateTo: TDateAny, tr
  */
 export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = false, abbreviated = false): string => {
 	const durationTS = seconds * 1000
-	
+
 	let text = ''
-	
+
 	if (TSYearsEstimate(durationTS)) {
 		text += ` ${ToDigits(TSYearsEstimate(durationTS), 0)}${abbreviated ? 'Y' : ' ' + AddS('Year', TSYearsEstimate(durationTS))}`
 		text += ` ${ToDigits(TSMonthsEstimate(durationTS, true), 0)}${abbreviated ? 'Mo' : ' ' + AddS('Month', TSMonthsEstimate(durationTS, true))}`
@@ -1125,7 +1125,7 @@ export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = fa
 		}
 	} else if (TSMonthsEstimate(durationTS, true)) {
 		text += ` ${ToDigits(TSMonthsEstimate(durationTS, true), 0)}${abbreviated ? 'Mo' : ' ' + AddS('Month', TSMonthsEstimate(durationTS, true))}`
-		
+
 		if (TSDays(durationTS, true)) {
 			text += ` ${ToDigits(TSDays(durationTS, true), 0)}${abbreviated ? 'D' : ' ' + AddS('Day', TSDays(durationTS, true))}`
 		}
@@ -1150,15 +1150,15 @@ export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = fa
 			text += ` ${ToDigits(TSSeconds(durationTS, true), 0)}${abbreviated ? 's' : ' ' + AddS('Second', TSSeconds(durationTS, true))}`
 		}
 	}
-	
+
 	return text.trim()
 }
 
 const checkType = (evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', diff: number): boolean => {
 	if (diff === 0) return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck)
-	
+
 	if (diff > 0) return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck)
-	
+
 	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 }
 
@@ -1166,30 +1166,30 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 	const date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
 		? DateParseTS('now', date2)
 		: date2
-	
+
 	const msDifference = (DateParseTSInternal(date1, undefined, true) ?? 0) - (DateParseTSInternal(date2ToUse, undefined, true) ?? 0)
-	
+
 	if (msDifference === 0) {
 		return checkType(evalType, msDifference)
 	}
-	
+
 	if (!!minInterval) {
 		const date1Object = DateObject(date1) ?? new Date()
 		const date2Object = DateObject(date2ToUse) ?? new Date()
-		
+
 		const yearDiff = date1Object.getUTCFullYear() - date2Object.getUTCFullYear()
-		
+
 		if (['year', 'years'].includes(minInterval)) {
 			return checkType(evalType, yearDiff)
 		}
-		
+
 		const monthDiff = date1Object.getUTCMonth() - date2Object.getUTCMonth()
-		
+
 		if (['month', 'months'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			return checkType(evalType, monthDiff)
 		}
-		
+
 		if (['week', 'weeks'].includes(minInterval)) {
 			if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000) return checkType(evalType, msDifference)
 			const weekDiff = (DateWeekNumber(date1)?.week ?? 0) - (DateWeekNumber(date2ToUse)?.week ?? 0)
@@ -1197,29 +1197,29 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			if (weekDiff === 0 && (DateWeekNumber(date1)?.week ?? 0) === 1 && Math.abs(yearDiff) > 1) {
 				if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			}
-			
+
 			return checkType(evalType, weekDiff)
 		}
-		
+
 		const dateOfMonthDiff = date1Object.getUTCDate() - date2Object.getUTCDate()
-		
+
 		if (['day', 'days'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
 			return checkType(evalType, dateOfMonthDiff)
 		}
-		
+
 		const hourDiff = date1Object.getUTCHours() - date2Object.getUTCHours()
-		
+
 		if (['hour', 'hours'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
 			if (dateOfMonthDiff !== 0) return checkType(evalType, dateOfMonthDiff)
 			return checkType(evalType, hourDiff)
 		}
-		
+
 		const minuteDiff = date1Object.getUTCMinutes() - date2Object.getUTCMinutes()
-		
+
 		if (['minute', 'minutes'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
@@ -1227,9 +1227,9 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			if (hourDiff !== 0) return checkType(evalType, hourDiff)
 			return checkType(evalType, minuteDiff)
 		}
-		
+
 		const secondDiff = date1Object.getUTCSeconds() - date2Object.getUTCSeconds()
-		
+
 		if (['second', 'second'].includes(minInterval)) {
 			if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			if (monthDiff !== 0) return checkType(evalType, monthDiff)
@@ -1239,7 +1239,7 @@ export const DateCompare = (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | '
 			return checkType(evalType, secondDiff)
 		}
 	}
-	
+
 	return checkType(evalType, msDifference)
 }
 
@@ -1266,9 +1266,9 @@ export interface IDates {
 
 export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => {
 	const baseDate = DateParseTSInternal(`${year}-${((quarter * 3) - 1).toString().padStart(2, '0')}-01`, 'UTC')
-	
+
 	if (!baseDate) return null
-	
+
 	return {
 		start: (DateISO(baseDate, {quarter: 'StartOf'}) ?? '').substr(0, 10),
 		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substr(0, 10)
@@ -1287,9 +1287,9 @@ export const InitialDateQuarter = (): IQuarter => ({
 
 export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	const dateObj = DateObject(date)
-	
+
 	if (!dateObj) return null
-	
+
 	return {
 		year: dateObj.getUTCFullYear(),
 		quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
@@ -1304,33 +1304,33 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
  */
 export const DateDayOfWeek = (date: TDateAny): number | null => {
 	const dateObj = DateObject(date)
-	
+
 	if (!dateObj) return null
-	
+
 	return dateObj.getUTCDay()
 }
 
-export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string | null => {
+export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean, timezoneDisplay?: string}): string | null => {
 	if (!date) return null
 	try {
 		const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date, CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
-		
+
 		if (!date) return null
-		
+
 		let dateObj = new Date(useDate)
-		
+
 		if (!!adjustments) {
 			dateObj = DateObject(dateObj, adjustments) ?? dateObj
 			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 		}
-		
-		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
+
+		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, adjustments?.timezoneDisplay ?? 'UTC')
 	} catch (err) {
 		return null
 	}
 }
 
-export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean}): string => DateOnlyNull(date, adjustments) ?? new Date().toISOString().substring(0, 10)
+export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {formatLocale?: boolean, timezoneDisplay?: string}): string => DateOnlyNull(date, adjustments) ?? new Date().toISOString().substring(0, 10)
 
 /**
  * Convert a date and/or time value to a time
@@ -1340,15 +1340,15 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {fo
  */
 export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {formatLocale?: boolean}): string | null => {
 	if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today') return null
-	
+
 	try {
 		let timeValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', DateParseTS(time, adjustments))
 		if (!!timeValue) return timeValue
-		
+
 		let useTime = (time ?? '').toString().toLowerCase().trim()
-		
+
 		let changeHours = 0
-		
+
 		if (useTime.endsWith('am')) useTime = useTime.substring(0, useTime.length - 2).trim()
 		if (useTime.endsWith('a')) useTime = useTime.substring(0, useTime.length - 1).trim()
 		if (useTime.endsWith('pm')) {
@@ -1359,12 +1359,12 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
 			useTime = useTime.substring(0, useTime.length - 1).trim()
 			changeHours += 12
 		}
-		
-		
+
+
 		if (useTime.substring(1, 2) === ':') useTime = `0${useTime}`
-		
+
 		useTime = DateOnly('now') + 'T' + useTime
-		
+
 		let tsValue = DateParseTS(useTime, adjustments)
 		if (!!tsValue) {
 			let newValue = DateFormatAny(!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC')
@@ -1372,7 +1372,7 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
 		}
 	} catch (err) {
 	}
-	
+
 	return null
 }
 
@@ -1386,21 +1386,21 @@ export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {fo
  */
 export const TimeSeries = (minuteIntervals: number, startTimeInclusive: TDateAny = '00:00', endTimeNotInclusive: TDateAny = '24:00'): string[] => {
 	let currentTime = TimeOnly(startTimeInclusive)
-	
+
 	if (!currentTime) return []
-	
+
 	const results = [currentTime]
-	
+
 	const endTimeCompute = TimeOnly(endTimeNotInclusive, {minutes: minuteIntervals * -1})
-	
+
 	if (!endTimeCompute || minuteIntervals <= 0) return results
-	
+
 	while (currentTime < endTimeCompute) {
 		currentTime = TimeOnly(currentTime, {minutes: minuteIntervals})
 		if (!currentTime) break
 		results.push(currentTime)
 	}
-	
+
 	return results
 }
 
@@ -1431,9 +1431,9 @@ export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') 
 
 export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate = 'now'): string => {
 	if (!date) return ''
-	
+
 	const weeksFrom = DateDiff(DateOnly(compareDate, {week: startOf}), DateOnly(date, {week: startOf}), 'weeks') ?? 0
-	
+
 	switch (weeksFrom) {
 		case 0:
 			return 'This Week'
@@ -1450,23 +1450,23 @@ export const DateDoWSundayZero = (date: TDateAny = 'now'): number | null => Clea
 
 export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 	const dow = DateDoWSundayZero(date)
-	
+
 	if (dow === null) return false
-	
+
 	return dow === 0 || dow === 6
 }
 
 export const DatesBetween = (start: TDateAny, end: TDateAny, adjustments: TDateOnlyAdjustment = {day: 1}, limit = 1000): string[] => {
 	if (!Object.values(adjustments).some(val => CleanNumber(val) > 0)) return []
-	
+
 	let addDate = DateOnly(start)
 	let dates: string[] = []
-	
+
 	while (DateCompare(addDate, 'IsSameOrBefore', end, 'day')) {
 		dates.push(addDate)
 		addDate = DateOnly(addDate, adjustments)
 		if (dates.length >= limit) break
 	}
-	
+
 	return dates
 }

@@ -331,14 +331,17 @@ export declare const DateOnlyNull: (date: TDateAny, adjustments?: ({
     days?: number | "StartOf" | "EndOf" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | ({
     week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | ({
     weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | undefined) => string | null;
 export declare const DateOnly: (date: TDateAny, adjustments?: ({
     year?: number | "StartOf" | "EndOf" | undefined;
@@ -353,14 +356,17 @@ export declare const DateOnly: (date: TDateAny, adjustments?: ({
     days?: number | "StartOf" | "EndOf" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | ({
     week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | ({
     weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } & {
     formatLocale?: boolean | undefined;
+    timezoneDisplay?: string | undefined;
 }) | undefined) => string;
 /**
  * Convert a date and/or time value to a time

@@ -3107,7 +3107,7 @@ var DateDayOfWeek = function (date) {
     return dateObj.getUTCDay();
 };
 var DateOnlyNull = function (date, adjustments) {
-    var _a, _b;
+    var _a, _b, _c;
     if (!date)
         return null;
     try {
@@ -3120,7 +3120,7 @@ var DateOnlyNull = function (date, adjustments) {
             if (Object.values(adjustments).includes('EndOf'))
                 dateObj.setUTCHours(10);
         }
-        return DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, 'UTC');
+        return DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', dateObj, (_c = adjustments === null || adjustments === void 0 ? void 0 : adjustments.timezoneDisplay) !== null && _c !== void 0 ? _c : 'UTC');
     }
     catch (err) {
         return null;
