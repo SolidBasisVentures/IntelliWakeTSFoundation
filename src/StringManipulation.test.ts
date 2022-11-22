@@ -21,7 +21,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords, AddS, ShortNumber
+	UCWords, AddS, ShortNumber, ToInitials
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 
@@ -42,12 +42,15 @@ test('String Functions', () => {
 	expect(ToCamelCase('userToken')).toBe('userToken')
 	expect(ToCamelCase('UserToken')).toBe('userToken')
 	expect(ToCamelCase('user_id')).toBe('userID')
-	expect(ToCamelCase('id')).toBe('ID')
+	expect(ToCamelCase('id')).toBe('id')
 	expect(ToPascalCase('user_token')).toBe('UserToken')
 	expect(ToPascalCase('userToken')).toBe('UserToken')
 	expect(ToPascalCase('user-token')).toBe('UserToken')
 	expect(ToPascalCase('user_id')).toBe('UserID')
 	expect(ToPascalCase('id')).toBe('ID')
+	expect(ToInitials('id')).toBe('I')
+	expect(ToInitials('dennis peters')).toBe('DP')
+	expect(ToInitials('dennis james peters')).toBe('DJP')
 	{
 		let link = 'https://www.google.com'
 		let anchor = '<a href=\'https://www.google.com\' target=\'_blank\'>https://www.google.com</a>'
@@ -79,7 +82,7 @@ test('String Functions', () => {
 			{name: 'ToDigitsBlank', method: ToDigitsBlank, value: 10, expected: '10', decimal: '10.0', empty: ''},
 			{name: 'ToDigitsDash', method: ToDigitsDash, value: 10, expected: '10', decimal: '10.0', empty: '-'}
 		]
-		
+
 		for (const symbolFunction of symbolFunctions) {
 			expect(symbolFunction.method(symbolFunction.value)).toBe(symbolFunction.expected)
 			expect(symbolFunction.method('')).toBe(symbolFunction.empty)
