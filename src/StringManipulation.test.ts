@@ -51,6 +51,8 @@ test('String Functions', () => {
 	expect(ToInitials('id')).toBe('I')
 	expect(ToInitials('dennis peters')).toBe('DP')
 	expect(ToInitials('dennis james peters')).toBe('DJP')
+	expect(ToInitials('peters, dennis james')).toBe('DJP')
+	expect(ToInitials('peters, dennis')).toBe('DP')
 	{
 		let link = 'https://www.google.com'
 		let anchor = '<a href=\'https://www.google.com\' target=\'_blank\'>https://www.google.com</a>'

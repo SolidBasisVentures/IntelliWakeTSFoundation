@@ -94,12 +94,22 @@ export const ToPascalCase = (str: string | string[] | undefined | null): string 
 	ToWords(str).map(st => st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join('')
 
 /**
- * Takes a string and returns the initials, like "Dennis J Peters" = "DJP"
+ * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
  * @param str
  * @constructor
  */
-export const ToInitials = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map(st => st.substring(0, 1).toUpperCase()).join('')
+export const ToInitials = (str: string | string[] | undefined | null): string => {
+	if (!str) return ''
+
+	if (typeof str === 'string') {
+		const commaItems = str.split(',')
+		if (commaItems.length === 2) {
+			return ToWords([commaItems[1], commaItems[0]]).map(st => st.substring(0, 1).toUpperCase()).join('')
+		}
+	}
+
+	return ToWords(str).map(st => st.substring(0, 1).toUpperCase()).join('')
+}
 
 /**
  * Replaces links to an anchor tag.

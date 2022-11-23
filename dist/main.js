@@ -1298,11 +1298,19 @@ var ToPascalCase = function (str) {
     return ToWords(str).map(function (st) { return st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st); }).join('');
 };
 /**
- * Takes a string and returns the initials, like "Dennis J Peters" = "DJP"
+ * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
  * @param str
  * @constructor
  */
 var ToInitials = function (str) {
+    if (!str)
+        return '';
+    if (typeof str === 'string') {
+        var commaItems = str.split(',');
+        if (commaItems.length === 2) {
+            return ToWords([commaItems[1], commaItems[0]]).map(function (st) { return st.substring(0, 1).toUpperCase(); }).join('');
+        }
+    }
     return ToWords(str).map(function (st) { return st.substring(0, 1).toUpperCase(); }).join('');
 };
 /**

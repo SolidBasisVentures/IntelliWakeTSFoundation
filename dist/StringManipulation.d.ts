@@ -39,7 +39,7 @@ export declare const ToUpperCaseWords: (str: string | string[] | undefined | nul
  */
 export declare const ToPascalCase: (str: string | string[] | undefined | null) => string;
 /**
- * Takes a string and returns the initials, like "Dennis J Peters" = "DJP"
+ * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
  * @param str
  * @constructor
  */
