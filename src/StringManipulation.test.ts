@@ -21,7 +21,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords, AddS, ShortNumber, ToInitials
+	UCWords, AddS, ShortNumber, ToInitials, AsteriskMatch
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 
@@ -205,4 +205,8 @@ test('ShortNumber', () => {
 	expect(ShortNumber(6666, 1, 'down')).toBe('6.6k')
 	expect(ShortNumber(3333, 1, 'up')).toBe('3.4k')
 	expect(ShortNumber(3333, 1, 'down')).toBe('3.3k')
+	expect(AsteriskMatch('Dennis', 'De*is')).toBeTruthy()
+	expect(AsteriskMatch('Dennis', 'Dez*is')).toBeFalsy()
+	expect(AsteriskMatch('Dennis', '*De*is*')).toBeTruthy()
+	expect(AsteriskMatch('Dennis', '*z*is')).toBeFalsy()
 })

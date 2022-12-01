@@ -1995,6 +1995,15 @@ var EllipsesAtMax = function (value, maxCharacters) {
         return value;
     return value.substring(0, maxCharacters) + "...";
 };
+var AsteriskMatch = function (value, asteriskPattern) {
+    var _a;
+    if (!value)
+        return false;
+    var regex = ReplaceAll('*', '([\\s\\S]*?)', ReplaceAll('\\', '\\/', asteriskPattern));
+    if (!regex)
+        return false;
+    return !!((_a = value.match(new RegExp(regex))) === null || _a === void 0 ? void 0 : _a.length);
+};
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -5039,6 +5048,7 @@ exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
+exports.AsteriskMatch = AsteriskMatch;
 exports.AverageNumber = AverageNumber;
 exports.AverageNumberNull = AverageNumberNull;
 exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;

@@ -881,3 +881,13 @@ export const EllipsesAtMax = (value: string | null | undefined, maxCharacters: n
 
 	return `${value.substring(0, maxCharacters)}...`
 }
+
+export const AsteriskMatch = (value: string | null | undefined, asteriskPattern: string): boolean => {
+	if (!value) return false
+
+	const regex = ReplaceAll('*', '([\\s\\S]*?)', ReplaceAll('\\', '\\/', asteriskPattern))
+
+	if (!regex) return false
+
+	return !!value.match(new RegExp(regex))?.length
+}

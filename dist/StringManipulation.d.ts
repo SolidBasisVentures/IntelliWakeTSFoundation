@@ -336,3 +336,4 @@ export declare const RandomKey: (length: number) => string;
 export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean, maxDecimals?: number, minDecimals?: number | null) => string;
 export declare const ShortNumber: (value: any, decimals?: number, round?: 'round' | 'up' | 'down') => string | null;
 export declare const EllipsesAtMax: (value: string | null | undefined, maxCharacters?: number) => string | null | undefined;
+export declare const AsteriskMatch: (value: string | null | undefined, asteriskPattern: string) => boolean;
