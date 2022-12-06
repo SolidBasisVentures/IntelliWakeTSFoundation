@@ -13,9 +13,9 @@
  * // returns "john-doe-bob"
  * ReplaceAll(' ', '-', 'john doe bob')
  */
-export const ReplaceAll = function(find: string | string[], replace: string, subject: string | null | undefined): string {
+export const ReplaceAll = function (find: string | string[], replace: string, subject: string | null | undefined): string {
 	if (!subject) return ''
-	
+
 	if (Array.isArray(find)) {
 		let result = subject
 		for (const findItem of find) {
@@ -47,13 +47,13 @@ export const ReplaceAll = function(find: string | string[], replace: string, sub
  */
 export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean): number => {
 	if (!value) return 0
-	
+
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)
 	str = ReplaceAll(',', '', str)
 	str = ReplaceAll('%', '', str)
 	if (str.trim().length === 0 || isNaN(str)) return !!allowNaN ? NaN : 0
-	
+
 	if (roundClean !== undefined) {
 		return RoundTo(parseFloat(str), roundClean)
 	}
@@ -72,7 +72,7 @@ export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNu
 
 export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 	let returnValues: number[] = []
-	
+
 	for (const value of values) {
 		const valueArray = ToArray(value)
 		for (const valueItem of valueArray) {
@@ -85,15 +85,15 @@ export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 			}
 		}
 	}
-	
+
 	return returnValues
 }
 
 export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]): number | null => {
 	const valids = ValidNumbers(values)
-	
+
 	if (valids.length === 0) return null
-	
+
 	return CleanNumber(CleanNumbers(decimals, valids) / valids.length, decimals)
 }
 
@@ -101,11 +101,11 @@ export const AverageNumber = (decimals: number, ...values: (any | any[])[]): num
 
 export const CleanDivideNull = (numerator: any, denominator: any): number | null => {
 	if (numerator === undefined || numerator === null) return null
-	
+
 	const useDenominator = CleanNumber(denominator)
-	
+
 	if (useDenominator === 0) return null
-	
+
 	return CleanNumber(numerator) / useDenominator
 }
 
@@ -148,11 +148,11 @@ export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): numbe
  */
 export const CleanNumberNull = (value: any, roundClean?: number): number | null => {
 	if (value === undefined || value === null) return null
-	
+
 	let parsed = CleanNumber(value, roundClean, true)
-	
+
 	if (isNaN(parsed)) return null
-	
+
 	return parsed
 }
 
@@ -163,19 +163,19 @@ export const JSONParse = <T = any>(json: any): T | null => {
 	if (!json) {
 		return null
 	}
-	
+
 	if (typeof json === 'object') return json
-	
+
 	let returnObj = null
-	
+
 	try {
 		returnObj = JSON.parse(json)
 	} catch (err) {
 		// console.log('JSONParse', err)
-		
+
 		return null
 	}
-	
+
 	return returnObj
 }
 
@@ -233,7 +233,7 @@ export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): stri
 export const IsValidInputDecimal = (value: string): boolean => {
 	// noinspection RegExpUnexpectedAnchor
 	const regEx = new RegExp('^\\d{1,}(\\.\\d{0,4})?$')
-	
+
 	return !value || regEx.test(value)
 }
 
@@ -243,7 +243,7 @@ export const IsValidInputDecimal = (value: string): boolean => {
 export const GenerateUUID = () => {
 	let d = new Date().getTime() //Timestamp
 	let d2 = (performance && performance.now && performance.now() * 1000) || 0 //Time in microseconds since page-load or 0 if unsupported
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 		let r = Math.random() * 16 //random number between 0 and 16
 		if (d > 0) {
 			//Use timestamp until depleted
@@ -274,16 +274,16 @@ export const IsOn = (value: any): boolean => {
 	if (!value) {
 		return false
 	}
-	
+
 	if (value === true) {
 		return value
 	}
-	
+
 	const floatValue = parseFloat(value)
 	if (!isNaN(floatValue)) {
 		return floatValue > 0
 	}
-	
+
 	return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim())
 }
 
@@ -382,13 +382,13 @@ export const AddressValid = (address: any, prefix?: string): boolean => {
  */
 export const AddressSingleRow = (object: any, prefix?: string): string => {
 	const usePrefix = prefix ?? ''
-	
+
 	let singleRow = (object[usePrefix + 'address_1'] ?? '').trim()
 	if (!!(object[usePrefix + 'address_2'] ?? '')) singleRow += ', ' + object[usePrefix + 'address_2']
 	if (!!(object[usePrefix + 'city'] ?? '')) singleRow += ', ' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) singleRow += ', ' + object[usePrefix + 'state']
 	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + object[usePrefix + 'zip']
-	
+
 	return singleRow
 }
 
@@ -412,36 +412,36 @@ export const AddressSingleRow = (object: any, prefix?: string): string => {
  */
 export const AddressMultiRow = (object: any, prefix?: string): string => {
 	const usePrefix = prefix ?? ''
-	
+
 	let multiRow = (object[usePrefix + 'address_1'] ?? '').trim()
 	if (!!object[usePrefix + 'address_2']) {
 		multiRow += '\n' + (object[usePrefix + 'address_2'] ?? '').trim()
 	}
-	
+
 	if (!!(object[usePrefix + 'city'] ?? '')) multiRow += '\n' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) multiRow += ', ' + object[usePrefix + 'state']
 	if (!!(object[usePrefix + 'zip'] ?? '')) multiRow += '  ' + object[usePrefix + 'zip']
-	
+
 	return multiRow
 }
 
 export const ArrayToGuidString = (byteArray: any): string => {
-	return Array.from(byteArray, function(byte: any) {
+	return Array.from(byteArray, function (byte: any) {
 		return ('0' + (byte & 0xff).toString(16)).slice(-2)
 	})
-		.join('')
-		.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
+	            .join('')
+	            .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
 }
 
 export const StringToByteArray = (str: string): any => {
 	let decoded = atob(str)
 	let i, il = decoded.length
 	let array = new Uint8Array(il)
-	
+
 	for (i = 0; i < il; ++i) {
 		array[i] = decoded.charCodeAt(i)
 	}
-	
+
 	return array
 }
 
@@ -543,13 +543,13 @@ export const filterAsync = async <T>(
 	predicate: (t: T) => Promise<boolean>
 ): Promise<T[]> => {
 	let returnArray: T[] = []
-	
+
 	for (const t of array) {
 		if (await predicate(t)) {
 			returnArray.push(t)
 		}
 	}
-	
+
 	return returnArray
 }
 
@@ -565,6 +565,30 @@ export const filterAsync = async <T>(
  */
 export const ToArray = <T>(value: T | T[]): T[] => !value ? [] : Array.isArray(value) ? value : [value]
 
+/**
+ * Generates a range of numbers
+ *
+ * @param end
+ * @param increment
+ * @param start
+ * @constructor
+ */
+export const ArrayRange = (end: number, increment = 1, start = 0): number [] => {
+	const useIncrement = end > start ? increment > 0 ? increment : GreaterNumber(increment * -1, 1)
+		: increment < 0 ? increment : LeastNumber(increment * -1, -1)
+
+	let results: number[] = []
+
+	let value = start
+
+	while (useIncrement > 0 ? end > value : end < value) {
+		results.push(value)
+		value += useIncrement
+	}
+
+	return results
+}
+
 export const PropertiesExist = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data)
 
 export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data && !!data[key])
@@ -573,7 +597,7 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	let ret: any = {}
 	const excludeSet: Set<string> = new Set(keys)
 	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
-	
+
 	for (let key in obj) {
 		// noinspection JSUnfilteredForInLoop
 		if (!excludeSet.has(key)) {
@@ -587,25 +611,25 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> & Partial<K> {
 	let ret: Omit<T, K> & Partial<K> = {...obj}
 	const excludeSet: Set<string> = new Set(keys)
-	
+
 	for (let key in obj) {
 		if (excludeSet.has(key) && !(ret as any)[key]) {
 			delete (ret as any)[key]
 		}
 	}
-	
+
 	return ret
 }
 
 export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 	let ret: Partial<T> = {...obj}
-	
+
 	for (let key in obj) {
 		if (key in obj && (ret as any)[key] === undefined) {
 			delete (ret as any)[key]
 		}
 	}
-	
+
 	return ret
 }
 
@@ -613,7 +637,7 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
 	let ret: any = {}
 	const includeSet: Set<string> = new Set(keys)
 	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
-	
+
 	for (let key in obj) {
 		// noinspection JSUnfilteredForInLoop
 		if (includeSet.has(key)) {
@@ -626,11 +650,11 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
 
 export function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
 	if (!value || !remove) return ''
-	
+
 	const arrayRemove = ToArray(remove)
-	
+
 	let newValue = value
-	
+
 	do {
 		for (const aRemove of arrayRemove) {
 			if (newValue.startsWith(aRemove)) {
@@ -638,17 +662,17 @@ export function RemoveStarting(remove: string | string[] | null | undefined, val
 			}
 		}
 	} while (recursive && arrayRemove.some(aRemove => newValue.startsWith(aRemove)))
-	
+
 	return newValue
 }
 
 export function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
 	if (!value || !remove) return ''
-	
+
 	const arrayRemove = ToArray(remove)
-	
+
 	let newValue = value
-	
+
 	do {
 		for (const aRemove of arrayRemove) {
 			if (newValue.endsWith(aRemove)) {
@@ -656,17 +680,17 @@ export function RemoveEnding(remove: string | string[] | null | undefined, value
 			}
 		}
 	} while (recursive && arrayRemove.some(aRemove => newValue.endsWith(aRemove)))
-	
+
 	return newValue
 }
 
 export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
 	if (!!checkVal || otherVals.length === 0) return checkVal
-	
+
 	for (const otherVal of otherVals) {
 		if (!!otherVal) return otherVal
 	}
-	
+
 	return otherVals[otherVals.length - 1]
 }
 
@@ -712,7 +736,7 @@ export const RBGFromHex = (hex: string): [r: number, g: number, b: number] => {
  */
 export const ColorBrightnessHex = (hex: string): number => {
 	const [r, g, b] = RBGFromHex(hex)
-	
+
 	return ColorBrightnessRGB(r, g, b)
 }
 
@@ -731,7 +755,7 @@ export function InvertColorRGB(r: number, g: number, b: number, bw = false) {
 			? '#000000'
 			: '#FFFFFF'
 	}
-	
+
 	// invert color components
 	const rs = (255 - r).toString(16),
 		gs = (255 - g).toString(16),
@@ -749,7 +773,7 @@ export function InvertColorRGB(r: number, g: number, b: number, bw = false) {
  */
 export function InvertColorHex(hex: string, bw = false) {
 	const [r, g, b] = RBGFromHex(hex)
-	
+
 	return InvertColorRGB(r, g, b, bw)
 }
 

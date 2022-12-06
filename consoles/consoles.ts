@@ -1,21 +1,23 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {AsteriskMatch} from '../src/StringManipulation'
+import {ArrayRange} from '../src/Functions'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-const sets: [string, string][] = [
-	['Dennis', 'De*is'],
-	['Dennis', 'Dez*is'],
-	['Dennis', '*De*is*'],
-	['Dennis', '*z*is']
-
+const sets: [number, number?, number?][] = [
+	[10],
+	[10, 2],
+	[10, 2, 1],
+	[-10],
+	[-10, 2],
+	[-10, 2, 1],
+	[-10, 1, -1]
 ]
 
 for (const set of sets) {
-	console.log(set[0], set[1], AsteriskMatch(set[0], set[1]))
+	console.log(set, ArrayRange(set[0], set[1], set[2]))
 }
 
 console.timeEnd('Consoles')
