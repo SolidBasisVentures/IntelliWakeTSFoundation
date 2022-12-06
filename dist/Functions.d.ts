@@ -263,6 +263,15 @@ export declare const filterAsync: <T>(array: T[], predicate: (t: T) => Promise<b
  * @constructor
  */
 export declare const ToArray: <T>(value: T | T[]) => T[];
+/**
+ * Generates a range of numbers
+ *
+ * @param end
+ * @param increment
+ * @param start
+ * @constructor
+ */
+export declare const ArrayRange: (end: number, increment?: number, start?: number) => number[];
 export declare const PropertiesExist: <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => boolean;
 export declare const PropertiesNotFalsey: <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => boolean;
 export declare function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K>;

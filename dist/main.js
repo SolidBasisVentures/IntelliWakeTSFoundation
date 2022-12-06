@@ -971,6 +971,27 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
  * @constructor
  */
 var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
+/**
+ * Generates a range of numbers
+ *
+ * @param end
+ * @param increment
+ * @param start
+ * @constructor
+ */
+var ArrayRange = function (end, increment, start) {
+    if (increment === void 0) { increment = 1; }
+    if (start === void 0) { start = 0; }
+    var useIncrement = end > start ? increment > 0 ? increment : GreaterNumber(increment * -1, 1)
+        : increment < 0 ? increment : LeastNumber(increment * -1, -1);
+    var results = [];
+    var value = start;
+    while (useIncrement > 0 ? end > value : end < value) {
+        results.push(value);
+        value += useIncrement;
+    }
+    return results;
+};
 var PropertiesExist = function (data) {
     var keys = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -5046,6 +5067,7 @@ exports.AddressCopy = AddressCopy;
 exports.AddressMultiRow = AddressMultiRow;
 exports.AddressSingleRow = AddressSingleRow;
 exports.AddressValid = AddressValid;
+exports.ArrayRange = ArrayRange;
 exports.ArrayToGuidString = ArrayToGuidString;
 exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.AsteriskMatch = AsteriskMatch;
