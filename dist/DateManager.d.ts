@@ -400,3 +400,14 @@ export declare const WeeksFromLabel: (date: string, startOf: 'StartOf' | 'StartO
 export declare const DateDoWSundayZero: (date?: TDateAny) => number | null;
 export declare const DateIsWeekend: (date?: TDateAny) => boolean;
 export declare const DatesBetween: (start: TDateAny, end: TDateAny, adjustments?: TDateOnlyAdjustment, limit?: number) => string[];
+export declare type TTimeZoneOlsonStructure = {
+    group: string;
+    zones: {
+        value: string;
+        name: string;
+    }[];
+};
+export declare const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[];
+export declare const TimeZoneOlsonsAmerica: () => string[];
+export declare const TimeZoneOlsonsAmericaCommon: () => string[];
+export declare function IANAZoneAbbr(date: TDateAny): string;
