@@ -10,7 +10,7 @@ import {
 	DateParseTS,
 	DateQuarter,
 	DatesQuarter,
-	DateWeekNumber,
+	DateWeekNumber, IANAZoneAbbr,
 	ManualParse,
 	SortCompareDate,
 	SortCompareDateNull,
@@ -285,6 +285,8 @@ test('Date Managers', () => {
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
+	expect(IANAZoneAbbr('2022-06-01')).toEqual('EDT')
+	expect(IANAZoneAbbr('2022-12-01')).toEqual('EST')
 	process.env.TZ = 'America/Las_Angeles'
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
@@ -314,4 +316,8 @@ test('Date Managers', () => {
 	expect(DateIsWeekend('2022-09-11')).toEqual(true)
 	expect(DateIsWeekend('2022-09-10')).toEqual(true)
 	expect(DateIsWeekend('2022-09-09')).toEqual(false)
+	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
+	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
+	expect(IANAZoneAbbr('2022-06-01', 'America/Denver')).toEqual('MDT')
+	expect(IANAZoneAbbr('2022-12-01', 'America/Denver')).toEqual('MST')
 })

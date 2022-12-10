@@ -410,4 +410,4 @@ export declare type TTimeZoneOlsonStructure = {
 export declare const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[];
 export declare const TimeZoneOlsonsAmerica: () => string[];
 export declare const TimeZoneOlsonsAmericaCommon: () => string[];
-export declare function IANAZoneAbbr(date: TDateAny): string;
+export declare function IANAZoneAbbr(date: TDateAny, IANA?: string): string;
