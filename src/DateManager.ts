@@ -627,7 +627,7 @@ export const TSSeconds = (ts: number, withinMinute?: boolean): number => Math.fl
 
 const DateIsLeapYear = (year: number): boolean => (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0))
 
-const DateDaysInMonth = (year: number, month: number): number => {
+export const DaysInMonthYear = (year: number, month: number): number => {
 	let monthCalc = month
 	let yearCalc = year
 
@@ -644,6 +644,11 @@ const DateDaysInMonth = (year: number, month: number): number => {
 	return [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]
 }
 
+export const DaysInMonth = (date: TDateAny): number => {
+	const originalDateObject = DateObject(date) ?? new Date()
+	return DaysInMonthYear(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth())
+}
+
 const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 	let dateTS = DateParseTSInternal(date)
 
@@ -653,7 +658,7 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 
 	const originalDateObject = DateObject(date) ?? new Date()
 	const originalDate = originalDateObject.getUTCDate()
-	const isLastDayOfMonth = originalDate === DateDaysInMonth(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth())
+	const isLastDayOfMonth = originalDate === DaysInMonthYear(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth())
 
 	for (let i = 0; i < Math.abs(months); i++) {
 		const dateObj = DateObject(dateTS) ?? new Date()
@@ -662,15 +667,15 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 
 		if (isLastDayOfMonth) {
 			if (isNegative) {
-				dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
+				dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month)
 			} else {
-				dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month + 1)
+				dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month + 1)
 			}
 		} else {
 			if (isNegative) {
-				dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month - 1)
+				dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month - 1)
 			} else {
-				dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month)
+				dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month)
 			}
 
 			let currentDate = DateObject(dateTS) ?? new Date()
@@ -678,7 +683,7 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 				dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate()
 
 			currentDate = DateObject(dateTS) ?? new Date()
-			const currentDaysInMonth = DateDaysInMonth(currentDate.getUTCFullYear(), currentDate.getUTCMonth())
+			const currentDaysInMonth = DaysInMonthYear(currentDate.getUTCFullYear(), currentDate.getUTCMonth())
 			if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
 				dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate())
 		}
@@ -732,7 +737,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 					case 'EndOf': {
 						const dateObj = DateObject(dateTS) ?? new Date()
 						dateTS = DateAdjustTS(dateTS, {
-							day: DateDaysInMonth(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
+							day: DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
 							days: 'EndOf'
 						}) ?? 0
 					}

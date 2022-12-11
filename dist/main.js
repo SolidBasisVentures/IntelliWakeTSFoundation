@@ -2542,7 +2542,7 @@ var TSHours = function (ts, withinDay) { return Math.floor((ts - (withinDay ? (T
 var TSMinutes = function (ts, withinHour) { return Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000); };
 var TSSeconds = function (ts, withinMinute) { return Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000); };
 var DateIsLeapYear = function (year) { return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); };
-var DateDaysInMonth = function (year, month) {
+var DaysInMonthYear = function (year, month) {
     var monthCalc = month;
     var yearCalc = year;
     while (monthCalc < 0) {
@@ -2555,6 +2555,11 @@ var DateDaysInMonth = function (year, month) {
     }
     return [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc];
 };
+var DaysInMonth = function (date) {
+    var _a;
+    var originalDateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
+    return DaysInMonthYear(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth());
+};
 var DateAdjustMonthTS = function (date, months) {
     var _a, _b, _c, _d;
     var dateTS = DateParseTSInternal(date);
@@ -2563,31 +2568,31 @@ var DateAdjustMonthTS = function (date, months) {
     var isNegative = months < 0;
     var originalDateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
     var originalDate = originalDateObject.getUTCDate();
-    var isLastDayOfMonth = originalDate === DateDaysInMonth(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth());
+    var isLastDayOfMonth = originalDate === DaysInMonthYear(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth());
     for (var i = 0; i < Math.abs(months); i++) {
         var dateObj = (_b = DateObject(dateTS)) !== null && _b !== void 0 ? _b : new Date();
         var year = dateObj.getUTCFullYear();
         var month = dateObj.getUTCMonth();
         if (isLastDayOfMonth) {
             if (isNegative) {
-                dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month);
+                dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month);
             }
             else {
-                dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month + 1);
+                dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month + 1);
             }
         }
         else {
             if (isNegative) {
-                dateTS -= 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month - 1);
+                dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month - 1);
             }
             else {
-                dateTS += 24 * 60 * 60 * 1000 * DateDaysInMonth(year, month);
+                dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month);
             }
             var currentDate = (_c = DateObject(dateTS)) !== null && _c !== void 0 ? _c : new Date();
             if (currentDate.getUTCDate() < 15 && currentDate.getUTCDate() < originalDate)
                 dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate();
             currentDate = (_d = DateObject(dateTS)) !== null && _d !== void 0 ? _d : new Date();
-            var currentDaysInMonth = DateDaysInMonth(currentDate.getUTCFullYear(), currentDate.getUTCMonth());
+            var currentDaysInMonth = DaysInMonthYear(currentDate.getUTCFullYear(), currentDate.getUTCMonth());
             if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
                 dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate());
         }
@@ -2646,7 +2651,7 @@ var DateAdjustTS = function (date, adjustments) {
                             {
                                 var dateObj = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
                                 dateTS = (_j = DateAdjustTS(dateTS, {
-                                    day: DateDaysInMonth(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
+                                    day: DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
                                     days: 'EndOf'
                                 })) !== null && _j !== void 0 ? _j : 0;
                             }
@@ -5702,6 +5707,8 @@ exports.DateQuarter = DateQuarter;
 exports.DateWeekNumber = DateWeekNumber;
 exports.DatesBetween = DatesBetween;
 exports.DatesQuarter = DatesQuarter;
+exports.DaysInMonth = DaysInMonth;
+exports.DaysInMonthYear = DaysInMonthYear;
 exports.DeepEqual = DeepEqual;
 exports.DigitsNth = DigitsNth;
 exports.DisplayNameFromFL = DisplayNameFromFL;

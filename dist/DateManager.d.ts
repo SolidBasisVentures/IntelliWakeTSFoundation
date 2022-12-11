@@ -219,6 +219,8 @@ export declare const TSDays: (ts: number, withinMonth?: boolean | undefined) => 
 export declare const TSHours: (ts: number, withinDay?: boolean | undefined) => number;
 export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) => number;
 export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
+export declare const DaysInMonthYear: (year: number, month: number) => number;
+export declare const DaysInMonth: (date: TDateAny) => number;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
 export declare const DateDiff: (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration) => number | null;
 export interface IWeekNumber {
