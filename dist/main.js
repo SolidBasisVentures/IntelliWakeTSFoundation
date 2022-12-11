@@ -2543,6 +2543,7 @@ var TSMinutes = function (ts, withinHour) { return Math.floor((ts - (withinHour 
 var TSSeconds = function (ts, withinMinute) { return Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000); };
 var DateIsLeapYear = function (year) { return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); };
 var DaysInMonthYear = function (year, month) {
+    var _a;
     var monthCalc = month;
     var yearCalc = year;
     while (monthCalc < 0) {
@@ -2553,15 +2554,16 @@ var DaysInMonthYear = function (year, month) {
         monthCalc -= 12;
         yearCalc += 1;
     }
-    return [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc];
+    return (_a = [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]) !== null && _a !== void 0 ? _a : null;
 };
 var DaysInMonth = function (date) {
-    var _a;
-    var originalDateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
+    var originalDateObject = DateObject(date);
+    if (!originalDateObject)
+        return null;
     return DaysInMonthYear(originalDateObject.getUTCFullYear(), originalDateObject.getUTCMonth());
 };
 var DateAdjustMonthTS = function (date, months) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     var dateTS = DateParseTSInternal(date);
     if (!dateTS)
         return null;
@@ -2575,24 +2577,24 @@ var DateAdjustMonthTS = function (date, months) {
         var month = dateObj.getUTCMonth();
         if (isLastDayOfMonth) {
             if (isNegative) {
-                dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month);
+                dateTS -= 24 * 60 * 60 * 1000 * ((_c = DaysInMonthYear(year, month)) !== null && _c !== void 0 ? _c : 0);
             }
             else {
-                dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month + 1);
+                dateTS += 24 * 60 * 60 * 1000 * ((_d = DaysInMonthYear(year, month + 1)) !== null && _d !== void 0 ? _d : 0);
             }
         }
         else {
             if (isNegative) {
-                dateTS -= 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month - 1);
+                dateTS -= 24 * 60 * 60 * 1000 * ((_e = DaysInMonthYear(year, month - 1)) !== null && _e !== void 0 ? _e : 0);
             }
             else {
-                dateTS += 24 * 60 * 60 * 1000 * DaysInMonthYear(year, month);
+                dateTS += 24 * 60 * 60 * 1000 * ((_f = DaysInMonthYear(year, month)) !== null && _f !== void 0 ? _f : 0);
             }
-            var currentDate = (_c = DateObject(dateTS)) !== null && _c !== void 0 ? _c : new Date();
+            var currentDate = (_g = DateObject(dateTS)) !== null && _g !== void 0 ? _g : new Date();
             if (currentDate.getUTCDate() < 15 && currentDate.getUTCDate() < originalDate)
                 dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate();
-            currentDate = (_d = DateObject(dateTS)) !== null && _d !== void 0 ? _d : new Date();
-            var currentDaysInMonth = DaysInMonthYear(currentDate.getUTCFullYear(), currentDate.getUTCMonth());
+            currentDate = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
+            var currentDaysInMonth = (_j = DaysInMonthYear(currentDate.getUTCFullYear(), currentDate.getUTCMonth())) !== null && _j !== void 0 ? _j : 0;
             if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
                 dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate());
         }
@@ -2601,11 +2603,11 @@ var DateAdjustMonthTS = function (date, months) {
 };
 var DateAdjustTS = function (date, adjustments) {
     var e_2, _a;
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13;
     var dateTS = DateParseTSInternal(date);
     try {
-        for (var _13 = __values(Object.keys(adjustments)), _14 = _13.next(); !_14.done; _14 = _13.next()) {
-            var key = _14.value;
+        for (var _14 = __values(Object.keys(adjustments)), _15 = _14.next(); !_15.done; _15 = _14.next()) {
+            var key = _15.value;
             if (!dateTS)
                 return null;
             switch (key) {
@@ -2650,10 +2652,10 @@ var DateAdjustTS = function (date, adjustments) {
                         case 'EndOf':
                             {
                                 var dateObj = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
-                                dateTS = (_j = DateAdjustTS(dateTS, {
-                                    day: DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth()) - (dateObj.getUTCDate()),
+                                dateTS = (_k = DateAdjustTS(dateTS, {
+                                    day: ((_j = DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth())) !== null && _j !== void 0 ? _j : 0) - (dateObj.getUTCDate()),
                                     days: 'EndOf'
-                                })) !== null && _j !== void 0 ? _j : 0;
+                                })) !== null && _k !== void 0 ? _k : 0;
                             }
                             break;
                         default:
@@ -2666,20 +2668,20 @@ var DateAdjustTS = function (date, adjustments) {
                     switch (adjustments[key]) {
                         case 'StartOf':
                             {
-                                var dateObj = (_k = DateObject(dateTS)) !== null && _k !== void 0 ? _k : new Date();
-                                dateTS = (_l = DateAdjustTS(dateTS, {
+                                var dateObj = (_l = DateObject(dateTS)) !== null && _l !== void 0 ? _l : new Date();
+                                dateTS = (_m = DateAdjustTS(dateTS, {
                                     month: (dateObj.getUTCMonth() % 3) * -1,
                                     months: 'StartOf'
-                                })) !== null && _l !== void 0 ? _l : 0;
+                                })) !== null && _m !== void 0 ? _m : 0;
                             }
                             break;
                         case 'EndOf':
                             {
-                                var dateObj = (_m = DateObject(dateTS)) !== null && _m !== void 0 ? _m : new Date();
-                                dateTS = (_o = DateAdjustTS(dateTS, {
+                                var dateObj = (_o = DateObject(dateTS)) !== null && _o !== void 0 ? _o : new Date();
+                                dateTS = (_p = DateAdjustTS(dateTS, {
                                     month: 2 - (dateObj.getUTCMonth() % 3),
                                     months: 'EndOf'
-                                })) !== null && _o !== void 0 ? _o : 0;
+                                })) !== null && _p !== void 0 ? _p : 0;
                             }
                             break;
                         default:
@@ -2696,47 +2698,47 @@ var DateAdjustTS = function (date, adjustments) {
                             switch (adjustments[key]) {
                                 case 'StartOf':
                                     {
-                                        var dateObj = (_p = DateObject(dateTS)) !== null && _p !== void 0 ? _p : new Date();
-                                        dateTS = (_q = DateAdjustTS(dateTS, {
+                                        var dateObj = (_q = DateObject(dateTS)) !== null && _q !== void 0 ? _q : new Date();
+                                        dateTS = (_r = DateAdjustTS(dateTS, {
                                             day: dateObj.getUTCDay() * -1,
                                             days: 'StartOf'
-                                        })) !== null && _q !== void 0 ? _q : 0;
+                                        })) !== null && _r !== void 0 ? _r : 0;
                                     }
                                     break;
                                 case 'StartOfMon':
                                     {
-                                        var dateObj = (_r = DateObject(dateTS)) !== null && _r !== void 0 ? _r : new Date();
+                                        var dateObj = (_s = DateObject(dateTS)) !== null && _s !== void 0 ? _s : new Date();
                                         switch (dateObj.getUTCDay()) {
                                             case 0:
                                                 //Sunday
-                                                dateTS = (_s = DateAdjustTS(dateTS, {
-                                                    day: -6,
-                                                    days: 'StartOf'
-                                                })) !== null && _s !== void 0 ? _s : 0;
-                                                break;
-                                            case 1:
-                                                // Monday
                                                 dateTS = (_t = DateAdjustTS(dateTS, {
+                                                    day: -6,
                                                     days: 'StartOf'
                                                 })) !== null && _t !== void 0 ? _t : 0;
                                                 break;
-                                            default:
-                                                // All other days
+                                            case 1:
+                                                // Monday
                                                 dateTS = (_u = DateAdjustTS(dateTS, {
-                                                    day: (dateObj.getUTCDay() - 1) * -1,
                                                     days: 'StartOf'
                                                 })) !== null && _u !== void 0 ? _u : 0;
+                                                break;
+                                            default:
+                                                // All other days
+                                                dateTS = (_v = DateAdjustTS(dateTS, {
+                                                    day: (dateObj.getUTCDay() - 1) * -1,
+                                                    days: 'StartOf'
+                                                })) !== null && _v !== void 0 ? _v : 0;
                                                 break;
                                         }
                                     }
                                     break;
                                 case 'EndOf':
                                     {
-                                        var dateObj = (_v = DateObject(dateTS)) !== null && _v !== void 0 ? _v : new Date();
-                                        dateTS = (_w = DateAdjustTS(dateTS, {
+                                        var dateObj = (_w = DateObject(dateTS)) !== null && _w !== void 0 ? _w : new Date();
+                                        dateTS = (_x = DateAdjustTS(dateTS, {
                                             day: 6 - dateObj.getUTCDay(),
                                             days: 'EndOf'
-                                        })) !== null && _w !== void 0 ? _w : 0;
+                                        })) !== null && _x !== void 0 ? _x : 0;
                                     }
                                     break;
                                 default:
@@ -2749,20 +2751,20 @@ var DateAdjustTS = function (date, adjustments) {
                             switch (adjustments[key]) {
                                 case 'StartOf':
                                     {
-                                        var dateObj = (_x = DateObject(dateTS)) !== null && _x !== void 0 ? _x : new Date();
-                                        dateTS = (_y = DateAdjustTS(dateTS, {
+                                        var dateObj = (_y = DateObject(dateTS)) !== null && _y !== void 0 ? _y : new Date();
+                                        dateTS = (_z = DateAdjustTS(dateTS, {
                                             hour: dateObj.getUTCHours() * -1,
                                             hours: 'StartOf'
-                                        })) !== null && _y !== void 0 ? _y : 0;
+                                        })) !== null && _z !== void 0 ? _z : 0;
                                     }
                                     break;
                                 case 'EndOf':
                                     {
-                                        var dateObj = (_z = DateObject(dateTS)) !== null && _z !== void 0 ? _z : new Date();
-                                        dateTS = (_0 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_0 = DateObject(dateTS)) !== null && _0 !== void 0 ? _0 : new Date();
+                                        dateTS = (_1 = DateAdjustTS(dateTS, {
                                             hour: 23 - dateObj.getUTCHours(),
                                             hours: 'EndOf'
-                                        })) !== null && _0 !== void 0 ? _0 : 0;
+                                        })) !== null && _1 !== void 0 ? _1 : 0;
                                     }
                                     break;
                                 default:
@@ -2775,20 +2777,20 @@ var DateAdjustTS = function (date, adjustments) {
                             switch (adjustments[key]) {
                                 case 'StartOf':
                                     {
-                                        var dateObj = (_1 = DateObject(dateTS)) !== null && _1 !== void 0 ? _1 : new Date();
-                                        dateTS = (_2 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_2 = DateObject(dateTS)) !== null && _2 !== void 0 ? _2 : new Date();
+                                        dateTS = (_3 = DateAdjustTS(dateTS, {
                                             minute: dateObj.getUTCMinutes() * -1,
                                             minutes: 'StartOf'
-                                        })) !== null && _2 !== void 0 ? _2 : 0;
+                                        })) !== null && _3 !== void 0 ? _3 : 0;
                                     }
                                     break;
                                 case 'EndOf':
                                     {
-                                        var dateObj = (_3 = DateObject(dateTS)) !== null && _3 !== void 0 ? _3 : new Date();
-                                        dateTS = (_4 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_4 = DateObject(dateTS)) !== null && _4 !== void 0 ? _4 : new Date();
+                                        dateTS = (_5 = DateAdjustTS(dateTS, {
                                             minute: 59 - dateObj.getUTCMinutes(),
                                             minutes: 'EndOf'
-                                        })) !== null && _4 !== void 0 ? _4 : 0;
+                                        })) !== null && _5 !== void 0 ? _5 : 0;
                                     }
                                     break;
                                 default:
@@ -2801,20 +2803,20 @@ var DateAdjustTS = function (date, adjustments) {
                             switch (adjustments[key]) {
                                 case 'StartOf':
                                     {
-                                        var dateObj = (_5 = DateObject(dateTS)) !== null && _5 !== void 0 ? _5 : new Date();
-                                        dateTS = (_6 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_6 = DateObject(dateTS)) !== null && _6 !== void 0 ? _6 : new Date();
+                                        dateTS = (_7 = DateAdjustTS(dateTS, {
                                             second: dateObj.getUTCSeconds() * -1,
                                             seconds: 'StartOf'
-                                        })) !== null && _6 !== void 0 ? _6 : 0;
+                                        })) !== null && _7 !== void 0 ? _7 : 0;
                                     }
                                     break;
                                 case 'EndOf':
                                     {
-                                        var dateObj = (_7 = DateObject(dateTS)) !== null && _7 !== void 0 ? _7 : new Date();
-                                        dateTS = (_8 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_8 = DateObject(dateTS)) !== null && _8 !== void 0 ? _8 : new Date();
+                                        dateTS = (_9 = DateAdjustTS(dateTS, {
                                             second: 59 - dateObj.getUTCSeconds(),
                                             seconds: 'EndOf'
-                                        })) !== null && _8 !== void 0 ? _8 : 0;
+                                        })) !== null && _9 !== void 0 ? _9 : 0;
                                     }
                                     break;
                                 default:
@@ -2827,18 +2829,18 @@ var DateAdjustTS = function (date, adjustments) {
                             switch (adjustments[key]) {
                                 case 'StartOf':
                                     {
-                                        var dateObj = (_9 = DateObject(dateTS)) !== null && _9 !== void 0 ? _9 : new Date();
-                                        dateTS = (_10 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_10 = DateObject(dateTS)) !== null && _10 !== void 0 ? _10 : new Date();
+                                        dateTS = (_11 = DateAdjustTS(dateTS, {
                                             millisecond: dateObj.getUTCMilliseconds() * -1
-                                        })) !== null && _10 !== void 0 ? _10 : 0;
+                                        })) !== null && _11 !== void 0 ? _11 : 0;
                                     }
                                     break;
                                 case 'EndOf':
                                     {
-                                        var dateObj = (_11 = DateObject(dateTS)) !== null && _11 !== void 0 ? _11 : new Date();
-                                        dateTS = (_12 = DateAdjustTS(dateTS, {
+                                        var dateObj = (_12 = DateObject(dateTS)) !== null && _12 !== void 0 ? _12 : new Date();
+                                        dateTS = (_13 = DateAdjustTS(dateTS, {
                                             millisecond: 999 - dateObj.getUTCMilliseconds()
-                                        })) !== null && _12 !== void 0 ? _12 : 0;
+                                        })) !== null && _13 !== void 0 ? _13 : 0;
                                     }
                                     break;
                                 default:
@@ -2858,7 +2860,7 @@ var DateAdjustTS = function (date, adjustments) {
     catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
-            if (_14 && !_14.done && (_a = _13.return)) _a.call(_13);
+            if (_15 && !_15.done && (_a = _14.return)) _a.call(_14);
         }
         finally { if (e_2) throw e_2.error; }
     }
