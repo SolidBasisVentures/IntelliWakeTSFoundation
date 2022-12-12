@@ -2047,10 +2047,10 @@ export const TimeZoneOlsonsAmerica = (): string[] => (TimeZoneOlsonsAll.find(TZO
 
 export const TimeZoneOlsonsAmericaCommon = (): string[] => (TimeZoneOlsonsAll.find(TZOA => TZOA.group === 'US (Common)')?.zones ?? []).map(zone => zone.value)
 
-export function IANAZoneAbbr(date: TDateAny, IANA?: string) {
-	const today = DateObject(date, {timezoneSource: IANA}) ?? new Date()
+export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
+	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	const short = today.toLocaleDateString(undefined)
-	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: IANA})
+	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
 	// Trying to remove date from the string in a locale-agnostic way
 	const shortIndex = full.indexOf(short)

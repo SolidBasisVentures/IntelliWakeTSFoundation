@@ -3919,11 +3919,11 @@ var TimeZoneOlsonsAll = [
 ];
 var TimeZoneOlsonsAmerica = function () { var _a, _b; return ((_b = (_a = TimeZoneOlsonsAll.find(function (TZOA) { return TZOA.group === 'America'; })) === null || _a === void 0 ? void 0 : _a.zones) !== null && _b !== void 0 ? _b : []).map(function (zone) { return zone.value; }); };
 var TimeZoneOlsonsAmericaCommon = function () { var _a, _b; return ((_b = (_a = TimeZoneOlsonsAll.find(function (TZOA) { return TZOA.group === 'US (Common)'; })) === null || _a === void 0 ? void 0 : _a.zones) !== null && _b !== void 0 ? _b : []).map(function (zone) { return zone.value; }); };
-function IANAZoneAbbr(date, IANA) {
+function IANAZoneAbbr(date, iana) {
     var _a;
-    var today = (_a = DateObject(date, { timezoneSource: IANA })) !== null && _a !== void 0 ? _a : new Date();
+    var today = (_a = DateObject(date, { timezoneSource: iana !== null && iana !== void 0 ? iana : undefined })) !== null && _a !== void 0 ? _a : new Date();
     var short = today.toLocaleDateString(undefined);
-    var full = today.toLocaleDateString(undefined, { timeZoneName: 'short', timeZone: IANA });
+    var full = today.toLocaleDateString(undefined, { timeZoneName: 'short', timeZone: iana !== null && iana !== void 0 ? iana : undefined });
     // Trying to remove date from the string in a locale-agnostic way
     var shortIndex = full.indexOf(short);
     if (shortIndex >= 0) {
