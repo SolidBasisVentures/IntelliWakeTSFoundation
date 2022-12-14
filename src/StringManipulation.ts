@@ -893,11 +893,15 @@ export const AsteriskMatch = (value: string | null | undefined, asteriskPattern:
 }
 
 export const BuildPath = (...paths: (string | null)[]) => {
-	return paths.map((part, i) => {
+	let build = paths.map((part, i) => {
 		if (i === 0) {
 			return (part ?? '').trim().replace(/[\/]*$/g, '')
 		} else {
 			return (part ?? '').trim().replace(/(^[\/]*|[\/]*$)/g, '')
 		}
 	}).filter(x => x.length).join('/')
+
+	if (paths[0] === '/' && !build.startsWith('/')) return '/' + build
+
+	return build
 }

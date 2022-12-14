@@ -2030,7 +2030,7 @@ var BuildPath = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         paths[_i] = arguments[_i];
     }
-    return paths.map(function (part, i) {
+    var build = paths.map(function (part, i) {
         if (i === 0) {
             return (part !== null && part !== void 0 ? part : '').trim().replace(/[\/]*$/g, '');
         }
@@ -2038,6 +2038,9 @@ var BuildPath = function () {
             return (part !== null && part !== void 0 ? part : '').trim().replace(/(^[\/]*|[\/]*$)/g, '');
         }
     }).filter(function (x) { return x.length; }).join('/');
+    if (paths[0] === '/' && !build.startsWith('/'))
+        return '/' + build;
+    return build;
 };
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
