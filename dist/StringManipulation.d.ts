@@ -337,3 +337,4 @@ export declare const AddS: (text?: string | null | undefined, count?: number | n
 export declare const ShortNumber: (value: any, decimals?: number, round?: 'round' | 'up' | 'down') => string | null;
 export declare const EllipsesAtMax: (value: string | null | undefined, maxCharacters?: number) => string | null | undefined;
 export declare const AsteriskMatch: (value: string | null | undefined, asteriskPattern: string) => boolean;
+export declare const BuildPath: (...paths: (string | null)[]) => string;

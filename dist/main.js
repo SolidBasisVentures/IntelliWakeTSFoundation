@@ -2025,6 +2025,20 @@ var AsteriskMatch = function (value, asteriskPattern) {
         return false;
     return !!((_a = value.match(new RegExp(regex))) === null || _a === void 0 ? void 0 : _a.length);
 };
+var BuildPath = function () {
+    var paths = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        paths[_i] = arguments[_i];
+    }
+    return paths.map(function (part, i) {
+        if (i === 0) {
+            return (part !== null && part !== void 0 ? part : '').trim().replace(/[\/]*$/g, '');
+        }
+        else {
+            return (part !== null && part !== void 0 ? part : '').trim().replace(/(^[\/]*|[\/]*$)/g, '');
+        }
+    }).filter(function (x) { return x.length; }).join('/');
+};
 
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
@@ -5657,6 +5671,7 @@ exports.ArrayWithIDChanges = ArrayWithIDChanges;
 exports.AsteriskMatch = AsteriskMatch;
 exports.AverageNumber = AverageNumber;
 exports.AverageNumberNull = AverageNumberNull;
+exports.BuildPath = BuildPath;
 exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
 exports.ChangeValueChanges = ChangeValueChanges;
 exports.CleanDivide = CleanDivide;

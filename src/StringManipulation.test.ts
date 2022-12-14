@@ -21,7 +21,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords, AddS, ShortNumber, ToInitials, AsteriskMatch
+	UCWords, AddS, ShortNumber, ToInitials, AsteriskMatch, BuildPath
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 
@@ -209,4 +209,11 @@ test('ShortNumber', () => {
 	expect(AsteriskMatch('Dennis', 'Dez*is')).toBeFalsy()
 	expect(AsteriskMatch('Dennis', '*De*is*')).toBeTruthy()
 	expect(AsteriskMatch('Dennis', '*z*is')).toBeFalsy()
+	expect(BuildPath('Test')).toBe('Test')
+	expect(BuildPath('Test', '1')).toBe('Test/1')
+	expect(BuildPath('Test', '/', '1')).toBe('Test/1')
+	expect(BuildPath('Test', '', '1')).toBe('Test/1')
+	expect(BuildPath('Test/', '/', '/1/')).toBe('Test/1')
+	expect(BuildPath('/Test/', '/', '/1/')).toBe('/Test/1')
+	expect(BuildPath('/Test/', '/~/', '/1/')).toBe('/Test/~/1')
 })
