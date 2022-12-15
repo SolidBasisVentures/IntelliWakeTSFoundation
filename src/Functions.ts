@@ -563,7 +563,7 @@ export const filterAsync = async <T>(
  * @param value
  * @constructor
  */
-export const ToArray = <T>(value: T | T[]): T[] => !value ? [] : Array.isArray(value) ? value : [value]
+export const ToArray = <T>(value: T | T[]): T[] => (value === null || value === undefined) ? [] : Array.isArray(value) ? value : [value]
 
 /**
  * Generates a range of numbers

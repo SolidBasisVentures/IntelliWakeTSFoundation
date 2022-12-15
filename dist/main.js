@@ -970,7 +970,7 @@ var filterAsync = function (array, predicate) { return __awaiter(void 0, void 0,
  * @param value
  * @constructor
  */
-var ToArray = function (value) { return !value ? [] : Array.isArray(value) ? value : [value]; };
+var ToArray = function (value) { return (value === null || value === undefined) ? [] : Array.isArray(value) ? value : [value]; };
 /**
  * Generates a range of numbers
  *

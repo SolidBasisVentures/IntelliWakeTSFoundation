@@ -170,6 +170,7 @@ test('Other', () => {
 	expect(GreaterNumber('2', ['qwer', 'zxcv'])).toEqual(2)
 	expect(GreaterNumber('2', 5)).toEqual(5)
 	expect(GreaterNumber(5, 2)).toEqual(5)
+	expect(GreaterNumber(-1, 0)).toEqual(0)
 	expect(LeastNumberNull('asdf', ['qwer', 'zxcv'])).toEqual(null)
 	expect(LeastNumberNull('asdf', ['5', 'zxcv'])).toEqual(5)
 	expect(LeastNumberNull(2, ['5', 'zxcv'])).toEqual(2)
