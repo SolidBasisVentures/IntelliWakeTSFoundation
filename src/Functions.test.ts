@@ -15,7 +15,8 @@ import {
 	LeastNumberNull,
 	ObjectToJSONString,
 	OmitFalsey,
-	OmitProperty, OmitUndefined,
+	OmitProperty,
+	OmitUndefined,
 	PickProperty,
 	RemoveEnding,
 	RemoveStarting,
@@ -23,7 +24,7 @@ import {
 	RoundTo,
 	ToArray
 } from './Functions'
-import {DeepEqual} from './DeepEqual'
+import {DeepEqual, SubsetEqual} from './DeepEqual'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
@@ -68,6 +69,14 @@ test('Deep Equal', () => {
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
 	expect(DeepEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
 	expect(ReplaceAll(' ', '-', 'one two three four')).toBe('one-two-three-four')
+})
+
+test('Subset Equal', () => {
+	expect(SubsetEqual(item, {...item})).toBe(true)
+	expect(SubsetEqual(item, {...item, valZZZ: false})).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
+	expect(SubsetEqual({...item, val1: false}, item)).toBe(false)
+	expect(SubsetEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
 })
 
 test('CleanNumber', () => {

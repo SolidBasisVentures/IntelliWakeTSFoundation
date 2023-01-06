@@ -4026,6 +4026,70 @@ var DeepEqual = function (object1, object2) {
             return object1 === object2;
     }
 };
+var SubsetEqual = function (subset, superset) {
+    var e_2, _a;
+    var _b, _c;
+    if (subset === undefined && superset === undefined)
+        return true;
+    if (subset === null && superset === null)
+        return true;
+    if ((!subset && !!superset) || (!!subset && !superset) || typeof subset !== typeof superset)
+        return false;
+    if (Array.isArray(subset)) {
+        if (subset.length !== superset.length)
+            return false;
+        for (var i = 0; i < subset.length; i++) {
+            if (!DeepEqual(subset[i], superset[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof subset) {
+        case 'function':
+            return true;
+        case 'object':
+            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
+                return true;
+            var keysSub = Object.keys(subset);
+            try {
+                for (var keysSub_1 = __values(keysSub), keysSub_1_1 = keysSub_1.next(); !keysSub_1_1.done; keysSub_1_1 = keysSub_1.next()) {
+                    var key = keysSub_1_1.value;
+                    var val1 = subset[key];
+                    var val2 = superset[key];
+                    if (typeof val1 !== typeof val2)
+                        return false;
+                    var areObjects = isObject(val1) && isObject(val2);
+                    if ((areObjects && !DeepEqual(val1, val2)) ||
+                        (!areObjects && val1 !== val2)) {
+                        return false;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (keysSub_1_1 && !keysSub_1_1.done && (_a = keysSub_1.return)) _a.call(keysSub_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            return true;
+        case 'string':
+            if (typeof superset === 'string') {
+                var ts1 = DateParseTS(subset);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(superset);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
+                }
+            }
+            return subset === superset;
+        default:
+            return subset === superset;
+    }
+};
 
 var initialChanges = {};
 /**
@@ -5832,6 +5896,7 @@ exports.StringHasDateData = StringHasDateData;
 exports.StringHasTimeData = StringHasTimeData;
 exports.StringHasTimeZoneData = StringHasTimeZoneData;
 exports.StringToByteArray = StringToByteArray;
+exports.SubsetEqual = SubsetEqual;
 exports.TSDays = TSDays;
 exports.TSHours = TSHours;
 exports.TSMinutes = TSMinutes;
