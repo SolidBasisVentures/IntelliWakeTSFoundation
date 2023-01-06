@@ -4033,13 +4033,13 @@ var SubsetEqual = function (subset, superset) {
         return true;
     if (subset === null && superset === null)
         return true;
-    if ((!subset && !!superset) || (!!subset && !superset) || typeof subset !== typeof superset)
+    if ((!subset && !!superset) || (!!subset && !superset))
         return false;
     if (Array.isArray(subset)) {
         if (subset.length !== superset.length)
             return false;
         for (var i = 0; i < subset.length; i++) {
-            if (!DeepEqual(subset[i], superset[i]))
+            if (!SubsetEqual(subset[i], superset[i]))
                 return false;
         }
         return true;
@@ -4058,11 +4058,9 @@ var SubsetEqual = function (subset, superset) {
                     var key = keysSub_1_1.value;
                     var val1 = subset[key];
                     var val2 = superset[key];
-                    if (typeof val1 !== typeof val2)
-                        return false;
                     var areObjects = isObject(val1) && isObject(val2);
-                    if ((areObjects && !DeepEqual(val1, val2)) ||
-                        (!areObjects && val1 !== val2)) {
+                    if ((areObjects && !SubsetEqual(val1, val2)) ||
+                        (!areObjects && val1 != val2)) {
                         return false;
                     }
                 }
@@ -4085,9 +4083,21 @@ var SubsetEqual = function (subset, superset) {
                     }
                 }
             }
-            return subset === superset;
+            if (typeof superset === 'number') {
+                var cn1 = CleanNumberNull(subset);
+                if (cn1 !== null)
+                    return superset === cn1;
+            }
+            return subset == superset;
+        case 'number':
+            if (typeof superset === 'string') {
+                var cn1 = CleanNumberNull(superset);
+                if (cn1 !== null)
+                    return subset === cn1;
+            }
+            return subset == superset;
         default:
-            return subset === superset;
+            return subset == superset;
     }
 };
 

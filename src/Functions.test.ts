@@ -74,6 +74,21 @@ test('Deep Equal', () => {
 test('Subset Equal', () => {
 	expect(SubsetEqual(item, {...item})).toBe(true)
 	expect(SubsetEqual(item, {...item, valZZZ: false})).toBe(true)
+	expect(SubsetEqual(item, {...item, val3: 'Ones'})).toBe(false)
+	expect(SubsetEqual({
+		"id": "7",
+		"description": "Audit Support"
+	}, {
+		"id": 7,
+		"description": "Audit Support"
+	})).toBe(true)
+	expect(SubsetEqual({
+		"id": "7",
+		"description": "Audit Support"
+	}, {
+		"id": 7,
+		"description": "Audit Supports"
+	})).toBe(false)
 	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetEqual({...item, val1: false}, item)).toBe(false)
 	expect(SubsetEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)

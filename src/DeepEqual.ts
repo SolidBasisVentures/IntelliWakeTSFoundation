@@ -1,4 +1,5 @@
 import {DateCompare, DateParseTS} from './DateManager'
+import {CleanNumberNull} from './Functions'
 
 function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
@@ -71,13 +72,13 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 	if (subset === undefined && superset === undefined) return true
 	if (subset === null && superset === null) return true
 
-	if ((!subset && !!superset) || (!!subset && !superset) || typeof subset !== typeof superset) return false
+	if ((!subset && !!superset) || (!!subset && !superset)) return false
 
 	if (Array.isArray(subset)) {
 		if (subset.length !== superset.length) return false
 
 		for (let i = 0; i < subset.length; i++) {
-			if (!DeepEqual(subset[i], superset[i])) return false
+			if (!SubsetEqual(subset[i], superset[i])) return false
 		}
 
 		return true
@@ -96,12 +97,10 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 				const val1 = subset[key]
 				const val2 = superset[key]
 
-				if (typeof val1 !== typeof val2) return false
-
 				const areObjects = isObject(val1) && isObject(val2)
 				if (
-					(areObjects && !DeepEqual(val1, val2)) ||
-					(!areObjects && val1 !== val2)
+					(areObjects && !SubsetEqual(val1, val2)) ||
+					(!areObjects && val1 != val2)
 				) {
 					return false
 				}
@@ -119,8 +118,20 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 				}
 			}
 
-			return subset === superset
+			if (typeof superset === 'number') {
+				const cn1 = CleanNumberNull(subset)
+				if (cn1 !== null) return superset === cn1
+			}
+
+			return subset == superset
+		case 'number':
+			if (typeof superset === 'string') {
+				const cn1 = CleanNumberNull(superset)
+				if (cn1 !== null) return subset === cn1
+			}
+
+			return subset == superset
 		default:
-			return subset === superset
+			return subset == superset
 	}
 }
