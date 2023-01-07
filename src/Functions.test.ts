@@ -92,6 +92,12 @@ test('Subset Equal', () => {
 	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetEqual({...item, val1: false}, item)).toBe(false)
 	expect(SubsetEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
+	expect(SubsetEqual(item, {...item, val1: true})).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: "true"})).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: "false"})).toBe(false)
+	expect(SubsetEqual(item, {...item, val1: 1})).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: 0})).toBe(false)
 })
 
 test('CleanNumber', () => {

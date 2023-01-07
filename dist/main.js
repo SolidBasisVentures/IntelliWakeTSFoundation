@@ -4047,6 +4047,8 @@ var SubsetEqual = function (subset, superset) {
     switch (typeof subset) {
         case 'function':
             return true;
+        case 'boolean':
+            return IsOn(subset) === IsOn(superset);
         case 'object':
             if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
                 return true;
@@ -4056,13 +4058,8 @@ var SubsetEqual = function (subset, superset) {
             try {
                 for (var keysSub_1 = __values(keysSub), keysSub_1_1 = keysSub_1.next(); !keysSub_1_1.done; keysSub_1_1 = keysSub_1.next()) {
                     var key = keysSub_1_1.value;
-                    var val1 = subset[key];
-                    var val2 = superset[key];
-                    var areObjects = isObject(val1) && isObject(val2);
-                    if ((areObjects && !SubsetEqual(val1, val2)) ||
-                        (!areObjects && val1 != val2)) {
+                    if (!SubsetEqual(subset[key], superset[key]))
                         return false;
-                    }
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -4074,6 +4071,9 @@ var SubsetEqual = function (subset, superset) {
             }
             return true;
         case 'string':
+            if (typeof superset === 'boolean') {
+                return IsOn(subset) === IsOn(superset);
+            }
             if (typeof superset === 'string') {
                 var ts1 = DateParseTS(subset);
                 if (!!ts1) {

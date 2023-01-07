@@ -1,5 +1,5 @@
 import {DateCompare, DateParseTS} from './DateManager'
-import {CleanNumberNull} from './Functions'
+import {CleanNumberNull, IsOn} from './Functions'
 
 function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
@@ -87,6 +87,8 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 	switch (typeof subset) {
 		case 'function':
 			return true
+		case 'boolean':
+			return IsOn(subset) === IsOn(superset)
 		case 'object':
 			if (typeof subset === 'object' && (subset as any).type?.toString().includes('react.')) return true
 			if (typeof superset === 'object' && (superset as any).type?.toString().includes('react.')) return true
@@ -94,20 +96,15 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 			const keysSub = Object.keys(subset)
 
 			for (const key of keysSub) {
-				const val1 = subset[key]
-				const val2 = superset[key]
-
-				const areObjects = isObject(val1) && isObject(val2)
-				if (
-					(areObjects && !SubsetEqual(val1, val2)) ||
-					(!areObjects && val1 != val2)
-				) {
-					return false
-				}
+				if (!SubsetEqual(subset[key], superset[key])) return false
 			}
 
 			return true
 		case 'string':
+			if (typeof superset === 'boolean') {
+				return IsOn(subset) === IsOn(superset)
+			}
+
 			if (typeof superset === 'string') {
 				const ts1 = DateParseTS(subset)
 				if (!!ts1) {
