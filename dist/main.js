@@ -4100,6 +4100,82 @@ var SubsetEqual = function (subset, superset) {
             return subset == superset;
     }
 };
+var SubsetFormEqual = function (subset, superset) {
+    var e_3, _a;
+    var _b, _c;
+    if (subset === undefined && superset === undefined)
+        return true;
+    if (subset === null && superset === null)
+        return true;
+    if ((subset === '' && superset === null) || (subset === null && superset === ''))
+        return true;
+    if ((!subset && !!superset) || (!!subset && !superset))
+        return false;
+    if (Array.isArray(subset)) {
+        if (subset.length !== superset.length)
+            return false;
+        for (var i = 0; i < subset.length; i++) {
+            if (!SubsetEqual(subset[i], superset[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof subset) {
+        case 'function':
+            return true;
+        case 'boolean':
+            return IsOn(subset) === IsOn(superset);
+        case 'object':
+            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
+                return true;
+            var keysSub = Object.keys(subset);
+            try {
+                for (var keysSub_2 = __values(keysSub), keysSub_2_1 = keysSub_2.next(); !keysSub_2_1.done; keysSub_2_1 = keysSub_2.next()) {
+                    var key = keysSub_2_1.value;
+                    if (!SubsetEqual(subset[key], superset[key]))
+                        return false;
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (keysSub_2_1 && !keysSub_2_1.done && (_a = keysSub_2.return)) _a.call(keysSub_2);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            return true;
+        case 'string':
+            if (typeof superset === 'boolean') {
+                return IsOn(subset) === IsOn(superset);
+            }
+            if (typeof superset === 'string') {
+                var ts1 = DateParseTS(subset);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(superset);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
+                }
+            }
+            if (typeof superset === 'number') {
+                var cn1 = CleanNumberNull(subset);
+                if (cn1 !== null)
+                    return superset === cn1;
+            }
+            return subset == superset;
+        case 'number':
+            if (typeof superset === 'string') {
+                var cn1 = CleanNumberNull(superset);
+                if (cn1 !== null)
+                    return subset === cn1;
+            }
+            return subset == superset;
+        default:
+            return subset == superset;
+    }
+};
 
 var initialChanges = {};
 /**
@@ -5907,6 +5983,7 @@ exports.StringHasTimeData = StringHasTimeData;
 exports.StringHasTimeZoneData = StringHasTimeZoneData;
 exports.StringToByteArray = StringToByteArray;
 exports.SubsetEqual = SubsetEqual;
+exports.SubsetFormEqual = SubsetFormEqual;
 exports.TSDays = TSDays;
 exports.TSHours = TSHours;
 exports.TSMinutes = TSMinutes;

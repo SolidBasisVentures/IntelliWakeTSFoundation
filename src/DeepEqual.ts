@@ -132,3 +132,69 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 			return subset == superset
 	}
 }
+
+export const SubsetFormEqual = (subset: any, superset: any): boolean => {
+	if (subset === undefined && superset === undefined) return true
+	if (subset === null && superset === null) return true
+	if ((subset === '' && superset === null) || (subset === null && superset === '')) return true
+
+	if ((!subset && !!superset) || (!!subset && !superset)) return false
+
+	if (Array.isArray(subset)) {
+		if (subset.length !== superset.length) return false
+
+		for (let i = 0; i < subset.length; i++) {
+			if (!SubsetEqual(subset[i], superset[i])) return false
+		}
+
+		return true
+	}
+
+	switch (typeof subset) {
+		case 'function':
+			return true
+		case 'boolean':
+			return IsOn(subset) === IsOn(superset)
+		case 'object':
+			if (typeof subset === 'object' && (subset as any).type?.toString().includes('react.')) return true
+			if (typeof superset === 'object' && (superset as any).type?.toString().includes('react.')) return true
+
+			const keysSub = Object.keys(subset)
+
+			for (const key of keysSub) {
+				if (!SubsetEqual(subset[key], superset[key])) return false
+			}
+
+			return true
+		case 'string':
+			if (typeof superset === 'boolean') {
+				return IsOn(subset) === IsOn(superset)
+			}
+
+			if (typeof superset === 'string') {
+				const ts1 = DateParseTS(subset)
+				if (!!ts1) {
+					const ts2 = DateParseTS(superset)
+					if (!!ts2) {
+						return DateCompare(ts1, 'IsSame', ts2, 'second')
+					}
+				}
+			}
+
+			if (typeof superset === 'number') {
+				const cn1 = CleanNumberNull(subset)
+				if (cn1 !== null) return superset === cn1
+			}
+
+			return subset == superset
+		case 'number':
+			if (typeof superset === 'string') {
+				const cn1 = CleanNumberNull(superset)
+				if (cn1 !== null) return subset === cn1
+			}
+
+			return subset == superset
+		default:
+			return subset == superset
+	}
+}
