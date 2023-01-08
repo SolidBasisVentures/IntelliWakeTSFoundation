@@ -4115,7 +4115,7 @@ var SubsetFormEqual = function (subset, superset) {
         if (subset.length !== superset.length)
             return false;
         for (var i = 0; i < subset.length; i++) {
-            if (!SubsetEqual(subset[i], superset[i]))
+            if (!SubsetFormEqual(subset[i], superset[i]))
                 return false;
         }
         return true;
@@ -4134,7 +4134,7 @@ var SubsetFormEqual = function (subset, superset) {
             try {
                 for (var keysSub_2 = __values(keysSub), keysSub_2_1 = keysSub_2.next(); !keysSub_2_1.done; keysSub_2_1 = keysSub_2.next()) {
                     var key = keysSub_2_1.value;
-                    if (!SubsetEqual(subset[key], superset[key]))
+                    if (!SubsetFormEqual(subset[key], superset[key]))
                         return false;
                 }
             }
