@@ -1,5 +1,5 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {SubsetEqual} from '../src/DeepEqual'
+import {SubsetEqual, SubsetFormEqual} from '../src/DeepEqual'
 
 require('source-map-support').install()
 
@@ -21,9 +21,10 @@ const item = {
 	val6: [
 		{item1: 1, item2: 'One'},
 		{item1: 2, item2: 'Two'}
-	]
+	],
+	valBlank: ''
 }
 
-console.log(SubsetEqual(item, {...item, val1: 'true'}))
+console.log(SubsetFormEqual(item, {...item, valBlank: null}))
 
 console.timeEnd('Consoles')

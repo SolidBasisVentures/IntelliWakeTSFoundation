@@ -136,6 +136,7 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 	if (subset === undefined && superset === undefined) return true
 	if (subset === null && superset === null) return true
+
 	if ((subset === '' && superset === null) || (subset === null && superset === '')) return true
 
 	if ((!subset && !!superset) || (!!subset && !superset)) return false
@@ -144,7 +145,7 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 		if (subset.length !== superset.length) return false
 
 		for (let i = 0; i < subset.length; i++) {
-			if (!SubsetEqual(subset[i], superset[i])) return false
+			if (!SubsetFormEqual(subset[i], superset[i])) return false
 		}
 
 		return true
@@ -161,8 +162,9 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 
 			const keysSub = Object.keys(subset)
 
+
 			for (const key of keysSub) {
-				if (!SubsetEqual(subset[key], superset[key])) return false
+				if (!SubsetFormEqual(subset[key], superset[key])) return false
 			}
 
 			return true

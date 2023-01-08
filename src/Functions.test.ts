@@ -24,7 +24,7 @@ import {
 	RoundTo,
 	ToArray
 } from './Functions'
-import {DeepEqual, SubsetEqual} from './DeepEqual'
+import {DeepEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
@@ -58,7 +58,8 @@ const item = {
 	val6: [
 		{item1: 1, item2: 'One'},
 		{item1: 2, item2: 'Two'}
-	]
+	],
+	valBlank: ''
 }
 
 test('Deep Equal', () => {
@@ -98,6 +99,37 @@ test('Subset Equal', () => {
 	expect(SubsetEqual(item, {...item, val1: "false"})).toBe(false)
 	expect(SubsetEqual(item, {...item, val1: 1})).toBe(true)
 	expect(SubsetEqual(item, {...item, val1: 0})).toBe(false)
+})
+
+test('Subset Form Equal', () => {
+	expect(SubsetFormEqual(item, {...item})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, valZZZ: false})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val3: 'Ones'})).toBe(false)
+	expect(SubsetFormEqual({
+		"id": "7",
+		"description": "Audit Support"
+	}, {
+		"id": 7,
+		"description": "Audit Support"
+	})).toBe(true)
+	expect(SubsetFormEqual({
+		"id": "7",
+		"description": "Audit Support"
+	}, {
+		"id": 7,
+		"description": "Audit Supports"
+	})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, val1: false})).toBe(false)
+	expect(SubsetFormEqual({...item, val1: false}, item)).toBe(false)
+	expect(SubsetFormEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val1: false})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, val1: true})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val1: "true"})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val1: "false"})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, val1: 1})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, valBlank: null})).toBe(true)
 })
 
 test('CleanNumber', () => {
