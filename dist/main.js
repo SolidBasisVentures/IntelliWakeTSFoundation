@@ -4109,6 +4109,8 @@ var SubsetFormEqual = function (subset, superset) {
         return true;
     if ((subset === '' && superset === null) || (subset === null && superset === ''))
         return true;
+    if ((subset === 'false' && !superset) || (!subset && superset === 'false'))
+        return true;
     if ((!subset && !!superset) || (!!subset && !superset))
         return false;
     if (Array.isArray(subset)) {

@@ -138,6 +138,7 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 	if (subset === null && superset === null) return true
 
 	if ((subset === '' && superset === null) || (subset === null && superset === '')) return true
+	if ((subset === 'false' && !superset) || (!subset && superset === 'false')) return true
 
 	if ((!subset && !!superset) || (!!subset && !superset)) return false
 

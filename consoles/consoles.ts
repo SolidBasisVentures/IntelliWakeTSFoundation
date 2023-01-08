@@ -7,22 +7,22 @@ console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
 console.log(SubsetFormEqual({
-	'id': '5',
-	'name': 'Nate Christensen',
-	'email': 'natechris13@outlook.com',
-	'smsphone': '',
-	'title': '',
-	'is_active': 'true',
-	'features': []
+	"id": "5",
+	"name": "Nate Christensen",
+	"email": "natechris13@outlook.com",
+	"smsphone": "",
+	"title": "",
+	"is_active": "false",
+	"features": []
 }, {
-	'id': 5,
-	'name': 'Nate Christensen',
-	'email': 'natechris13@outlook.com',
-	'smsphone': '',
-	'is_active': true,
-	'features': [],
-	'updated_ts': '2022-11-08 12:23:06.389-05',
-	'title': null
+	"id": 5,
+	"name": "Nate Christensen",
+	"email": "natechris13@outlook.com",
+	"smsphone": "",
+	"is_active": false,
+	"features": [],
+	"updated_ts": "2023-01-07 21:27:27.856-05",
+	"title": ""
 }))
 
 console.timeEnd('Consoles')

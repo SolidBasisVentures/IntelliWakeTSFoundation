@@ -129,6 +129,7 @@ test('Subset Form Equal', () => {
 	expect(SubsetFormEqual(item, {...item, val1: 1})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
 	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
+	expect(SubsetFormEqual({...item, val1: false}, {...item, val1: 'false'})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, valBlank: null})).toBe(true)
 })
 
