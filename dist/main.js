@@ -2954,6 +2954,24 @@ var DateWeekNumber = function (date, adjustments) {
     var week = Math.ceil(days / 7);
     return { year: year, week: week };
 };
+var DateWeekISONumber = function (date, adjustments) {
+    var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', adjustments);
+    if (!currentDate)
+        return null;
+    var tdt = new Date(currentDate.valueOf());
+    var dayn = (currentDate.getDay() + 6) % 7;
+    tdt.setDate(tdt.getDate() - dayn + 3);
+    var firstThursday = tdt.valueOf();
+    tdt.setMonth(0, 1);
+    if (tdt.getDay() !== 4) {
+        tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+    }
+    var week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000);
+    var dateYear = currentDate;
+    dateYear.setDate(dateYear.getDate() + 3 - (dateYear.getDay() + 6) % 7);
+    var year = dateYear.getFullYear();
+    return { year: year, week: week };
+};
 var DateFromWeekNumber = function (weekNumber, startOf) {
     if (startOf === void 0) { startOf = 'StartOf'; }
     var days = (weekNumber.week - 1) * 7;
@@ -5876,6 +5894,7 @@ exports.DateOnly = DateOnly;
 exports.DateOnlyNull = DateOnlyNull;
 exports.DateParseTS = DateParseTS;
 exports.DateQuarter = DateQuarter;
+exports.DateWeekISONumber = DateWeekISONumber;
 exports.DateWeekNumber = DateWeekNumber;
 exports.DatesBetween = DatesBetween;
 exports.DatesQuarter = DatesQuarter;

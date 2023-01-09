@@ -275,6 +275,30 @@ export declare const DateWeekNumber: (date?: TDateAny, adjustments?: {
 } | {
     weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } | undefined) => IWeekNumber | null;
+export declare const DateWeekISONumber: (date?: TDateAny, adjustments?: {
+    year?: number | "StartOf" | "EndOf" | undefined;
+    years?: number | "StartOf" | "EndOf" | undefined;
+    quarter?: number | "StartOf" | "EndOf" | undefined;
+    quarters?: number | "StartOf" | "EndOf" | undefined;
+    month?: number | "StartOf" | "EndOf" | undefined;
+    months?: number | "StartOf" | "EndOf" | undefined;
+    week?: number | "StartOf" | "EndOf" | undefined;
+    weeks?: number | "StartOf" | "EndOf" | undefined;
+    day?: number | "StartOf" | "EndOf" | undefined;
+    days?: number | "StartOf" | "EndOf" | undefined;
+    hour?: number | "StartOf" | "EndOf" | undefined;
+    hours?: number | "StartOf" | "EndOf" | undefined;
+    minute?: number | "StartOf" | "EndOf" | undefined;
+    minutes?: number | "StartOf" | "EndOf" | undefined;
+    second?: number | "StartOf" | "EndOf" | undefined;
+    seconds?: number | "StartOf" | "EndOf" | undefined;
+    millisecond?: number | "StartOf" | "EndOf" | undefined;
+    milliseconds?: number | "StartOf" | "EndOf" | undefined;
+} | {
+    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
+} | {
+    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
+} | undefined) => IWeekNumber | null;
 export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;

@@ -1016,7 +1016,29 @@ export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWee
 
 	const week = Math.ceil(days / 7)
 
-	return {year: year, week: week}
+	return {year, week}
+}
+
+export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
+	const currentDate = DateObject(date ?? 'now', adjustments)
+	if (!currentDate) return null
+
+	const tdt = new Date(currentDate.valueOf());
+	const dayn = (currentDate.getDay() + 6) % 7;
+	tdt.setDate(tdt.getDate() - dayn + 3);
+	const firstThursday = tdt.valueOf();
+	tdt.setMonth(0, 1);
+	if (tdt.getDay() !== 4)
+	{
+		tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+	}
+	const week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000);
+
+	const dateYear = currentDate
+	dateYear.setDate(dateYear.getDate() + 3 - (dateYear.getDay() + 6) % 7)
+	const year = dateYear.getFullYear()
+
+	return {year, week}
 }
 
 export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
