@@ -2043,6 +2043,230 @@ var BuildPath = function () {
     return build;
 };
 
+function isObject(object) {
+    return object !== null && object !== undefined && typeof object === 'object';
+}
+var DeepEqual = function (object1, object2) {
+    var e_1, _a;
+    var _b, _c;
+    if (object1 === undefined && object2 === undefined)
+        return true;
+    if (object1 === null && object2 === null)
+        return true;
+    if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
+        return false;
+    if (Array.isArray(object1)) {
+        if (object1.length !== object2.length)
+            return false;
+        for (var i = 0; i < object1.length; i++) {
+            if (!DeepEqual(object1[i], object2[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof object1) {
+        case 'function':
+            return true;
+        case 'object':
+            if (typeof object1 === 'object' && ((_b = object1.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            if (typeof object2 === 'object' && ((_c = object2.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
+                return true;
+            var keys1 = Object.keys(object1);
+            var keys2 = Object.keys(object2);
+            if (keys1.length !== keys2.length) {
+                return false;
+            }
+            try {
+                for (var keys1_1 = __values(keys1), keys1_1_1 = keys1_1.next(); !keys1_1_1.done; keys1_1_1 = keys1_1.next()) {
+                    var key = keys1_1_1.value;
+                    var val1 = object1[key];
+                    var val2 = object2[key];
+                    if (typeof val1 !== typeof val2)
+                        return false;
+                    var areObjects = isObject(val1) && isObject(val2);
+                    if ((areObjects && !DeepEqual(val1, val2)) ||
+                        (!areObjects && val1 !== val2)) {
+                        return false;
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (keys1_1_1 && !keys1_1_1.done && (_a = keys1_1.return)) _a.call(keys1_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return true;
+        case 'string':
+            if (typeof object2 === 'string') {
+                var ts1 = DateParseTS(object1);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(object2);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
+                }
+            }
+            return object1 === object2;
+        default:
+            return object1 === object2;
+    }
+};
+var SubsetEqual = function (subset, superset) {
+    var e_2, _a;
+    var _b, _c;
+    if (subset === undefined && superset === undefined)
+        return true;
+    if (subset === null && superset === null)
+        return true;
+    if ((!subset && !!superset) || (!!subset && !superset))
+        return false;
+    if (Array.isArray(subset)) {
+        if (subset.length !== superset.length)
+            return false;
+        for (var i = 0; i < subset.length; i++) {
+            if (!SubsetEqual(subset[i], superset[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof subset) {
+        case 'function':
+            return true;
+        case 'boolean':
+            return IsOn(subset) === IsOn(superset);
+        case 'object':
+            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
+                return true;
+            var keysSub = Object.keys(subset);
+            try {
+                for (var keysSub_1 = __values(keysSub), keysSub_1_1 = keysSub_1.next(); !keysSub_1_1.done; keysSub_1_1 = keysSub_1.next()) {
+                    var key = keysSub_1_1.value;
+                    if (!SubsetEqual(subset[key], superset[key]))
+                        return false;
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (keysSub_1_1 && !keysSub_1_1.done && (_a = keysSub_1.return)) _a.call(keysSub_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            return true;
+        case 'string':
+            if (typeof superset === 'boolean') {
+                return IsOn(subset) === IsOn(superset);
+            }
+            if (typeof superset === 'string') {
+                var ts1 = DateParseTS(subset);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(superset);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
+                }
+            }
+            if (typeof superset === 'number') {
+                var cn1 = CleanNumberNull(subset);
+                if (cn1 !== null)
+                    return superset === cn1;
+            }
+            return subset == superset;
+        case 'number':
+            if (typeof superset === 'string') {
+                var cn1 = CleanNumberNull(superset);
+                if (cn1 !== null)
+                    return subset === cn1;
+            }
+            return subset == superset;
+        default:
+            return subset == superset;
+    }
+};
+var SubsetFormEqual = function (subset, superset) {
+    var e_3, _a;
+    var _b, _c;
+    if (subset === undefined && superset === undefined)
+        return true;
+    if (subset === null && superset === null)
+        return true;
+    if ((subset === '' && superset === null) || (subset === null && superset === ''))
+        return true;
+    if ((subset === 'false' && !superset) || (!subset && superset === 'false'))
+        return true;
+    if ((!subset && !!superset) || (!!subset && !superset))
+        return false;
+    if (Array.isArray(subset)) {
+        if (subset.length !== superset.length)
+            return false;
+        for (var i = 0; i < subset.length; i++) {
+            if (!SubsetFormEqual(subset[i], superset[i]))
+                return false;
+        }
+        return true;
+    }
+    switch (typeof subset) {
+        case 'function':
+            return true;
+        case 'boolean':
+            return IsOn(subset) === IsOn(superset);
+        case 'object':
+            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
+                return true;
+            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
+                return true;
+            var keysSub = Object.keys(subset);
+            try {
+                for (var keysSub_2 = __values(keysSub), keysSub_2_1 = keysSub_2.next(); !keysSub_2_1.done; keysSub_2_1 = keysSub_2.next()) {
+                    var key = keysSub_2_1.value;
+                    if (!SubsetFormEqual(subset[key], superset[key]))
+                        return false;
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (keysSub_2_1 && !keysSub_2_1.done && (_a = keysSub_2.return)) _a.call(keysSub_2);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            return true;
+        case 'string':
+            if (typeof superset === 'boolean') {
+                return IsOn(subset) === IsOn(superset);
+            }
+            if (typeof superset === 'string') {
+                var ts1 = DateParseTS(subset);
+                if (!!ts1) {
+                    var ts2 = DateParseTS(superset);
+                    if (!!ts2) {
+                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                    }
+                }
+            }
+            if (typeof superset === 'number') {
+                var cn1 = CleanNumberNull(subset);
+                if (cn1 !== null)
+                    return superset === cn1;
+            }
+            return subset == superset;
+        case 'number':
+            if (typeof superset === 'string') {
+                var cn1 = CleanNumberNull(superset);
+                if (cn1 !== null)
+                    return subset === cn1;
+            }
+            return subset == superset;
+        default:
+            return subset == superset;
+    }
+};
+
 var DATE_FORMAT_DATE = 'YYYY-MM-DD';
 var DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss';
 var DATE_FORMAT_TIME_NO_SECONDS = 'HH:mm';
@@ -2945,6 +3169,7 @@ var DateComponent = function (component, date, adjustments) {
     return CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)));
 };
 var DateWeekNumber = function (date, adjustments) {
+    console.error('Deprecated!  Use: DateWeekISONumber');
     var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
     if (!currentDate)
         return null;
@@ -2973,9 +3198,26 @@ var DateWeekISONumber = function (date, adjustments) {
     return { year: year, week: week };
 };
 var DateFromWeekNumber = function (weekNumber, startOf) {
+    var _a, _b;
     if (startOf === void 0) { startOf = 'StartOf'; }
     var days = (weekNumber.week - 1) * 7;
-    return DateOnly(new Date(weekNumber.year, 0, days), { week: startOf });
+    var tryDate = DateOnly(new Date(weekNumber.year, 0, days), { week: startOf });
+    var tryWeekNumber = (_a = DateWeekISONumber(tryDate)) !== null && _a !== void 0 ? _a : weekNumber;
+    var attempts = 0;
+    while (!DeepEqual(weekNumber, tryWeekNumber)) {
+        if (attempts > 4) {
+            throw new Error("Could not calculate DateFromWeekNumber " + JSON.stringify(weekNumber));
+        }
+        attempts++;
+        if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {
+            tryDate = DateOnly(tryDate, { weeks: 1 });
+        }
+        else {
+            tryDate = DateOnly(tryDate, { weeks: -1 });
+        }
+        tryWeekNumber = (_b = DateWeekISONumber(tryDate)) !== null && _b !== void 0 ? _b : weekNumber;
+    }
+    return tryDate;
 };
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
@@ -3972,230 +4214,6 @@ function IANAZoneAbbr(date, iana) {
         return full;
     }
 }
-
-function isObject(object) {
-    return object !== null && object !== undefined && typeof object === 'object';
-}
-var DeepEqual = function (object1, object2) {
-    var e_1, _a;
-    var _b, _c;
-    if (object1 === undefined && object2 === undefined)
-        return true;
-    if (object1 === null && object2 === null)
-        return true;
-    if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2)
-        return false;
-    if (Array.isArray(object1)) {
-        if (object1.length !== object2.length)
-            return false;
-        for (var i = 0; i < object1.length; i++) {
-            if (!DeepEqual(object1[i], object2[i]))
-                return false;
-        }
-        return true;
-    }
-    switch (typeof object1) {
-        case 'function':
-            return true;
-        case 'object':
-            if (typeof object1 === 'object' && ((_b = object1.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
-                return true;
-            if (typeof object2 === 'object' && ((_c = object2.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
-                return true;
-            var keys1 = Object.keys(object1);
-            var keys2 = Object.keys(object2);
-            if (keys1.length !== keys2.length) {
-                return false;
-            }
-            try {
-                for (var keys1_1 = __values(keys1), keys1_1_1 = keys1_1.next(); !keys1_1_1.done; keys1_1_1 = keys1_1.next()) {
-                    var key = keys1_1_1.value;
-                    var val1 = object1[key];
-                    var val2 = object2[key];
-                    if (typeof val1 !== typeof val2)
-                        return false;
-                    var areObjects = isObject(val1) && isObject(val2);
-                    if ((areObjects && !DeepEqual(val1, val2)) ||
-                        (!areObjects && val1 !== val2)) {
-                        return false;
-                    }
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (keys1_1_1 && !keys1_1_1.done && (_a = keys1_1.return)) _a.call(keys1_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return true;
-        case 'string':
-            if (typeof object2 === 'string') {
-                var ts1 = DateParseTS(object1);
-                if (!!ts1) {
-                    var ts2 = DateParseTS(object2);
-                    if (!!ts2) {
-                        return DateCompare(ts1, 'IsSame', ts2, 'second');
-                    }
-                }
-            }
-            return object1 === object2;
-        default:
-            return object1 === object2;
-    }
-};
-var SubsetEqual = function (subset, superset) {
-    var e_2, _a;
-    var _b, _c;
-    if (subset === undefined && superset === undefined)
-        return true;
-    if (subset === null && superset === null)
-        return true;
-    if ((!subset && !!superset) || (!!subset && !superset))
-        return false;
-    if (Array.isArray(subset)) {
-        if (subset.length !== superset.length)
-            return false;
-        for (var i = 0; i < subset.length; i++) {
-            if (!SubsetEqual(subset[i], superset[i]))
-                return false;
-        }
-        return true;
-    }
-    switch (typeof subset) {
-        case 'function':
-            return true;
-        case 'boolean':
-            return IsOn(subset) === IsOn(superset);
-        case 'object':
-            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
-                return true;
-            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
-                return true;
-            var keysSub = Object.keys(subset);
-            try {
-                for (var keysSub_1 = __values(keysSub), keysSub_1_1 = keysSub_1.next(); !keysSub_1_1.done; keysSub_1_1 = keysSub_1.next()) {
-                    var key = keysSub_1_1.value;
-                    if (!SubsetEqual(subset[key], superset[key]))
-                        return false;
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (keysSub_1_1 && !keysSub_1_1.done && (_a = keysSub_1.return)) _a.call(keysSub_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            return true;
-        case 'string':
-            if (typeof superset === 'boolean') {
-                return IsOn(subset) === IsOn(superset);
-            }
-            if (typeof superset === 'string') {
-                var ts1 = DateParseTS(subset);
-                if (!!ts1) {
-                    var ts2 = DateParseTS(superset);
-                    if (!!ts2) {
-                        return DateCompare(ts1, 'IsSame', ts2, 'second');
-                    }
-                }
-            }
-            if (typeof superset === 'number') {
-                var cn1 = CleanNumberNull(subset);
-                if (cn1 !== null)
-                    return superset === cn1;
-            }
-            return subset == superset;
-        case 'number':
-            if (typeof superset === 'string') {
-                var cn1 = CleanNumberNull(superset);
-                if (cn1 !== null)
-                    return subset === cn1;
-            }
-            return subset == superset;
-        default:
-            return subset == superset;
-    }
-};
-var SubsetFormEqual = function (subset, superset) {
-    var e_3, _a;
-    var _b, _c;
-    if (subset === undefined && superset === undefined)
-        return true;
-    if (subset === null && superset === null)
-        return true;
-    if ((subset === '' && superset === null) || (subset === null && superset === ''))
-        return true;
-    if ((subset === 'false' && !superset) || (!subset && superset === 'false'))
-        return true;
-    if ((!subset && !!superset) || (!!subset && !superset))
-        return false;
-    if (Array.isArray(subset)) {
-        if (subset.length !== superset.length)
-            return false;
-        for (var i = 0; i < subset.length; i++) {
-            if (!SubsetFormEqual(subset[i], superset[i]))
-                return false;
-        }
-        return true;
-    }
-    switch (typeof subset) {
-        case 'function':
-            return true;
-        case 'boolean':
-            return IsOn(subset) === IsOn(superset);
-        case 'object':
-            if (typeof subset === 'object' && ((_b = subset.type) === null || _b === void 0 ? void 0 : _b.toString().includes('react.')))
-                return true;
-            if (typeof superset === 'object' && ((_c = superset.type) === null || _c === void 0 ? void 0 : _c.toString().includes('react.')))
-                return true;
-            var keysSub = Object.keys(subset);
-            try {
-                for (var keysSub_2 = __values(keysSub), keysSub_2_1 = keysSub_2.next(); !keysSub_2_1.done; keysSub_2_1 = keysSub_2.next()) {
-                    var key = keysSub_2_1.value;
-                    if (!SubsetFormEqual(subset[key], superset[key]))
-                        return false;
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (keysSub_2_1 && !keysSub_2_1.done && (_a = keysSub_2.return)) _a.call(keysSub_2);
-                }
-                finally { if (e_3) throw e_3.error; }
-            }
-            return true;
-        case 'string':
-            if (typeof superset === 'boolean') {
-                return IsOn(subset) === IsOn(superset);
-            }
-            if (typeof superset === 'string') {
-                var ts1 = DateParseTS(subset);
-                if (!!ts1) {
-                    var ts2 = DateParseTS(superset);
-                    if (!!ts2) {
-                        return DateCompare(ts1, 'IsSame', ts2, 'second');
-                    }
-                }
-            }
-            if (typeof superset === 'number') {
-                var cn1 = CleanNumberNull(subset);
-                if (cn1 !== null)
-                    return superset === cn1;
-            }
-            return subset == superset;
-        case 'number':
-            if (typeof superset === 'string') {
-                var cn1 = CleanNumberNull(superset);
-                if (cn1 !== null)
-                    return subset === cn1;
-            }
-            return subset == superset;
-        default:
-            return subset == superset;
-    }
-};
 
 var initialChanges = {};
 /**

@@ -4,13 +4,16 @@ import {
 	DateDiff,
 	DateDiffComponents,
 	DateFormat,
-	DateFormatAny, DateFromWeekNumber,
-	DateISO, DateIsWeekend,
+	DateFormatAny,
+	DateFromWeekNumber,
+	DateISO,
+	DateIsWeekend,
 	DateOnly,
 	DateParseTS,
 	DateQuarter,
-	DatesQuarter, DateWeekISONumber,
-	DateWeekNumber, IANAZoneAbbr,
+	DatesQuarter,
+	DateWeekISONumber,
+	IANAZoneAbbr,
 	ManualParse,
 	SortCompareDate,
 	SortCompareDateNull,
@@ -104,14 +107,14 @@ test('Date Managers', () => {
 		second: -1,
 		millisecond: 0
 	})
-	expect(DateWeekNumber('2021-01-01')).toEqual({year: 2021, week: 1})
-	expect(DateWeekNumber('2021-01-02')).toEqual({year: 2021, week: 1})
-	expect(DateWeekNumber('2021-01-03')).toEqual({year: 2021, week: 2})
-	expect(DateWeekNumber('2021-01-09')).toEqual({year: 2021, week: 2})
-	expect(DateWeekNumber('2021-01-10')).toEqual({year: 2021, week: 3})
-	expect(DateWeekNumber('2023-01-01')).toEqual({year: 2023, week: 1})
-	expect(DateWeekNumber('2023-01-03')).toEqual({year: 2023, week: 2})
-	expect(DateWeekNumber('2023-01-08')).toEqual({year: 2023, week: 2})
+	// expect(DateWeekNumber('2021-01-01')).toEqual({year: 2021, week: 1})
+	// expect(DateWeekNumber('2021-01-02')).toEqual({year: 2021, week: 1})
+	// expect(DateWeekNumber('2021-01-03')).toEqual({year: 2021, week: 2})
+	// expect(DateWeekNumber('2021-01-09')).toEqual({year: 2021, week: 2})
+	// expect(DateWeekNumber('2021-01-10')).toEqual({year: 2021, week: 3})
+	// expect(DateWeekNumber('2023-01-01')).toEqual({year: 2023, week: 1})
+	// expect(DateWeekNumber('2023-01-03')).toEqual({year: 2023, week: 2})
+	// expect(DateWeekNumber('2023-01-08')).toEqual({year: 2023, week: 2})
 	expect(DateWeekISONumber('2021-01-01')).toEqual({year: 2020, week: 53})
 	expect(DateWeekISONumber('2021-01-02')).toEqual({year: 2020, week: 53})
 	expect(DateWeekISONumber('2021-01-03')).toEqual({year: 2020, week: 53})
@@ -123,9 +126,10 @@ test('Date Managers', () => {
 	expect(DateWeekISONumber('2023-01-03')).toEqual({year: 2023, week: 1})
 	expect(DateWeekISONumber('2023-01-08')).toEqual({year: 2023, week: 1})
 	expect(DateWeekISONumber('2023-01-09')).toEqual({year: 2023, week: 2})
-	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2020-12-27')
-	expect(DateFromWeekNumber({year: 2021, week: 2})).toEqual('2021-01-03')
-	expect(DateFromWeekNumber({year: 2021, week: 3})).toEqual('2021-01-10')
+	expect(DateFromWeekNumber({year: 2020, week: 52})).toEqual('2020-12-27')
+	expect(DateFromWeekNumber({year: 2020, week: 53})).toEqual('2021-01-03')
+	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2021-01-10')
+	expect(DateFromWeekNumber({year: 2022, week: 52})).toEqual('2023-01-01')
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T10:00:00Z', 'day')).toEqual(true)
@@ -244,7 +248,7 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-07-04', {week: 'StartOf'})).toEqual('2022-07-03')
 	expect(DateOnly('2022-07-05', {week: 'StartOf'})).toEqual('2022-07-03')
 	expect(DateOnly('2022-07-03', {days: 1, weeks: 'StartOfMon'})).toEqual('2022-07-04')
-	expect( DateOnly('2022-07-03', {weeks: 'StartOfMon'})).toEqual('2022-06-27')
+	expect(DateOnly('2022-07-03', {weeks: 'StartOfMon'})).toEqual('2022-06-27')
 	expect(DateOnly('2022-07-04', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	expect(DateOnly('2022-07-05', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	const otz = process.env.TZ

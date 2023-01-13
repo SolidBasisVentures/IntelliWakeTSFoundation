@@ -1,5 +1,6 @@
 import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
+import {DeepEqual} from './DeepEqual'
 
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
 export const DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss'
@@ -1005,6 +1006,7 @@ export const DateComponent = (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 's
 	CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)))
 
 export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
+	console.error('Deprecated!  Use: DateWeekISONumber')
 	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
 	if (!currentDate) return null
 
@@ -1044,7 +1046,27 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
 	const days = (weekNumber.week - 1) * 7
 
-	return DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
+	let tryDate = DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
+	let tryWeekNumber = DateWeekISONumber(tryDate) ?? weekNumber
+
+	let attempts = 0
+
+	while (!DeepEqual(weekNumber, tryWeekNumber)) {
+		if (attempts > 4) {
+			throw new Error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
+			break
+		}
+		attempts++
+		if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {
+			tryDate = DateOnly(tryDate, {weeks: 1})
+		} else {
+			tryDate = DateOnly(tryDate, {weeks: -1})
+		}
+
+		tryWeekNumber = DateWeekISONumber(tryDate) ?? weekNumber
+	}
+
+	return tryDate
 }
 
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {
