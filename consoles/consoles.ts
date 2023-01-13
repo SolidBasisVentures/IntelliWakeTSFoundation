@@ -1,28 +1,19 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {SubsetFormEqual} from '../src/DeepEqual'
+import {ConstrainObject} from '../src/ObjectConstraint'
+import {ObjectConstraintTest} from './TestDatum'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(SubsetFormEqual({
-	"id": "5",
-	"name": "Nate Christensen",
-	"email": "natechris13@outlook.com",
-	"smsphone": "",
-	"title": "",
-	"is_active": "false",
-	"features": []
-}, {
-	"id": 5,
-	"name": "Nate Christensen",
-	"email": "natechris13@outlook.com",
-	"smsphone": "",
-	"is_active": false,
-	"features": [],
-	"updated_ts": "2023-01-07 21:27:27.856-05",
-	"title": ""
-}))
+
+console.log(ConstrainObject({
+	id: '1',
+	name: null,
+	start_date: '1/1/2023',
+	ids: ['1', 2, ''],
+	is_active: 'false'
+}, ObjectConstraintTest))
 
 console.timeEnd('Consoles')
