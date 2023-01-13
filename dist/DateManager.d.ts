@@ -299,7 +299,7 @@ export declare const DateWeekISONumber: (date?: TDateAny, adjustments?: {
 } | {
     weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
 } | undefined) => IWeekNumber | null;
-export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string;
+export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string | null;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;
     month: number;

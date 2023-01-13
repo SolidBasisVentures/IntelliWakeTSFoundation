@@ -3200,13 +3200,16 @@ var DateWeekISONumber = function (date, adjustments) {
 var DateFromWeekNumber = function (weekNumber, startOf) {
     var _a, _b;
     if (startOf === void 0) { startOf = 'StartOf'; }
+    if (!(weekNumber === null || weekNumber === void 0 ? void 0 : weekNumber.year))
+        return null;
     var days = (weekNumber.week - 1) * 7;
     var tryDate = DateOnly(new Date(weekNumber.year, 0, days), { week: startOf });
     var tryWeekNumber = (_a = DateWeekISONumber(tryDate)) !== null && _a !== void 0 ? _a : weekNumber;
     var attempts = 0;
     while (!DeepEqual(weekNumber, tryWeekNumber)) {
         if (attempts > 4) {
-            throw new Error("Could not calculate DateFromWeekNumber " + JSON.stringify(weekNumber));
+            console.error("Could not calculate DateFromWeekNumber " + JSON.stringify(weekNumber));
+            return null;
         }
         attempts++;
         if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {

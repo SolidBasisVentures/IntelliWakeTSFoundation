@@ -1043,7 +1043,9 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 	return {year, week}
 }
 
-export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string => {
+export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string | null => {
+	if (!weekNumber?.year) return null
+
 	const days = (weekNumber.week - 1) * 7
 
 	let tryDate = DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
@@ -1053,8 +1055,8 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' |
 
 	while (!DeepEqual(weekNumber, tryWeekNumber)) {
 		if (attempts > 4) {
-			throw new Error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
-			break
+			console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
+			return null
 		}
 		attempts++
 		if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {

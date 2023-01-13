@@ -130,6 +130,7 @@ test('Date Managers', () => {
 	expect(DateFromWeekNumber({year: 2020, week: 53})).toEqual('2021-01-03')
 	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2021-01-10')
 	expect(DateFromWeekNumber({year: 2022, week: 52})).toEqual('2023-01-01')
+	expect(DateFromWeekNumber({year: 0, week: 52})).toEqual(null)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z', 'year')).toEqual(true)
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T10:00:00Z', 'day')).toEqual(true)
