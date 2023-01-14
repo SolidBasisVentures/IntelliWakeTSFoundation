@@ -112,6 +112,9 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 	return newObj
 }
 
+/**
+ * Options when converting FormData to an Object
+ */
 export type TObjectFromFormDataOptions<T extends Record<string, any> = Record<string, any | null>> = {
 	excludeColumns?: (keyof T)[]
 	includeColumns?: (keyof T)[]

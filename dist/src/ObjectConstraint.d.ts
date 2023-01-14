@@ -25,6 +25,9 @@ export declare type TObjectConstraint<T extends Record<string, any> = Record<str
  * @constructor
  */
 export declare const ConstrainObject: <T extends Record<string, any>>(obj: T, constraint: Record<keyof T, TObjectFieldConstraint>) => T;
+/**
+ * Options when converting FormData to an Object
+ */
 export declare type TObjectFromFormDataOptions<T extends Record<string, any> = Record<string, any | null>> = {
     excludeColumns?: (keyof T)[];
     includeColumns?: (keyof T)[];
