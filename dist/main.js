@@ -5126,6 +5126,166 @@ var EnumValueFromKey = function (e, key) {
     ICS.ICS_Text = function (event) { return ICS.VCALENDAROpen_Text + ICS.VEVENT_Text(event) + ICS.VCALENDARClose_Text; };
 })(exports.ICS || (exports.ICS = {}));
 
+var ConstrainType = function (value, fieldConstraint) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    if ((fieldConstraint.nullIfFalsey && !value) || value === null || value === undefined) {
+        if (fieldConstraint.nullable || fieldConstraint.nullIfFalsey) {
+            return null;
+        }
+        else {
+            return fieldConstraint.type === 'date' ? DateOnly((_a = fieldConstraint.default) !== null && _a !== void 0 ? _a : 'now') :
+                fieldConstraint.type === 'datetime' ? DateISO((_b = fieldConstraint.default) !== null && _b !== void 0 ? _b : 'now') :
+                    fieldConstraint.type === 'time' ? TimeOnly((_c = fieldConstraint.default) !== null && _c !== void 0 ? _c : 'now') :
+                        fieldConstraint.type === 'number' ? CleanNumber(fieldConstraint.default) :
+                            fieldConstraint.type === 'boolean' ? IsOn((_d = fieldConstraint.default) !== null && _d !== void 0 ? _d : true) :
+                                fieldConstraint.type === 'object' ? ((_e = fieldConstraint.default) !== null && _e !== void 0 ? _e : {}) :
+                                    ((_f = fieldConstraint.default) !== null && _f !== void 0 ? _f : '').toString();
+        }
+    }
+    if (fieldConstraint.type === 'boolean') {
+        if (typeof value !== 'boolean')
+            return IsOn(value);
+    }
+    else if (fieldConstraint.type === 'number') {
+        if (typeof value !== 'number')
+            return fieldConstraint.nullable ? CleanNumberNull(value) : CleanNumber(value);
+    }
+    else if (fieldConstraint.type === 'date') {
+        return fieldConstraint.nullable ? DateOnlyNull(value) : DateOnly(value);
+    }
+    else if (fieldConstraint.type === 'datetime') {
+        return fieldConstraint.nullable ? DateISO(value) : ((_g = DateISO(value)) !== null && _g !== void 0 ? _g : NowISOString());
+    }
+    else if (fieldConstraint.type === 'time') {
+        return fieldConstraint.nullable ? TimeOnly(value) : ((_h = TimeOnly(value)) !== null && _h !== void 0 ? _h : '00:00');
+    }
+    else if (fieldConstraint.type === 'object') {
+        if (typeof value !== 'object')
+            return {};
+    }
+    else {
+        if (typeof value !== 'string')
+            return !value ? '' : value.toString();
+    }
+    return value;
+};
+var ConstrainOthers = function (value, fieldConstraint) {
+    var newValue = value;
+    if (fieldConstraint.length && value) {
+        switch (typeof value) {
+            case 'string':
+                newValue = value.substring(0, fieldConstraint.length);
+                break;
+            case 'number':
+                if (value.toString().length > fieldConstraint.length) {
+                    throw new Error("Value " + value + " longer than " + ToDigits(fieldConstraint.length));
+                }
+        }
+    }
+    if (fieldConstraint.values) {
+        if (!fieldConstraint.values.includes(value))
+            return null;
+    }
+    if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value)
+        return fieldConstraint.minValue;
+    if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value)
+        return fieldConstraint.maxValue;
+    return newValue;
+};
+/**
+ * Takes an object and returns an object that matches the types provided by the constraint
+ *
+ * @param obj
+ * @param constraint
+ * @constructor
+ */
+var ConstrainObject = function (obj, constraint) {
+    var e_1, _a;
+    var newObj = obj;
+    var _loop_1 = function (key) {
+        var fieldConstraint = constraint[key];
+        if (fieldConstraint) {
+            if (fieldConstraint.isArray) {
+                newObj[key] = ToArray(newObj[key])
+                    .map(function (value) { return ConstrainType(value, fieldConstraint); })
+                    .filter(function (value) { return fieldConstraint.arrayAllowFalsey || !!value; })
+                    .map(function (value) { return ConstrainOthers(value, fieldConstraint); })
+                    .filter(function (value) { return fieldConstraint.arrayAllowFalsey || !!value; });
+            }
+            else {
+                newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint);
+            }
+        }
+    };
+    try {
+        for (var _b = __values(Object.keys(obj)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var key = _c.value;
+            _loop_1(key);
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    return newObj;
+};
+/**
+ * Converts FormData to an object... Recommend using "constraint" option
+ *
+ * @param formData
+ * @param options
+ * @constructor
+ */
+var ObjectFromFormData = function (formData, options) {
+    var e_2, _a;
+    var _b, _c, _d, _e;
+    var returnObject = {};
+    if (options === null || options === void 0 ? void 0 : options.default) {
+        try {
+            for (var _f = __values(Object.keys(options.default).filter(function (key) {
+                var _a, _b;
+                if ((_a = options.includeColumns) === null || _a === void 0 ? void 0 : _a.includes(key))
+                    return true;
+                return !options.includeColumns && !((_b = options.excludeColumns) === null || _b === void 0 ? void 0 : _b.includes(key));
+            })), _g = _f.next(); !_g.done; _g = _f.next()) {
+                var key = _g.value;
+                var data = (Array.isArray(options.default[key]) || ((_b = options.arrayFormDataItems) === null || _b === void 0 ? void 0 : _b.includes(key)))
+                    ? (_d = (_c = formData.getAll(key)) !== null && _c !== void 0 ? _c : options === null || options === void 0 ? void 0 : options.default[key]) !== null && _d !== void 0 ? _d : null : formData.get(key);
+                if (data !== undefined && typeof options.default[key] === 'boolean')
+                    data = IsOn(data);
+                if (data !== undefined && typeof options.default[key] === 'number')
+                    data = CleanNumber(data);
+                returnObject[key] = (_e = data !== null && data !== void 0 ? data : options === null || options === void 0 ? void 0 : options.default[key]) !== null && _e !== void 0 ? _e : null;
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+    }
+    else {
+        formData.forEach(function (value, key) {
+            var all = formData.getAll(key);
+            if (Array.isArray(all) && all.length > 1) {
+                returnObject[key] = all;
+            }
+            else {
+                returnObject[key] = value;
+            }
+        });
+    }
+    if (options === null || options === void 0 ? void 0 : options.constraint) {
+        returnObject = ConstrainObject(returnObject, options.constraint);
+    }
+    return returnObject;
+};
+
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -5849,166 +6009,6 @@ var SelectBetweenIDs = function (allIDs, lastID, nextID, inclusive) {
         finally { if (e_2) throw e_2.error; }
     }
     return betweenIDs;
-};
-
-var ConstrainType = function (value, fieldConstraint) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    if ((fieldConstraint.nullIfFalsey && !value) || value === null || value === undefined) {
-        if (fieldConstraint.nullable || fieldConstraint.nullIfFalsey) {
-            return null;
-        }
-        else {
-            return fieldConstraint.type === 'date' ? DateOnly((_a = fieldConstraint.default) !== null && _a !== void 0 ? _a : 'now') :
-                fieldConstraint.type === 'datetime' ? DateISO((_b = fieldConstraint.default) !== null && _b !== void 0 ? _b : 'now') :
-                    fieldConstraint.type === 'time' ? TimeOnly((_c = fieldConstraint.default) !== null && _c !== void 0 ? _c : 'now') :
-                        fieldConstraint.type === 'number' ? CleanNumber(fieldConstraint.default) :
-                            fieldConstraint.type === 'boolean' ? IsOn((_d = fieldConstraint.default) !== null && _d !== void 0 ? _d : true) :
-                                fieldConstraint.type === 'object' ? ((_e = fieldConstraint.default) !== null && _e !== void 0 ? _e : {}) :
-                                    ((_f = fieldConstraint.default) !== null && _f !== void 0 ? _f : '').toString();
-        }
-    }
-    if (fieldConstraint.type === 'boolean') {
-        if (typeof value !== 'boolean')
-            return IsOn(value);
-    }
-    else if (fieldConstraint.type === 'number') {
-        if (typeof value !== 'number')
-            return fieldConstraint.nullable ? CleanNumberNull(value) : CleanNumber(value);
-    }
-    else if (fieldConstraint.type === 'date') {
-        return fieldConstraint.nullable ? DateOnlyNull(value) : DateOnly(value);
-    }
-    else if (fieldConstraint.type === 'datetime') {
-        return fieldConstraint.nullable ? DateISO(value) : ((_g = DateISO(value)) !== null && _g !== void 0 ? _g : NowISOString());
-    }
-    else if (fieldConstraint.type === 'time') {
-        return fieldConstraint.nullable ? TimeOnly(value) : ((_h = TimeOnly(value)) !== null && _h !== void 0 ? _h : '00:00');
-    }
-    else if (fieldConstraint.type === 'object') {
-        if (typeof value !== 'object')
-            return {};
-    }
-    else {
-        if (typeof value !== 'string')
-            return !value ? '' : value.toString();
-    }
-    return value;
-};
-var ConstrainOthers = function (value, fieldConstraint) {
-    var newValue = value;
-    if (fieldConstraint.length && value) {
-        switch (typeof value) {
-            case 'string':
-                newValue = value.substring(0, fieldConstraint.length);
-                break;
-            case 'number':
-                if (value.toString().length > fieldConstraint.length) {
-                    throw new Error("Value " + value + " longer than " + ToDigits(fieldConstraint.length));
-                }
-        }
-    }
-    if (fieldConstraint.values) {
-        if (!fieldConstraint.values.includes(value))
-            return null;
-    }
-    if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value)
-        return fieldConstraint.minValue;
-    if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value)
-        return fieldConstraint.maxValue;
-    return newValue;
-};
-/**
- * Takes an object and returns an object that matches the types provided by the constraint
- *
- * @param obj
- * @param constraint
- * @constructor
- */
-var ConstrainObject = function (obj, constraint) {
-    var e_1, _a;
-    var newObj = obj;
-    var _loop_1 = function (key) {
-        var fieldConstraint = constraint[key];
-        if (fieldConstraint) {
-            if (fieldConstraint.isArray) {
-                newObj[key] = ToArray(newObj[key])
-                    .map(function (value) { return ConstrainType(value, fieldConstraint); })
-                    .filter(function (value) { return fieldConstraint.arrayAllowFalsey || !!value; })
-                    .map(function (value) { return ConstrainOthers(value, fieldConstraint); })
-                    .filter(function (value) { return fieldConstraint.arrayAllowFalsey || !!value; });
-            }
-            else {
-                newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint);
-            }
-        }
-    };
-    try {
-        for (var _b = __values(Object.keys(obj)), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var key = _c.value;
-            _loop_1(key);
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    return newObj;
-};
-/**
- * Converts FormData to an object... Recommend using "constraint" option
- *
- * @param formData
- * @param options
- * @constructor
- */
-var ObjectFromFormData = function (formData, options) {
-    var e_2, _a;
-    var _b, _c, _d, _e;
-    var returnObject = {};
-    if (options === null || options === void 0 ? void 0 : options.default) {
-        try {
-            for (var _f = __values(Object.keys(options.default).filter(function (key) {
-                var _a, _b;
-                if ((_a = options.includeColumns) === null || _a === void 0 ? void 0 : _a.includes(key))
-                    return true;
-                return !options.includeColumns && !((_b = options.excludeColumns) === null || _b === void 0 ? void 0 : _b.includes(key));
-            })), _g = _f.next(); !_g.done; _g = _f.next()) {
-                var key = _g.value;
-                var data = (Array.isArray(options.default[key]) || ((_b = options.arrayFormDataItems) === null || _b === void 0 ? void 0 : _b.includes(key)))
-                    ? (_d = (_c = formData.getAll(key)) !== null && _c !== void 0 ? _c : options === null || options === void 0 ? void 0 : options.default[key]) !== null && _d !== void 0 ? _d : null : formData.get(key);
-                if (data !== undefined && typeof options.default[key] === 'boolean')
-                    data = IsOn(data);
-                if (data !== undefined && typeof options.default[key] === 'number')
-                    data = CleanNumber(data);
-                returnObject[key] = (_e = data !== null && data !== void 0 ? data : options === null || options === void 0 ? void 0 : options.default[key]) !== null && _e !== void 0 ? _e : null;
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_g && !_g.done && (_a = _f.return)) _a.call(_f);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-    }
-    else {
-        formData.forEach(function (value, key) {
-            var all = formData.getAll(key);
-            if (Array.isArray(all) && all.length > 1) {
-                returnObject[key] = all;
-            }
-            else {
-                returnObject[key] = value;
-            }
-        });
-    }
-    if (options === null || options === void 0 ? void 0 : options.constraint) {
-        returnObject = ConstrainObject(returnObject, options.constraint);
-    }
-    return returnObject;
 };
 
 exports.AddChange = AddChange;
