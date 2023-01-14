@@ -1,11 +1,12 @@
 {
 	"name": "@solidbasisventures/intelliwaketsfoundation",
-	"version": "5.1.19",
+	"version": "5.1.20",
 	"description": "NPM package for IntelliWake TypeScript Foundation Components",
 	"main": "dist/main.js",
 	"types": "dist/main.d.ts",
 	"scripts": {
-		"BuildAndPublish": "rm -rf dist/* && rollup -c && mv dist/src/* dist/ && rm -rf dist/src && npm version patch --no-git-tag-version && npm publish",
+		"BuildAndPublish": "rm -rf dist/* && rollup -c && npm version patch --no-git-tag-version && npm publish",
+		"BuildAndPublishMV": "rm -rf dist/* && rollup -c && mv dist/src/* dist/ && rm -rf dist/src && npm version patch --no-git-tag-version && npm publish",
 		"YarnInstall": "yarn install",
 		"YarnUpgrade": "yarn upgrade",
 		"Test": "jest",
