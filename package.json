@@ -1,10 +1,9 @@
 {
 	"name": "@solidbasisventures/intelliwaketsfoundation",
-	"version": "5.1.18",
+	"version": "5.1.19",
 	"description": "NPM package for IntelliWake TypeScript Foundation Components",
 	"main": "dist/main.js",
 	"types": "dist/main.d.ts",
-	"type": "commonjs",
 	"scripts": {
 		"BuildAndPublish": "rm -rf dist/* && rollup -c && mv dist/src/* dist/ && rm -rf dist/src && npm version patch --no-git-tag-version && npm publish",
 		"YarnInstall": "yarn install",
@@ -33,7 +32,6 @@
 		"rollup": "^2.10.8",
 		"rollup-plugin-terser": "^5.3.0",
 		"rollup-plugin-typescript2": "^0.27.1",
-		"rollup-plugin-flat-dts": "^2.0.0",
 		"source-map-support": "^0.5.19",
 		"ts-jest": "^26.4.3",
 		"ts-node": "^9.0.0",
