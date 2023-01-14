@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "dist",
-        "module": "ESNext",
+        "module": "esnext",
         "target": "es5",
         "lib": [
             "es6",
@@ -13,7 +13,6 @@
         "sourceMap": true,
         "allowJs": false,
         "declaration": true,
-	    "declarationDir": "dist",
         "moduleResolution": "node",
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
@@ -32,6 +31,6 @@
         "node_modules",
         "dist",
         "example",
-	    "rollup.config.js"
+        "rollup.config.js"
     ]
 }
