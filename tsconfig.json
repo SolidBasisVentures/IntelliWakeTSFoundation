@@ -32,6 +32,6 @@
         "node_modules",
         "dist",
         "example",
-	    "rollup.config.mjs"
+	    "rollup.config.js"
     ]
 }

@@ -1,6 +1,5 @@
-import json from './package.json' assert { type: 'json' }
+import pkg from './package.json'
 import typescript from 'rollup-plugin-typescript2'
-import dts from 'rollup-plugin-dts'
 
 export default {
     input: [
@@ -8,9 +7,8 @@ export default {
     ],
     output: [
         {
-            file: json.main,
-            format: 'cjs',
-	        plugins: [dts()]
+            file: pkg.main,
+            format: 'cjs'
 	        // file: 'dist/main.js',
 	        // format: 'esm'
         }
