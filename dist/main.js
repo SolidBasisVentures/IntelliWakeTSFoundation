@@ -3441,7 +3441,6 @@ var SortCompareDateNull = function (date1, date2, minInterval) {
             : null;
 };
 var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a = SortCompareDateNull(date1, date2, minInterval)) !== null && _a !== void 0 ? _a : 0; };
-exports.EQuarter = void 0;
 (function (EQuarter) {
     EQuarter[EQuarter["Q1"] = 1] = "Q1";
     EQuarter[EQuarter["Q2"] = 2] = "Q2";
@@ -5067,7 +5066,6 @@ var EnumValueFromKey = function (e, key) {
     return (key === null || key === undefined) ? undefined : Object.values(e)[Object.keys(e).indexOf(key)];
 };
 
-exports.ICS = void 0;
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
         if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
@@ -5288,7 +5286,6 @@ var ObjectFromFormData = function (formData, options) {
     return returnObject;
 };
 
-exports.Stages = void 0;
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -5939,7 +5936,6 @@ var SearchSort = function (arrayTable, search, sortColumn, options) {
 };
 
 var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
-exports.UnselectedIDList = void 0;
 (function (UnselectedIDList) {
     UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
