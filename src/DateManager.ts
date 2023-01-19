@@ -1055,7 +1055,7 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' |
 
 	while (!DeepEqual(weekNumber, tryWeekNumber)) {
 		if (attempts > 4) {
-			console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
+			// console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
 			return null
 		}
 		attempts++
@@ -1069,6 +1069,14 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' |
 	}
 
 	return tryDate
+}
+
+export const WeekNumberAdjust = (weekNumber: IWeekNumber, adjustment: TDateOnlyAdjustment | number): IWeekNumber | null => {
+	let nextDate = DateFromWeekNumber(weekNumber)
+
+	if (!nextDate) return null
+
+	return DateWeekISONumber(DateOnly(nextDate, typeof adjustment === 'number' ? {weeks: adjustment} : adjustment))
 }
 
 export const DateDiffComponents = (dateFrom: TDateAny, dateTo: TDateAny): {

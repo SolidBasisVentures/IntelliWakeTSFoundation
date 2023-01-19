@@ -3208,7 +3208,7 @@ var DateFromWeekNumber = function (weekNumber, startOf) {
     var attempts = 0;
     while (!DeepEqual(weekNumber, tryWeekNumber)) {
         if (attempts > 4) {
-            console.error("Could not calculate DateFromWeekNumber " + JSON.stringify(weekNumber));
+            // console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
             return null;
         }
         attempts++;
@@ -3221,6 +3221,12 @@ var DateFromWeekNumber = function (weekNumber, startOf) {
         tryWeekNumber = (_b = DateWeekISONumber(tryDate)) !== null && _b !== void 0 ? _b : weekNumber;
     }
     return tryDate;
+};
+var WeekNumberAdjust = function (weekNumber, adjustment) {
+    var nextDate = DateFromWeekNumber(weekNumber);
+    if (!nextDate)
+        return null;
+    return DateWeekISONumber(DateOnly(nextDate, typeof adjustment === 'number' ? { weeks: adjustment } : adjustment));
 };
 var DateDiffComponents = function (dateFrom, dateTo) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
@@ -3441,6 +3447,7 @@ var SortCompareDateNull = function (date1, date2, minInterval) {
             : null;
 };
 var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a = SortCompareDateNull(date1, date2, minInterval)) !== null && _a !== void 0 ? _a : 0; };
+exports.EQuarter = void 0;
 (function (EQuarter) {
     EQuarter[EQuarter["Q1"] = 1] = "Q1";
     EQuarter[EQuarter["Q2"] = 2] = "Q2";
@@ -5066,6 +5073,7 @@ var EnumValueFromKey = function (e, key) {
     return (key === null || key === undefined) ? undefined : Object.values(e)[Object.keys(e).indexOf(key)];
 };
 
+exports.ICS = void 0;
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
         if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
@@ -5286,6 +5294,7 @@ var ObjectFromFormData = function (formData, options) {
     return returnObject;
 };
 
+exports.Stages = void 0;
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -5936,6 +5945,7 @@ var SearchSort = function (arrayTable, search, sortColumn, options) {
 };
 
 var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
+exports.UnselectedIDList = void 0;
 (function (UnselectedIDList) {
     UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
@@ -6233,6 +6243,7 @@ exports.Trunc = Trunc;
 exports.UCWords = UCWords;
 exports.ValidNumbers = ValidNumbers;
 exports.WeekDays = WeekDays;
+exports.WeekNumberAdjust = WeekNumberAdjust;
 exports.WeeksFromLabel = WeeksFromLabel;
 exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
 exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
