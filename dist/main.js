@@ -2241,11 +2241,15 @@ var SubsetFormEqual = function (subset, superset) {
                 return IsOn(subset) === IsOn(superset);
             }
             if (typeof superset === 'string') {
-                var ts1 = DateParseTS(subset);
-                if (!!ts1) {
-                    var ts2 = DateParseTS(superset);
-                    if (!!ts2) {
-                        return DateCompare(ts1, 'IsSame', ts2, 'second');
+                if (subset.includes('-') || subset.includes('/')) {
+                    var ts1 = DateParseTS(subset);
+                    if (!!ts1) {
+                        if (superset.includes('-') || superset.includes('/')) {
+                            var ts2 = DateParseTS(superset);
+                            if (!!ts2) {
+                                return DateCompare(ts1, 'IsSame', ts2, 'second');
+                            }
+                        }
                     }
                 }
             }
