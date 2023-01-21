@@ -175,11 +175,15 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 			}
 
 			if (typeof superset === 'string') {
-				const ts1 = DateParseTS(subset)
-				if (!!ts1) {
-					const ts2 = DateParseTS(superset)
-					if (!!ts2) {
-						return DateCompare(ts1, 'IsSame', ts2, 'second')
+				if (subset.includes('-') || subset.includes('/')) {
+					const ts1 = DateParseTS(subset)
+					if (!!ts1) {
+						if (superset.includes('-') || superset.includes('/')) {
+							const ts2 = DateParseTS(superset)
+							if (!!ts2) {
+								return DateCompare(ts1, 'IsSame', ts2, 'second')
+							}
+						}
 					}
 				}
 			}

@@ -131,6 +131,8 @@ test('Subset Form Equal', () => {
 	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
 	expect(SubsetFormEqual({...item, val1: false}, {...item, val1: 'false'})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, valBlank: null})).toBe(true)
+	expect(SubsetFormEqual({smsphone: '3344'}, {smsphone: '3344'})).toBe(true)
+	expect(SubsetFormEqual({smsphone: '3344'}, {smsphone: '334455'})).toBe(false)
 })
 
 test('CleanNumber', () => {
