@@ -1390,7 +1390,9 @@ export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment &
 	}
 }
 
-export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & { formatLocale?: boolean, timezoneDisplay?: string }): string => DateOnlyNull(date, adjustments) ?? new Date().toISOString().substring(0, 10)
+export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & { formatLocale?: boolean, timezoneDisplay?: string }): string => DateOnlyNull(date, adjustments) ??
+	DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', new Date(), adjustments?.timezoneDisplay ?? 'UTC') ??
+	new Date().toISOString().substring(0, 10)
 
 /**
  * Convert a date and/or time value to a time

@@ -21,6 +21,7 @@ import {
 	TimeOnly,
 	TimeSeries, WeekNumberAdjust
 } from './DateManager'
+import {CleanNumber} from './Functions'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dt = '2021-12-22T14:41:24Z'
@@ -270,6 +271,8 @@ test('Date Managers', () => {
 	expect(DateOnly('today')).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
+	expect(DateOnly(null)).toEqual(new Date().toISOString().substring(0, 10))
+	expect(DateOnly(null, {formatLocale: true})).toEqual(CleanNumber(new Date().toISOString().substring(5, 7)).toString() + '/' + CleanNumber(new Date().toISOString().substring(8, 10)).toString() + '/' + new Date().toISOString().substring(0, 4))
 	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'Asia/Tehran'
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
