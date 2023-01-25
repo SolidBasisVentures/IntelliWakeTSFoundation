@@ -3480,6 +3480,29 @@ var DateQuarter = function (date) {
         quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
     };
 };
+var DatesMonth = function (year, monthOneBased) {
+    var _a, _b;
+    var baseDate = DateParseTSInternal(year + "-" + (monthOneBased).toString().padStart(2, '0') + "-01", 'UTC');
+    if (!baseDate)
+        return null;
+    return {
+        start: ((_a = DateISO(baseDate, { month: 'StartOf' })) !== null && _a !== void 0 ? _a : '').substr(0, 10),
+        end: ((_b = DateISO(baseDate, { month: 'EndOf' })) !== null && _b !== void 0 ? _b : '').substr(0, 10)
+    };
+};
+var InitialDateMonth = function () { return ({
+    year: new Date().getFullYear(),
+    monthOneBased: Math.floor(new Date().getUTCMonth()) + 1
+}); };
+var DateMonth = function (date) {
+    var dateObj = DateObject(date);
+    if (!dateObj)
+        return null;
+    return {
+        year: dateObj.getUTCFullYear(),
+        monthOneBased: Math.floor(dateObj.getUTCMonth()) + 1
+    };
+};
 /**
  * 0 = Sunday
  *
@@ -6086,6 +6109,7 @@ exports.DateFromWeekNumber = DateFromWeekNumber;
 exports.DateICS = DateICS;
 exports.DateISO = DateISO;
 exports.DateIsWeekend = DateIsWeekend;
+exports.DateMonth = DateMonth;
 exports.DateObject = DateObject;
 exports.DateOnly = DateOnly;
 exports.DateOnlyNull = DateOnlyNull;
@@ -6094,6 +6118,7 @@ exports.DateQuarter = DateQuarter;
 exports.DateWeekISONumber = DateWeekISONumber;
 exports.DateWeekNumber = DateWeekNumber;
 exports.DatesBetween = DatesBetween;
+exports.DatesMonth = DatesMonth;
 exports.DatesQuarter = DatesQuarter;
 exports.DaysInMonth = DaysInMonth;
 exports.DaysInMonthYear = DaysInMonthYear;
@@ -6130,6 +6155,7 @@ exports.HHcmmcss = HHcmmcss;
 exports.HTMLToText = HTMLToText;
 exports.IANAOffset = IANAOffset;
 exports.IANAZoneAbbr = IANAZoneAbbr;
+exports.InitialDateMonth = InitialDateMonth;
 exports.InitialDateQuarter = InitialDateQuarter;
 exports.InvertColorHex = InvertColorHex;
 exports.InvertColorRGB = InvertColorRGB;

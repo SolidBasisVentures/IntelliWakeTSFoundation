@@ -338,6 +338,13 @@ export interface IQuarter {
 }
 export declare const InitialDateQuarter: () => IQuarter;
 export declare const DateQuarter: (date: TDateAny) => IQuarter | null;
+export declare const DatesMonth: (year: number, monthOneBased: number) => IDates | null;
+export interface IMonth {
+    year: number;
+    monthOneBased: number;
+}
+export declare const InitialDateMonth: () => IMonth;
+export declare const DateMonth: (date: TDateAny) => IMonth | null;
 /**
  * 0 = Sunday
  *
