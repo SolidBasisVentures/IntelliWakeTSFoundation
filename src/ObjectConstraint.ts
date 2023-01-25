@@ -73,13 +73,15 @@ const ConstrainOthers = (value: any, fieldConstraint: TObjectFieldConstraint): a
 		}
 	}
 
-	if (fieldConstraint.values) {
-		if (!fieldConstraint.values.includes(value)) return null
+	if (!fieldConstraint.nullable || value) {
+		if (fieldConstraint.values) {
+			if (!fieldConstraint.values.includes(value)) return null
+		}
+
+		if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value) return fieldConstraint.minValue
+
+		if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value) return fieldConstraint.maxValue
 	}
-
-	if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value) return fieldConstraint.minValue
-
-	if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value) return fieldConstraint.maxValue
 
 	return newValue
 }
@@ -105,6 +107,10 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 					.filter(value => fieldConstraint.arrayAllowFalsey || !!value)
 			} else {
 				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
+			}
+
+			if (fieldConstraint.nullable && !newObj[key]) {
+				newObj[key] = null
 			}
 		}
 	}

@@ -49,6 +49,38 @@ test('ObjectConstraint', () => {
 		salary: 20000,
 		is_active: false
 	})
+
+	expect(ConstrainObject({
+		id: '1',
+		name: null,
+		start_date: '1/1/2023',
+		ids: ['1', 2, 0, null, ''],
+		salary: null,
+		is_active: 'false'
+	}, {...ObjectConstraintTest, name: {...ObjectConstraintTest.name, nullable: true}, salary: {...ObjectConstraintTest.salary, nullable: true}})).toEqual({
+		id: 1,
+		name: null,
+		start_date: '2023-01-01',
+		ids: [1, 2],
+		salary: null,
+		is_active: false
+	})
+
+	expect(ConstrainObject({
+		id: '1',
+		name: '',
+		start_date: '1/1/2023',
+		ids: ['1', 2, 0, null, ''],
+		salary: 0,
+		is_active: 'false'
+	}, {...ObjectConstraintTest, name: {...ObjectConstraintTest.name, nullable: true}, salary: {...ObjectConstraintTest.salary, nullable: true}})).toEqual({
+		id: 1,
+		name: null,
+		start_date: '2023-01-01',
+		ids: [1, 2],
+		salary: null,
+		is_active: false
+	})
 })
 
 test('FormData', () => {
