@@ -3451,7 +3451,6 @@ var SortCompareDateNull = function (date1, date2, minInterval) {
             : null;
 };
 var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a = SortCompareDateNull(date1, date2, minInterval)) !== null && _a !== void 0 ? _a : 0; };
-exports.EQuarter = void 0;
 (function (EQuarter) {
     EQuarter[EQuarter["Q1"] = 1] = "Q1";
     EQuarter[EQuarter["Q2"] = 2] = "Q2";
@@ -3513,7 +3512,7 @@ var DateOnlyNull = function (date, adjustments) {
         return null;
     }
 };
-var DateOnly = function (date, adjustments) { var _a; return (_a = DateOnlyNull(date, adjustments)) !== null && _a !== void 0 ? _a : new Date().toISOString().substring(0, 10); };
+var DateOnly = function (date, adjustments) { var _a, _b, _c; return (_c = (_a = DateOnlyNull(date, adjustments)) !== null && _a !== void 0 ? _a : DateFormat((adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? 'Local' : 'Date', new Date(), (_b = adjustments === null || adjustments === void 0 ? void 0 : adjustments.timezoneDisplay) !== null && _b !== void 0 ? _b : 'UTC')) !== null && _c !== void 0 ? _c : new Date().toISOString().substring(0, 10); };
 /**
  * Convert a date and/or time value to a time
  * @param time
@@ -5077,7 +5076,6 @@ var EnumValueFromKey = function (e, key) {
     return (key === null || key === undefined) ? undefined : Object.values(e)[Object.keys(e).indexOf(key)];
 };
 
-exports.ICS = void 0;
 (function (ICS) {
     ICS.Header = function (filenameNoExtension) {
         if (filenameNoExtension === void 0) { filenameNoExtension = 'calendar'; }
@@ -5194,14 +5192,16 @@ var ConstrainOthers = function (value, fieldConstraint) {
                 }
         }
     }
-    if (fieldConstraint.values) {
-        if (!fieldConstraint.values.includes(value))
-            return null;
+    if (!fieldConstraint.nullable || value) {
+        if (fieldConstraint.values) {
+            if (!fieldConstraint.values.includes(value))
+                return null;
+        }
+        if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value)
+            return fieldConstraint.minValue;
+        if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value)
+            return fieldConstraint.maxValue;
     }
-    if (fieldConstraint.minValue !== undefined && fieldConstraint.minValue > value)
-        return fieldConstraint.minValue;
-    if (fieldConstraint.maxValue !== undefined && fieldConstraint.maxValue < value)
-        return fieldConstraint.maxValue;
     return newValue;
 };
 /**
@@ -5226,6 +5226,9 @@ var ConstrainObject = function (obj, constraint) {
             }
             else {
                 newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint);
+            }
+            if (fieldConstraint.nullable && !newObj[key]) {
+                newObj[key] = null;
             }
         }
     };
@@ -5298,7 +5301,6 @@ var ObjectFromFormData = function (formData, options) {
     return returnObject;
 };
 
-exports.Stages = void 0;
 (function (Stages) {
     Stages["Local"] = "local";
     Stages["Migrate"] = "migrate";
@@ -5949,7 +5951,6 @@ var SearchSort = function (arrayTable, search, sortColumn, options) {
 };
 
 var ToID = function (item) { return typeof item === 'number' ? item : item.id; };
-exports.UnselectedIDList = void 0;
 (function (UnselectedIDList) {
     UnselectedIDList.IsSelected = function (item, unselectedIDs) { return !unselectedIDs.includes(ToID(item)); };
     UnselectedIDList.SelectedIDs = function (items, unselectedIDs) { return items.reduce(function (result, cur) {
