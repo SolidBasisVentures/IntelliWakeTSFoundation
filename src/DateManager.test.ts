@@ -8,6 +8,7 @@ import {
 	DateFromWeekNumber,
 	DateISO,
 	DateIsWeekend,
+	DateMonth,
 	DateOnly,
 	DateParseTS,
 	DateQuarter,
@@ -19,7 +20,8 @@ import {
 	SortCompareDateNull,
 	TimeFloorMinute,
 	TimeOnly,
-	TimeSeries, WeekNumberAdjust
+	TimeSeries,
+	WeekNumberAdjust
 } from './DateManager'
 import {CleanNumber} from './Functions'
 
@@ -238,6 +240,8 @@ test('Date Managers', () => {
 	expect(DateQuarter('2021-07-01')).toEqual({year: 2021, quarter: 3})
 	expect(DateQuarter('2021-10-01')).toEqual({year: 2021, quarter: 4})
 	expect(DateQuarter('2021-12-31')).toEqual({year: 2021, quarter: 4})
+	expect(DateMonth('2021-01-01')).toEqual({year: 2021, monthOneBased: 1})
+	expect(DateMonth('2021-12-31')).toEqual({year: 2021, monthOneBased: 12})
 	expect(DateCompare(new Date(), 'IsSame', new Date(), 'day')).toEqual(true)
 	expect(DateCompare(new Date(), 'IsBefore', new Date(), 'day')).toEqual(false)
 	expect(DateCompare(new Date(), 'IsSame', {seconds: -2}, 'day')).toEqual(true)

@@ -1356,6 +1356,38 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	}
 }
 
+export const DatesMonth = (year: number, monthOneBased: number): IDates | null => {
+	const baseDate = DateParseTSInternal(`${year}-${(monthOneBased).toString().padStart(2, '0')}-01`, 'UTC')
+
+	if (!baseDate) return null
+
+	return {
+		start: (DateISO(baseDate, {month: 'StartOf'}) ?? '').substr(0, 10),
+		end: (DateISO(baseDate, {month: 'EndOf'}) ?? '').substr(0, 10)
+	}
+}
+
+export interface IMonth {
+	year: number
+	monthOneBased: number
+}
+
+export const InitialDateMonth = (): IMonth => ({
+	year: new Date().getFullYear(),
+	monthOneBased: Math.floor(new Date().getUTCMonth()) + 1
+})
+
+export const DateMonth = (date: TDateAny): IMonth | null => {
+	const dateObj = DateObject(date)
+
+	if (!dateObj) return null
+
+	return {
+		year: dateObj.getUTCFullYear(),
+		monthOneBased: Math.floor(dateObj.getUTCMonth()) + 1
+	}
+}
+
 /**
  * 0 = Sunday
  *
