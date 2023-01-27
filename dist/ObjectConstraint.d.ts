@@ -24,7 +24,7 @@ export declare type TObjectConstraint<T extends Record<string, any> = Record<str
  * @param constraint
  * @constructor
  */
-export declare const ConstrainObject: <T extends Record<string, any>>(obj: T, constraint: Record<keyof T, TObjectFieldConstraint>) => T;
+export declare const ConstrainObject: <T extends Record<string, any>>(obj: T, constraint: TObjectConstraint<T>) => T;
 /**
  * Options when converting FormData to an Object
  */

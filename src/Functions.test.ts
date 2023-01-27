@@ -25,6 +25,7 @@ import {
 	ToArray
 } from './Functions'
 import {DeepEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
+import {test, expect} from 'vitest'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)

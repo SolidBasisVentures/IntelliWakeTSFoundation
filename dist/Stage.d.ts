@@ -25,7 +25,7 @@ export declare const GetStage: () => Stages;
  * // return Development
  * GetStageName('dev')
  */
-export declare const GetStageName: (stage?: Stages | undefined) => string;
+export declare const GetStageName: (stage?: Stages) => string;
 /**
  * Determines whether the stage is one of the following: local, migrate, dev, qa
  */

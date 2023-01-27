@@ -31,7 +31,7 @@ export declare const ReplaceAll: (find: string | string[], replace: string, subj
  * // return 100.1
  * CleanNumber('100.12', 1)
  */
-export declare const CleanNumber: (value: any, roundClean?: number | undefined, allowNaN?: boolean | undefined) => number;
+export declare const CleanNumber: (value: any, roundClean?: number, allowNaN?: boolean) => number;
 export declare const GreaterNumberNull: (...values: (any | any[])[]) => number | null;
 export declare const GreaterNumber: (...values: (any | any[])[]) => number;
 export declare const LeastNumberNull: (...values: (any | any[])[]) => number | null;
@@ -73,7 +73,7 @@ export declare const CleanNumbers: (roundTo: number, ...values: (any | any[])[])
  * // return 100.1
  * CleanNumberNull('100.12', 1)
  */
-export declare const CleanNumberNull: (value: any, roundClean?: number | undefined) => number | null;
+export declare const CleanNumberNull: (value: any, roundClean?: number) => number | null;
 /**
  * A wrapper function for JSON.parse with try/catch.
  */
@@ -171,7 +171,7 @@ export declare const AddressCopy: (fromObject: any, fromPrefix: string, toObject
  * // returns true
  * AddressValid({ address_1: 'Blk1, Lot1, Some street' })
  */
-export declare const AddressValid: (address: any, prefix?: string | undefined) => boolean;
+export declare const AddressValid: (address: any, prefix?: string) => boolean;
 /**
  * Combines an address object into a single row string.
  *
@@ -187,7 +187,7 @@ export declare const AddressValid: (address: any, prefix?: string | undefined) =
  * // returns "Blk 1, Lot 2, Some Street, Suite 100, Burr Ridge, IL  61257"
  * AddressSingleRow(address1)
  */
-export declare const AddressSingleRow: (object: any, prefix?: string | undefined) => string;
+export declare const AddressSingleRow: (object: any, prefix?: string) => string;
 /**
  * Combines an address object into a multiline row string.
  *
@@ -206,7 +206,7 @@ export declare const AddressSingleRow: (object: any, prefix?: string | undefined
  * // Burr Ridge, IL, 61257"
  * AddressMultiRow(address1)
  */
-export declare const AddressMultiRow: (object: any, prefix?: string | undefined) => string;
+export declare const AddressMultiRow: (object: any, prefix?: string) => string;
 export declare const ArrayToGuidString: (byteArray: any) => string;
 export declare const StringToByteArray: (str: string) => any;
 export declare const FormUrlEncoded: (x: any) => string;

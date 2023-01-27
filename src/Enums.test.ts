@@ -1,4 +1,5 @@
 import {EnumKeyFromValue, EnumKeys, EnumValueFromKey, EnumValues} from './Enums'
+import {test, expect} from 'vitest'
 
 enum ETest {
 	TestOne = 'Test 1',

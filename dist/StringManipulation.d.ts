@@ -291,7 +291,7 @@ export declare const FormatExternalURL: (url: string) => string;
  * // returns 'Doe, John Smith, Jr.'
  * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
  */
-export declare const DisplayNameFromFL: (first?: string | undefined, last?: string | undefined, middle?: string | undefined, suffix?: string | undefined) => string;
+export declare const DisplayNameFromFL: (first?: string, last?: string, middle?: string, suffix?: string) => string;
 /**
  * Returns formatted name from an object.
  *
@@ -304,7 +304,7 @@ export declare const DisplayNameFromFL: (first?: string | undefined, last?: stri
  *   suffix_name: 'Jr.',
  * })
  */
-export declare const DisplayNameFromObject: (object?: any, prefix?: string | undefined) => string;
+export declare const DisplayNameFromObject: (object?: any, prefix?: string) => string;
 /**
  * Converts the first character of each word of a string to uppercase.
  *
@@ -333,7 +333,7 @@ export declare const RandomKey: (length: number) => string;
  * @param minDecimals
  * @constructor
  */
-export declare const AddS: (text?: string | null | undefined, count?: number | null | undefined, showNumber?: boolean, maxDecimals?: number, minDecimals?: number | null) => string;
+export declare const AddS: (text?: string | null, count?: number | null, showNumber?: boolean, maxDecimals?: number, minDecimals?: number | null) => string;
 export declare const ShortNumber: (value: any, decimals?: number, round?: 'round' | 'up' | 'down') => string | null;
 export declare const EllipsesAtMax: (value: string | null | undefined, maxCharacters?: number) => string | null | undefined;
 export declare const AsteriskMatch: (value: string | null | undefined, asteriskPattern: string) => boolean;

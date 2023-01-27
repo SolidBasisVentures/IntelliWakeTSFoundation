@@ -24,6 +24,7 @@ import {
 	UCWords, AddS, ShortNumber, ToInitials, AsteriskMatch, BuildPath
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
+import {test, expect} from 'vitest'
 
 test('String Functions', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')

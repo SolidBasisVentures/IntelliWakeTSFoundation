@@ -24,6 +24,7 @@ import {
 	WeekNumberAdjust
 } from './DateManager'
 import {CleanNumber} from './Functions'
+import {test, expect} from 'vitest'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dt = '2021-12-22T14:41:24Z'

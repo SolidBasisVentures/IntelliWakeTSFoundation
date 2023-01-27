@@ -1,4 +1,4 @@
-import {TObjectConstraint} from '../src/ObjectConstraint'
+import {TObjectConstraint} from './ObjectConstraint'
 
 export type TConstaintTest = {
 	id: number

@@ -1,4 +1,5 @@
 import {EvaluateCondition, EvaluateString, TVariables} from './Evaluator'
+import {test, expect} from 'vitest'
 
 const variables: TVariables = {
 	Zero: '0',

@@ -1,5 +1,6 @@
 import {ConstrainObject, ObjectFromFormData} from './ObjectConstraint'
-import {ObjectConstraintTest, TestFormData} from '../consoles/TestDatum'
+import {ObjectConstraintTest, TestFormData} from './TestDatum'
+import {test, expect} from 'vitest'
 
 test('ObjectConstraint', () => {
 	expect(ConstrainObject({
@@ -9,7 +10,7 @@ test('ObjectConstraint', () => {
 		ids: '1',
 		salary: '5000',
 		is_active: 'false'
-	}, ObjectConstraintTest)).toEqual({
+	} as any, ObjectConstraintTest)).toEqual({
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',
@@ -25,7 +26,7 @@ test('ObjectConstraint', () => {
 		ids: ['1', 2, 0, null, ''],
 		salary: '15000',
 		is_active: 'false'
-	}, ObjectConstraintTest)).toEqual({
+	} as any, ObjectConstraintTest)).toEqual({
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',
@@ -41,7 +42,7 @@ test('ObjectConstraint', () => {
 		ids: ['1', 2, 0, null, ''],
 		salary: 25000,
 		is_active: 'false'
-	}, ObjectConstraintTest)).toEqual({
+	} as any, ObjectConstraintTest)).toEqual({
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',

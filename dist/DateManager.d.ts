@@ -34,32 +34,9 @@ export declare type TAdjustment = {
 /**
  * Current time in ISO string format
  */
-export declare const NowISOString: (adjustment?: {
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} | {
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | {
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | undefined) => string;
+export declare const NowISOString: (adjustment?: TAdjustment) => string;
 export declare const CurrentTimeZone: () => string;
-export declare const IANAOffset: (timeZone?: string | null | undefined, sourceDate?: TDateAny) => number | null;
+export declare const IANAOffset: (timeZone?: string | null, sourceDate?: TDateAny) => number | null;
 export declare const StringHasTimeData: (value: string) => boolean;
 export declare const StringHasDateData: (value: string) => boolean;
 export declare const StringHasTimeZoneData: (value: string) => boolean;
@@ -70,141 +47,13 @@ export declare type TDateParseOptions = TAdjustment & {
     timezoneSource?: string;
     ignoreIANA?: boolean;
 };
-export declare const DateParseTS: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | undefined) => number | null;
-export declare const DateISO: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | undefined) => string | null;
-export declare const DateObject: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | undefined) => Date | null;
-export declare const DateICS: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    timezoneSource?: string | undefined;
-    ignoreIANA?: boolean | undefined;
-}) | undefined) => string | null;
+export declare const DateParseTS: (date: TDateAny, adjustments?: TDateParseOptions) => number | null;
+export declare const DateISO: (date: TDateAny, adjustments?: TDateParseOptions) => string | null;
+export declare const DateObject: (date: TDateAny, adjustments?: TDateParseOptions) => Date | null;
+export declare const DateICS: (date: TDateAny, adjustments?: TDateParseOptions) => string | null;
 export declare type TDateFormat = 'Local' | 'LocalDoW' | 'LocalDateTime' | 'LocalDoWTime' | 'Date' | 'DateTime' | 'DisplayDate' | 'DisplayTime' | 'DisplayDateDoW' | 'DisplayDateTime' | 'DisplayDateDoWTime' | 'DisplayDateLong' | 'DisplayDateDoWLong' | 'DisplayDateTimeLong' | 'DisplayDateDoWTimeLong';
-export declare const DateFormatAny: (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
-export declare const DateFormat: (format: TDateFormat, date: TDateAny, timezoneDisplay?: string | undefined, timezoneSource?: string | undefined) => string | null;
+export declare const DateFormatAny: (format: TDateFormat | string, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string) => string | null;
+export declare const DateFormat: (format: TDateFormat, date: TDateAny, timezoneDisplay?: string, timezoneSource?: string) => string | null;
 export declare const YYYYMMDDHHmmss: (date: TDateAny) => string;
 export declare const YYYY_MM_DD_HH_mm_ss: (date: TDateAny) => string;
 export declare const YYYYsMMsDDsHHcmmcss: (date: TDateAny) => string;
@@ -213,12 +62,12 @@ export declare const HHcmmcss: (date: TDateAny) => string;
 export declare const MonthNames: string[];
 export declare const WeekDays: string[];
 export declare const TSYearsEstimate: (ts: number) => number;
-export declare const TSMonthsEstimate: (ts: number, withinYear?: boolean | undefined) => number;
+export declare const TSMonthsEstimate: (ts: number, withinYear?: boolean) => number;
 export declare const TSWeeks: (ts: number) => number;
-export declare const TSDays: (ts: number, withinMonth?: boolean | undefined) => number;
-export declare const TSHours: (ts: number, withinDay?: boolean | undefined) => number;
-export declare const TSMinutes: (ts: number, withinHour?: boolean | undefined) => number;
-export declare const TSSeconds: (ts: number, withinMinute?: boolean | undefined) => number;
+export declare const TSDays: (ts: number, withinMonth?: boolean) => number;
+export declare const TSHours: (ts: number, withinDay?: boolean) => number;
+export declare const TSMinutes: (ts: number, withinHour?: boolean) => number;
+export declare const TSSeconds: (ts: number, withinMinute?: boolean) => number;
 export declare const DaysInMonthYear: (year: number, month: number) => number | null;
 export declare const DaysInMonth: (date: TDateAny) => number | null;
 export declare const DateAdjustTS: (date: TDateAny, adjustments: TAdjustment) => number | null;
@@ -227,78 +76,9 @@ export interface IWeekNumber {
     year: number;
     week: number;
 }
-export declare const DateComponent: (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: {
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} | {
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | {
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | undefined) => number;
-export declare const DateWeekNumber: (date?: TDateAny, adjustments?: {
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} | {
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | {
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | undefined) => IWeekNumber | null;
-export declare const DateWeekISONumber: (date?: TDateAny, adjustments?: {
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-    hour?: number | "StartOf" | "EndOf" | undefined;
-    hours?: number | "StartOf" | "EndOf" | undefined;
-    minute?: number | "StartOf" | "EndOf" | undefined;
-    minutes?: number | "StartOf" | "EndOf" | undefined;
-    second?: number | "StartOf" | "EndOf" | undefined;
-    seconds?: number | "StartOf" | "EndOf" | undefined;
-    millisecond?: number | "StartOf" | "EndOf" | undefined;
-    milliseconds?: number | "StartOf" | "EndOf" | undefined;
-} | {
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | {
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} | undefined) => IWeekNumber | null;
+export declare const DateComponent: (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: TAdjustment) => number;
+export declare const DateWeekNumber: (date?: TDateAny, adjustments?: TAdjustment) => IWeekNumber | null;
+export declare const DateWeekISONumber: (date?: TDateAny, adjustments?: TAdjustment) => IWeekNumber | null;
 export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string | null;
 export declare const WeekNumberAdjust: (weekNumber: IWeekNumber, adjustment: TDateOnlyAdjustment | number) => IWeekNumber | null;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
@@ -318,9 +98,9 @@ export declare const DateDiffLongDescription: (dateFrom: TDateAny, dateTo: TDate
  * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
  */
 export declare const DurationLongDescription: (seconds: number, tripToSecondsOrTwo?: boolean, abbreviated?: boolean) => string;
-export declare const DateCompare: (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny | TDateParseOptions, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => boolean;
-export declare const SortCompareDateNull: (date1: TDateAny, date2: TDateAny, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => number | null;
-export declare const SortCompareDate: (date1: TDateAny, date2: TDateAny, minInterval?: "year" | "years" | "quarter" | "quarters" | "month" | "months" | "week" | "weeks" | "day" | "days" | "hour" | "hours" | "minute" | "minutes" | "second" | "seconds" | "millisecond" | "milliseconds" | undefined) => number;
+export declare const DateCompare: (date1: TDateAny, evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter', date2: TDateAny | TDateParseOptions, minInterval?: TDuration) => boolean;
+export declare const SortCompareDateNull: (date1: TDateAny, date2: TDateAny, minInterval?: TDuration) => number | null;
+export declare const SortCompareDate: (date1: TDateAny, date2: TDateAny, minInterval?: TDuration) => number;
 export declare enum EQuarter {
     Q1 = 1,
     Q2 = 2,
@@ -352,65 +132,23 @@ export declare const DateMonth: (date: TDateAny) => IMonth | null;
  * @constructor
  */
 export declare const DateDayOfWeek: (date: TDateAny) => number | null;
-export declare const DateOnlyNull: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | undefined) => string | null;
-export declare const DateOnly: (date: TDateAny, adjustments?: ({
-    year?: number | "StartOf" | "EndOf" | undefined;
-    years?: number | "StartOf" | "EndOf" | undefined;
-    quarter?: number | "StartOf" | "EndOf" | undefined;
-    quarters?: number | "StartOf" | "EndOf" | undefined;
-    month?: number | "StartOf" | "EndOf" | undefined;
-    months?: number | "StartOf" | "EndOf" | undefined;
-    week?: number | "StartOf" | "EndOf" | undefined;
-    weeks?: number | "StartOf" | "EndOf" | undefined;
-    day?: number | "StartOf" | "EndOf" | undefined;
-    days?: number | "StartOf" | "EndOf" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | ({
-    week?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | ({
-    weeks?: number | "StartOf" | "EndOf" | "StartOfMon" | undefined;
-} & {
-    formatLocale?: boolean | undefined;
-    timezoneDisplay?: string | undefined;
-}) | undefined) => string;
+export declare const DateOnlyNull: (date: TDateAny, adjustments?: TDateOnlyAdjustment & {
+    formatLocale?: boolean;
+    timezoneDisplay?: string;
+}) => string | null;
+export declare const DateOnly: (date: TDateAny, adjustments?: TDateOnlyAdjustment & {
+    formatLocale?: boolean;
+    timezoneDisplay?: string;
+}) => string;
 /**
  * Convert a date and/or time value to a time
  * @param time
  * @param adjustments
  * @constructor
  */
-export declare const TimeOnly: (time: TDateAny, adjustments?: (TTimeOnlyAdjustment & {
-    formatLocale?: boolean | undefined;
-}) | undefined) => string | null;
+export declare const TimeOnly: (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {
+    formatLocale?: boolean;
+}) => string | null;
 /**
  * Generates a series of times, starting with the first time (default '00:00') and ending BEFORE the end time (default: '24:00')
  *
