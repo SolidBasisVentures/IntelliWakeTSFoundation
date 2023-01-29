@@ -15,9 +15,9 @@
 	"scripts": {
 		"Vitest-Watch" : "vitest",
 		"Publish": "vitest run && tsc && vite build && pnpm add -g pnpm && pnpm version patch && npm publish ./dist && git push",
-		"Install-Intelliwake": "pnpm add -g pnpm && pnpm pnpm install",
+		"Install-IntelliWake": "pnpm add -g pnpm && pnpm install",
 		"BuildAndPublishOLD": "rm -rf dist/* && rollup -c && npm version patch --no-git-tag-version && npm publish",
-		"Version-Minor-Adcance": "pnpm version minor"
+		"Version-Minor-Advance": "pnpm version minor"
 	},
 	"files": [ "dist" ],
 	"author": "SolidBasisVentures",
