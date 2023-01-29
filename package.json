@@ -1,6 +1,6 @@
 {
 	"name": "@solidbasisventures/intelliwaketsfoundation",
-	"version": "5.2.9",
+	"version": "5.2.10",
 	"description": "NPM package for IntelliWake TypeScript Foundation Components",
 	"type": "module",
 	"main": "./dist/main.umd.cjs",
@@ -13,13 +13,15 @@
 		}
 	},
 	"scripts": {
-		"Vitest-Watch" : "vitest",
+		"Vitest-Watch": "vitest",
 		"Publish": "tsc && vite build && pnpm add -g pnpm && pnpm version patch && npm publish ./dist && git push",
 		"Install-IntelliWake": "pnpm add -g pnpm && pnpm install",
 		"BuildAndPublishOLD": "rm -rf dist/* && rollup -c && npm version patch --no-git-tag-version && npm publish",
 		"Version-Minor-Advance": "pnpm version minor"
 	},
-	"files": [ "dist" ],
+	"files": [
+		"dist"
+	],
 	"author": "SolidBasisVentures",
 	"license": "MIT",
 	"repository": {
