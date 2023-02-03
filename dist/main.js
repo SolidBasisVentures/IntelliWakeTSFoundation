@@ -1184,118 +1184,285 @@ const ae = (e, a) => {
         }
         break;
     }
-  }
-  return n;
-}, _ = (e, a, n) => {
-  let r = C(e), t = C(a);
-  if (!r || !t)
-    return null;
-  if (r === t)
-    return 0;
-  switch (n) {
-    case "year":
-    case "years":
-    case "month":
-    case "months":
-      const i = r < t, o = (["year", "years"].includes(n) ? 12 : 1) * (i ? -1 : 1);
-      let u = 0, l = J(t, o) ?? 0;
-      for (; i ? r <= l : r >= l; )
-        u -= i ? -1 : 1, l = J(l, o) ?? 0;
-      return u;
-    default: {
-      const s = t - r;
-      switch (n) {
-        case "week":
-        case "weeks":
-          return s < 0 ? De(s * -1) * -1 : De(s);
-        case "day":
-        case "days":
-          return s < 0 ? k(s * -1) * -1 : k(s);
-        case "hour":
-        case "hours":
-          return s < 0 ? I(s * -1) * -1 : I(s);
-        case "minute":
-        case "minutes":
-          return s < 0 ? w(s * -1) * -1 : w(s);
-        case "second":
-        case "seconds":
-          return s < 0 ? V(s * -1) * -1 : V(s);
-        case "millisecond":
-        case "milliseconds":
-          return s;
-      }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (_15 && !_15.done && (_a = _14.return)) _a.call(_14);
+        }
+        finally { if (e_2) throw e_2.error; }
     }
-  }
-  return null;
-}, sr = (e, a, n) => c(Y(e, p(a, n))), oe = (e, a) => {
-  console.error("Deprecated!  Use: DateWeekISONumber");
-  const n = d(e ?? "now", { timezoneSource: "UTC", ...a });
-  if (!n)
+    return dateTS;
+};
+var DateDiff = function (dateFrom, dateTo, duration) {
+    // const isDayRanged = ['year'
+    // 										 , 'years'
+    // 										 , 'quarter'
+    // 										 , 'quarters'
+    // 										 , 'month'
+    // 										 , 'months'
+    // 										 , 'week'
+    // 										 , 'weeks'
+    // 										 , 'day'
+    // 										 , 'days'].includes(duration)
+    var _a, _b;
+    var date1 = DateParseTSInternal(dateFrom);
+    var date2 = DateParseTSInternal(dateTo);
+    if (!date1 || !date2)
+        return null;
+    if (date1 === date2)
+        return 0;
+    switch (duration) {
+        case 'year':
+        case 'years':
+        case 'month':
+        case 'months':
+            var isNegative = date1 < date2;
+            var increment = (['year', 'years'].includes(duration) ? 12 : 1) * (isNegative ? -1 : 1);
+            var count = 0;
+            var newTS = (_a = DateAdjustMonthTS(date2, increment)) !== null && _a !== void 0 ? _a : 0;
+            while (isNegative ? date1 <= newTS : date1 >= newTS) {
+                count -= isNegative ? -1 : 1;
+                newTS = (_b = DateAdjustMonthTS(newTS, increment)) !== null && _b !== void 0 ? _b : 0;
+            }
+            return count;
+        default: {
+            var diff = date2 - date1;
+            switch (duration) {
+                case 'week':
+                case 'weeks':
+                    return diff < 0 ? TSWeeks(diff * -1) * -1 : TSWeeks(diff);
+                case 'day':
+                case 'days':
+                    return diff < 0 ? TSDays(diff * -1) * -1 : TSDays(diff);
+                case 'hour':
+                case 'hours':
+                    return diff < 0 ? TSHours(diff * -1) * -1 : TSHours(diff);
+                case 'minute':
+                case 'minutes':
+                    return diff < 0 ? TSMinutes(diff * -1) * -1 : TSMinutes(diff);
+                case 'second':
+                case 'seconds':
+                    return diff < 0 ? TSSeconds(diff * -1) * -1 : TSSeconds(diff);
+                case 'millisecond':
+                case 'milliseconds':
+                    return diff;
+            }
+        }
+    }
     return null;
-  const r = c(Y("YYYY", e)), t = new Date(r, 0, 1), i = Math.floor((n.valueOf() - t.valueOf()) / (24 * 60 * 60 * 1e3)) + 7, o = Math.ceil(i / 7);
-  return { year: r, week: o };
-}, ue = (e, a) => {
-  const n = d(e ?? "now", a);
-  if (!n)
-    return null;
-  const r = new Date(n.valueOf()), t = (n.getDay() + 6) % 7;
-  r.setDate(r.getDate() - t + 3);
-  const i = r.valueOf();
-  r.setMonth(0, 1), r.getDay() !== 4 && r.setMonth(0, 1 + (4 - r.getDay() + 7) % 7);
-  const o = 1 + Math.ceil((i - r.valueOf()) / 6048e5), u = n;
-  return u.setDate(u.getDate() + 3 - (u.getDay() + 6) % 7), { year: u.getFullYear(), week: o };
-}, Sa = (e, a = "StartOf") => {
-  if (!(e != null && e.year))
-    return null;
-  const n = (e.week - 1) * 7;
-  let r = b(new Date(e.year, 0, n), { week: a }), t = ue(r) ?? e, i = 0;
-  for (; !ae(e, t); ) {
-    if (i > 4)
-      return null;
-    i++, t.year < e.year || t.year === e.year && t.week < e.week ? r = b(r, { weeks: 1 }) : r = b(r, { weeks: -1 }), t = ue(r) ?? e;
-  }
-  return r;
-}, lr = (e, a) => {
-  let n = Sa(e);
-  return n ? ue(b(n, typeof a == "number" ? { weeks: a } : a)) : null;
-}, Da = (e, a) => {
-  let n = {
-    year: 0,
-    month: 0,
-    day: 0,
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0
-  };
-  const r = C(e) ?? 0;
-  let t = C(a) ?? 0;
-  return n.year = _(r, t, "year") ?? 0, n.year && (t = p(t, { year: n.year * -1 }) ?? 0), n.month = _(r, t, "month") ?? 0, n.month && (t = p(t, { month: n.month * -1 }) ?? 0), n.day = _(r, t, "day") ?? 0, n.day && (t = p(t, { day: n.day * -1 }) ?? 0), n.hour = _(r, t, "hour") ?? 0, n.hour && (t = p(t, { hour: n.hour * -1 }) ?? 0), n.minute = _(r, t, "minute") ?? 0, n.minute && (t = p(t, { minute: n.minute * -1 }) ?? 0), n.second = _(r, t, "second") ?? 0, n.second && (t = p(t, { second: n.second * -1 }) ?? 0), n.millisecond = _(r, t, "millisecond") ?? 0, n;
-}, cr = (e, a, n = !1, r = !1) => {
-  const t = Da(e, a);
-  let i = "";
-  return t.year ? (i += ` ${v(t.year)}${r ? "Y" : " " + S("Year", t.year)}`, i += ` ${v(t.month)}${r ? "Mo" : " " + S("Month", t.month)}`, t.day && !n && (i += ` ${v(t.day)}${r ? "D" : " " + S("Day", t.day)}`)) : t.month ? (i += ` ${v(t.month)}${r ? "Mo" : " " + S("Month", t.month)}`, t.day && (i += ` ${v(t.day)}${r ? "D" : " " + S("Day", t.day)}`)) : t.day ? (i += ` ${v(t.day)}${r ? "D" : " " + S("Day", t.day)}`, t.hour && (i += ` ${v(t.hour)}${r ? "h" : " " + S("Hour", t.hour)}`), t.minute && !n && (i += ` ${v(t.minute)}${r ? "m" : " " + S("Minute", t.minute)}`)) : t.hour ? (i += ` ${v(t.hour)}${r ? "h" : " " + S("Hour", t.hour)}`, t.minute && (i += ` ${v(t.minute)}${r ? "m" : " " + S("Minute", t.minute)}`)) : ((t.minute || !i && n) && (i += ` ${v(t.minute)}${r ? "m" : " " + S("Minute", t.minute)}`), (!i || !n && t.second) && (i += ` ${v(t.second)}${r ? "s" : " " + S("Second", t.second)}`)), i.trim();
-}, mr = (e, a = !1, n = !1) => {
-  const r = e * 1e3;
-  let t = "";
-  return X(r) ? (t += ` ${v(X(r), 0)}${n ? "Y" : " " + S("Year", X(r))}`, t += ` ${v(R(r, !0), 0)}${n ? "Mo" : " " + S("Month", R(r, !0))}`, k(r, !0) && !a && (t += ` ${v(k(r, !0), 0)}${n ? "D" : " " + S("Day", k(r, !0))}`)) : R(r, !0) ? (t += ` ${v(R(r, !0), 0)}${n ? "Mo" : " " + S("Month", R(r, !0))}`, k(r, !0) && (t += ` ${v(k(r, !0), 0)}${n ? "D" : " " + S("Day", k(r, !0))}`)) : k(r, !0) ? (t += ` ${v(k(r, !0), 0)}${n ? "D" : " " + S("Day", k(r, !0))}`, I(r, !0) && (t += ` ${v(I(r, !0), 0)}${n ? "h" : " " + S("Hour", I(r, !0))}`), w(r, !0) && !a && (t += ` ${v(w(r, !0), 0)}${n ? "m" : " " + S("Minute", w(r, !0))}`)) : I(r, !0) ? (t += ` ${v(I(r, !0), 0)}${n ? "h" : " " + S("Hour", I(r, !0))}`, w(r, !0) && (t += ` ${v(w(r, !0), 0)}${n ? "m" : " " + S("Minute", w(r, !0))}`)) : ((w(r, !0) || !t && a) && (t += ` ${v(w(r, !0), 0)}${n ? "m" : " " + S("Minute", w(r, !0))}`), (!t || !a && V(r, !0)) && (t += ` ${v(V(r, !0), 0)}${n ? "s" : " " + S("Second", V(r, !0))}`)), t.trim();
-}, y = (e, a) => a === 0 ? ["IsSame", "IsSameOrBefore", "IsSameOrAfter"].includes(e) : a > 0 ? ["IsAfter", "IsSameOrAfter"].includes(e) : ["IsBefore", "IsSameOrBefore"].includes(e), W = (e, a, n, r) => {
-  var o, u, l;
-  const t = n && typeof n == "object" && !(n instanceof Date) ? p("now", n) : n, i = (C(e, void 0, !0) ?? 0) - (C(t, void 0, !0) ?? 0);
-  if (i === 0)
-    return y(a, i);
-  if (r) {
-    const s = d(e) ?? new Date(), g = d(t) ?? new Date(), m = s.getUTCFullYear() - g.getUTCFullYear();
-    if (["year", "years"].includes(r))
-      return y(a, m);
-    const h = s.getUTCMonth() - g.getUTCMonth();
-    if (["month", "months"].includes(r))
-      return m !== 0 ? y(a, m) : y(a, h);
-    if (["week", "weeks"].includes(r)) {
-      if (Math.abs(i) > 7 * 24 * 60 * 60 * 1e3)
-        return y(a, i);
-      const Z = (((o = oe(e)) == null ? void 0 : o.week) ?? 0) - (((u = oe(t)) == null ? void 0 : u.week) ?? 0);
-      return Z === 0 && (((l = oe(e)) == null ? void 0 : l.week) ?? 0) === 1 && Math.abs(m) > 1 && m !== 0 ? y(a, m) : y(a, Z);
+};
+var DateComponent = function (component, date, adjustments) {
+    return CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)));
+};
+var DateWeekNumber = function (date, adjustments) {
+    console.error('Deprecated!  Use: DateWeekISONumber');
+    var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
+    if (!currentDate)
+        return null;
+    var year = CleanNumber(DateFormatAny('YYYY', date));
+    var startDate = new Date(year, 0, 1);
+    var days = Math.floor((currentDate.valueOf() - startDate.valueOf()) / (24 * 60 * 60 * 1000)) + 7;
+    var week = Math.ceil(days / 7);
+    return { year: year, week: week };
+};
+var DateWeekISONumber = function (date, adjustments) {
+    var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', adjustments);
+    if (!currentDate)
+        return null;
+    var tdt = new Date(currentDate.valueOf());
+    var dayn = (currentDate.getDay() + 6) % 7;
+    tdt.setDate(tdt.getDate() - dayn + 3);
+    var firstThursday = tdt.valueOf();
+    tdt.setMonth(0, 1);
+    if (tdt.getDay() !== 4) {
+        tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+    }
+    var week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000);
+    var dateYear = currentDate;
+    dateYear.setDate(dateYear.getDate() + 3 - (dateYear.getDay() + 6) % 7);
+    var year = dateYear.getFullYear();
+    return { year: year, week: week };
+};
+var DateFromWeekNumber = function (weekNumber) {
+    var _a, _b;
+    if (!(weekNumber === null || weekNumber === void 0 ? void 0 : weekNumber.year))
+        return null;
+    var days = (weekNumber.week - 1) * 7;
+    var tryDate = DateOnly(new Date(weekNumber.year, 0, days), { week: 'StartOfMon' });
+    var tryWeekNumber = (_a = DateWeekISONumber(tryDate)) !== null && _a !== void 0 ? _a : weekNumber;
+    var attempts = 0;
+    while (!DeepEqual(weekNumber, tryWeekNumber)) {
+        if (attempts > 4) {
+            // console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
+            return null;
+        }
+        attempts++;
+        if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {
+            tryDate = DateOnly(tryDate, { weeks: 1 });
+        }
+        else {
+            tryDate = DateOnly(tryDate, { weeks: -1 });
+        }
+        tryWeekNumber = (_b = DateWeekISONumber(tryDate)) !== null && _b !== void 0 ? _b : weekNumber;
+    }
+    return tryDate;
+};
+var DatesFromWeekNumber = function (weekNumber) {
+    var start = DateFromWeekNumber(weekNumber);
+    if (!start)
+        return null;
+    return {
+        start: start,
+        end: DateOnly(start, { days: 6 })
+    };
+};
+var WeekNumberAdjust = function (weekNumber, adjustment) {
+    var nextDate = DateFromWeekNumber(weekNumber);
+    if (!nextDate)
+        return null;
+    return DateWeekISONumber(DateOnly(nextDate, typeof adjustment === 'number' ? { weeks: adjustment } : adjustment));
+};
+var DateDiffComponents = function (dateFrom, dateTo) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+    var returnComponents = {
+        year: 0,
+        month: 0,
+        day: 0,
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0
+    };
+    var dateFromTS = (_a = DateParseTSInternal(dateFrom)) !== null && _a !== void 0 ? _a : 0;
+    var checkTo = (_b = DateParseTSInternal(dateTo)) !== null && _b !== void 0 ? _b : 0;
+    returnComponents.year = (_c = DateDiff(dateFromTS, checkTo, 'year')) !== null && _c !== void 0 ? _c : 0;
+    if (returnComponents.year)
+        checkTo = (_d = DateParseTS(checkTo, { year: returnComponents.year * -1 })) !== null && _d !== void 0 ? _d : 0;
+    returnComponents.month = (_e = DateDiff(dateFromTS, checkTo, 'month')) !== null && _e !== void 0 ? _e : 0;
+    if (returnComponents.month)
+        checkTo = (_f = DateParseTS(checkTo, { month: returnComponents.month * -1 })) !== null && _f !== void 0 ? _f : 0;
+    returnComponents.day = (_g = DateDiff(dateFromTS, checkTo, 'day')) !== null && _g !== void 0 ? _g : 0;
+    if (returnComponents.day)
+        checkTo = (_h = DateParseTS(checkTo, { day: returnComponents.day * -1 })) !== null && _h !== void 0 ? _h : 0;
+    returnComponents.hour = (_j = DateDiff(dateFromTS, checkTo, 'hour')) !== null && _j !== void 0 ? _j : 0;
+    if (returnComponents.hour)
+        checkTo = (_k = DateParseTS(checkTo, { hour: returnComponents.hour * -1 })) !== null && _k !== void 0 ? _k : 0;
+    returnComponents.minute = (_l = DateDiff(dateFromTS, checkTo, 'minute')) !== null && _l !== void 0 ? _l : 0;
+    if (returnComponents.minute)
+        checkTo = (_m = DateParseTS(checkTo, { minute: returnComponents.minute * -1 })) !== null && _m !== void 0 ? _m : 0;
+    returnComponents.second = (_o = DateDiff(dateFromTS, checkTo, 'second')) !== null && _o !== void 0 ? _o : 0;
+    if (returnComponents.second)
+        checkTo = (_p = DateParseTS(checkTo, { second: returnComponents.second * -1 })) !== null && _p !== void 0 ? _p : 0;
+    returnComponents.millisecond = (_q = DateDiff(dateFromTS, checkTo, 'millisecond')) !== null && _q !== void 0 ? _q : 0;
+    return returnComponents;
+};
+var DateDiffLongDescription = function (dateFrom, dateTo, tripToSecondsOrTwo, abbreviated) {
+    if (tripToSecondsOrTwo === void 0) { tripToSecondsOrTwo = false; }
+    if (abbreviated === void 0) { abbreviated = false; }
+    var components = DateDiffComponents(dateFrom, dateTo);
+    var text = '';
+    if (components.year) {
+        text += " " + ToDigits(components.year) + (abbreviated ? 'Y' : (' ' + AddS('Year', components.year)));
+        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : (' ' + AddS('Month', components.month)));
+        if (components.day && !tripToSecondsOrTwo) {
+            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+        }
+    }
+    else if (components.month) {
+        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : (' ' + AddS('Month', components.month)));
+        if (components.day) {
+            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+        }
+    }
+    else if (components.day) {
+        text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+        if (components.hour) {
+            text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : (' ' + AddS('Hour', components.hour)));
+        }
+        if (components.minute && !tripToSecondsOrTwo) {
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+        }
+    }
+    else if (components.hour) {
+        text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : (' ' + AddS('Hour', components.hour)));
+        if (components.minute) {
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+        }
+    }
+    else {
+        if (components.minute || (!text && tripToSecondsOrTwo)) {
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+        }
+        if (!text || (!tripToSecondsOrTwo && components.second)) {
+            text += " " + ToDigits(components.second) + (abbreviated ? 's' : (' ' + AddS('Second', components.second)));
+        }
+    }
+    return text.trim();
+};
+/**
+ * Displays a simplified duration format from seconds.
+ *
+ * @example
+ * MomentDurationShortText((30 * 60) + 20) // result: 30 Minutes 20 Seconds
+ */
+var DurationLongDescription = function (seconds, tripToSecondsOrTwo, abbreviated) {
+    if (tripToSecondsOrTwo === void 0) { tripToSecondsOrTwo = false; }
+    if (abbreviated === void 0) { abbreviated = false; }
+    var durationTS = seconds * 1000;
+    var text = '';
+    if (TSYearsEstimate(durationTS)) {
+        text += " " + ToDigits(TSYearsEstimate(durationTS), 0) + (abbreviated ? 'Y' : ' ' + AddS('Year', TSYearsEstimate(durationTS)));
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + (abbreviated ? 'Mo' : ' ' + AddS('Month', TSMonthsEstimate(durationTS, true)));
+        if (TSDays(durationTS, true) && !tripToSecondsOrTwo) {
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + (abbreviated ? 'D' : ' ' + AddS('Day', TSDays(durationTS, true)));
+        }
+    }
+    else if (TSMonthsEstimate(durationTS, true)) {
+        text += " " + ToDigits(TSMonthsEstimate(durationTS, true), 0) + (abbreviated ? 'Mo' : ' ' + AddS('Month', TSMonthsEstimate(durationTS, true)));
+        if (TSDays(durationTS, true)) {
+            text += " " + ToDigits(TSDays(durationTS, true), 0) + (abbreviated ? 'D' : ' ' + AddS('Day', TSDays(durationTS, true)));
+        }
+    }
+    else if (TSDays(durationTS, true)) {
+        text += " " + ToDigits(TSDays(durationTS, true), 0) + (abbreviated ? 'D' : ' ' + AddS('Day', TSDays(durationTS, true)));
+        if (TSHours(durationTS, true)) {
+            text += " " + ToDigits(TSHours(durationTS, true), 0) + (abbreviated ? 'h' : ' ' + AddS('Hour', TSHours(durationTS, true)));
+        }
+        if (TSMinutes(durationTS, true) && !tripToSecondsOrTwo) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + (abbreviated ? 'm' : ' ' + AddS('Minute', TSMinutes(durationTS, true)));
+        }
+    }
+    else if (TSHours(durationTS, true)) {
+        text += " " + ToDigits(TSHours(durationTS, true), 0) + (abbreviated ? 'h' : ' ' + AddS('Hour', TSHours(durationTS, true)));
+        if (TSMinutes(durationTS, true)) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + (abbreviated ? 'm' : ' ' + AddS('Minute', TSMinutes(durationTS, true)));
+        }
+    }
+    else {
+        if (TSMinutes(durationTS, true) || (!text && tripToSecondsOrTwo)) {
+            text += " " + ToDigits(TSMinutes(durationTS, true), 0) + (abbreviated ? 'm' : ' ' + AddS('Minute', TSMinutes(durationTS, true)));
+        }
+        if (!text || (!tripToSecondsOrTwo && TSSeconds(durationTS, true))) {
+            text += " " + ToDigits(TSSeconds(durationTS, true), 0) + (abbreviated ? 's' : ' ' + AddS('Second', TSSeconds(durationTS, true)));
+        }
+    }
+    return text.trim();
+};
+var checkType = function (evalCheck, diff) {
+    if (diff === 0)
+        return ['IsSame', 'IsSameOrBefore', 'IsSameOrAfter'].includes(evalCheck);
+    if (diff > 0)
+        return ['IsAfter', 'IsSameOrAfter'].includes(evalCheck);
+    return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck);
+};
+var DateCompare = function (date1, evalType, date2, minInterval) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
+        ? DateParseTS('now', date2)
+        : date2;
+    var msDifference = ((_a = DateParseTSInternal(date1, undefined, true)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2ToUse, undefined, true)) !== null && _b !== void 0 ? _b : 0);
+    if (msDifference === 0) {
+        return checkType(evalType, msDifference);
     }
     const D = s.getUTCDate() - g.getUTCDate();
     if (["day", "days"].includes(r))
@@ -2626,253 +2793,249 @@ const gt = (e, a, n, r = !0) => {
       i && t.push(o);
   return t;
 };
-export {
-  Ur as AddChange,
-  Lr as AddIDChange,
-  Pr as AddIDChanges,
-  S as AddS,
-  Ga as AddressCopy,
-  Va as AddressMultiRow,
-  Ka as AddressSingleRow,
-  za as AddressValid,
-  on as ArrayRange,
-  Ja as ArrayToGuidString,
-  Br as ArrayWithIDChanges,
-  Xn as AsteriskMatch,
-  Fa as AverageNumber,
-  Je as AverageNumberNull,
-  er as BuildPath,
-  Ca as ChangeArrayByIDOrUUID,
-  Nr as ChangeValueChanges,
-  Ra as CleanDivide,
-  qe as CleanDivideNull,
-  c as CleanNumber,
-  E as CleanNumberNull,
-  Ze as CleanNumbers,
-  ra as CleanScripts,
-  An as CoalesceFalsey,
-  hn as ColorBrightnessHex,
-  Ne as ColorBrightnessRGB,
-  $r as CombineArrayWithIDOrUUIDChanges,
-  $a as ConsoleColor,
-  Oa as ConstrainObject,
-  Aa as CurrentTimeZone,
-  ne as DATE_FORMAT_DATE,
-  me as DATE_FORMAT_DATE_DISPLAY,
-  Ie as DATE_FORMAT_DATE_DISPLAY_DOW,
-  _e as DATE_FORMAT_DATE_DISPLAY_DOW_LONG,
-  fe as DATE_FORMAT_DATE_DISPLAY_LONG,
-  la as DATE_FORMAT_DATE_TIME,
-  ca as DATE_FORMAT_DATE_TIME_DISPLAY,
-  ma as DATE_FORMAT_DATE_TIME_DISPLAY_DOW,
-  ga as DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG,
-  fa as DATE_FORMAT_DATE_TIME_DISPLAY_LONG,
-  F as DATE_FORMAT_TIME_DISPLAY,
-  ar as DATE_FORMAT_TIME_NO_SECONDS,
-  sa as DATE_FORMAT_TIME_SECONDS,
-  Fr as DataToCSVExport,
-  Rr as DataToCSVExportNoQuotes,
-  xr as DataToTabDelim,
-  T as DateAdjustTS,
-  W as DateCompare,
-  sr as DateComponent,
-  Sr as DateDayOfWeek,
-  _ as DateDiff,
-  Da as DateDiffComponents,
-  cr as DateDiffLongDescription,
-  ba as DateDoWSundayZero,
-  H as DateFormat,
-  Y as DateFormatAny,
-  Sa as DateFromWeekNumber,
-  nr as DateICS,
-  N as DateISO,
-  br as DateIsWeekend,
-  yr as DateMonth,
-  d as DateObject,
-  b as DateOnly,
-  $e as DateOnlyNull,
-  p as DateParseTS,
-  Ar as DateQuarter,
-  ue as DateWeekISONumber,
-  oe as DateWeekNumber,
-  Cr as DatesBetween,
-  hr as DatesMonth,
-  gr as DatesQuarter,
-  ur as DaysInMonth,
-  L as DaysInMonthYear,
-  ae as DeepEqual,
-  j as DigitsNth,
-  ia as DisplayNameFromFL,
-  qn as DisplayNameFromObject,
-  mr as DurationLongDescription,
-  pa as EQuarter,
-  pr as ESTTodayDate,
-  Tr as ESTTodayDateTimeLabel,
-  Qn as EllipsesAtMax,
-  qr as EnumKeyFromValue,
-  Vr as EnumKeys,
-  Zr as EnumValueFromKey,
-  Jr as EnumValues,
-  Kr as EvaluateCondition,
-  le as EvaluateString,
-  at as FindIsActiveString,
-  Za as FormUrlEncoded,
-  Jn as FormatExternalURL,
-  Gn as FormatPhoneNumber,
-  Kn as FormatPhoneNumberDots,
-  zn as FormatPhoneNumberOld,
-  Wn as FormatSSN,
-  Vn as FormatZip,
-  Qe as GenerateUUID,
-  He as GetStage,
-  Qr as GetStageName,
-  Ha as GoogleMapsAddressLink,
-  Ya as GoogleMapsGPSLink,
-  ze as GreaterNumber,
-  Ge as GreaterNumberNull,
-  or as HHcmmcss,
-  kn as HTMLToText,
-  Q as IANAOffset,
-  Or as IANAZoneAbbr,
-  pe as ICS,
-  vr as InitialDateMonth,
-  dr as InitialDateQuarter,
-  vn as InvertColorHex,
-  ea as InvertColorRGB,
-  ve as IsDateString,
-  se as IsEqual,
-  Yr as IsJSON,
-  O as IsOn,
-  Ye as IsStage,
-  Na as IsStageDevFocused,
-  Xr as IsStageDevTestFocused,
-  Ua as IsStageTestFocused,
-  Wa as IsValidInputDecimal,
-  je as JSONParse,
-  Qa as JSONStringToObject,
-  Ve as LeastNumber,
-  Ke as LeastNumberNull,
-  wn as LeftPad,
-  ye as ManualParse,
-  Se as MonthNames,
-  da as NowISOString,
-  ct as ObjectContainsSearch,
-  G as ObjectContainsSearchTerms,
-  Gr as ObjectDiffs,
-  jr as ObjectFromFormData,
-  ja as ObjectToJSONString,
-  Ir as ObjectWithChanges,
-  cn as OmitFalsey,
-  ln as OmitProperty,
-  mn as OmitUndefined,
-  et as PagesForRange,
-  ta as PhoneComponents,
-  fn as PickProperty,
-  un as PropertiesExist,
-  sn as PropertiesNotFalsey,
-  Ue as RBGFromHex,
-  Zn as RandomKey,
-  ua as RandomString,
-  ot as ReSortOrder,
-  zr as ReduceObjectToOtherKeys,
-  Fe as RemoveDupProperties,
-  Hr as RemoveDupPropertiesByID,
-  Wr as RemoveDupPropertiesByIDArray,
-  dn as RemoveEnding,
-  gn as RemoveStarting,
-  M as ReplaceAll,
-  bn as ReplaceLinks,
-  On as RightPad,
-  Ee as RoundTo,
-  mt as SearchRow,
-  we as SearchRows,
-  ft as SearchSort,
-  te as SearchTerms,
-  gt as SelectBetweenIDs,
-  jn as ShortNumber,
-  yn as Sleep,
-  tt as SortColumnUpdate,
-  Ce as SortColumns,
-  ge as SortCompare,
-  fr as SortCompareDate,
-  Ta as SortCompareDateNull,
-  La as SortCompareNull,
-  it as SortIndex,
-  _a as SortIndexNull,
-  ut as SortPerArray,
-  Ea as Stages,
-  lt as StringContainsSearch,
-  Pa as StringContainsSearchTerms,
-  nt as StringFindIsActive,
-  Le as StringHasDateData,
-  ha as StringHasTimeData,
-  Pe as StringHasTimeZoneData,
-  qa as StringToByteArray,
-  Ae as SubsetEqual,
-  he as SubsetFormEqual,
-  k as TSDays,
-  I as TSHours,
-  w as TSMinutes,
-  R as TSMonthsEstimate,
-  V as TSSeconds,
-  De as TSWeeks,
-  X as TSYearsEstimate,
-  st as TermsToSearch,
-  Cn as TextToHTML,
-  Ma as TimeFloorMinute,
-  P as TimeOnly,
-  Dr as TimeSeries,
-  Be as TimeZoneOlsonsAll,
-  kr as TimeZoneOlsonsAmerica,
-  wr as TimeZoneOlsonsAmericaCommon,
-  x as ToArray,
-  Tn as ToCamelCase,
-  En as ToCurrency,
-  _n as ToCurrencyBlank,
-  Ln as ToCurrencyDash,
-  Nn as ToCurrencyMax,
-  v as ToDigits,
-  Fn as ToDigitsBlank,
-  Rn as ToDigitsBlankMax,
-  xn as ToDigitsDash,
-  Yn as ToDigitsDashMax,
-  Bn as ToDigitsMax,
-  aa as ToFirstLetterUpper,
-  ce as ToFirstLetterUpperSmart,
-  K as ToID,
-  Mn as ToInitials,
-  Dn as ToKebabCase,
-  pn as ToPascalCase,
-  Un as ToPercent,
-  Pn as ToPercentBlank,
-  $n as ToPercentDash,
-  In as ToPercentMax,
-  Sn as ToSnakeCase,
-  Hn as ToStringArray,
-  na as ToUpperCaseWords,
-  $ as ToWords,
-  xa as Trunc,
-  oa as UCWords,
-  Oe as UnselectedIDList,
-  re as ValidNumbers,
-  ie as WeekDays,
-  lr as WeekNumberAdjust,
-  Mr as WeeksFromLabel,
-  va as YYYYMMDDHHmmss,
-  rr as YYYY_MM_DD_HH_mm_ss,
-  ir as YYYYsMMsDD,
-  tr as YYYYsMMsDDsHHcmmcss,
-  Xa as ab2str,
-  Ba as consoleLogTable,
-  rn as everyAsync,
-  tn as filterAsync,
-  an as findAsync,
-  Er as initialChanges,
-  We as initialConsoleLogTableDef,
-  rt as initialFilterSortPaginator,
-  _r as initialIDChanges,
-  Ia as initialSortColumn,
-  Xe as isAB,
-  nn as someAsync,
-  en as str2ab
-};
+
+exports.AddChange = AddChange;
+exports.AddIDChange = AddIDChange;
+exports.AddIDChanges = AddIDChanges;
+exports.AddS = AddS;
+exports.AddressCopy = AddressCopy;
+exports.AddressMultiRow = AddressMultiRow;
+exports.AddressSingleRow = AddressSingleRow;
+exports.AddressValid = AddressValid;
+exports.ArrayRange = ArrayRange;
+exports.ArrayToGuidString = ArrayToGuidString;
+exports.ArrayWithIDChanges = ArrayWithIDChanges;
+exports.AsteriskMatch = AsteriskMatch;
+exports.AverageNumber = AverageNumber;
+exports.AverageNumberNull = AverageNumberNull;
+exports.BuildPath = BuildPath;
+exports.ChangeArrayByIDOrUUID = ChangeArrayByIDOrUUID;
+exports.ChangeValueChanges = ChangeValueChanges;
+exports.CleanDivide = CleanDivide;
+exports.CleanDivideNull = CleanDivideNull;
+exports.CleanNumber = CleanNumber;
+exports.CleanNumberNull = CleanNumberNull;
+exports.CleanNumbers = CleanNumbers;
+exports.CleanScripts = CleanScripts;
+exports.CoalesceFalsey = CoalesceFalsey;
+exports.ColorBrightnessHex = ColorBrightnessHex;
+exports.ColorBrightnessRGB = ColorBrightnessRGB;
+exports.CombineArrayWithIDOrUUIDChanges = CombineArrayWithIDOrUUIDChanges;
+exports.ConsoleColor = ConsoleColor;
+exports.ConstrainObject = ConstrainObject;
+exports.CurrentTimeZone = CurrentTimeZone;
+exports.DATE_FORMAT_DATE = DATE_FORMAT_DATE;
+exports.DATE_FORMAT_DATE_DISPLAY = DATE_FORMAT_DATE_DISPLAY;
+exports.DATE_FORMAT_DATE_DISPLAY_DOW = DATE_FORMAT_DATE_DISPLAY_DOW;
+exports.DATE_FORMAT_DATE_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG;
+exports.DATE_FORMAT_DATE_DISPLAY_LONG = DATE_FORMAT_DATE_DISPLAY_LONG;
+exports.DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE_TIME;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY = DATE_FORMAT_DATE_TIME_DISPLAY;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW = DATE_FORMAT_DATE_TIME_DISPLAY_DOW;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG;
+exports.DATE_FORMAT_DATE_TIME_DISPLAY_LONG = DATE_FORMAT_DATE_TIME_DISPLAY_LONG;
+exports.DATE_FORMAT_TIME_DISPLAY = DATE_FORMAT_TIME_DISPLAY;
+exports.DATE_FORMAT_TIME_NO_SECONDS = DATE_FORMAT_TIME_NO_SECONDS;
+exports.DATE_FORMAT_TIME_SECONDS = DATE_FORMAT_TIME_SECONDS;
+exports.DataToCSVExport = DataToCSVExport;
+exports.DataToCSVExportNoQuotes = DataToCSVExportNoQuotes;
+exports.DataToTabDelim = DataToTabDelim;
+exports.DateAdjustTS = DateAdjustTS;
+exports.DateCompare = DateCompare;
+exports.DateComponent = DateComponent;
+exports.DateDayOfWeek = DateDayOfWeek;
+exports.DateDiff = DateDiff;
+exports.DateDiffComponents = DateDiffComponents;
+exports.DateDiffLongDescription = DateDiffLongDescription;
+exports.DateDoWSundayZero = DateDoWSundayZero;
+exports.DateFormat = DateFormat;
+exports.DateFormatAny = DateFormatAny;
+exports.DateFromWeekNumber = DateFromWeekNumber;
+exports.DateICS = DateICS;
+exports.DateISO = DateISO;
+exports.DateIsWeekend = DateIsWeekend;
+exports.DateMonth = DateMonth;
+exports.DateObject = DateObject;
+exports.DateOnly = DateOnly;
+exports.DateOnlyNull = DateOnlyNull;
+exports.DateParseTS = DateParseTS;
+exports.DateQuarter = DateQuarter;
+exports.DateWeekISONumber = DateWeekISONumber;
+exports.DateWeekNumber = DateWeekNumber;
+exports.DatesBetween = DatesBetween;
+exports.DatesFromWeekNumber = DatesFromWeekNumber;
+exports.DatesMonth = DatesMonth;
+exports.DatesQuarter = DatesQuarter;
+exports.DaysInMonth = DaysInMonth;
+exports.DaysInMonthYear = DaysInMonthYear;
+exports.DeepEqual = DeepEqual;
+exports.DigitsNth = DigitsNth;
+exports.DisplayNameFromFL = DisplayNameFromFL;
+exports.DisplayNameFromObject = DisplayNameFromObject;
+exports.DurationLongDescription = DurationLongDescription;
+exports.ESTTodayDate = ESTTodayDate;
+exports.ESTTodayDateTimeLabel = ESTTodayDateTimeLabel;
+exports.EllipsesAtMax = EllipsesAtMax;
+exports.EnumKeyFromValue = EnumKeyFromValue;
+exports.EnumKeys = EnumKeys;
+exports.EnumValueFromKey = EnumValueFromKey;
+exports.EnumValues = EnumValues;
+exports.EvaluateCondition = EvaluateCondition;
+exports.EvaluateString = EvaluateString;
+exports.FindIsActiveString = FindIsActiveString;
+exports.FormUrlEncoded = FormUrlEncoded;
+exports.FormatExternalURL = FormatExternalURL;
+exports.FormatPhoneNumber = FormatPhoneNumber;
+exports.FormatPhoneNumberDots = FormatPhoneNumberDots;
+exports.FormatPhoneNumberOld = FormatPhoneNumberOld;
+exports.FormatSSN = FormatSSN;
+exports.FormatZip = FormatZip;
+exports.GenerateUUID = GenerateUUID;
+exports.GetStage = GetStage;
+exports.GetStageName = GetStageName;
+exports.GoogleMapsAddressLink = GoogleMapsAddressLink;
+exports.GoogleMapsGPSLink = GoogleMapsGPSLink;
+exports.GreaterNumber = GreaterNumber;
+exports.GreaterNumberNull = GreaterNumberNull;
+exports.HHcmmcss = HHcmmcss;
+exports.HTMLToText = HTMLToText;
+exports.IANAOffset = IANAOffset;
+exports.IANAZoneAbbr = IANAZoneAbbr;
+exports.InitialDateMonth = InitialDateMonth;
+exports.InitialDateQuarter = InitialDateQuarter;
+exports.InvertColorHex = InvertColorHex;
+exports.InvertColorRGB = InvertColorRGB;
+exports.IsDateString = IsDateString;
+exports.IsEqual = IsEqual;
+exports.IsJSON = IsJSON;
+exports.IsOn = IsOn;
+exports.IsStage = IsStage;
+exports.IsStageDevFocused = IsStageDevFocused;
+exports.IsStageDevTestFocused = IsStageDevTestFocused;
+exports.IsStageTestFocused = IsStageTestFocused;
+exports.IsValidInputDecimal = IsValidInputDecimal;
+exports.JSONParse = JSONParse;
+exports.JSONStringToObject = JSONStringToObject;
+exports.LeastNumber = LeastNumber;
+exports.LeastNumberNull = LeastNumberNull;
+exports.LeftPad = LeftPad;
+exports.ManualParse = ManualParse;
+exports.MonthNames = MonthNames;
+exports.NowISOString = NowISOString;
+exports.ObjectContainsSearch = ObjectContainsSearch;
+exports.ObjectContainsSearchTerms = ObjectContainsSearchTerms;
+exports.ObjectDiffs = ObjectDiffs;
+exports.ObjectFromFormData = ObjectFromFormData;
+exports.ObjectToJSONString = ObjectToJSONString;
+exports.ObjectWithChanges = ObjectWithChanges;
+exports.OmitFalsey = OmitFalsey;
+exports.OmitProperty = OmitProperty;
+exports.OmitUndefined = OmitUndefined;
+exports.PagesForRange = PagesForRange;
+exports.PhoneComponents = PhoneComponents;
+exports.PickProperty = PickProperty;
+exports.PropertiesExist = PropertiesExist;
+exports.PropertiesNotFalsey = PropertiesNotFalsey;
+exports.RBGFromHex = RBGFromHex;
+exports.RandomKey = RandomKey;
+exports.RandomString = RandomString;
+exports.ReSortOrder = ReSortOrder;
+exports.ReduceObjectToOtherKeys = ReduceObjectToOtherKeys;
+exports.RemoveDupProperties = RemoveDupProperties;
+exports.RemoveDupPropertiesByID = RemoveDupPropertiesByID;
+exports.RemoveDupPropertiesByIDArray = RemoveDupPropertiesByIDArray;
+exports.RemoveEnding = RemoveEnding;
+exports.RemoveStarting = RemoveStarting;
+exports.ReplaceAll = ReplaceAll;
+exports.ReplaceLinks = ReplaceLinks;
+exports.RightPad = RightPad;
+exports.RoundTo = RoundTo;
+exports.SearchRow = SearchRow;
+exports.SearchRows = SearchRows;
+exports.SearchSort = SearchSort;
+exports.SearchTerms = SearchTerms;
+exports.SelectBetweenIDs = SelectBetweenIDs;
+exports.ShortNumber = ShortNumber;
+exports.Sleep = Sleep;
+exports.SortColumnUpdate = SortColumnUpdate;
+exports.SortColumns = SortColumns;
+exports.SortCompare = SortCompare;
+exports.SortCompareDate = SortCompareDate;
+exports.SortCompareDateNull = SortCompareDateNull;
+exports.SortCompareNull = SortCompareNull;
+exports.SortIndex = SortIndex;
+exports.SortIndexNull = SortIndexNull;
+exports.SortPerArray = SortPerArray;
+exports.StringContainsSearch = StringContainsSearch;
+exports.StringContainsSearchTerms = StringContainsSearchTerms;
+exports.StringFindIsActive = StringFindIsActive;
+exports.StringHasDateData = StringHasDateData;
+exports.StringHasTimeData = StringHasTimeData;
+exports.StringHasTimeZoneData = StringHasTimeZoneData;
+exports.StringToByteArray = StringToByteArray;
+exports.SubsetEqual = SubsetEqual;
+exports.SubsetFormEqual = SubsetFormEqual;
+exports.TSDays = TSDays;
+exports.TSHours = TSHours;
+exports.TSMinutes = TSMinutes;
+exports.TSMonthsEstimate = TSMonthsEstimate;
+exports.TSSeconds = TSSeconds;
+exports.TSWeeks = TSWeeks;
+exports.TSYearsEstimate = TSYearsEstimate;
+exports.TermsToSearch = TermsToSearch;
+exports.TextToHTML = TextToHTML;
+exports.TimeFloorMinute = TimeFloorMinute;
+exports.TimeOnly = TimeOnly;
+exports.TimeSeries = TimeSeries;
+exports.TimeZoneOlsonsAll = TimeZoneOlsonsAll;
+exports.TimeZoneOlsonsAmerica = TimeZoneOlsonsAmerica;
+exports.TimeZoneOlsonsAmericaCommon = TimeZoneOlsonsAmericaCommon;
+exports.ToArray = ToArray;
+exports.ToCamelCase = ToCamelCase;
+exports.ToCurrency = ToCurrency;
+exports.ToCurrencyBlank = ToCurrencyBlank;
+exports.ToCurrencyDash = ToCurrencyDash;
+exports.ToCurrencyMax = ToCurrencyMax;
+exports.ToDigits = ToDigits;
+exports.ToDigitsBlank = ToDigitsBlank;
+exports.ToDigitsBlankMax = ToDigitsBlankMax;
+exports.ToDigitsDash = ToDigitsDash;
+exports.ToDigitsDashMax = ToDigitsDashMax;
+exports.ToDigitsMax = ToDigitsMax;
+exports.ToFirstLetterUpper = ToFirstLetterUpper;
+exports.ToFirstLetterUpperSmart = ToFirstLetterUpperSmart;
+exports.ToID = ToID;
+exports.ToInitials = ToInitials;
+exports.ToKebabCase = ToKebabCase;
+exports.ToPascalCase = ToPascalCase;
+exports.ToPercent = ToPercent;
+exports.ToPercentBlank = ToPercentBlank;
+exports.ToPercentDash = ToPercentDash;
+exports.ToPercentMax = ToPercentMax;
+exports.ToSnakeCase = ToSnakeCase;
+exports.ToStringArray = ToStringArray;
+exports.ToUpperCaseWords = ToUpperCaseWords;
+exports.ToWords = ToWords;
+exports.Trunc = Trunc;
+exports.UCWords = UCWords;
+exports.ValidNumbers = ValidNumbers;
+exports.WeekDays = WeekDays;
+exports.WeekNumberAdjust = WeekNumberAdjust;
+exports.WeeksFromLabel = WeeksFromLabel;
+exports.YYYYMMDDHHmmss = YYYYMMDDHHmmss;
+exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
+exports.YYYYsMMsDD = YYYYsMMsDD;
+exports.YYYYsMMsDDsHHcmmcss = YYYYsMMsDDsHHcmmcss;
+exports.ab2str = ab2str;
+exports.consoleLogTable = consoleLogTable;
+exports.everyAsync = everyAsync;
+exports.filterAsync = filterAsync;
+exports.findAsync = findAsync;
+exports.initialChanges = initialChanges;
+exports.initialConsoleLogTableDef = initialConsoleLogTableDef;
+exports.initialFilterSortPaginator = initialFilterSortPaginator;
+exports.initialIDChanges = initialIDChanges;
+exports.initialSortColumn = initialSortColumn;
+exports.isAB = isAB;
+exports.someAsync = someAsync;
+exports.str2ab = str2ab;

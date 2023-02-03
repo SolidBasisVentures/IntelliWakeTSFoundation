@@ -79,7 +79,8 @@ export interface IWeekNumber {
 export declare const DateComponent: (component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 'ss', date?: TDateAny, adjustments?: TAdjustment) => number;
 export declare const DateWeekNumber: (date?: TDateAny, adjustments?: TAdjustment) => IWeekNumber | null;
 export declare const DateWeekISONumber: (date?: TDateAny, adjustments?: TAdjustment) => IWeekNumber | null;
-export declare const DateFromWeekNumber: (weekNumber: IWeekNumber, startOf?: 'StartOf' | 'StartOfMon') => string | null;
+export declare const DateFromWeekNumber: (weekNumber: IWeekNumber) => string | null;
+export declare const DatesFromWeekNumber: (weekNumber: IWeekNumber) => IDates | null;
 export declare const WeekNumberAdjust: (weekNumber: IWeekNumber, adjustment: TDateOnlyAdjustment | number) => IWeekNumber | null;
 export declare const DateDiffComponents: (dateFrom: TDateAny, dateTo: TDateAny) => {
     year: number;

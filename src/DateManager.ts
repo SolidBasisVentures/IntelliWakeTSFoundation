@@ -1025,16 +1025,15 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 	const currentDate = DateObject(date ?? 'now', adjustments)
 	if (!currentDate) return null
 
-	const tdt = new Date(currentDate.valueOf());
-	const dayn = (currentDate.getDay() + 6) % 7;
-	tdt.setDate(tdt.getDate() - dayn + 3);
-	const firstThursday = tdt.valueOf();
-	tdt.setMonth(0, 1);
-	if (tdt.getDay() !== 4)
-	{
-		tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+	const tdt = new Date(currentDate.valueOf())
+	const dayn = (currentDate.getDay() + 6) % 7
+	tdt.setDate(tdt.getDate() - dayn + 3)
+	const firstThursday = tdt.valueOf()
+	tdt.setMonth(0, 1)
+	if (tdt.getDay() !== 4) {
+		tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7)
 	}
-	const week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000);
+	const week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000)
 
 	const dateYear = currentDate
 	dateYear.setDate(dateYear.getDate() + 3 - (dateYear.getDay() + 6) % 7)
@@ -1043,12 +1042,12 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 	return {year, week}
 }
 
-export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' | 'StartOfMon' = 'StartOf'): string | null => {
+export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	if (!weekNumber?.year) return null
 
 	const days = (weekNumber.week - 1) * 7
 
-	let tryDate = DateOnly(new Date(weekNumber.year, 0, days), {week: startOf})
+	let tryDate = DateOnly(new Date(weekNumber.year, 0, days), {week: 'StartOfMon'})
 	let tryWeekNumber = DateWeekISONumber(tryDate) ?? weekNumber
 
 	let attempts = 0
@@ -1069,6 +1068,17 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber, startOf: 'StartOf' |
 	}
 
 	return tryDate
+}
+
+export const DatesFromWeekNumber = (weekNumber: IWeekNumber): IDates | null => {
+	const start = DateFromWeekNumber(weekNumber)
+
+	if (!start) return null
+
+	return {
+		start,
+		end: DateOnly(start, {days: 6})
+	}
 }
 
 export const WeekNumberAdjust = (weekNumber: IWeekNumber, adjustment: TDateOnlyAdjustment | number): IWeekNumber | null => {
@@ -1402,7 +1412,10 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	return dateObj.getUTCDay()
 }
 
-export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment & { formatLocale?: boolean, timezoneDisplay?: string }): string | null => {
+export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {
+	formatLocale?: boolean,
+	timezoneDisplay?: string
+}): string | null => {
 	if (!date) return null
 	try {
 		const useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? DateFormat('Date', date, CurrentTimeZone()) ?? '' : (date ?? '').substring(0, 10)
@@ -1422,7 +1435,10 @@ export const DateOnlyNull = (date: TDateAny, adjustments?: TDateOnlyAdjustment &
 	}
 }
 
-export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & { formatLocale?: boolean, timezoneDisplay?: string }): string => DateOnlyNull(date, adjustments) ??
+export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & {
+	formatLocale?: boolean,
+	timezoneDisplay?: string
+}): string => DateOnlyNull(date, adjustments) ??
 	DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', new Date(), adjustments?.timezoneDisplay ?? 'UTC') ??
 	new Date().toISOString().substring(0, 10)
 
@@ -1432,7 +1448,9 @@ export const DateOnly = (date: TDateAny, adjustments?: TDateOnlyAdjustment & { f
  * @param adjustments
  * @constructor
  */
-export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & { formatLocale?: boolean }): string | null => {
+export const TimeOnly = (time: TDateAny, adjustments?: TTimeOnlyAdjustment & {
+	formatLocale?: boolean
+}): string | null => {
 	if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today') return null
 
 	try {
