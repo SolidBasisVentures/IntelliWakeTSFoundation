@@ -31,15 +31,15 @@ export const ChangeValueChanges = <T>(
 	original?: T
 ) => {
 	if (!!setChanges && !!name) {
-		setChanges(prevState => {
+		setChanges((prevState) => {
 			let nextState = {...prevState}
-			
+
 			if (!!original && IsEqual(original[name], value)) {
 				delete nextState[name]
 			} else {
 				nextState[name] = value
 			}
-			
+
 			return nextState
 		})
 	}
@@ -71,10 +71,11 @@ export const AddChange = <T>(name: keyof T, value: any, changes: IChanges<T>): I
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T => ({
-	...item,
-	...changes
-} as T)
+export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T =>
+	({
+		...item,
+		...changes
+	} as T)
 
 export type IIDObject = {
 	id: number
@@ -138,20 +139,26 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
  * @param initial
  * @constructor
  */
-export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number, uuid?: string}>(prevState: T[], change: Partial<T>, initial: T): T[] => {
+export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any; id?: number; uuid?: string}>(
+	prevState: T[],
+	change: Partial<T>,
+	initial: T
+): T[] => {
 	let newState = [...prevState]
-	
-	let idx = newState.findIndex(nS => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid))
-	
+
+	let idx = newState.findIndex(
+		(nS) => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid)
+	)
+
 	if (idx >= 0) {
 		newState[idx] = {...newState[idx], ...change}
 		return newState
 	}
-	
+
 	let newVal = {...initial, ...change}
-	
+
 	if (!newVal.id && !newVal.uuid) newVal.uuid = GenerateUUID()
-	
+
 	return [...newState, {...newVal}]
 }
 
@@ -169,8 +176,11 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
  * @param changes
  * @param initial
  */
-export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, id?: number, uuid?: string}>(original: T[], changes: Partial<T>[], initial: T): T[] =>
-	changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change, initial), original)
+export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any; id?: number; uuid?: string}>(
+	original: T[],
+	changes: Partial<T>[],
+	initial: T
+): T[] => changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change, initial), original)
 
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
@@ -184,24 +194,28 @@ export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, i
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: IIDChanges<T>): T[] => items.map(item => ({...item, ...idChanges[item.id]}))
+export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: IIDChanges<T>): T[] =>
+	items.map((item) => ({...item, ...idChanges[item.id]}))
 
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExport = function(filename: string, csvData: any, blankZeros = true) {
+export const DataToCSVExport = function (filename: string, csvData: any, blankZeros = true) {
 	const csvString = csvData
 		.map((row: any) =>
 			row
 				.map((item: any) =>
-					(blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
-						typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item ?? '').toString()
+					blankZeros && ((typeof item === 'number' && !item) || item === '0')
+						? ''
+						: typeof item === 'string'
+						? '"' + ReplaceAll('"', '""', item) + '"'
+						: (item ?? '').toString()
 				)
 				.join(',')
 		)
 		.join('\n')
-	
+
 	let pom = document.createElement('a')
 	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
 	pom.href = URL.createObjectURL(blob)
@@ -213,13 +227,13 @@ export const DataToCSVExport = function(filename: string, csvData: any, blankZer
  * Converts Data to CSV without quotes. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) {
+export const DataToCSVExportNoQuotes = function (filename: string, csvData: any) {
 	const csvString = csvData
 		.map((row: any) =>
 			row.map((item: any) => (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item ?? '')).join(',')
 		)
 		.join('\n')
-	
+
 	let pom = document.createElement('a')
 	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
 	pom.href = URL.createObjectURL(blob)
@@ -235,34 +249,50 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
  * @param headerToWords
  * @constructor
  */
-export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHeaders = true, headerToWords = true): string => {
-	const headers: (keyof T)[] = datasets
-		.reduce<(keyof T)[]>((results, dataset) => [...results, ...(Object.keys(dataset) as (keyof T)[]).filter(ds => !results.includes(ds))], [])
-	
+export const DataToTabDelim = <T = Record<string, any>>(
+	datasets: T[],
+	includeHeaders = true,
+	headerToWords = true
+): string => {
+	const headers: (keyof T)[] = datasets.reduce<(keyof T)[]>(
+		(results, dataset) => [
+			...results,
+			...(Object.keys(dataset) as (keyof T)[]).filter((ds) => !results.includes(ds))
+		],
+		[]
+	)
+
 	let tabDelim = ''
-	
+
 	if (includeHeaders) {
-		tabDelim += headers.map(header => `"${headerToWords ? ToUpperCaseWords(header as string) : header}"`).join('\t')
+		tabDelim += headers
+			.map((header) => `"${headerToWords ? ToUpperCaseWords(header as string) : header}"`)
+			.join('\t')
 	}
-	
+
 	for (const dataset of datasets) {
 		if (tabDelim) tabDelim += `\r\n`
-		
-		tabDelim += headers.map(header => {
-			if (dataset[header] === undefined ||
-				dataset[header] === null ||
-				(typeof dataset[header] === 'string' && (dataset[header] as any).trim() === '')) return ''
-			
-			const numberValue = CleanNumberNull(dataset[header])
-			
-			if (numberValue !== null) {
-				return numberValue.toString()
-			}
-			
-			return `"${dataset[header]}"`
-		}).join('\t')
+
+		tabDelim += headers
+			.map((header) => {
+				if (
+					dataset[header] === undefined ||
+					dataset[header] === null ||
+					(typeof dataset[header] === 'string' && (dataset[header] as any).trim() === '')
+				)
+					return ''
+
+				const numberValue = CleanNumberNull(dataset[header])
+
+				if (numberValue !== null) {
+					return numberValue.toString()
+				}
+
+				return `"${dataset[header]}"`
+			})
+			.join('\t')
 	}
-	
+
 	return tabDelim
 }
 
@@ -271,9 +301,9 @@ export const DataToTabDelim = <T = Record<string, any>>(datasets: T[], includeHe
  */
 export const IsJSON = (json: any): boolean => {
 	if (!json) return false
-	
+
 	if (typeof json !== 'string') return false
-	
+
 	try {
 		const result = JSON.parse(json)
 		const type = Object.prototype.toString.call(result)
@@ -285,19 +315,19 @@ export const IsJSON = (json: any): boolean => {
 
 export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 	if (val1 === val2) return true
-	
+
 	if (val1 === null) return val2 === null
 	if (val2 === null) {
 		if (consoleLog) console.log(val1, val2)
 		return false
 	}
-	
+
 	if (val1 === undefined) return val2 === undefined
 	if (val2 === undefined) {
 		if (consoleLog) console.log(val1, val2)
 		return false
 	}
-	
+
 	if (Array.isArray(val1)) {
 		if (Array.isArray(val2)) {
 			if (val1.length !== val2.length) {
@@ -318,20 +348,20 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 		if (consoleLog) console.log('Array/Not', val1, val2)
 		return false
 	}
-	
+
 	if (typeof val1 === 'object' || typeof val2 === 'object') {
 		const keys1 = Object.keys(val1)
 		const keys2 = Object.keys(val2)
-		
+
 		if (keys1.length !== keys2.length) {
 			if (consoleLog) console.log('Object Keys', val1, val2)
 			return false
 		}
-		
-		const idx = keys1.findIndex(key1 => !IsEqual(val1[key1], val2[key1]))
-		
+
+		const idx = keys1.findIndex((key1) => !IsEqual(val1[key1], val2[key1]))
+
 		if (idx === -1) return true
-		
+
 		if (consoleLog) {
 			console.log(`Object Key`, keys1[idx], val1, val2)
 			return false
@@ -350,7 +380,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 			if (consoleLog) console.log('Numbers2', val1, val2)
 			return false
 		}
-		
+
 		if (IsDateString(val1)) {
 			let pTRM = DateFormat(val1, DATE_FORMAT_DATE)
 			if (!!pTRM) {
@@ -367,7 +397,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 			}
 		}
 	}
-	
+
 	if (consoleLog) console.log('Fallout', val1, val2)
 	return false
 }
@@ -391,7 +421,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
  */
 export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: IChanges<T>): IChanges<T> => {
 	const result: IChanges<T> = {...original}
-	
+
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
 			if (DeepEqual(propsToRemove[key], result[key])) {
@@ -399,7 +429,7 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -426,12 +456,12 @@ export const RemoveDupProperties = <T>(original: IChanges<T>, propsToRemove: ICh
  */
 export const RemoveDupPropertiesByID = <T>(original: IIDChanges<T>, propsToRemove: IIDChanges<T>): IIDChanges<T> => {
 	const result: any = {...original}
-	
+
 	for (const key in propsToRemove) {
 		if (propsToRemove.hasOwnProperty(key)) {
 			if (result.hasOwnProperty(key)) {
 				const subResult = RemoveDupProperties(result[key], propsToRemove[key])
-				
+
 				if (Object.keys(subResult).length === 0) {
 					delete result[key]
 				} else {
@@ -440,7 +470,7 @@ export const RemoveDupPropertiesByID = <T>(original: IIDChanges<T>, propsToRemov
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -465,14 +495,14 @@ export const RemoveDupPropertiesByID = <T>(original: IIDChanges<T>, propsToRemov
  */
 export const RemoveDupPropertiesByIDArray = <T>(original: IIDChanges<T>, propsToRemoveArray: any[]): IIDChanges<T> => {
 	const result: any = {...original}
-	
+
 	for (const key in original) {
 		if (original.hasOwnProperty(key)) {
 			const propsToRemove = propsToRemoveArray.find((propsToRemove) => propsToRemove.id == key)
-			
+
 			if (!!propsToRemove) {
 				const subResult = RemoveDupProperties(result[key], propsToRemove)
-				
+
 				if (Object.keys(subResult).length === 0) {
 					delete result[key]
 				} else {
@@ -481,7 +511,7 @@ export const RemoveDupPropertiesByIDArray = <T>(original: IIDChanges<T>, propsTo
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -500,7 +530,7 @@ export const RemoveDupPropertiesByIDArray = <T>(original: IIDChanges<T>, propsTo
  */
 export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[] = []): any => {
 	let results: any = {}
-	
+
 	for (const key of Object.keys(compare)) {
 		if (!excludeKeys.includes(key)) {
 			if (compare[key] !== comparedTo[key]) {
@@ -508,7 +538,7 @@ export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[]
 			}
 		}
 	}
-	
+
 	return results
 }
 
@@ -527,17 +557,17 @@ export const ObjectDiffs = (compare: any, comparedTo: any, excludeKeys: string[]
  */
 export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: string[] = []): any => {
 	let results: any = {}
-	
+
 	for (const key of Object.keys(main)) {
 		if (!excludeKeys.includes(key) && reduceTo[key] !== undefined) {
 			results[key] = main[key]
 		}
 	}
-	
+
 	return results
 }
 
-export type Nullable<T> = { [K in keyof T]: T[K] | null }
+export type Nullable<T> = {[K in keyof T]: T[K] | null}
 
 export type DeepNullable<T> = {
 	[K in keyof T]: DeepNullable<T[K]> | null
