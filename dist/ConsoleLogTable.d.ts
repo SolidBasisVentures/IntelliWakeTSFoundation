@@ -55,4 +55,3 @@ export declare const ConsoleColor: {
  *
  * consoleLogTable(data)
  */
-export declare const consoleLogTable: (arrayData: any[][], tableDef?: TConsoleLogTableDef) => void;

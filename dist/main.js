@@ -2,6 +2,169 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var initialConsoleLogTableDef = {
+    firstRowIsHeader: true,
+    surroundingLines: true,
+    columns: []
+};
+var ConsoleColor = {
+    Reset: '\x1b[0m',
+    // Bright: '\x1b[1m',
+    // Dim: '\x1b[2m',
+    Underscore: '\x1b[4m',
+    // Blink: '\x1b[5m',
+    Reverse: '\x1b[7m',
+    // Hidden: '\x1b[8m',
+    fg: {
+        Black: '\x1b[30m',
+        Red: '\x1b[31m',
+        Green: '\x1b[32m',
+        Yellow: '\x1b[33m',
+        Blue: '\x1b[34m',
+        Magenta: '\x1b[35m',
+        Cyan: '\x1b[36m',
+        White: '\x1b[37m',
+        Crimson: '\x1b[38m'
+    },
+    bg: {
+        Black: '\x1b[40m',
+        Red: '\x1b[41m',
+        Green: '\x1b[42m',
+        Yellow: '\x1b[43m',
+        Blue: '\x1b[44m',
+        Magenta: '\x1b[45m',
+        Cyan: '\x1b[46m',
+        White: '\x1b[47m',
+        Crimson: '\x1b[48m'
+    }
+};
+/**
+ * Formats an array of data into a table format and prints it in the console.
+ *
+ * @example
+ * let data = [
+ *   ['ID', 'User', 'Age'],
+ *   ['1', 'john doe', '24'],
+ *   ['2', 'sally jones', '32']
+ * ]
+ * // returns
+ * ----------------------
+ * ID   User          Age
+ * ----------------------
+ * 1   john doe       24
+ * 2   sally jones    32
+ * ----------------------
+ *
+ * consoleLogTable(data)
+ */
+/*export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLogTableDef) => {
+    const nullIndicator = '(null)'
+
+    if (arrayData.length === 0) return
+
+    let useTableDef = {...tableDef}
+
+    if (!useTableDef.columns || useTableDef.columns.length === 0) {
+        useTableDef.columns = []
+
+        const dataAnalyze = arrayData[0]
+
+        for (let col = 0; col < dataAnalyze.length; col++) {
+            useTableDef.columns.push({
+                characters: arrayData.reduce((prev, cur) => {
+                    const len = (cur[col] ?? nullIndicator).toString().length
+                    return len > prev ? len : prev
+                }, 1),
+                justify: !!arrayData.find((dataItem, idx) =>
+                    idx === 0 ? false : isNaN(parseFloat((dataItem[col] ?? '0').toString()))
+                )
+                    ? 'L'
+                    : 'R'
+            })
+        }
+    }
+
+    let firstRow = true
+
+    if (useTableDef.surroundingLines) {
+        console.log(' ')
+        console.log(
+            arrayData[0]
+                .map((_columnValue, idx) => {
+                    let text = ''
+                    const columnDef = (useTableDef.columns ?? [])[idx]
+                    if (!!columnDef) {
+                        if (columnDef.justify === 'L') {
+                            text = text.padEnd(columnDef.characters, columnDef.padWith ?? '-')
+                        } else {
+                            text = text.padStart(columnDef.characters, columnDef.padWith ?? '-')
+                        }
+                    }
+                    return text
+                })
+                .join('---')
+        )
+    }
+
+    for (const dataItem of arrayData) {
+        console.log(
+            dataItem
+                .map((columnValue, idx) => {
+                    let text = (columnValue ?? '(null)').toString()
+                    const columnDef = (useTableDef.columns ?? [])[idx]
+                    if (!!columnDef) {
+                        if (columnDef.justify === 'L') {
+                            text = text.padEnd(columnDef.characters, columnDef.padWith ?? ' ')
+                        } else {
+                            text = text.padStart(columnDef.characters, columnDef.padWith ?? ' ')
+                        }
+                    }
+                    return text
+                })
+                .join('   ')
+        )
+        if (useTableDef.firstRowIsHeader && firstRow) {
+            console.log(
+                dataItem
+                    .map((_columnValue, idx) => {
+                        let text = ''
+                        const columnDef = (useTableDef.columns ?? [])[idx]
+                        if (!!columnDef) {
+                            if (columnDef.justify === 'L') {
+                                text = text.padEnd(columnDef.characters, columnDef.padWith ?? '-')
+                            } else {
+                                text = text.padStart(columnDef.characters, columnDef.padWith ?? '-')
+                            }
+                        }
+                        return text
+                    })
+                    .join('---')
+            )
+        }
+        firstRow = false
+    }
+
+    if (useTableDef.surroundingLines) {
+        console.log(
+            arrayData[0]
+                .map((_columnValue, idx) => {
+                    let text = ''
+                    const columnDef = (useTableDef.columns ?? [])[idx]
+                    if (!!columnDef) {
+                        if (columnDef.justify === 'L') {
+                            text = text.padEnd(columnDef.characters, columnDef.padWith ?? '-')
+                        } else {
+                            text = text.padStart(columnDef.characters, columnDef.padWith ?? '-')
+                        }
+                    }
+                    return text
+                })
+                .join('---')
+        )
+        console.log(' ')
+    }
+} */
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -100,175 +263,6 @@ function __spread() {
         ar = ar.concat(__read(arguments[i]));
     return ar;
 }
-
-var initialConsoleLogTableDef = {
-    firstRowIsHeader: true,
-    surroundingLines: true,
-    columns: []
-};
-var ConsoleColor = {
-    Reset: '\x1b[0m',
-    // Bright: '\x1b[1m',
-    // Dim: '\x1b[2m',
-    Underscore: '\x1b[4m',
-    // Blink: '\x1b[5m',
-    Reverse: '\x1b[7m',
-    // Hidden: '\x1b[8m',
-    fg: {
-        Black: '\x1b[30m',
-        Red: '\x1b[31m',
-        Green: '\x1b[32m',
-        Yellow: '\x1b[33m',
-        Blue: '\x1b[34m',
-        Magenta: '\x1b[35m',
-        Cyan: '\x1b[36m',
-        White: '\x1b[37m',
-        Crimson: '\x1b[38m'
-    },
-    bg: {
-        Black: '\x1b[40m',
-        Red: '\x1b[41m',
-        Green: '\x1b[42m',
-        Yellow: '\x1b[43m',
-        Blue: '\x1b[44m',
-        Magenta: '\x1b[45m',
-        Cyan: '\x1b[46m',
-        White: '\x1b[47m',
-        Crimson: '\x1b[48m'
-    }
-};
-/**
- * Formats an array of data into a table format and prints it in the console.
- *
- * @example
- * let data = [
- *   ['ID', 'User', 'Age'],
- *   ['1', 'john doe', '24'],
- *   ['2', 'sally jones', '32']
- * ]
- * // returns
- * ----------------------
- * ID   User          Age
- * ----------------------
- * 1   john doe       24
- * 2   sally jones    32
- * ----------------------
- *
- * consoleLogTable(data)
- */
-var consoleLogTable = function (arrayData, tableDef) {
-    var e_1, _a;
-    if (tableDef === void 0) { tableDef = initialConsoleLogTableDef; }
-    var nullIndicator = '(null)';
-    if (arrayData.length === 0)
-        return;
-    var useTableDef = __assign({}, tableDef);
-    if (!useTableDef.columns || useTableDef.columns.length === 0) {
-        useTableDef.columns = [];
-        var dataAnalyze = arrayData[0];
-        var _loop_1 = function (col) {
-            useTableDef.columns.push({
-                characters: arrayData.reduce(function (prev, cur) {
-                    var _a;
-                    var len = ((_a = cur[col]) !== null && _a !== void 0 ? _a : nullIndicator).toString().length;
-                    return len > prev ? len : prev;
-                }, 1),
-                justify: !!arrayData.find(function (dataItem, idx) { var _a; return idx === 0 ? false : isNaN(parseFloat(((_a = dataItem[col]) !== null && _a !== void 0 ? _a : '0').toString())); })
-                    ? 'L'
-                    : 'R'
-            });
-        };
-        for (var col = 0; col < dataAnalyze.length; col++) {
-            _loop_1(col);
-        }
-    }
-    var firstRow = true;
-    if (useTableDef.surroundingLines) {
-        console.log(' ');
-        console.log(arrayData[0]
-            .map(function (_columnValue, idx) {
-            var _a, _b, _c;
-            var text = '';
-            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
-            if (!!columnDef) {
-                if (columnDef.justify === 'L') {
-                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
-                }
-                else {
-                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
-                }
-            }
-            return text;
-        })
-            .join('---'));
-    }
-    try {
-        for (var arrayData_1 = __values(arrayData), arrayData_1_1 = arrayData_1.next(); !arrayData_1_1.done; arrayData_1_1 = arrayData_1.next()) {
-            var dataItem = arrayData_1_1.value;
-            console.log(dataItem
-                .map(function (columnValue, idx) {
-                var _a, _b, _c;
-                var text = (columnValue !== null && columnValue !== void 0 ? columnValue : '(null)').toString();
-                var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
-                if (!!columnDef) {
-                    if (columnDef.justify === 'L') {
-                        text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : ' ');
-                    }
-                    else {
-                        text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : ' ');
-                    }
-                }
-                return text;
-            })
-                .join('   '));
-            if (useTableDef.firstRowIsHeader && firstRow) {
-                console.log(dataItem
-                    .map(function (_columnValue, idx) {
-                    var _a, _b, _c;
-                    var text = '';
-                    var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
-                    if (!!columnDef) {
-                        if (columnDef.justify === 'L') {
-                            text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
-                        }
-                        else {
-                            text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
-                        }
-                    }
-                    return text;
-                })
-                    .join('---'));
-            }
-            firstRow = false;
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (arrayData_1_1 && !arrayData_1_1.done && (_a = arrayData_1.return)) _a.call(arrayData_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    if (useTableDef.surroundingLines) {
-        console.log(arrayData[0]
-            .map(function (_columnValue, idx) {
-            var _a, _b, _c;
-            var text = '';
-            var columnDef = ((_a = useTableDef.columns) !== null && _a !== void 0 ? _a : [])[idx];
-            if (!!columnDef) {
-                if (columnDef.justify === 'L') {
-                    text = text.padEnd(columnDef.characters, (_b = columnDef.padWith) !== null && _b !== void 0 ? _b : '-');
-                }
-                else {
-                    text = text.padStart(columnDef.characters, (_c = columnDef.padWith) !== null && _c !== void 0 ? _c : '-');
-                }
-            }
-            return text;
-        })
-            .join('---'));
-        console.log(' ');
-    }
-};
 
 /**
  * Truncates a string and replaces the remaining characters with ellipsis.
@@ -2287,7 +2281,7 @@ var DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = DATE_FORMAT_DATE_DISPLAY_DOW_LONG +
 /**
  * Current time in ISO string format
  */
-var NowISOString = function (adjustment) { var _a; return !adjustment ? new Date().toISOString() : ((_a = DateISO('now', adjustment)) !== null && _a !== void 0 ? _a : new Date().toISOString()); };
+var NowISOString = function (adjustment) { var _a; return !adjustment ? new Date().toISOString() : (_a = DateISO('now', adjustment)) !== null && _a !== void 0 ? _a : new Date().toISOString(); };
 var CurrentTimeZone = function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; };
 var IANAOffset = function (timeZone, sourceDate) {
     var _a;
@@ -2312,11 +2306,11 @@ var IANAOffset = function (timeZone, sourceDate) {
     });
     var other = objFromStr(str);
     // console.log('Other', str, other)
-    var amsterdamOffset = (other.day * 1440) + (other.hour * 60) + other.minute;
+    var amsterdamOffset = other.day * 1440 + other.hour * 60 + other.minute;
     str = date.toLocaleString(['nl-NL'], { day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false });
     var myLocale = objFromStr(str);
     // console.log('Locale', str, myLocale)
-    var myLocaleOffset = (myLocale.day * 1440) + (myLocale.hour * 60) + myLocale.minute;
+    var myLocaleOffset = myLocale.day * 1440 + myLocale.hour * 60 + myLocale.minute;
     // if (myLocaleOffset < amsterdamOffset) myLocaleOffset += amsterdamOffset
     // 	console.log('Here', process.env.TZ, timeZone, sourceDate, other.day, amsterdamOffset, myLocale.day, myLocaleOffset, date.getTimezoneOffset())
     if (other.day > myLocale.day) {
@@ -2362,7 +2356,14 @@ var IANAOffset = function (timeZone, sourceDate) {
 };
 var StringHasTimeData = function (value) { return value.includes(':'); };
 var StringHasDateData = function (value) { return value.includes('-') || /\d{8}/.test(value); };
-var StringHasTimeZoneData = function (value) { return value === 'now' || value === 'today' || value.includes('T') || value.substr(15).includes('Z') || value.includes('+') || value.substr(15).includes('-'); };
+var StringHasTimeZoneData = function (value) {
+    return value === 'now' ||
+        value === 'today' ||
+        value.includes('T') ||
+        value.substr(15).includes('Z') ||
+        value.includes('+') ||
+        value.substr(15).includes('-');
+};
 var IsDateString = function (value) {
     if (!value || typeof value !== 'string')
         return false;
@@ -2410,12 +2411,12 @@ var ManualParse = function (date) {
     dateObj.setUTCSeconds(CleanNumber((_c = d[10]) !== null && _c !== void 0 ? _c : 0));
     // }
     // if (d[12]) {
-    dateObj.setUTCMilliseconds((CleanNumber(((_d = d[12]) !== null && _d !== void 0 ? _d : 0).toString().padEnd(3, '0').substr(0, 3))));
+    dateObj.setUTCMilliseconds(CleanNumber(((_d = d[12]) !== null && _d !== void 0 ? _d : 0).toString().padEnd(3, '0').substr(0, 3)));
     // }
     var offsetHours = 0;
     if (d[14]) {
-        offsetHours = (CleanNumber(d[16])) + parseInt(d[17], 10);
-        offsetHours *= ((d[15] === '-') ? 1 : -1);
+        offsetHours = CleanNumber(d[16]) + parseInt(d[17], 10);
+        offsetHours *= d[15] === '-' ? 1 : -1;
         // console.log('o off', dateObj.getTime(), offset)
         // } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
         // offset -= CleanNumber(date.substr(-3))
@@ -2438,7 +2439,7 @@ var ManualParse = function (date) {
     // console.log(date, d, dateObj, offset)
     // console.log('offset', dateObj, offset, dateObj.getTime())
     // console.log('Trying...', dateObj, offsetHours)
-    var time = dateObj.valueOf() + (offsetHours * 3600000);
+    var time = dateObj.valueOf() + offsetHours * 3600000;
     var newDateObj = new Date(time);
     if (!newDateObj)
         return null;
@@ -2474,7 +2475,7 @@ var DateParseTSInternal = function (date, timezoneSource, ignoreIANA) {
             // console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
             // console.log(date, date.length)
             // if (date.length > 10) {
-            result += (((_b = IANAOffset(timezoneSource, date)) !== null && _b !== void 0 ? _b : 0) * 60000);
+            result += ((_b = IANAOffset(timezoneSource, date)) !== null && _b !== void 0 ? _b : 0) * 60000;
             // }
             // result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
         }
@@ -2527,14 +2528,14 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
         try {
             if (!dateObject || dateObject.valueOf() === 0)
                 return null;
-            var sourceDate = (!!date && date !== 'now' && date !== 'today') ? dateObject : undefined;
+            var sourceDate = !!date && date !== 'now' && date !== 'today' ? dateObject : undefined;
             var sourceOffset = (_b = IANAOffset(timezoneSource, sourceDate)) !== null && _b !== void 0 ? _b : 0; // Chic 5
             var displayOffset = (_c = IANAOffset(timezoneDisplay, sourceDate)) !== null && _c !== void 0 ? _c : 0; // Chic 6
-            var offset = noTZInfo ?
-                !timezoneSource ?
-                    (displayOffset - sourceOffset) - (displayOffset - sourceOffset) :
-                    (((_d = IANAOffset(undefined, sourceDate)) !== null && _d !== void 0 ? _d : 0) - sourceOffset) - (displayOffset - sourceOffset) :
-                (sourceOffset - displayOffset);
+            var offset = noTZInfo
+                ? !timezoneSource
+                    ? displayOffset - sourceOffset - (displayOffset - sourceOffset)
+                    : ((_d = IANAOffset(undefined, sourceDate)) !== null && _d !== void 0 ? _d : 0) - sourceOffset - (displayOffset - sourceOffset)
+                : sourceOffset - displayOffset;
             // console.log('DFA', date, noTZInfo, timezoneSource, sourceOffset, timezoneDisplay, displayOffset, offset)
             // if (timezoneDisplay === 'America/Los_Angeles' && timezoneSource === 'America/Chicago')
             // console.log('---')
@@ -2560,9 +2561,9 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             case 'YY':
                 return dateApply.getFullYear().toString().substr(2).padStart(2, '0');
             case 'Q':
-                return (Math.ceil((dateApply.getMonth() + 1) / 3)).toString();
+                return Math.ceil((dateApply.getMonth() + 1) / 3).toString();
             case 'Qo':
-                return (_a = DigitsNth((Math.ceil((dateApply.getMonth() + 1) / 3)))) !== null && _a !== void 0 ? _a : '';
+                return (_a = DigitsNth(Math.ceil((dateApply.getMonth() + 1) / 3))) !== null && _a !== void 0 ? _a : '';
             case 'MMMM':
                 return (_b = MonthNames[dateApply.getMonth()]) !== null && _b !== void 0 ? _b : '';
             case 'MMM':
@@ -2601,15 +2602,17 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             case 'ddd':
                 return ((_h = WeekDays[dateApply.getDay()]) !== null && _h !== void 0 ? _h : '').substr(0, 3);
             case 'dddd':
-                return ((_j = WeekDays[dateApply.getDay()]) !== null && _j !== void 0 ? _j : '');
+                return (_j = WeekDays[dateApply.getDay()]) !== null && _j !== void 0 ? _j : '';
             case 'HH':
                 return dateApply.getHours().toString().padStart(2, '0');
             case 'H':
                 return dateApply.getHours().toString();
             case 'hh':
-                return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()).toString().padStart(2, '0');
+                return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours())
+                    .toString()
+                    .padStart(2, '0');
             case 'h': {
-                var hour = (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours());
+                var hour = dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours();
                 return (hour === 0 ? 12 : hour).toString();
             }
             case 'mm':
@@ -2701,8 +2704,10 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
             inEscape = true;
         }
         else {
-            if (formatChar === previousChar || previousChar === '' || (command.length > 0 &&
-                patterns.some(function (pattern) { return pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1); }))) {
+            if (formatChar === previousChar ||
+                previousChar === '' ||
+                (command.length > 0 &&
+                    patterns.some(function (pattern) { return pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1); }))) {
                 command += formatChar;
             }
             else {
@@ -2728,33 +2733,55 @@ var DateFormatAny = function (format, date, timezoneDisplay, timezoneSource) {
     result += applyCommand(command, dateObject);
     return result;
 };
-var DateFormat = function (format, date, timezoneDisplay, timezoneSource) {
-    return DateFormatAny(format, date, timezoneDisplay, timezoneSource);
-};
+var DateFormat = function (format, date, timezoneDisplay, timezoneSource) { return DateFormatAny(format, date, timezoneDisplay, timezoneSource); };
 var YYYYMMDDHHmmss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
-    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject.getDate().toString().padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject.getMinutes().toString().padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
+    return "" + dateObject.getFullYear() + (dateObject.getMonth() + 1).toString().padStart(2, '0') + dateObject
+        .getDate()
+        .toString()
+        .padStart(2, '0') + dateObject.getHours().toString().padStart(2, '0') + dateObject
+        .getMinutes()
+        .toString()
+        .padStart(2, '0') + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYY_MM_DD_HH_mm_ss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
-    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject.getDate().toString().padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject.getMinutes().toString().padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "-" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "-" + dateObject
+        .getDate()
+        .toString()
+        .padStart(2, '0') + "_" + dateObject.getHours().toString().padStart(2, '0') + "-" + dateObject
+        .getMinutes()
+        .toString()
+        .padStart(2, '0') + "-" + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYYsMMsDDsHHcmmcss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject
+        .getDate()
+        .toString()
+        .padStart(2, '0') + " " + dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject
+        .getMinutes()
+        .toString()
+        .padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var YYYYsMMsDD = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
-    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject.getDate().toString().padStart(2, '0');
+    return dateObject.getFullYear() + "/" + (dateObject.getMonth() + 1).toString().padStart(2, '0') + "/" + dateObject
+        .getDate()
+        .toString()
+        .padStart(2, '0');
 };
 var HHcmmcss = function (date) {
     var _a;
     var dateObject = (_a = DateObject(date)) !== null && _a !== void 0 ? _a : new Date();
-    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject.getMinutes().toString().padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
+    return dateObject.getHours().toString().padStart(2, '0') + ":" + dateObject
+        .getMinutes()
+        .toString()
+        .padStart(2, '0') + ":" + dateObject.getSeconds().toString().padStart(2, '0');
 };
 var MonthNames = [
     'January',
@@ -2770,23 +2797,25 @@ var MonthNames = [
     'November',
     'December'
 ];
-var WeekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday'
-];
+var WeekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var TSYearsEstimate = function (ts) { return Math.floor(ts / 365 / 24 / 60 / 60 / 1000); };
-var TSMonthsEstimate = function (ts, withinYear) { return Math.floor((ts - (withinYear ? (TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000) : 0)) / 30 / 24 / 60 / 60 / 1000); };
+var TSMonthsEstimate = function (ts, withinYear) {
+    return Math.floor((ts - (withinYear ? TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000 : 0)) / 30 / 24 / 60 / 60 / 1000);
+};
 var TSWeeks = function (ts) { return Math.floor(ts / 7 / 24 / 60 / 60 / 1000); };
-var TSDays = function (ts, withinMonth) { return Math.floor((ts - (withinMonth ? (TSMonthsEstimate(ts) * 30 * 24 * 60 * 60 * 1000) : 0)) / 24 / 60 / 60 / 1000); };
-var TSHours = function (ts, withinDay) { return Math.floor((ts - (withinDay ? (TSDays(ts) * 24 * 60 * 60 * 1000) : 0)) / 60 / 60 / 1000); };
-var TSMinutes = function (ts, withinHour) { return Math.floor((ts - (withinHour ? (TSHours(ts) * 60 * 60 * 1000) : 0)) / 60 / 1000); };
-var TSSeconds = function (ts, withinMinute) { return Math.floor((ts - (withinMinute ? (TSMinutes(ts) * 60 * 1000) : 0)) / 1000); };
-var DateIsLeapYear = function (year) { return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); };
+var TSDays = function (ts, withinMonth) {
+    return Math.floor((ts - (withinMonth ? TSMonthsEstimate(ts) * 30 * 24 * 60 * 60 * 1000 : 0)) / 24 / 60 / 60 / 1000);
+};
+var TSHours = function (ts, withinDay) {
+    return Math.floor((ts - (withinDay ? TSDays(ts) * 24 * 60 * 60 * 1000 : 0)) / 60 / 60 / 1000);
+};
+var TSMinutes = function (ts, withinHour) {
+    return Math.floor((ts - (withinHour ? TSHours(ts) * 60 * 60 * 1000 : 0)) / 60 / 1000);
+};
+var TSSeconds = function (ts, withinMinute) {
+    return Math.floor((ts - (withinMinute ? TSMinutes(ts) * 60 * 1000 : 0)) / 1000);
+};
+var DateIsLeapYear = function (year) { return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0; };
 var DaysInMonthYear = function (year, month) {
     var _a;
     var monthCalc = month;
@@ -2799,7 +2828,7 @@ var DaysInMonthYear = function (year, month) {
         monthCalc -= 12;
         yearCalc += 1;
     }
-    return (_a = [31, (DateIsLeapYear(yearCalc) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]) !== null && _a !== void 0 ? _a : null;
+    return (_a = [31, DateIsLeapYear(yearCalc) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc]) !== null && _a !== void 0 ? _a : null;
 };
 var DaysInMonth = function (date) {
     var originalDateObject = DateObject(date);
@@ -2840,8 +2869,15 @@ var DateAdjustMonthTS = function (date, months) {
                 dateTS -= 24 * 60 * 60 * 1000 * currentDate.getUTCDate();
             currentDate = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
             var currentDaysInMonth = (_j = DaysInMonthYear(currentDate.getUTCFullYear(), currentDate.getUTCMonth())) !== null && _j !== void 0 ? _j : 0;
-            if (currentDate.getUTCDate() > 15 && currentDate.getUTCDate() < originalDate && currentDate.getUTCDate() < currentDaysInMonth)
-                dateTS += 24 * 60 * 60 * 1000 * ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate());
+            if (currentDate.getUTCDate() > 15 &&
+                currentDate.getUTCDate() < originalDate &&
+                currentDate.getUTCDate() < currentDaysInMonth)
+                dateTS +=
+                    24 *
+                        60 *
+                        60 *
+                        1000 *
+                        ((currentDaysInMonth > originalDate ? originalDate : currentDaysInMonth) - currentDate.getUTCDate());
         }
     }
     return dateTS;
@@ -2898,7 +2934,8 @@ var DateAdjustTS = function (date, adjustments) {
                             {
                                 var dateObj = (_h = DateObject(dateTS)) !== null && _h !== void 0 ? _h : new Date();
                                 dateTS = (_k = DateAdjustTS(dateTS, {
-                                    day: ((_j = DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth())) !== null && _j !== void 0 ? _j : 0) - (dateObj.getUTCDate()),
+                                    day: ((_j = DaysInMonthYear(dateObj.getUTCFullYear(), dateObj.getUTCMonth())) !== null && _j !== void 0 ? _j : 0) -
+                                        dateObj.getUTCDate(),
                                     days: 'EndOf'
                                 })) !== null && _k !== void 0 ? _k : 0;
                             }
@@ -3169,9 +3206,7 @@ var DateDiff = function (dateFrom, dateTo, duration) {
     }
     return null;
 };
-var DateComponent = function (component, date, adjustments) {
-    return CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)));
-};
+var DateComponent = function (component, date, adjustments) { return CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments))); };
 var DateWeekNumber = function (date, adjustments) {
     console.error('Deprecated!  Use: DateWeekISONumber');
     var currentDate = DateObject(date !== null && date !== void 0 ? date : 'now', __assign({ timezoneSource: 'UTC' }, adjustments));
@@ -3193,21 +3228,20 @@ var DateWeekISONumber = function (date, adjustments) {
     var firstThursday = tdt.valueOf();
     tdt.setMonth(0, 1);
     if (tdt.getDay() !== 4) {
-        tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+        tdt.setMonth(0, 1 + ((4 - tdt.getDay() + 7) % 7));
     }
     var week = 1 + Math.ceil((firstThursday - tdt.valueOf()) / 604800000);
     var dateYear = currentDate;
-    dateYear.setDate(dateYear.getDate() + 3 - (dateYear.getDay() + 6) % 7);
+    dateYear.setDate(dateYear.getDate() + 3 - ((dateYear.getDay() + 6) % 7));
     var year = dateYear.getFullYear();
     return { year: year, week: week };
 };
-var DateFromWeekNumber = function (weekNumber, startOf) {
+var DateFromWeekNumber = function (weekNumber) {
     var _a, _b;
-    if (startOf === void 0) { startOf = 'StartOf'; }
     if (!(weekNumber === null || weekNumber === void 0 ? void 0 : weekNumber.year))
         return null;
     var days = (weekNumber.week - 1) * 7;
-    var tryDate = DateOnly(new Date(weekNumber.year, 0, days), { week: startOf });
+    var tryDate = DateOnly(new Date(weekNumber.year, 0, days), { week: 'StartOfMon' });
     var tryWeekNumber = (_a = DateWeekISONumber(tryDate)) !== null && _a !== void 0 ? _a : weekNumber;
     var attempts = 0;
     while (!DeepEqual(weekNumber, tryWeekNumber)) {
@@ -3216,7 +3250,8 @@ var DateFromWeekNumber = function (weekNumber, startOf) {
             return null;
         }
         attempts++;
-        if (tryWeekNumber.year < weekNumber.year || (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {
+        if (tryWeekNumber.year < weekNumber.year ||
+            (tryWeekNumber.year === weekNumber.year && tryWeekNumber.week < weekNumber.week)) {
             tryDate = DateOnly(tryDate, { weeks: 1 });
         }
         else {
@@ -3225,6 +3260,15 @@ var DateFromWeekNumber = function (weekNumber, startOf) {
         tryWeekNumber = (_b = DateWeekISONumber(tryDate)) !== null && _b !== void 0 ? _b : weekNumber;
     }
     return tryDate;
+};
+var DatesFromWeekNumber = function (weekNumber) {
+    var start = DateFromWeekNumber(weekNumber);
+    if (!start)
+        return null;
+    return {
+        start: start,
+        end: DateOnly(start, { days: 6 })
+    };
 };
 var WeekNumberAdjust = function (weekNumber, adjustment) {
     var nextDate = DateFromWeekNumber(weekNumber);
@@ -3272,39 +3316,39 @@ var DateDiffLongDescription = function (dateFrom, dateTo, tripToSecondsOrTwo, ab
     var components = DateDiffComponents(dateFrom, dateTo);
     var text = '';
     if (components.year) {
-        text += " " + ToDigits(components.year) + (abbreviated ? 'Y' : (' ' + AddS('Year', components.year)));
-        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : (' ' + AddS('Month', components.month)));
+        text += " " + ToDigits(components.year) + (abbreviated ? 'Y' : ' ' + AddS('Year', components.year));
+        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : ' ' + AddS('Month', components.month));
         if (components.day && !tripToSecondsOrTwo) {
-            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : ' ' + AddS('Day', components.day));
         }
     }
     else if (components.month) {
-        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : (' ' + AddS('Month', components.month)));
+        text += " " + ToDigits(components.month) + (abbreviated ? 'Mo' : ' ' + AddS('Month', components.month));
         if (components.day) {
-            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+            text += " " + ToDigits(components.day) + (abbreviated ? 'D' : ' ' + AddS('Day', components.day));
         }
     }
     else if (components.day) {
-        text += " " + ToDigits(components.day) + (abbreviated ? 'D' : (' ' + AddS('Day', components.day)));
+        text += " " + ToDigits(components.day) + (abbreviated ? 'D' : ' ' + AddS('Day', components.day));
         if (components.hour) {
-            text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : (' ' + AddS('Hour', components.hour)));
+            text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : ' ' + AddS('Hour', components.hour));
         }
         if (components.minute && !tripToSecondsOrTwo) {
-            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : ' ' + AddS('Minute', components.minute));
         }
     }
     else if (components.hour) {
-        text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : (' ' + AddS('Hour', components.hour)));
+        text += " " + ToDigits(components.hour) + (abbreviated ? 'h' : ' ' + AddS('Hour', components.hour));
         if (components.minute) {
-            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : ' ' + AddS('Minute', components.minute));
         }
     }
     else {
         if (components.minute || (!text && tripToSecondsOrTwo)) {
-            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : (' ' + AddS('Minute', components.minute)));
+            text += " " + ToDigits(components.minute) + (abbreviated ? 'm' : ' ' + AddS('Minute', components.minute));
         }
         if (!text || (!tripToSecondsOrTwo && components.second)) {
-            text += " " + ToDigits(components.second) + (abbreviated ? 's' : (' ' + AddS('Second', components.second)));
+            text += " " + ToDigits(components.second) + (abbreviated ? 's' : ' ' + AddS('Second', components.second));
         }
     }
     return text.trim();
@@ -3367,9 +3411,7 @@ var checkType = function (evalCheck, diff) {
 };
 var DateCompare = function (date1, evalType, date2, minInterval) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-    var date2ToUse = (!!date2 && typeof date2 === 'object' && !(date2 instanceof Date))
-        ? DateParseTS('now', date2)
-        : date2;
+    var date2ToUse = !!date2 && typeof date2 === 'object' && !(date2 instanceof Date) ? DateParseTS('now', date2) : date2;
     var msDifference = ((_a = DateParseTSInternal(date1, undefined, true)) !== null && _a !== void 0 ? _a : 0) - ((_b = DateParseTSInternal(date2ToUse, undefined, true)) !== null && _b !== void 0 ? _b : 0);
     if (msDifference === 0) {
         return checkType(evalType, msDifference);
@@ -3446,8 +3488,10 @@ var DateCompare = function (date1, evalType, date2, minInterval) {
     return checkType(evalType, msDifference);
 };
 var SortCompareDateNull = function (date1, date2, minInterval) {
-    return DateCompare(date1, 'IsBefore', date2, minInterval) ? -1
-        : DateCompare(date1, 'IsAfter', date2, minInterval) ? 1
+    return DateCompare(date1, 'IsBefore', date2, minInterval)
+        ? -1
+        : DateCompare(date1, 'IsAfter', date2, minInterval)
+            ? 1
             : null;
 };
 var SortCompareDate = function (date1, date2, minInterval) { var _a; return (_a = SortCompareDateNull(date1, date2, minInterval)) !== null && _a !== void 0 ? _a : 0; };
@@ -3460,7 +3504,7 @@ exports.EQuarter = void 0;
 })(exports.EQuarter || (exports.EQuarter = {}));
 var DatesQuarter = function (year, quarter) {
     var _a, _b;
-    var baseDate = DateParseTSInternal(year + "-" + ((quarter * 3) - 1).toString().padStart(2, '0') + "-01", 'UTC');
+    var baseDate = DateParseTSInternal(year + "-" + (quarter * 3 - 1).toString().padStart(2, '0') + "-01", 'UTC');
     if (!baseDate)
         return null;
     return {
@@ -3483,7 +3527,7 @@ var DateQuarter = function (date) {
 };
 var DatesMonth = function (year, monthOneBased) {
     var _a, _b;
-    var baseDate = DateParseTSInternal(year + "-" + (monthOneBased).toString().padStart(2, '0') + "-01", 'UTC');
+    var baseDate = DateParseTSInternal(year + "-" + monthOneBased.toString().padStart(2, '0') + "-01", 'UTC');
     if (!baseDate)
         return null;
     return {
@@ -3521,7 +3565,8 @@ var DateOnlyNull = function (date, adjustments) {
     if (!date)
         return null;
     try {
-        var useDate = !date || (typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)) ? (_a = DateFormat('Date', date, CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
+        var useDate = !date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
+            ? (_a = DateFormat('Date', date, CurrentTimeZone())) !== null && _a !== void 0 ? _a : '' : (date !== null && date !== void 0 ? date : '').substring(0, 10);
         if (!date)
             return null;
         var dateObj = new Date(useDate);
@@ -3569,13 +3614,12 @@ var TimeOnly = function (time, adjustments) {
         useTime = DateOnly('now') + 'T' + useTime;
         var tsValue = DateParseTS(useTime, adjustments);
         if (!!tsValue) {
-            var newValue = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', tsValue + (changeHours * 60 * 60 * 1000), 'UTC');
+            var newValue = DateFormatAny(!!(adjustments === null || adjustments === void 0 ? void 0 : adjustments.formatLocale) ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss', tsValue + changeHours * 60 * 60 * 1000, 'UTC');
             if (!!newValue)
                 return newValue;
         }
     }
-    catch (err) {
-    }
+    catch (err) { }
     return null;
 };
 /**
@@ -3676,558 +3720,554 @@ var DatesBetween = function (start, end, adjustments, limit) {
 };
 var TimeZoneOlsonsAll = [
     {
-        'group': 'US (Common)',
-        'zones': [
-            { 'value': 'America/Puerto_Rico', 'name': 'Puerto Rico (Atlantic)' },
-            { 'value': 'America/New_York', 'name': 'New York (Eastern)' },
-            { 'value': 'America/Chicago', 'name': 'Chicago (Central)' },
-            { 'value': 'America/Denver', 'name': 'Denver (Mountain)' },
-            { 'value': 'America/Phoenix', 'name': 'Phoenix (MST)' },
-            { 'value': 'America/Los_Angeles', 'name': 'Los Angeles (Pacific)' },
-            { 'value': 'America/Anchorage', 'name': 'Anchorage (Alaska)' },
-            { 'value': 'Pacific/Honolulu', 'name': 'Honolulu (Hawaii)' }
+        group: 'US (Common)',
+        zones: [
+            { value: 'America/Puerto_Rico', name: 'Puerto Rico (Atlantic)' },
+            { value: 'America/New_York', name: 'New York (Eastern)' },
+            { value: 'America/Chicago', name: 'Chicago (Central)' },
+            { value: 'America/Denver', name: 'Denver (Mountain)' },
+            { value: 'America/Phoenix', name: 'Phoenix (MST)' },
+            { value: 'America/Los_Angeles', name: 'Los Angeles (Pacific)' },
+            { value: 'America/Anchorage', name: 'Anchorage (Alaska)' },
+            { value: 'Pacific/Honolulu', name: 'Honolulu (Hawaii)' }
         ]
     },
     {
-        'group': 'America',
-        'zones': [
-            { 'value': 'America/Adak', 'name': 'Adak' },
-            { 'value': 'America/Anchorage', 'name': 'Anchorage' },
-            { 'value': 'America/Anguilla', 'name': 'Anguilla' },
-            { 'value': 'America/Antigua', 'name': 'Antigua' },
-            { 'value': 'America/Araguaina', 'name': 'Araguaina' },
-            { 'value': 'America/Argentina/Buenos_Aires', 'name': 'Argentina - Buenos Aires' },
-            { 'value': 'America/Argentina/Catamarca', 'name': 'Argentina - Catamarca' },
-            { 'value': 'America/Argentina/ComodRivadavia', 'name': 'Argentina - ComodRivadavia' },
-            { 'value': 'America/Argentina/Cordoba', 'name': 'Argentina - Cordoba' },
-            { 'value': 'America/Argentina/Jujuy', 'name': 'Argentina - Jujuy' },
-            { 'value': 'America/Argentina/La_Rioja', 'name': 'Argentina - La Rioja' },
-            { 'value': 'America/Argentina/Mendoza', 'name': 'Argentina - Mendoza' },
-            { 'value': 'America/Argentina/Rio_Gallegos', 'name': 'Argentina - Rio Gallegos' },
-            { 'value': 'America/Argentina/Salta', 'name': 'Argentina - Salta' },
-            { 'value': 'America/Argentina/San_Juan', 'name': 'Argentina - San Juan' },
-            { 'value': 'America/Argentina/San_Luis', 'name': 'Argentina - San Luis' },
-            { 'value': 'America/Argentina/Tucuman', 'name': 'Argentina - Tucuman' },
-            { 'value': 'America/Argentina/Ushuaia', 'name': 'Argentina - Ushuaia' },
-            { 'value': 'America/Aruba', 'name': 'Aruba' },
-            { 'value': 'America/Asuncion', 'name': 'Asuncion' },
-            { 'value': 'America/Atikokan', 'name': 'Atikokan' },
-            { 'value': 'America/Atka', 'name': 'Atka' },
-            { 'value': 'America/Bahia', 'name': 'Bahia' },
-            { 'value': 'America/Barbados', 'name': 'Barbados' },
-            { 'value': 'America/Belem', 'name': 'Belem' },
-            { 'value': 'America/Belize', 'name': 'Belize' },
-            { 'value': 'America/Blanc-Sablon', 'name': 'Blanc-Sablon' },
-            { 'value': 'America/Boa_Vista', 'name': 'Boa Vista' },
-            { 'value': 'America/Bogota', 'name': 'Bogota' },
-            { 'value': 'America/Boise', 'name': 'Boise' },
-            { 'value': 'America/Buenos_Aires', 'name': 'Buenos Aires' },
-            { 'value': 'America/Cambridge_Bay', 'name': 'Cambridge Bay' },
-            { 'value': 'America/Campo_Grande', 'name': 'Campo Grande' },
-            { 'value': 'America/Cancun', 'name': 'Cancun' },
-            { 'value': 'America/Caracas', 'name': 'Caracas' },
-            { 'value': 'America/Catamarca', 'name': 'Catamarca' },
-            { 'value': 'America/Cayenne', 'name': 'Cayenne' },
-            { 'value': 'America/Cayman', 'name': 'Cayman' },
-            { 'value': 'America/Chicago', 'name': 'Chicago' },
-            { 'value': 'America/Chihuahua', 'name': 'Chihuahua' },
-            { 'value': 'America/Coral_Harbour', 'name': 'Coral Harbour' },
-            { 'value': 'America/Cordoba', 'name': 'Cordoba' },
-            { 'value': 'America/Costa_Rica', 'name': 'Costa Rica' },
-            { 'value': 'America/Cuiaba', 'name': 'Cuiaba' },
-            { 'value': 'America/Curacao', 'name': 'Curacao' },
-            { 'value': 'America/Danmarkshavn', 'name': 'Danmarkshavn' },
-            { 'value': 'America/Dawson', 'name': 'Dawson' },
-            { 'value': 'America/Dawson_Creek', 'name': 'Dawson Creek' },
-            { 'value': 'America/Denver', 'name': 'Denver' },
-            { 'value': 'America/Detroit', 'name': 'Detroit' },
-            { 'value': 'America/Dominica', 'name': 'Dominica' },
-            { 'value': 'America/Edmonton', 'name': 'Edmonton' },
-            { 'value': 'America/Eirunepe', 'name': 'Eirunepe' },
-            { 'value': 'America/El_Salvador', 'name': 'El Salvador' },
-            { 'value': 'America/Ensenada', 'name': 'Ensenada' },
-            { 'value': 'America/Fortaleza', 'name': 'Fortaleza' },
-            { 'value': 'America/Fort_Wayne', 'name': 'Fort Wayne' },
-            { 'value': 'America/Glace_Bay', 'name': 'Glace Bay' },
-            { 'value': 'America/Godthab', 'name': 'Godthab' },
-            { 'value': 'America/Goose_Bay', 'name': 'Goose Bay' },
-            { 'value': 'America/Grand_Turk', 'name': 'Grand Turk' },
-            { 'value': 'America/Grenada', 'name': 'Grenada' },
-            { 'value': 'America/Guadeloupe', 'name': 'Guadeloupe' },
-            { 'value': 'America/Guatemala', 'name': 'Guatemala' },
-            { 'value': 'America/Guayaquil', 'name': 'Guayaquil' },
-            { 'value': 'America/Guyana', 'name': 'Guyana' },
-            { 'value': 'America/Halifax', 'name': 'Halifax' },
-            { 'value': 'America/Havana', 'name': 'Havana' },
-            { 'value': 'America/Hermosillo', 'name': 'Hermosillo' },
-            { 'value': 'America/Indiana/Indianapolis', 'name': 'Indiana - Indianapolis' },
-            { 'value': 'America/Indiana/Knox', 'name': 'Indiana - Knox' },
-            { 'value': 'America/Indiana/Marengo', 'name': 'Indiana - Marengo' },
-            { 'value': 'America/Indiana/Petersburg', 'name': 'Indiana - Petersburg' },
-            { 'value': 'America/Indiana/Tell_City', 'name': 'Indiana - Tell City' },
-            { 'value': 'America/Indiana/Vevay', 'name': 'Indiana - Vevay' },
-            { 'value': 'America/Indiana/Vincennes', 'name': 'Indiana - Vincennes' },
-            { 'value': 'America/Indiana/Winamac', 'name': 'Indiana - Winamac' },
-            { 'value': 'America/Indianapolis', 'name': 'Indianapolis' },
-            { 'value': 'America/Inuvik', 'name': 'Inuvik' },
-            { 'value': 'America/Iqaluit', 'name': 'Iqaluit' },
-            { 'value': 'America/Jamaica', 'name': 'Jamaica' },
-            { 'value': 'America/Jujuy', 'name': 'Jujuy' },
-            { 'value': 'America/Juneau', 'name': 'Juneau' },
-            { 'value': 'America/Kentucky/Louisville', 'name': 'Kentucky - Louisville' },
-            { 'value': 'America/Kentucky/Monticello', 'name': 'Kentucky - Monticello' },
-            { 'value': 'America/Knox_IN', 'name': 'Knox IN' },
-            { 'value': 'America/La_Paz', 'name': 'La Paz' },
-            { 'value': 'America/Lima', 'name': 'Lima' },
-            { 'value': 'America/Los_Angeles', 'name': 'Los Angeles' },
-            { 'value': 'America/Louisville', 'name': 'Louisville' },
-            { 'value': 'America/Maceio', 'name': 'Maceio' },
-            { 'value': 'America/Managua', 'name': 'Managua' },
-            { 'value': 'America/Manaus', 'name': 'Manaus' },
-            { 'value': 'America/Marigot', 'name': 'Marigot' },
-            { 'value': 'America/Martinique', 'name': 'Martinique' },
-            { 'value': 'America/Matamoros', 'name': 'Matamoros' },
-            { 'value': 'America/Mazatlan', 'name': 'Mazatlan' },
-            { 'value': 'America/Mendoza', 'name': 'Mendoza' },
-            { 'value': 'America/Menominee', 'name': 'Menominee' },
-            { 'value': 'America/Merida', 'name': 'Merida' },
-            { 'value': 'America/Mexico_City', 'name': 'Mexico City' },
-            { 'value': 'America/Miquelon', 'name': 'Miquelon' },
-            { 'value': 'America/Moncton', 'name': 'Moncton' },
-            { 'value': 'America/Monterrey', 'name': 'Monterrey' },
-            { 'value': 'America/Montevideo', 'name': 'Montevideo' },
-            { 'value': 'America/Montreal', 'name': 'Montreal' },
-            { 'value': 'America/Montserrat', 'name': 'Montserrat' },
-            { 'value': 'America/Nassau', 'name': 'Nassau' },
-            { 'value': 'America/New_York', 'name': 'New York' },
-            { 'value': 'America/Nipigon', 'name': 'Nipigon' },
-            { 'value': 'America/Nome', 'name': 'Nome' },
-            { 'value': 'America/Noronha', 'name': 'Noronha' },
-            { 'value': 'America/North_Dakota/Center', 'name': 'North Dakota - Center' },
-            { 'value': 'America/North_Dakota/New_Salem', 'name': 'North Dakota - New Salem' },
-            { 'value': 'America/Ojinaga', 'name': 'Ojinaga' },
-            { 'value': 'America/Panama', 'name': 'Panama' },
-            { 'value': 'America/Pangnirtung', 'name': 'Pangnirtung' },
-            { 'value': 'America/Paramaribo', 'name': 'Paramaribo' },
-            { 'value': 'America/Phoenix', 'name': 'Phoenix' },
-            { 'value': 'America/Port-au-Prince', 'name': 'Port-au-Prince' },
-            { 'value': 'America/Porto_Acre', 'name': 'Porto Acre' },
-            { 'value': 'America/Port_of_Spain', 'name': 'Port of Spain' },
-            { 'value': 'America/Porto_Velho', 'name': 'Porto Velho' },
-            { 'value': 'America/Puerto_Rico', 'name': 'Puerto Rico' },
-            { 'value': 'America/Rainy_River', 'name': 'Rainy River' },
-            { 'value': 'America/Rankin_Inlet', 'name': 'Rankin Inlet' },
-            { 'value': 'America/Recife', 'name': 'Recife' },
-            { 'value': 'America/Regina', 'name': 'Regina' },
-            { 'value': 'America/Resolute', 'name': 'Resolute' },
-            { 'value': 'America/Rio_Branco', 'name': 'Rio Branco' },
-            { 'value': 'America/Rosario', 'name': 'Rosario' },
-            { 'value': 'America/Santa_Isabel', 'name': 'Santa Isabel' },
-            { 'value': 'America/Santarem', 'name': 'Santarem' },
-            { 'value': 'America/Santiago', 'name': 'Santiago' },
-            { 'value': 'America/Santo_Domingo', 'name': 'Santo Domingo' },
-            { 'value': 'America/Sao_Paulo', 'name': 'Sao Paulo' },
-            { 'value': 'America/Scoresbysund', 'name': 'Scoresbysund' },
-            { 'value': 'America/Shiprock', 'name': 'Shiprock' },
-            { 'value': 'America/St_Barthelemy', 'name': 'St Barthelemy' },
-            { 'value': 'America/St_Johns', 'name': 'St Johns' },
-            { 'value': 'America/St_Kitts', 'name': 'St Kitts' },
-            { 'value': 'America/St_Lucia', 'name': 'St Lucia' },
-            { 'value': 'America/St_Thomas', 'name': 'St Thomas' },
-            { 'value': 'America/St_Vincent', 'name': 'St Vincent' },
-            { 'value': 'America/Swift_Current', 'name': 'Swift Current' },
-            { 'value': 'America/Tegucigalpa', 'name': 'Tegucigalpa' },
-            { 'value': 'America/Thule', 'name': 'Thule' },
-            { 'value': 'America/Thunder_Bay', 'name': 'Thunder Bay' },
-            { 'value': 'America/Tijuana', 'name': 'Tijuana' },
-            { 'value': 'America/Toronto', 'name': 'Toronto' },
-            { 'value': 'America/Tortola', 'name': 'Tortola' },
-            { 'value': 'America/Vancouver', 'name': 'Vancouver' },
-            { 'value': 'America/Virgin', 'name': 'Virgin' },
-            { 'value': 'America/Whitehorse', 'name': 'Whitehorse' },
-            { 'value': 'America/Winnipeg', 'name': 'Winnipeg' },
-            { 'value': 'America/Yakutat', 'name': 'Yakutat' },
-            { 'value': 'America/Yellowknife', 'name': 'Yellowknife' }
+        group: 'America',
+        zones: [
+            { value: 'America/Adak', name: 'Adak' },
+            { value: 'America/Anchorage', name: 'Anchorage' },
+            { value: 'America/Anguilla', name: 'Anguilla' },
+            { value: 'America/Antigua', name: 'Antigua' },
+            { value: 'America/Araguaina', name: 'Araguaina' },
+            { value: 'America/Argentina/Buenos_Aires', name: 'Argentina - Buenos Aires' },
+            { value: 'America/Argentina/Catamarca', name: 'Argentina - Catamarca' },
+            { value: 'America/Argentina/ComodRivadavia', name: 'Argentina - ComodRivadavia' },
+            { value: 'America/Argentina/Cordoba', name: 'Argentina - Cordoba' },
+            { value: 'America/Argentina/Jujuy', name: 'Argentina - Jujuy' },
+            { value: 'America/Argentina/La_Rioja', name: 'Argentina - La Rioja' },
+            { value: 'America/Argentina/Mendoza', name: 'Argentina - Mendoza' },
+            { value: 'America/Argentina/Rio_Gallegos', name: 'Argentina - Rio Gallegos' },
+            { value: 'America/Argentina/Salta', name: 'Argentina - Salta' },
+            { value: 'America/Argentina/San_Juan', name: 'Argentina - San Juan' },
+            { value: 'America/Argentina/San_Luis', name: 'Argentina - San Luis' },
+            { value: 'America/Argentina/Tucuman', name: 'Argentina - Tucuman' },
+            { value: 'America/Argentina/Ushuaia', name: 'Argentina - Ushuaia' },
+            { value: 'America/Aruba', name: 'Aruba' },
+            { value: 'America/Asuncion', name: 'Asuncion' },
+            { value: 'America/Atikokan', name: 'Atikokan' },
+            { value: 'America/Atka', name: 'Atka' },
+            { value: 'America/Bahia', name: 'Bahia' },
+            { value: 'America/Barbados', name: 'Barbados' },
+            { value: 'America/Belem', name: 'Belem' },
+            { value: 'America/Belize', name: 'Belize' },
+            { value: 'America/Blanc-Sablon', name: 'Blanc-Sablon' },
+            { value: 'America/Boa_Vista', name: 'Boa Vista' },
+            { value: 'America/Bogota', name: 'Bogota' },
+            { value: 'America/Boise', name: 'Boise' },
+            { value: 'America/Buenos_Aires', name: 'Buenos Aires' },
+            { value: 'America/Cambridge_Bay', name: 'Cambridge Bay' },
+            { value: 'America/Campo_Grande', name: 'Campo Grande' },
+            { value: 'America/Cancun', name: 'Cancun' },
+            { value: 'America/Caracas', name: 'Caracas' },
+            { value: 'America/Catamarca', name: 'Catamarca' },
+            { value: 'America/Cayenne', name: 'Cayenne' },
+            { value: 'America/Cayman', name: 'Cayman' },
+            { value: 'America/Chicago', name: 'Chicago' },
+            { value: 'America/Chihuahua', name: 'Chihuahua' },
+            { value: 'America/Coral_Harbour', name: 'Coral Harbour' },
+            { value: 'America/Cordoba', name: 'Cordoba' },
+            { value: 'America/Costa_Rica', name: 'Costa Rica' },
+            { value: 'America/Cuiaba', name: 'Cuiaba' },
+            { value: 'America/Curacao', name: 'Curacao' },
+            { value: 'America/Danmarkshavn', name: 'Danmarkshavn' },
+            { value: 'America/Dawson', name: 'Dawson' },
+            { value: 'America/Dawson_Creek', name: 'Dawson Creek' },
+            { value: 'America/Denver', name: 'Denver' },
+            { value: 'America/Detroit', name: 'Detroit' },
+            { value: 'America/Dominica', name: 'Dominica' },
+            { value: 'America/Edmonton', name: 'Edmonton' },
+            { value: 'America/Eirunepe', name: 'Eirunepe' },
+            { value: 'America/El_Salvador', name: 'El Salvador' },
+            { value: 'America/Ensenada', name: 'Ensenada' },
+            { value: 'America/Fortaleza', name: 'Fortaleza' },
+            { value: 'America/Fort_Wayne', name: 'Fort Wayne' },
+            { value: 'America/Glace_Bay', name: 'Glace Bay' },
+            { value: 'America/Godthab', name: 'Godthab' },
+            { value: 'America/Goose_Bay', name: 'Goose Bay' },
+            { value: 'America/Grand_Turk', name: 'Grand Turk' },
+            { value: 'America/Grenada', name: 'Grenada' },
+            { value: 'America/Guadeloupe', name: 'Guadeloupe' },
+            { value: 'America/Guatemala', name: 'Guatemala' },
+            { value: 'America/Guayaquil', name: 'Guayaquil' },
+            { value: 'America/Guyana', name: 'Guyana' },
+            { value: 'America/Halifax', name: 'Halifax' },
+            { value: 'America/Havana', name: 'Havana' },
+            { value: 'America/Hermosillo', name: 'Hermosillo' },
+            { value: 'America/Indiana/Indianapolis', name: 'Indiana - Indianapolis' },
+            { value: 'America/Indiana/Knox', name: 'Indiana - Knox' },
+            { value: 'America/Indiana/Marengo', name: 'Indiana - Marengo' },
+            { value: 'America/Indiana/Petersburg', name: 'Indiana - Petersburg' },
+            { value: 'America/Indiana/Tell_City', name: 'Indiana - Tell City' },
+            { value: 'America/Indiana/Vevay', name: 'Indiana - Vevay' },
+            { value: 'America/Indiana/Vincennes', name: 'Indiana - Vincennes' },
+            { value: 'America/Indiana/Winamac', name: 'Indiana - Winamac' },
+            { value: 'America/Indianapolis', name: 'Indianapolis' },
+            { value: 'America/Inuvik', name: 'Inuvik' },
+            { value: 'America/Iqaluit', name: 'Iqaluit' },
+            { value: 'America/Jamaica', name: 'Jamaica' },
+            { value: 'America/Jujuy', name: 'Jujuy' },
+            { value: 'America/Juneau', name: 'Juneau' },
+            { value: 'America/Kentucky/Louisville', name: 'Kentucky - Louisville' },
+            { value: 'America/Kentucky/Monticello', name: 'Kentucky - Monticello' },
+            { value: 'America/Knox_IN', name: 'Knox IN' },
+            { value: 'America/La_Paz', name: 'La Paz' },
+            { value: 'America/Lima', name: 'Lima' },
+            { value: 'America/Los_Angeles', name: 'Los Angeles' },
+            { value: 'America/Louisville', name: 'Louisville' },
+            { value: 'America/Maceio', name: 'Maceio' },
+            { value: 'America/Managua', name: 'Managua' },
+            { value: 'America/Manaus', name: 'Manaus' },
+            { value: 'America/Marigot', name: 'Marigot' },
+            { value: 'America/Martinique', name: 'Martinique' },
+            { value: 'America/Matamoros', name: 'Matamoros' },
+            { value: 'America/Mazatlan', name: 'Mazatlan' },
+            { value: 'America/Mendoza', name: 'Mendoza' },
+            { value: 'America/Menominee', name: 'Menominee' },
+            { value: 'America/Merida', name: 'Merida' },
+            { value: 'America/Mexico_City', name: 'Mexico City' },
+            { value: 'America/Miquelon', name: 'Miquelon' },
+            { value: 'America/Moncton', name: 'Moncton' },
+            { value: 'America/Monterrey', name: 'Monterrey' },
+            { value: 'America/Montevideo', name: 'Montevideo' },
+            { value: 'America/Montreal', name: 'Montreal' },
+            { value: 'America/Montserrat', name: 'Montserrat' },
+            { value: 'America/Nassau', name: 'Nassau' },
+            { value: 'America/New_York', name: 'New York' },
+            { value: 'America/Nipigon', name: 'Nipigon' },
+            { value: 'America/Nome', name: 'Nome' },
+            { value: 'America/Noronha', name: 'Noronha' },
+            { value: 'America/North_Dakota/Center', name: 'North Dakota - Center' },
+            { value: 'America/North_Dakota/New_Salem', name: 'North Dakota - New Salem' },
+            { value: 'America/Ojinaga', name: 'Ojinaga' },
+            { value: 'America/Panama', name: 'Panama' },
+            { value: 'America/Pangnirtung', name: 'Pangnirtung' },
+            { value: 'America/Paramaribo', name: 'Paramaribo' },
+            { value: 'America/Phoenix', name: 'Phoenix' },
+            { value: 'America/Port-au-Prince', name: 'Port-au-Prince' },
+            { value: 'America/Porto_Acre', name: 'Porto Acre' },
+            { value: 'America/Port_of_Spain', name: 'Port of Spain' },
+            { value: 'America/Porto_Velho', name: 'Porto Velho' },
+            { value: 'America/Puerto_Rico', name: 'Puerto Rico' },
+            { value: 'America/Rainy_River', name: 'Rainy River' },
+            { value: 'America/Rankin_Inlet', name: 'Rankin Inlet' },
+            { value: 'America/Recife', name: 'Recife' },
+            { value: 'America/Regina', name: 'Regina' },
+            { value: 'America/Resolute', name: 'Resolute' },
+            { value: 'America/Rio_Branco', name: 'Rio Branco' },
+            { value: 'America/Rosario', name: 'Rosario' },
+            { value: 'America/Santa_Isabel', name: 'Santa Isabel' },
+            { value: 'America/Santarem', name: 'Santarem' },
+            { value: 'America/Santiago', name: 'Santiago' },
+            { value: 'America/Santo_Domingo', name: 'Santo Domingo' },
+            { value: 'America/Sao_Paulo', name: 'Sao Paulo' },
+            { value: 'America/Scoresbysund', name: 'Scoresbysund' },
+            { value: 'America/Shiprock', name: 'Shiprock' },
+            { value: 'America/St_Barthelemy', name: 'St Barthelemy' },
+            { value: 'America/St_Johns', name: 'St Johns' },
+            { value: 'America/St_Kitts', name: 'St Kitts' },
+            { value: 'America/St_Lucia', name: 'St Lucia' },
+            { value: 'America/St_Thomas', name: 'St Thomas' },
+            { value: 'America/St_Vincent', name: 'St Vincent' },
+            { value: 'America/Swift_Current', name: 'Swift Current' },
+            { value: 'America/Tegucigalpa', name: 'Tegucigalpa' },
+            { value: 'America/Thule', name: 'Thule' },
+            { value: 'America/Thunder_Bay', name: 'Thunder Bay' },
+            { value: 'America/Tijuana', name: 'Tijuana' },
+            { value: 'America/Toronto', name: 'Toronto' },
+            { value: 'America/Tortola', name: 'Tortola' },
+            { value: 'America/Vancouver', name: 'Vancouver' },
+            { value: 'America/Virgin', name: 'Virgin' },
+            { value: 'America/Whitehorse', name: 'Whitehorse' },
+            { value: 'America/Winnipeg', name: 'Winnipeg' },
+            { value: 'America/Yakutat', name: 'Yakutat' },
+            { value: 'America/Yellowknife', name: 'Yellowknife' }
         ]
     },
     {
-        'group': 'Europe',
-        'zones': [
-            { 'value': 'Europe/Amsterdam', 'name': 'Amsterdam' },
-            { 'value': 'Europe/Andorra', 'name': 'Andorra' },
-            { 'value': 'Europe/Athens', 'name': 'Athens' },
-            { 'value': 'Europe/Belfast', 'name': 'Belfast' },
-            { 'value': 'Europe/Belgrade', 'name': 'Belgrade' },
-            { 'value': 'Europe/Berlin', 'name': 'Berlin' },
-            { 'value': 'Europe/Bratislava', 'name': 'Bratislava' },
-            { 'value': 'Europe/Brussels', 'name': 'Brussels' },
-            { 'value': 'Europe/Bucharest', 'name': 'Bucharest' },
-            { 'value': 'Europe/Budapest', 'name': 'Budapest' },
-            { 'value': 'Europe/Chisinau', 'name': 'Chisinau' },
-            { 'value': 'Europe/Copenhagen', 'name': 'Copenhagen' },
-            { 'value': 'Europe/Dublin', 'name': 'Dublin' },
-            { 'value': 'Europe/Gibraltar', 'name': 'Gibraltar' },
-            { 'value': 'Europe/Guernsey', 'name': 'Guernsey' },
-            { 'value': 'Europe/Helsinki', 'name': 'Helsinki' },
-            { 'value': 'Europe/Isle_of_Man', 'name': 'Isle of Man' },
-            { 'value': 'Europe/Istanbul', 'name': 'Istanbul' },
-            { 'value': 'Europe/Jersey', 'name': 'Jersey' },
-            { 'value': 'Europe/Kaliningrad', 'name': 'Kaliningrad' },
-            { 'value': 'Europe/Kiev', 'name': 'Kiev' },
-            { 'value': 'Europe/Lisbon', 'name': 'Lisbon' },
-            { 'value': 'Europe/Ljubljana', 'name': 'Ljubljana' },
-            { 'value': 'Europe/London', 'name': 'London' },
-            { 'value': 'Europe/Luxembourg', 'name': 'Luxembourg' },
-            { 'value': 'Europe/Madrid', 'name': 'Madrid' },
-            { 'value': 'Europe/Malta', 'name': 'Malta' },
-            { 'value': 'Europe/Mariehamn', 'name': 'Mariehamn' },
-            { 'value': 'Europe/Minsk', 'name': 'Minsk' },
-            { 'value': 'Europe/Monaco', 'name': 'Monaco' },
-            { 'value': 'Europe/Moscow', 'name': 'Moscow' },
-            { 'value': 'Europe/Nicosia', 'name': 'Nicosia' },
-            { 'value': 'Europe/Oslo', 'name': 'Oslo' },
-            { 'value': 'Europe/Paris', 'name': 'Paris' },
-            { 'value': 'Europe/Podgorica', 'name': 'Podgorica' },
-            { 'value': 'Europe/Prague', 'name': 'Prague' },
-            { 'value': 'Europe/Riga', 'name': 'Riga' },
-            { 'value': 'Europe/Rome', 'name': 'Rome' },
-            { 'value': 'Europe/Samara', 'name': 'Samara' },
-            { 'value': 'Europe/San_Marino', 'name': 'San Marino' },
-            { 'value': 'Europe/Sarajevo', 'name': 'Sarajevo' },
-            { 'value': 'Europe/Simferopol', 'name': 'Simferopol' },
-            { 'value': 'Europe/Skopje', 'name': 'Skopje' },
-            { 'value': 'Europe/Sofia', 'name': 'Sofia' },
-            { 'value': 'Europe/Stockholm', 'name': 'Stockholm' },
-            { 'value': 'Europe/Tallinn', 'name': 'Tallinn' },
-            { 'value': 'Europe/Tirane', 'name': 'Tirane' },
-            { 'value': 'Europe/Tiraspol', 'name': 'Tiraspol' },
-            { 'value': 'Europe/Uzhgorod', 'name': 'Uzhgorod' },
-            { 'value': 'Europe/Vaduz', 'name': 'Vaduz' },
-            { 'value': 'Europe/Vatican', 'name': 'Vatican' },
-            { 'value': 'Europe/Vienna', 'name': 'Vienna' },
-            { 'value': 'Europe/Vilnius', 'name': 'Vilnius' },
-            { 'value': 'Europe/Volgograd', 'name': 'Volgograd' },
-            { 'value': 'Europe/Warsaw', 'name': 'Warsaw' },
-            { 'value': 'Europe/Zagreb', 'name': 'Zagreb' },
-            { 'value': 'Europe/Zaporozhye', 'name': 'Zaporozhye' },
-            { 'value': 'Europe/Zurich', 'name': 'Zurich' }
+        group: 'Europe',
+        zones: [
+            { value: 'Europe/Amsterdam', name: 'Amsterdam' },
+            { value: 'Europe/Andorra', name: 'Andorra' },
+            { value: 'Europe/Athens', name: 'Athens' },
+            { value: 'Europe/Belfast', name: 'Belfast' },
+            { value: 'Europe/Belgrade', name: 'Belgrade' },
+            { value: 'Europe/Berlin', name: 'Berlin' },
+            { value: 'Europe/Bratislava', name: 'Bratislava' },
+            { value: 'Europe/Brussels', name: 'Brussels' },
+            { value: 'Europe/Bucharest', name: 'Bucharest' },
+            { value: 'Europe/Budapest', name: 'Budapest' },
+            { value: 'Europe/Chisinau', name: 'Chisinau' },
+            { value: 'Europe/Copenhagen', name: 'Copenhagen' },
+            { value: 'Europe/Dublin', name: 'Dublin' },
+            { value: 'Europe/Gibraltar', name: 'Gibraltar' },
+            { value: 'Europe/Guernsey', name: 'Guernsey' },
+            { value: 'Europe/Helsinki', name: 'Helsinki' },
+            { value: 'Europe/Isle_of_Man', name: 'Isle of Man' },
+            { value: 'Europe/Istanbul', name: 'Istanbul' },
+            { value: 'Europe/Jersey', name: 'Jersey' },
+            { value: 'Europe/Kaliningrad', name: 'Kaliningrad' },
+            { value: 'Europe/Kiev', name: 'Kiev' },
+            { value: 'Europe/Lisbon', name: 'Lisbon' },
+            { value: 'Europe/Ljubljana', name: 'Ljubljana' },
+            { value: 'Europe/London', name: 'London' },
+            { value: 'Europe/Luxembourg', name: 'Luxembourg' },
+            { value: 'Europe/Madrid', name: 'Madrid' },
+            { value: 'Europe/Malta', name: 'Malta' },
+            { value: 'Europe/Mariehamn', name: 'Mariehamn' },
+            { value: 'Europe/Minsk', name: 'Minsk' },
+            { value: 'Europe/Monaco', name: 'Monaco' },
+            { value: 'Europe/Moscow', name: 'Moscow' },
+            { value: 'Europe/Nicosia', name: 'Nicosia' },
+            { value: 'Europe/Oslo', name: 'Oslo' },
+            { value: 'Europe/Paris', name: 'Paris' },
+            { value: 'Europe/Podgorica', name: 'Podgorica' },
+            { value: 'Europe/Prague', name: 'Prague' },
+            { value: 'Europe/Riga', name: 'Riga' },
+            { value: 'Europe/Rome', name: 'Rome' },
+            { value: 'Europe/Samara', name: 'Samara' },
+            { value: 'Europe/San_Marino', name: 'San Marino' },
+            { value: 'Europe/Sarajevo', name: 'Sarajevo' },
+            { value: 'Europe/Simferopol', name: 'Simferopol' },
+            { value: 'Europe/Skopje', name: 'Skopje' },
+            { value: 'Europe/Sofia', name: 'Sofia' },
+            { value: 'Europe/Stockholm', name: 'Stockholm' },
+            { value: 'Europe/Tallinn', name: 'Tallinn' },
+            { value: 'Europe/Tirane', name: 'Tirane' },
+            { value: 'Europe/Tiraspol', name: 'Tiraspol' },
+            { value: 'Europe/Uzhgorod', name: 'Uzhgorod' },
+            { value: 'Europe/Vaduz', name: 'Vaduz' },
+            { value: 'Europe/Vatican', name: 'Vatican' },
+            { value: 'Europe/Vienna', name: 'Vienna' },
+            { value: 'Europe/Vilnius', name: 'Vilnius' },
+            { value: 'Europe/Volgograd', name: 'Volgograd' },
+            { value: 'Europe/Warsaw', name: 'Warsaw' },
+            { value: 'Europe/Zagreb', name: 'Zagreb' },
+            { value: 'Europe/Zaporozhye', name: 'Zaporozhye' },
+            { value: 'Europe/Zurich', name: 'Zurich' }
         ]
     },
     {
-        'group': 'Asia',
-        'zones': [
-            { 'value': 'Asia/Aden', 'name': 'Aden' },
-            { 'value': 'Asia/Almaty', 'name': 'Almaty' },
-            { 'value': 'Asia/Amman', 'name': 'Amman' },
-            { 'value': 'Asia/Anadyr', 'name': 'Anadyr' },
-            { 'value': 'Asia/Aqtau', 'name': 'Aqtau' },
-            { 'value': 'Asia/Aqtobe', 'name': 'Aqtobe' },
-            { 'value': 'Asia/Ashgabat', 'name': 'Ashgabat' },
-            { 'value': 'Asia/Ashkhabad', 'name': 'Ashkhabad' },
-            { 'value': 'Asia/Baghdad', 'name': 'Baghdad' },
-            { 'value': 'Asia/Bahrain', 'name': 'Bahrain' },
-            { 'value': 'Asia/Baku', 'name': 'Baku' },
-            { 'value': 'Asia/Bangkok', 'name': 'Bangkok' },
-            { 'value': 'Asia/Beirut', 'name': 'Beirut' },
-            { 'value': 'Asia/Bishkek', 'name': 'Bishkek' },
-            { 'value': 'Asia/Brunei', 'name': 'Brunei' },
-            { 'value': 'Asia/Calcutta', 'name': 'Calcutta' },
-            { 'value': 'Asia/Choibalsan', 'name': 'Choibalsan' },
-            { 'value': 'Asia/Chongqing', 'name': 'Chongqing' },
-            { 'value': 'Asia/Chungking', 'name': 'Chungking' },
-            { 'value': 'Asia/Colombo', 'name': 'Colombo' },
-            { 'value': 'Asia/Dacca', 'name': 'Dacca' },
-            { 'value': 'Asia/Damascus', 'name': 'Damascus' },
-            { 'value': 'Asia/Dhaka', 'name': 'Dhaka' },
-            { 'value': 'Asia/Dili', 'name': 'Dili' },
-            { 'value': 'Asia/Dubai', 'name': 'Dubai' },
-            { 'value': 'Asia/Dushanbe', 'name': 'Dushanbe' },
-            { 'value': 'Asia/Gaza', 'name': 'Gaza' },
-            { 'value': 'Asia/Harbin', 'name': 'Harbin' },
-            { 'value': 'Asia/Ho_Chi_Minh', 'name': 'Ho Chi Minh' },
-            { 'value': 'Asia/Hong_Kong', 'name': 'Hong Kong' },
-            { 'value': 'Asia/Hovd', 'name': 'Hovd' },
-            { 'value': 'Asia/Irkutsk', 'name': 'Irkutsk' },
-            { 'value': 'Asia/Istanbul', 'name': 'Istanbul' },
-            { 'value': 'Asia/Jakarta', 'name': 'Jakarta' },
-            { 'value': 'Asia/Jayapura', 'name': 'Jayapura' },
-            { 'value': 'Asia/Jerusalem', 'name': 'Jerusalem' },
-            { 'value': 'Asia/Kabul', 'name': 'Kabul' },
-            { 'value': 'Asia/Kamchatka', 'name': 'Kamchatka' },
-            { 'value': 'Asia/Karachi', 'name': 'Karachi' },
-            { 'value': 'Asia/Kashgar', 'name': 'Kashgar' },
-            { 'value': 'Asia/Kathmandu', 'name': 'Kathmandu' },
-            { 'value': 'Asia/Katmandu', 'name': 'Katmandu' },
-            { 'value': 'Asia/Kolkata', 'name': 'Kolkata' },
-            { 'value': 'Asia/Krasnoyarsk', 'name': 'Krasnoyarsk' },
-            { 'value': 'Asia/Kuala_Lumpur', 'name': 'Kuala Lumpur' },
-            { 'value': 'Asia/Kuching', 'name': 'Kuching' },
-            { 'value': 'Asia/Kuwait', 'name': 'Kuwait' },
-            { 'value': 'Asia/Macao', 'name': 'Macao' },
-            { 'value': 'Asia/Macau', 'name': 'Macau' },
-            { 'value': 'Asia/Magadan', 'name': 'Magadan' },
-            { 'value': 'Asia/Makassar', 'name': 'Makassar' },
-            { 'value': 'Asia/Manila', 'name': 'Manila' },
-            { 'value': 'Asia/Muscat', 'name': 'Muscat' },
-            { 'value': 'Asia/Nicosia', 'name': 'Nicosia' },
-            { 'value': 'Asia/Novokuznetsk', 'name': 'Novokuznetsk' },
-            { 'value': 'Asia/Novosibirsk', 'name': 'Novosibirsk' },
-            { 'value': 'Asia/Omsk', 'name': 'Omsk' },
-            { 'value': 'Asia/Oral', 'name': 'Oral' },
-            { 'value': 'Asia/Phnom_Penh', 'name': 'Phnom Penh' },
-            { 'value': 'Asia/Pontianak', 'name': 'Pontianak' },
-            { 'value': 'Asia/Pyongyang', 'name': 'Pyongyang' },
-            { 'value': 'Asia/Qatar', 'name': 'Qatar' },
-            { 'value': 'Asia/Qyzylorda', 'name': 'Qyzylorda' },
-            { 'value': 'Asia/Rangoon', 'name': 'Rangoon' },
-            { 'value': 'Asia/Riyadh', 'name': 'Riyadh' },
-            { 'value': 'Asia/Saigon', 'name': 'Saigon' },
-            { 'value': 'Asia/Sakhalin', 'name': 'Sakhalin' },
-            { 'value': 'Asia/Samarkand', 'name': 'Samarkand' },
-            { 'value': 'Asia/Seoul', 'name': 'Seoul' },
-            { 'value': 'Asia/Shanghai', 'name': 'Shanghai' },
-            { 'value': 'Asia/Singapore', 'name': 'Singapore' },
-            { 'value': 'Asia/Taipei', 'name': 'Taipei' },
-            { 'value': 'Asia/Tashkent', 'name': 'Tashkent' },
-            { 'value': 'Asia/Tbilisi', 'name': 'Tbilisi' },
-            { 'value': 'Asia/Tehran', 'name': 'Tehran' },
-            { 'value': 'Asia/Tel_Aviv', 'name': 'Tel Aviv' },
-            { 'value': 'Asia/Thimbu', 'name': 'Thimbu' },
-            { 'value': 'Asia/Thimphu', 'name': 'Thimphu' },
-            { 'value': 'Asia/Tokyo', 'name': 'Tokyo' },
-            { 'value': 'Asia/Ujung_Pandang', 'name': 'Ujung Pandang' },
-            { 'value': 'Asia/Ulaanbaatar', 'name': 'Ulaanbaatar' },
-            { 'value': 'Asia/Ulan_Bator', 'name': 'Ulan Bator' },
-            { 'value': 'Asia/Urumqi', 'name': 'Urumqi' },
-            { 'value': 'Asia/Vientiane', 'name': 'Vientiane' },
-            { 'value': 'Asia/Vladivostok', 'name': 'Vladivostok' },
-            { 'value': 'Asia/Yakutsk', 'name': 'Yakutsk' },
-            { 'value': 'Asia/Yekaterinburg', 'name': 'Yekaterinburg' },
-            { 'value': 'Asia/Yerevan', 'name': 'Yerevan' }
+        group: 'Asia',
+        zones: [
+            { value: 'Asia/Aden', name: 'Aden' },
+            { value: 'Asia/Almaty', name: 'Almaty' },
+            { value: 'Asia/Amman', name: 'Amman' },
+            { value: 'Asia/Anadyr', name: 'Anadyr' },
+            { value: 'Asia/Aqtau', name: 'Aqtau' },
+            { value: 'Asia/Aqtobe', name: 'Aqtobe' },
+            { value: 'Asia/Ashgabat', name: 'Ashgabat' },
+            { value: 'Asia/Ashkhabad', name: 'Ashkhabad' },
+            { value: 'Asia/Baghdad', name: 'Baghdad' },
+            { value: 'Asia/Bahrain', name: 'Bahrain' },
+            { value: 'Asia/Baku', name: 'Baku' },
+            { value: 'Asia/Bangkok', name: 'Bangkok' },
+            { value: 'Asia/Beirut', name: 'Beirut' },
+            { value: 'Asia/Bishkek', name: 'Bishkek' },
+            { value: 'Asia/Brunei', name: 'Brunei' },
+            { value: 'Asia/Calcutta', name: 'Calcutta' },
+            { value: 'Asia/Choibalsan', name: 'Choibalsan' },
+            { value: 'Asia/Chongqing', name: 'Chongqing' },
+            { value: 'Asia/Chungking', name: 'Chungking' },
+            { value: 'Asia/Colombo', name: 'Colombo' },
+            { value: 'Asia/Dacca', name: 'Dacca' },
+            { value: 'Asia/Damascus', name: 'Damascus' },
+            { value: 'Asia/Dhaka', name: 'Dhaka' },
+            { value: 'Asia/Dili', name: 'Dili' },
+            { value: 'Asia/Dubai', name: 'Dubai' },
+            { value: 'Asia/Dushanbe', name: 'Dushanbe' },
+            { value: 'Asia/Gaza', name: 'Gaza' },
+            { value: 'Asia/Harbin', name: 'Harbin' },
+            { value: 'Asia/Ho_Chi_Minh', name: 'Ho Chi Minh' },
+            { value: 'Asia/Hong_Kong', name: 'Hong Kong' },
+            { value: 'Asia/Hovd', name: 'Hovd' },
+            { value: 'Asia/Irkutsk', name: 'Irkutsk' },
+            { value: 'Asia/Istanbul', name: 'Istanbul' },
+            { value: 'Asia/Jakarta', name: 'Jakarta' },
+            { value: 'Asia/Jayapura', name: 'Jayapura' },
+            { value: 'Asia/Jerusalem', name: 'Jerusalem' },
+            { value: 'Asia/Kabul', name: 'Kabul' },
+            { value: 'Asia/Kamchatka', name: 'Kamchatka' },
+            { value: 'Asia/Karachi', name: 'Karachi' },
+            { value: 'Asia/Kashgar', name: 'Kashgar' },
+            { value: 'Asia/Kathmandu', name: 'Kathmandu' },
+            { value: 'Asia/Katmandu', name: 'Katmandu' },
+            { value: 'Asia/Kolkata', name: 'Kolkata' },
+            { value: 'Asia/Krasnoyarsk', name: 'Krasnoyarsk' },
+            { value: 'Asia/Kuala_Lumpur', name: 'Kuala Lumpur' },
+            { value: 'Asia/Kuching', name: 'Kuching' },
+            { value: 'Asia/Kuwait', name: 'Kuwait' },
+            { value: 'Asia/Macao', name: 'Macao' },
+            { value: 'Asia/Macau', name: 'Macau' },
+            { value: 'Asia/Magadan', name: 'Magadan' },
+            { value: 'Asia/Makassar', name: 'Makassar' },
+            { value: 'Asia/Manila', name: 'Manila' },
+            { value: 'Asia/Muscat', name: 'Muscat' },
+            { value: 'Asia/Nicosia', name: 'Nicosia' },
+            { value: 'Asia/Novokuznetsk', name: 'Novokuznetsk' },
+            { value: 'Asia/Novosibirsk', name: 'Novosibirsk' },
+            { value: 'Asia/Omsk', name: 'Omsk' },
+            { value: 'Asia/Oral', name: 'Oral' },
+            { value: 'Asia/Phnom_Penh', name: 'Phnom Penh' },
+            { value: 'Asia/Pontianak', name: 'Pontianak' },
+            { value: 'Asia/Pyongyang', name: 'Pyongyang' },
+            { value: 'Asia/Qatar', name: 'Qatar' },
+            { value: 'Asia/Qyzylorda', name: 'Qyzylorda' },
+            { value: 'Asia/Rangoon', name: 'Rangoon' },
+            { value: 'Asia/Riyadh', name: 'Riyadh' },
+            { value: 'Asia/Saigon', name: 'Saigon' },
+            { value: 'Asia/Sakhalin', name: 'Sakhalin' },
+            { value: 'Asia/Samarkand', name: 'Samarkand' },
+            { value: 'Asia/Seoul', name: 'Seoul' },
+            { value: 'Asia/Shanghai', name: 'Shanghai' },
+            { value: 'Asia/Singapore', name: 'Singapore' },
+            { value: 'Asia/Taipei', name: 'Taipei' },
+            { value: 'Asia/Tashkent', name: 'Tashkent' },
+            { value: 'Asia/Tbilisi', name: 'Tbilisi' },
+            { value: 'Asia/Tehran', name: 'Tehran' },
+            { value: 'Asia/Tel_Aviv', name: 'Tel Aviv' },
+            { value: 'Asia/Thimbu', name: 'Thimbu' },
+            { value: 'Asia/Thimphu', name: 'Thimphu' },
+            { value: 'Asia/Tokyo', name: 'Tokyo' },
+            { value: 'Asia/Ujung_Pandang', name: 'Ujung Pandang' },
+            { value: 'Asia/Ulaanbaatar', name: 'Ulaanbaatar' },
+            { value: 'Asia/Ulan_Bator', name: 'Ulan Bator' },
+            { value: 'Asia/Urumqi', name: 'Urumqi' },
+            { value: 'Asia/Vientiane', name: 'Vientiane' },
+            { value: 'Asia/Vladivostok', name: 'Vladivostok' },
+            { value: 'Asia/Yakutsk', name: 'Yakutsk' },
+            { value: 'Asia/Yekaterinburg', name: 'Yekaterinburg' },
+            { value: 'Asia/Yerevan', name: 'Yerevan' }
         ]
     },
     {
-        'group': 'Africa',
-        'zones': [
-            { 'value': 'Africa/Abidjan', 'name': 'Abidjan' },
-            { 'value': 'Africa/Accra', 'name': 'Accra' },
-            { 'value': 'Africa/Addis_Ababa', 'name': 'Addis Ababa' },
-            { 'value': 'Africa/Algiers', 'name': 'Algiers' },
-            { 'value': 'Africa/Asmara', 'name': 'Asmara' },
-            { 'value': 'Africa/Asmera', 'name': 'Asmera' },
-            { 'value': 'Africa/Bamako', 'name': 'Bamako' },
-            { 'value': 'Africa/Bangui', 'name': 'Bangui' },
-            { 'value': 'Africa/Banjul', 'name': 'Banjul' },
-            { 'value': 'Africa/Bissau', 'name': 'Bissau' },
-            { 'value': 'Africa/Blantyre', 'name': 'Blantyre' },
-            { 'value': 'Africa/Brazzaville', 'name': 'Brazzaville' },
-            { 'value': 'Africa/Bujumbura', 'name': 'Bujumbura' },
-            { 'value': 'Africa/Cairo', 'name': 'Cairo' },
-            { 'value': 'Africa/Casablanca', 'name': 'Casablanca' },
-            { 'value': 'Africa/Ceuta', 'name': 'Ceuta' },
-            { 'value': 'Africa/Conakry', 'name': 'Conakry' },
-            { 'value': 'Africa/Dakar', 'name': 'Dakar' },
-            { 'value': 'Africa/Dar_es_Salaam', 'name': 'Dar es Salaam' },
-            { 'value': 'Africa/Djibouti', 'name': 'Djibouti' },
-            { 'value': 'Africa/Douala', 'name': 'Douala' },
-            { 'value': 'Africa/El_Aaiun', 'name': 'El Aaiun' },
-            { 'value': 'Africa/Freetown', 'name': 'Freetown' },
-            { 'value': 'Africa/Gaborone', 'name': 'Gaborone' },
-            { 'value': 'Africa/Harare', 'name': 'Harare' },
-            { 'value': 'Africa/Johannesburg', 'name': 'Johannesburg' },
-            { 'value': 'Africa/Kampala', 'name': 'Kampala' },
-            { 'value': 'Africa/Khartoum', 'name': 'Khartoum' },
-            { 'value': 'Africa/Kigali', 'name': 'Kigali' },
-            { 'value': 'Africa/Kinshasa', 'name': 'Kinshasa' },
-            { 'value': 'Africa/Lagos', 'name': 'Lagos' },
-            { 'value': 'Africa/Libreville', 'name': 'Libreville' },
-            { 'value': 'Africa/Lome', 'name': 'Lome' },
-            { 'value': 'Africa/Luanda', 'name': 'Luanda' },
-            { 'value': 'Africa/Lubumbashi', 'name': 'Lubumbashi' },
-            { 'value': 'Africa/Lusaka', 'name': 'Lusaka' },
-            { 'value': 'Africa/Malabo', 'name': 'Malabo' },
-            { 'value': 'Africa/Maputo', 'name': 'Maputo' },
-            { 'value': 'Africa/Maseru', 'name': 'Maseru' },
-            { 'value': 'Africa/Mbabane', 'name': 'Mbabane' },
-            { 'value': 'Africa/Mogadishu', 'name': 'Mogadishu' },
-            { 'value': 'Africa/Monrovia', 'name': 'Monrovia' },
-            { 'value': 'Africa/Nairobi', 'name': 'Nairobi' },
-            { 'value': 'Africa/Ndjamena', 'name': 'Ndjamena' },
-            { 'value': 'Africa/Niamey', 'name': 'Niamey' },
-            { 'value': 'Africa/Nouakchott', 'name': 'Nouakchott' },
-            { 'value': 'Africa/Ouagadougou', 'name': 'Ouagadougou' },
-            { 'value': 'Africa/Porto-Novo', 'name': 'Porto-Novo' },
-            { 'value': 'Africa/Sao_Tome', 'name': 'Sao Tome' },
-            { 'value': 'Africa/Timbuktu', 'name': 'Timbuktu' },
-            { 'value': 'Africa/Tripoli', 'name': 'Tripoli' },
-            { 'value': 'Africa/Tunis', 'name': 'Tunis' },
-            { 'value': 'Africa/Windhoek', 'name': 'Windhoek' }
+        group: 'Africa',
+        zones: [
+            { value: 'Africa/Abidjan', name: 'Abidjan' },
+            { value: 'Africa/Accra', name: 'Accra' },
+            { value: 'Africa/Addis_Ababa', name: 'Addis Ababa' },
+            { value: 'Africa/Algiers', name: 'Algiers' },
+            { value: 'Africa/Asmara', name: 'Asmara' },
+            { value: 'Africa/Asmera', name: 'Asmera' },
+            { value: 'Africa/Bamako', name: 'Bamako' },
+            { value: 'Africa/Bangui', name: 'Bangui' },
+            { value: 'Africa/Banjul', name: 'Banjul' },
+            { value: 'Africa/Bissau', name: 'Bissau' },
+            { value: 'Africa/Blantyre', name: 'Blantyre' },
+            { value: 'Africa/Brazzaville', name: 'Brazzaville' },
+            { value: 'Africa/Bujumbura', name: 'Bujumbura' },
+            { value: 'Africa/Cairo', name: 'Cairo' },
+            { value: 'Africa/Casablanca', name: 'Casablanca' },
+            { value: 'Africa/Ceuta', name: 'Ceuta' },
+            { value: 'Africa/Conakry', name: 'Conakry' },
+            { value: 'Africa/Dakar', name: 'Dakar' },
+            { value: 'Africa/Dar_es_Salaam', name: 'Dar es Salaam' },
+            { value: 'Africa/Djibouti', name: 'Djibouti' },
+            { value: 'Africa/Douala', name: 'Douala' },
+            { value: 'Africa/El_Aaiun', name: 'El Aaiun' },
+            { value: 'Africa/Freetown', name: 'Freetown' },
+            { value: 'Africa/Gaborone', name: 'Gaborone' },
+            { value: 'Africa/Harare', name: 'Harare' },
+            { value: 'Africa/Johannesburg', name: 'Johannesburg' },
+            { value: 'Africa/Kampala', name: 'Kampala' },
+            { value: 'Africa/Khartoum', name: 'Khartoum' },
+            { value: 'Africa/Kigali', name: 'Kigali' },
+            { value: 'Africa/Kinshasa', name: 'Kinshasa' },
+            { value: 'Africa/Lagos', name: 'Lagos' },
+            { value: 'Africa/Libreville', name: 'Libreville' },
+            { value: 'Africa/Lome', name: 'Lome' },
+            { value: 'Africa/Luanda', name: 'Luanda' },
+            { value: 'Africa/Lubumbashi', name: 'Lubumbashi' },
+            { value: 'Africa/Lusaka', name: 'Lusaka' },
+            { value: 'Africa/Malabo', name: 'Malabo' },
+            { value: 'Africa/Maputo', name: 'Maputo' },
+            { value: 'Africa/Maseru', name: 'Maseru' },
+            { value: 'Africa/Mbabane', name: 'Mbabane' },
+            { value: 'Africa/Mogadishu', name: 'Mogadishu' },
+            { value: 'Africa/Monrovia', name: 'Monrovia' },
+            { value: 'Africa/Nairobi', name: 'Nairobi' },
+            { value: 'Africa/Ndjamena', name: 'Ndjamena' },
+            { value: 'Africa/Niamey', name: 'Niamey' },
+            { value: 'Africa/Nouakchott', name: 'Nouakchott' },
+            { value: 'Africa/Ouagadougou', name: 'Ouagadougou' },
+            { value: 'Africa/Porto-Novo', name: 'Porto-Novo' },
+            { value: 'Africa/Sao_Tome', name: 'Sao Tome' },
+            { value: 'Africa/Timbuktu', name: 'Timbuktu' },
+            { value: 'Africa/Tripoli', name: 'Tripoli' },
+            { value: 'Africa/Tunis', name: 'Tunis' },
+            { value: 'Africa/Windhoek', name: 'Windhoek' }
         ]
     },
     {
-        'group': 'Australia',
-        'zones': [
-            { 'value': 'Australia/ACT', 'name': 'ACT' },
-            { 'value': 'Australia/Adelaide', 'name': 'Adelaide' },
-            { 'value': 'Australia/Brisbane', 'name': 'Brisbane' },
-            { 'value': 'Australia/Broken_Hill', 'name': 'Broken Hill' },
-            { 'value': 'Australia/Canberra', 'name': 'Canberra' },
-            { 'value': 'Australia/Currie', 'name': 'Currie' },
-            { 'value': 'Australia/Darwin', 'name': 'Darwin' },
-            { 'value': 'Australia/Eucla', 'name': 'Eucla' },
-            { 'value': 'Australia/Hobart', 'name': 'Hobart' },
-            { 'value': 'Australia/LHI', 'name': 'LHI' },
-            { 'value': 'Australia/Lindeman', 'name': 'Lindeman' },
-            { 'value': 'Australia/Lord_Howe', 'name': 'Lord Howe' },
-            { 'value': 'Australia/Melbourne', 'name': 'Melbourne' },
-            { 'value': 'Australia/North', 'name': 'North' },
-            { 'value': 'Australia/NSW', 'name': 'NSW' },
-            { 'value': 'Australia/Perth', 'name': 'Perth' },
-            { 'value': 'Australia/Queensland', 'name': 'Queensland' },
-            { 'value': 'Australia/South', 'name': 'South' },
-            { 'value': 'Australia/Sydney', 'name': 'Sydney' },
-            { 'value': 'Australia/Tasmania', 'name': 'Tasmania' },
-            { 'value': 'Australia/Victoria', 'name': 'Victoria' },
-            { 'value': 'Australia/West', 'name': 'West' },
-            { 'value': 'Australia/Yancowinna', 'name': 'Yancowinna' }
+        group: 'Australia',
+        zones: [
+            { value: 'Australia/ACT', name: 'ACT' },
+            { value: 'Australia/Adelaide', name: 'Adelaide' },
+            { value: 'Australia/Brisbane', name: 'Brisbane' },
+            { value: 'Australia/Broken_Hill', name: 'Broken Hill' },
+            { value: 'Australia/Canberra', name: 'Canberra' },
+            { value: 'Australia/Currie', name: 'Currie' },
+            { value: 'Australia/Darwin', name: 'Darwin' },
+            { value: 'Australia/Eucla', name: 'Eucla' },
+            { value: 'Australia/Hobart', name: 'Hobart' },
+            { value: 'Australia/LHI', name: 'LHI' },
+            { value: 'Australia/Lindeman', name: 'Lindeman' },
+            { value: 'Australia/Lord_Howe', name: 'Lord Howe' },
+            { value: 'Australia/Melbourne', name: 'Melbourne' },
+            { value: 'Australia/North', name: 'North' },
+            { value: 'Australia/NSW', name: 'NSW' },
+            { value: 'Australia/Perth', name: 'Perth' },
+            { value: 'Australia/Queensland', name: 'Queensland' },
+            { value: 'Australia/South', name: 'South' },
+            { value: 'Australia/Sydney', name: 'Sydney' },
+            { value: 'Australia/Tasmania', name: 'Tasmania' },
+            { value: 'Australia/Victoria', name: 'Victoria' },
+            { value: 'Australia/West', name: 'West' },
+            { value: 'Australia/Yancowinna', name: 'Yancowinna' }
         ]
     },
     {
-        'group': 'Indian',
-        'zones': [
-            { 'value': 'Indian/Antananarivo', 'name': 'Antananarivo' },
-            { 'value': 'Indian/Chagos', 'name': 'Chagos' },
-            { 'value': 'Indian/Christmas', 'name': 'Christmas' },
-            { 'value': 'Indian/Cocos', 'name': 'Cocos' },
-            { 'value': 'Indian/Comoro', 'name': 'Comoro' },
-            { 'value': 'Indian/Kerguelen', 'name': 'Kerguelen' },
-            { 'value': 'Indian/Mahe', 'name': 'Mahe' },
-            { 'value': 'Indian/Maldives', 'name': 'Maldives' },
-            { 'value': 'Indian/Mauritius', 'name': 'Mauritius' },
-            { 'value': 'Indian/Mayotte', 'name': 'Mayotte' },
-            { 'value': 'Indian/Reunion', 'name': 'Reunion' }
+        group: 'Indian',
+        zones: [
+            { value: 'Indian/Antananarivo', name: 'Antananarivo' },
+            { value: 'Indian/Chagos', name: 'Chagos' },
+            { value: 'Indian/Christmas', name: 'Christmas' },
+            { value: 'Indian/Cocos', name: 'Cocos' },
+            { value: 'Indian/Comoro', name: 'Comoro' },
+            { value: 'Indian/Kerguelen', name: 'Kerguelen' },
+            { value: 'Indian/Mahe', name: 'Mahe' },
+            { value: 'Indian/Maldives', name: 'Maldives' },
+            { value: 'Indian/Mauritius', name: 'Mauritius' },
+            { value: 'Indian/Mayotte', name: 'Mayotte' },
+            { value: 'Indian/Reunion', name: 'Reunion' }
         ]
     },
     {
-        'group': 'Atlantic',
-        'zones': [
-            { 'value': 'Atlantic/Azores', 'name': 'Azores' },
-            { 'value': 'Atlantic/Bermuda', 'name': 'Bermuda' },
-            { 'value': 'Atlantic/Canary', 'name': 'Canary' },
-            { 'value': 'Atlantic/Cape_Verde', 'name': 'Cape Verde' },
-            { 'value': 'Atlantic/Faeroe', 'name': 'Faeroe' },
-            { 'value': 'Atlantic/Faroe', 'name': 'Faroe' },
-            { 'value': 'Atlantic/Jan_Mayen', 'name': 'Jan Mayen' },
-            { 'value': 'Atlantic/Madeira', 'name': 'Madeira' },
-            { 'value': 'Atlantic/Reykjavik', 'name': 'Reykjavik' },
-            { 'value': 'Atlantic/South_Georgia', 'name': 'South Georgia' },
-            { 'value': 'Atlantic/Stanley', 'name': 'Stanley' },
-            { 'value': 'Atlantic/St_Helena', 'name': 'St Helena' }
+        group: 'Atlantic',
+        zones: [
+            { value: 'Atlantic/Azores', name: 'Azores' },
+            { value: 'Atlantic/Bermuda', name: 'Bermuda' },
+            { value: 'Atlantic/Canary', name: 'Canary' },
+            { value: 'Atlantic/Cape_Verde', name: 'Cape Verde' },
+            { value: 'Atlantic/Faeroe', name: 'Faeroe' },
+            { value: 'Atlantic/Faroe', name: 'Faroe' },
+            { value: 'Atlantic/Jan_Mayen', name: 'Jan Mayen' },
+            { value: 'Atlantic/Madeira', name: 'Madeira' },
+            { value: 'Atlantic/Reykjavik', name: 'Reykjavik' },
+            { value: 'Atlantic/South_Georgia', name: 'South Georgia' },
+            { value: 'Atlantic/Stanley', name: 'Stanley' },
+            { value: 'Atlantic/St_Helena', name: 'St Helena' }
         ]
     },
     {
-        'group': 'Pacific',
-        'zones': [
-            { 'value': 'Pacific/Apia', 'name': 'Apia' },
-            { 'value': 'Pacific/Auckland', 'name': 'Auckland' },
-            { 'value': 'Pacific/Chatham', 'name': 'Chatham' },
-            { 'value': 'Pacific/Easter', 'name': 'Easter' },
-            { 'value': 'Pacific/Efate', 'name': 'Efate' },
-            { 'value': 'Pacific/Enderbury', 'name': 'Enderbury' },
-            { 'value': 'Pacific/Fakaofo', 'name': 'Fakaofo' },
-            { 'value': 'Pacific/Fiji', 'name': 'Fiji' },
-            { 'value': 'Pacific/Funafuti', 'name': 'Funafuti' },
-            { 'value': 'Pacific/Galapagos', 'name': 'Galapagos' },
-            { 'value': 'Pacific/Gambier', 'name': 'Gambier' },
-            { 'value': 'Pacific/Guadalcanal', 'name': 'Guadalcanal' },
-            { 'value': 'Pacific/Guam', 'name': 'Guam' },
-            { 'value': 'Pacific/Honolulu', 'name': 'Honolulu' },
-            { 'value': 'Pacific/Johnston', 'name': 'Johnston' },
-            { 'value': 'Pacific/Kiritimati', 'name': 'Kiritimati' },
-            { 'value': 'Pacific/Kosrae', 'name': 'Kosrae' },
-            { 'value': 'Pacific/Kwajalein', 'name': 'Kwajalein' },
-            { 'value': 'Pacific/Majuro', 'name': 'Majuro' },
-            { 'value': 'Pacific/Marquesas', 'name': 'Marquesas' },
-            { 'value': 'Pacific/Midway', 'name': 'Midway' },
-            { 'value': 'Pacific/Nauru', 'name': 'Nauru' },
-            { 'value': 'Pacific/Niue', 'name': 'Niue' },
-            { 'value': 'Pacific/Norfolk', 'name': 'Norfolk' },
-            { 'value': 'Pacific/Noumea', 'name': 'Noumea' },
-            { 'value': 'Pacific/Pago_Pago', 'name': 'Pago Pago' },
-            { 'value': 'Pacific/Palau', 'name': 'Palau' },
-            { 'value': 'Pacific/Pitcairn', 'name': 'Pitcairn' },
-            { 'value': 'Pacific/Ponape', 'name': 'Ponape' },
-            { 'value': 'Pacific/Port_Moresby', 'name': 'Port Moresby' },
-            { 'value': 'Pacific/Rarotonga', 'name': 'Rarotonga' },
-            { 'value': 'Pacific/Saipan', 'name': 'Saipan' },
-            { 'value': 'Pacific/Samoa', 'name': 'Samoa' },
-            { 'value': 'Pacific/Tahiti', 'name': 'Tahiti' },
-            { 'value': 'Pacific/Tarawa', 'name': 'Tarawa' },
-            { 'value': 'Pacific/Tongatapu', 'name': 'Tongatapu' },
-            { 'value': 'Pacific/Truk', 'name': 'Truk' },
-            { 'value': 'Pacific/Wake', 'name': 'Wake' },
-            { 'value': 'Pacific/Wallis', 'name': 'Wallis' },
-            { 'value': 'Pacific/Yap', 'name': 'Yap' }
+        group: 'Pacific',
+        zones: [
+            { value: 'Pacific/Apia', name: 'Apia' },
+            { value: 'Pacific/Auckland', name: 'Auckland' },
+            { value: 'Pacific/Chatham', name: 'Chatham' },
+            { value: 'Pacific/Easter', name: 'Easter' },
+            { value: 'Pacific/Efate', name: 'Efate' },
+            { value: 'Pacific/Enderbury', name: 'Enderbury' },
+            { value: 'Pacific/Fakaofo', name: 'Fakaofo' },
+            { value: 'Pacific/Fiji', name: 'Fiji' },
+            { value: 'Pacific/Funafuti', name: 'Funafuti' },
+            { value: 'Pacific/Galapagos', name: 'Galapagos' },
+            { value: 'Pacific/Gambier', name: 'Gambier' },
+            { value: 'Pacific/Guadalcanal', name: 'Guadalcanal' },
+            { value: 'Pacific/Guam', name: 'Guam' },
+            { value: 'Pacific/Honolulu', name: 'Honolulu' },
+            { value: 'Pacific/Johnston', name: 'Johnston' },
+            { value: 'Pacific/Kiritimati', name: 'Kiritimati' },
+            { value: 'Pacific/Kosrae', name: 'Kosrae' },
+            { value: 'Pacific/Kwajalein', name: 'Kwajalein' },
+            { value: 'Pacific/Majuro', name: 'Majuro' },
+            { value: 'Pacific/Marquesas', name: 'Marquesas' },
+            { value: 'Pacific/Midway', name: 'Midway' },
+            { value: 'Pacific/Nauru', name: 'Nauru' },
+            { value: 'Pacific/Niue', name: 'Niue' },
+            { value: 'Pacific/Norfolk', name: 'Norfolk' },
+            { value: 'Pacific/Noumea', name: 'Noumea' },
+            { value: 'Pacific/Pago_Pago', name: 'Pago Pago' },
+            { value: 'Pacific/Palau', name: 'Palau' },
+            { value: 'Pacific/Pitcairn', name: 'Pitcairn' },
+            { value: 'Pacific/Ponape', name: 'Ponape' },
+            { value: 'Pacific/Port_Moresby', name: 'Port Moresby' },
+            { value: 'Pacific/Rarotonga', name: 'Rarotonga' },
+            { value: 'Pacific/Saipan', name: 'Saipan' },
+            { value: 'Pacific/Samoa', name: 'Samoa' },
+            { value: 'Pacific/Tahiti', name: 'Tahiti' },
+            { value: 'Pacific/Tarawa', name: 'Tarawa' },
+            { value: 'Pacific/Tongatapu', name: 'Tongatapu' },
+            { value: 'Pacific/Truk', name: 'Truk' },
+            { value: 'Pacific/Wake', name: 'Wake' },
+            { value: 'Pacific/Wallis', name: 'Wallis' },
+            { value: 'Pacific/Yap', name: 'Yap' }
         ]
     },
     {
-        'group': 'Antarctica',
-        'zones': [
-            { 'value': 'Antarctica/Casey', 'name': 'Casey' },
-            { 'value': 'Antarctica/Davis', 'name': 'Davis' },
-            { 'value': 'Antarctica/DumontDUrville', 'name': 'DumontDUrville' },
-            { 'value': 'Antarctica/Macquarie', 'name': 'Macquarie' },
-            { 'value': 'Antarctica/Mawson', 'name': 'Mawson' },
-            { 'value': 'Antarctica/McMurdo', 'name': 'McMurdo' },
-            { 'value': 'Antarctica/Palmer', 'name': 'Palmer' },
-            { 'value': 'Antarctica/Rothera', 'name': 'Rothera' },
-            { 'value': 'Antarctica/South_Pole', 'name': 'South Pole' },
-            { 'value': 'Antarctica/Syowa', 'name': 'Syowa' },
-            { 'value': 'Antarctica/Vostok', 'name': 'Vostok' }
+        group: 'Antarctica',
+        zones: [
+            { value: 'Antarctica/Casey', name: 'Casey' },
+            { value: 'Antarctica/Davis', name: 'Davis' },
+            { value: 'Antarctica/DumontDUrville', name: 'DumontDUrville' },
+            { value: 'Antarctica/Macquarie', name: 'Macquarie' },
+            { value: 'Antarctica/Mawson', name: 'Mawson' },
+            { value: 'Antarctica/McMurdo', name: 'McMurdo' },
+            { value: 'Antarctica/Palmer', name: 'Palmer' },
+            { value: 'Antarctica/Rothera', name: 'Rothera' },
+            { value: 'Antarctica/South_Pole', name: 'South Pole' },
+            { value: 'Antarctica/Syowa', name: 'Syowa' },
+            { value: 'Antarctica/Vostok', name: 'Vostok' }
         ]
     },
     {
-        'group': 'Arctic',
-        'zones': [
-            { 'value': 'Arctic/Longyearbyen', 'name': 'Longyearbyen' }
-        ]
+        group: 'Arctic',
+        zones: [{ value: 'Arctic/Longyearbyen', name: 'Longyearbyen' }]
     },
     {
-        'group': 'UTC',
-        'zones': [
-            { 'value': 'UTC', 'name': 'UTC' }
-        ]
+        group: 'UTC',
+        zones: [{ value: 'UTC', name: 'UTC' }]
     },
     {
-        'group': 'Manual Offsets',
-        'zones': [
-            { 'value': 'UTC-12', 'name': 'UTC-12' },
-            { 'value': 'UTC-11', 'name': 'UTC-11' },
-            { 'value': 'UTC-10', 'name': 'UTC-10' },
-            { 'value': 'UTC-9', 'name': 'UTC-9' },
-            { 'value': 'UTC-8', 'name': 'UTC-8' },
-            { 'value': 'UTC-7', 'name': 'UTC-7' },
-            { 'value': 'UTC-6', 'name': 'UTC-6' },
-            { 'value': 'UTC-5', 'name': 'UTC-5' },
-            { 'value': 'UTC-4', 'name': 'UTC-4' },
-            { 'value': 'UTC-3', 'name': 'UTC-3' },
-            { 'value': 'UTC-2', 'name': 'UTC-2' },
-            { 'value': 'UTC-1', 'name': 'UTC-1' },
-            { 'value': 'UTC+0', 'name': 'UTC+0' },
-            { 'value': 'UTC+1', 'name': 'UTC+1' },
-            { 'value': 'UTC+2', 'name': 'UTC+2' },
-            { 'value': 'UTC+3', 'name': 'UTC+3' },
-            { 'value': 'UTC+4', 'name': 'UTC+4' },
-            { 'value': 'UTC+5', 'name': 'UTC+5' },
-            { 'value': 'UTC+6', 'name': 'UTC+6' },
-            { 'value': 'UTC+7', 'name': 'UTC+7' },
-            { 'value': 'UTC+8', 'name': 'UTC+8' },
-            { 'value': 'UTC+9', 'name': 'UTC+9' },
-            { 'value': 'UTC+10', 'name': 'UTC+10' },
-            { 'value': 'UTC+11', 'name': 'UTC+11' },
-            { 'value': 'UTC+12', 'name': 'UTC+12' },
-            { 'value': 'UTC+13', 'name': 'UTC+13' },
-            { 'value': 'UTC+14', 'name': 'UTC+14' }
+        group: 'Manual Offsets',
+        zones: [
+            { value: 'UTC-12', name: 'UTC-12' },
+            { value: 'UTC-11', name: 'UTC-11' },
+            { value: 'UTC-10', name: 'UTC-10' },
+            { value: 'UTC-9', name: 'UTC-9' },
+            { value: 'UTC-8', name: 'UTC-8' },
+            { value: 'UTC-7', name: 'UTC-7' },
+            { value: 'UTC-6', name: 'UTC-6' },
+            { value: 'UTC-5', name: 'UTC-5' },
+            { value: 'UTC-4', name: 'UTC-4' },
+            { value: 'UTC-3', name: 'UTC-3' },
+            { value: 'UTC-2', name: 'UTC-2' },
+            { value: 'UTC-1', name: 'UTC-1' },
+            { value: 'UTC+0', name: 'UTC+0' },
+            { value: 'UTC+1', name: 'UTC+1' },
+            { value: 'UTC+2', name: 'UTC+2' },
+            { value: 'UTC+3', name: 'UTC+3' },
+            { value: 'UTC+4', name: 'UTC+4' },
+            { value: 'UTC+5', name: 'UTC+5' },
+            { value: 'UTC+6', name: 'UTC+6' },
+            { value: 'UTC+7', name: 'UTC+7' },
+            { value: 'UTC+8', name: 'UTC+8' },
+            { value: 'UTC+9', name: 'UTC+9' },
+            { value: 'UTC+10', name: 'UTC+10' },
+            { value: 'UTC+11', name: 'UTC+11' },
+            { value: 'UTC+12', name: 'UTC+12' },
+            { value: 'UTC+13', name: 'UTC+13' },
+            { value: 'UTC+14', name: 'UTC+14' }
         ]
     }
 ];
@@ -4301,7 +4341,9 @@ var AddChange = function (name, value, changes) {
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-var ObjectWithChanges = function (item, changes) { return (__assign(__assign({}, item), changes)); };
+var ObjectWithChanges = function (item, changes) {
+    return (__assign(__assign({}, item), changes));
+};
 var initialIDChanges = {};
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
@@ -4364,9 +4406,7 @@ var ChangeArrayByIDOrUUID = function (prevState, change, initial) {
  * @param changes
  * @param initial
  */
-var CombineArrayWithIDOrUUIDChanges = function (original, changes, initial) {
-    return changes.reduce(function (result, change) { return ChangeArrayByIDOrUUID(result, change, initial); }, original);
-};
+var CombineArrayWithIDOrUUIDChanges = function (original, changes, initial) { return changes.reduce(function (result, change) { return ChangeArrayByIDOrUUID(result, change, initial); }, original); };
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
  *
@@ -4379,7 +4419,9 @@ var CombineArrayWithIDOrUUIDChanges = function (original, changes, initial) {
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-var ArrayWithIDChanges = function (items, idChanges) { return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); }); };
+var ArrayWithIDChanges = function (items, idChanges) {
+    return items.map(function (item) { return (__assign(__assign({}, item), idChanges[item.id])); });
+};
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
@@ -4390,8 +4432,11 @@ var DataToCSVExport = function (filename, csvData, blankZeros) {
         .map(function (row) {
         return row
             .map(function (item) {
-            return (blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
-                typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item !== null && item !== void 0 ? item : '').toString();
+            return blankZeros && ((typeof item === 'number' && !item) || item === '0')
+                ? ''
+                : typeof item === 'string'
+                    ? '"' + ReplaceAll('"', '""', item) + '"'
+                    : (item !== null && item !== void 0 ? item : '').toString();
         })
             .join(',');
     })
@@ -4430,16 +4475,18 @@ var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
     var e_1, _a;
     if (includeHeaders === void 0) { includeHeaders = true; }
     if (headerToWords === void 0) { headerToWords = true; }
-    var headers = datasets
-        .reduce(function (results, dataset) { return __spread(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
+    var headers = datasets.reduce(function (results, dataset) { return __spread(results, Object.keys(dataset).filter(function (ds) { return !results.includes(ds); })); }, []);
     var tabDelim = '';
     if (includeHeaders) {
-        tabDelim += headers.map(function (header) { return "\"" + (headerToWords ? ToUpperCaseWords(header) : header) + "\""; }).join('\t');
+        tabDelim += headers
+            .map(function (header) { return "\"" + (headerToWords ? ToUpperCaseWords(header) : header) + "\""; })
+            .join('\t');
     }
     var _loop_1 = function (dataset) {
         if (tabDelim)
             tabDelim += "\r\n";
-        tabDelim += headers.map(function (header) {
+        tabDelim += headers
+            .map(function (header) {
             if (dataset[header] === undefined ||
                 dataset[header] === null ||
                 (typeof dataset[header] === 'string' && dataset[header].trim() === ''))
@@ -4449,7 +4496,8 @@ var DataToTabDelim = function (datasets, includeHeaders, headerToWords) {
                 return numberValue.toString();
             }
             return "\"" + dataset[header] + "\"";
-        }).join('\t');
+        })
+            .join('\t');
     };
     try {
         for (var datasets_1 = __values(datasets), datasets_1_1 = datasets_1.next(); !datasets_1_1.done; datasets_1_1 = datasets_1.next()) {
@@ -6122,6 +6170,7 @@ exports.DateQuarter = DateQuarter;
 exports.DateWeekISONumber = DateWeekISONumber;
 exports.DateWeekNumber = DateWeekNumber;
 exports.DatesBetween = DatesBetween;
+exports.DatesFromWeekNumber = DatesFromWeekNumber;
 exports.DatesMonth = DatesMonth;
 exports.DatesQuarter = DatesQuarter;
 exports.DaysInMonth = DaysInMonth;
@@ -6285,7 +6334,6 @@ exports.YYYY_MM_DD_HH_mm_ss = YYYY_MM_DD_HH_mm_ss;
 exports.YYYYsMMsDD = YYYYsMMsDD;
 exports.YYYYsMMsDDsHHcmmcss = YYYYsMMsDDsHHcmmcss;
 exports.ab2str = ab2str;
-exports.consoleLogTable = consoleLogTable;
 exports.everyAsync = everyAsync;
 exports.filterAsync = filterAsync;
 exports.findAsync = findAsync;
