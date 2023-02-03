@@ -63,7 +63,7 @@ export const ConsoleColor = {
  *
  * consoleLogTable(data)
  */
-export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLogTableDef) => {
+/*export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLogTableDef) => {
 	const nullIndicator = '(null)'
 
 	if (arrayData.length === 0) return
@@ -169,4 +169,4 @@ export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLog
 		)
 		console.log(' ')
 	}
-}
+} */
