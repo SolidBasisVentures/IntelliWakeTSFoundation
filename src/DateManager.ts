@@ -1186,7 +1186,7 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	return tryDate
 }
 
-export const DatesFromWeekNumber = (weekNumber: IWeekNumber): IDates | null => {
+export const DatesFromWeekNumberNull = (weekNumber: IWeekNumber): IDates | null => {
 	const start = DateFromWeekNumber(weekNumber)
 
 	if (!start) return null
@@ -1196,6 +1196,12 @@ export const DatesFromWeekNumber = (weekNumber: IWeekNumber): IDates | null => {
 		end: DateOnly(start, {days: 6})
 	}
 }
+
+export const DatesFromWeekNumber = (weekNumber: IWeekNumber): IDates =>
+	DatesFromWeekNumberNull(weekNumber) ?? {
+		start: DateOnly('now', {week: 'StartOfMon'}),
+		end: DateOnly('now', {week: 'StartOfMon', days: 6})
+	}
 
 export const WeekNumberAdjust = (
 	weekNumber: IWeekNumber,
