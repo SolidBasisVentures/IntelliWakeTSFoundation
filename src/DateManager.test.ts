@@ -17,6 +17,7 @@ import {
 	DateWeekISONumber,
 	IANAZoneAbbr,
 	ManualParse,
+	MonthDatesFromDateISOWeeks,
 	SortCompareDate,
 	SortCompareDateNull,
 	TimeFloorMinute,
@@ -149,6 +150,8 @@ test('Date Managers', () => {
 	expect(DateFromWeekNumber({year: 2022, week: 52})).toEqual('2022-12-26')
 	expect(DateFromWeekNumber({year: 0, week: 52})).toEqual(null)
 	expect(DatesFromWeekNumber({year: 2023, week: 5})).toEqual({start: '2023-01-30', end: '2023-02-05'})
+	expect(MonthDatesFromDateISOWeeks('2023-01-10')).toEqual({start: '2023-01-02', end: '2023-02-05'})
+	expect(MonthDatesFromDateISOWeeks('2023-02-10')).toEqual({start: '2023-02-06', end: '2023-03-05'})
 	expect(WeekNumberAdjust({year: 2022, week: 52}, 1)).toEqual({year: 2023, week: 1})
 	expect(WeekNumberAdjust({year: 2023, week: 1}, -1)).toEqual({year: 2022, week: 52})
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z')).toEqual(true)
@@ -338,22 +341,19 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
 	expect(DateOnly('today')).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly(null)).toEqual(new Date().toISOString().substring(0, 10))
 	expect(DateOnly(null, {formatLocale: true})).toEqual(
@@ -382,22 +382,19 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
 	expect(DateOnly('today')).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/New_York'
@@ -419,22 +416,19 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
 	expect(DateOnly('today')).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
@@ -457,22 +451,19 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
 	expect(DateOnly('today')).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
-		`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date()
-			.getDate()
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
 			.toString()
-			.padStart(2, '0')}`
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	if (!!otz) {

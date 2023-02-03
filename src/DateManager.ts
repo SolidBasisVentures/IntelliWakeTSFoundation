@@ -1153,7 +1153,7 @@ export const DateWeekISONumberNull = (date?: TDateAny, adjustments?: TAdjustment
 }
 
 export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber =>
-	DateWeekISONumber(date, adjustments) ?? {year: new Date().getFullYear(), week: 1}
+	DateWeekISONumberNull(date, adjustments) ?? {year: new Date().getFullYear(), week: 1}
 
 export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	if (!weekNumber?.year) return null
@@ -1202,6 +1202,20 @@ export const DatesFromWeekNumber = (weekNumber: IWeekNumber): IDates =>
 		start: DateOnly('now', {week: 'StartOfMon'}),
 		end: DateOnly('now', {week: 'StartOfMon', days: 6})
 	}
+
+export const MonthDatesFromDateISOWeeks = (date: TDateAny): IDates => {
+	const start = DateOnly(date ?? 'now', {month: 'StartOf', days: 6, week: 'StartOfMon'})
+
+	let end = DateOnly(start, {weeks: 2})
+
+	while (DateCompare(start, 'IsSame', end, 'month')) {
+		end = DateOnly(end, {week: 1})
+	}
+
+	end = DateOnly(end, {week: -1, days: 6})
+
+	return {start, end}
+}
 
 export const WeekNumberAdjust = (
 	weekNumber: IWeekNumber,
