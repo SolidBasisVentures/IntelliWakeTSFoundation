@@ -599,40 +599,54 @@ export const DateFormat = (
 
 export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
-	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1).toString().padStart(2, '0')}${dateObject
+	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1)
+		.toString()
+		.padStart(2, '0')}${dateObject
 		.getDate()
 		.toString()
-		.padStart(2, '0')}${dateObject.getHours().toString().padStart(2, '0')}${dateObject
+		.padStart(2, '0')}${dateObject
+		.getHours()
+		.toString()
+		.padStart(2, '0')}${dateObject
 		.getMinutes()
 		.toString()
 		.padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
-	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject
+	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1)
+		.toString()
+		.padStart(2, '0')}-${dateObject
 		.getDate()
 		.toString()
-		.padStart(2, '0')}_${dateObject.getHours().toString().padStart(2, '0')}-${dateObject
+		.padStart(2, '0')}_${dateObject
+		.getHours()
+		.toString()
+		.padStart(2, '0')}-${dateObject
 		.getMinutes()
 		.toString()
 		.padStart(2, '0')}-${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 export const YYYYsMMsDDsHHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
-	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject
+	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1)
+		.toString()
+		.padStart(2, '0')}/${dateObject
 		.getDate()
 		.toString()
-		.padStart(2, '0')} ${dateObject.getHours().toString().padStart(2, '0')}:${dateObject
+		.padStart(2, '0')} ${dateObject
+		.getHours()
+		.toString()
+		.padStart(2, '0')}:${dateObject
 		.getMinutes()
 		.toString()
 		.padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 export const YYYYsMMsDD = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
-	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject
-		.getDate()
+	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1)
 		.toString()
-		.padStart(2, '0')}`
+		.padStart(2, '0')}/${dateObject.getDate().toString().padStart(2, '0')}`
 }
 export const HHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
@@ -1137,6 +1151,9 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 
 	return {year, week}
 }
+
+export const WeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber =>
+	DateWeekISONumber(date, adjustments) ?? {year: new Date().getFullYear(), week: 1}
 
 export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	if (!weekNumber?.year) return null
