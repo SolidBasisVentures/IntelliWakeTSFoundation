@@ -1131,7 +1131,7 @@ export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWee
 	return {year, week}
 }
 
-export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
+export const DateWeekISONumberNull = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	const currentDate = DateObject(date ?? 'now', adjustments)
 	if (!currentDate) return null
 
@@ -1152,7 +1152,7 @@ export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): I
 	return {year, week}
 }
 
-export const WeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber =>
+export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber =>
 	DateWeekISONumber(date, adjustments) ?? {year: new Date().getFullYear(), week: 1}
 
 export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
