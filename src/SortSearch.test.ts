@@ -1,4 +1,5 @@
 import {
+	FindIsActive,
 	ObjectContainsSearchTerms,
 	SearchRow,
 	SearchRows,
@@ -9,12 +10,14 @@ import {
 } from './SortSearch'
 
 test('SortCompare', () => {
-	expect([
-		{id: 1, name: 'AAA', prioritized: false},
-		{id: 2, name: 'ZZZ', prioritized: false},
-		{id: 3, name: 'CCC', prioritized: true},
-		{id: 4, name: 'BBB', prioritized: false}
-	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized) ?? SortCompare(a.name, b.name))).toEqual([
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: 'CCC', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized) ?? SortCompare(a.name, b.name))
+	).toEqual([
 		{id: 3, name: 'CCC', prioritized: true},
 		{id: 1, name: 'AAA', prioritized: false},
 		{id: 4, name: 'BBB', prioritized: false},
@@ -23,12 +26,14 @@ test('SortCompare', () => {
 })
 
 test('SortCompare Empty Bottom', () => {
-	expect([
-		{id: 3, name: 'CCC', prioritized: true},
-		{id: 1, name: 'AAA', prioritized: undefined},
-		{id: 4, name: 'BBB', prioritized: false},
-		{id: 2, name: 'ZZZ', prioritized: undefined}
-	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Bottom') ?? SortCompare(a.name, b.name))).toEqual([
+	expect(
+		[
+			{id: 3, name: 'CCC', prioritized: true},
+			{id: 1, name: 'AAA', prioritized: undefined},
+			{id: 4, name: 'BBB', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: undefined}
+		].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Bottom') ?? SortCompare(a.name, b.name))
+	).toEqual([
 		{id: 3, name: 'CCC', prioritized: true},
 		{id: 4, name: 'BBB', prioritized: false},
 		{id: 1, name: 'AAA', prioritized: undefined},
@@ -37,12 +42,14 @@ test('SortCompare Empty Bottom', () => {
 })
 
 test('SortCompare Empty Top', () => {
-	expect([
-		{id: 3, name: 'CCC', prioritized: true},
-		{id: 1, name: 'AAA', prioritized: undefined},
-		{id: 2, name: 'ZZZ', prioritized: undefined},
-		{id: 4, name: 'BBB', prioritized: false}
-	].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Top') ?? SortCompare(a.name, b.name))).toEqual([
+	expect(
+		[
+			{id: 3, name: 'CCC', prioritized: true},
+			{id: 1, name: 'AAA', prioritized: undefined},
+			{id: 2, name: 'ZZZ', prioritized: undefined},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) => SortCompareNull(b.prioritized, a.prioritized, 'Top') ?? SortCompare(a.name, b.name))
+	).toEqual([
 		{id: 1, name: 'AAA', prioritized: undefined},
 		{id: 2, name: 'ZZZ', prioritized: undefined},
 		{id: 3, name: 'CCC', prioritized: true},
@@ -51,12 +58,14 @@ test('SortCompare Empty Top', () => {
 })
 
 test('SortCompare Empty ID Bottom', () => {
-	expect([
-		{id: 1, name: 'AAA'},
-		{id: null, name: 'ZZZ'},
-		{id: null, name: 'CCC'},
-		{id: 4, name: 'BBB'}
-	].sort((a, b) => SortCompareNull(a.id, b.id, 'Bottom') ?? SortCompare(a.name, b.name))).toEqual([
+	expect(
+		[
+			{id: 1, name: 'AAA'},
+			{id: null, name: 'ZZZ'},
+			{id: null, name: 'CCC'},
+			{id: 4, name: 'BBB'}
+		].sort((a, b) => SortCompareNull(a.id, b.id, 'Bottom') ?? SortCompare(a.name, b.name))
+	).toEqual([
 		{id: 1, name: 'AAA'},
 		{id: 4, name: 'BBB'},
 		{id: null, name: 'CCC'},
@@ -65,12 +74,14 @@ test('SortCompare Empty ID Bottom', () => {
 })
 
 test('SortCompare Empty ID Top', () => {
-	expect([
-		{id: 1, name: 'AAA'},
-		{id: null, name: 'ZZZ'},
-		{id: null, name: 'CCC'},
-		{id: 4, name: 'BBB'}
-	].sort((a, b) => SortCompareNull(a.id, b.id, 'Top') ?? SortCompare(a.name, b.name))).toEqual([
+	expect(
+		[
+			{id: 1, name: 'AAA'},
+			{id: null, name: 'ZZZ'},
+			{id: null, name: 'CCC'},
+			{id: 4, name: 'BBB'}
+		].sort((a, b) => SortCompareNull(a.id, b.id, 'Top') ?? SortCompare(a.name, b.name))
+	).toEqual([
 		{id: null, name: 'CCC'},
 		{id: null, name: 'ZZZ'},
 		{id: 1, name: 'AAA'},
@@ -79,16 +90,18 @@ test('SortCompare Empty ID Top', () => {
 })
 
 test('Sort Array', () => {
-	expect([
-		{id: 1, name: 'One'},
-		{id: 2, name: 'Two'},
-		{id: 3, name: 'Three'},
-		{id: 4, name: 'Four'},
-		{id: 5, name: 'Five'},
-		{id: null, name: 'Empty'},
-		{id: 7, name: 'Seven'},
-		{id: 6, name: 'Six'}
-	].sort((a, b) => SortPerArray(a.id, b.id, [4, 5, 3, 2, 1], 'Bottom'))).toEqual([
+	expect(
+		[
+			{id: 1, name: 'One'},
+			{id: 2, name: 'Two'},
+			{id: 3, name: 'Three'},
+			{id: 4, name: 'Four'},
+			{id: 5, name: 'Five'},
+			{id: null, name: 'Empty'},
+			{id: 7, name: 'Seven'},
+			{id: 6, name: 'Six'}
+		].sort((a, b) => SortPerArray(a.id, b.id, [4, 5, 3, 2, 1], 'Bottom'))
+	).toEqual([
 		{id: 4, name: 'Four'},
 		{id: 5, name: 'Five'},
 		{id: 3, name: 'Three'},
@@ -101,19 +114,13 @@ test('Sort Array', () => {
 })
 
 test('Sort Index Numeric', () => {
-	expect([2, 4, 3, 1, 4]
-		.sort((a, b) => SortIndex(a, b, [4, 3, 2, 1])))
-		.toEqual([
-			4, 4, 3, 2, 1
-		])
+	expect([2, 4, 3, 1, 4].sort((a, b) => SortIndex(a, b, [4, 3, 2, 1]))).toEqual([4, 4, 3, 2, 1])
 })
 
 test('Sort Index String', () => {
-	expect(['Three', 'One', 'Four', 'One', 'Two']
-		.sort((a, b) => SortIndex(a, b, ['One', 'Two', 'Three', 'Four'])))
-		.toEqual([
-			'One', 'One', 'Two', 'Three', 'Four'
-		])
+	expect(
+		['Three', 'One', 'Four', 'One', 'Two'].sort((a, b) => SortIndex(a, b, ['One', 'Two', 'Three', 'Four']))
+	).toEqual(['One', 'One', 'Two', 'Three', 'Four'])
 })
 
 test('Search', () => {
@@ -126,14 +133,18 @@ test('Search', () => {
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24'], {matchFromTerm: 1})).toEqual(true)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchFromTerm: 1})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24'], {matchUntilTerm: 0})).toEqual(false)
-	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24', 'Sally'], {
-		matchFromTerm: 1,
-		matchUntilTerm: 1
-	})).toEqual(true)
-	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john', '25', 'doe'], {
-		matchFromTerm: 1,
-		matchUntilTerm: 1
-	})).toEqual(false)
+	expect(
+		ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['Fred', '24', 'Sally'], {
+			matchFromTerm: 1,
+			matchUntilTerm: 1
+		})
+	).toEqual(true)
+	expect(
+		ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john', '25', 'doe'], {
+			matchFromTerm: 1,
+			matchUntilTerm: 1
+		})
+	).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchFromTerm: 1})).toEqual(false)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24', 'Fred'], {matchUntilTerm: 0})).toEqual(true)
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchUntilTerm: 0})).toEqual(true)
@@ -141,14 +152,27 @@ test('Search', () => {
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 1})).toEqual(false)
 	expect(SearchRow({user: 'john doe', age: 24}, 'Fred 24', {matchFromTerm: 1})).toEqual(true)
 	expect(SearchRow({user: 'john doe', age: 24}, '24 Fred', {matchFromTerm: 2})).toEqual(false)
-	expect(SearchRows([
-		{user: 'john doe', age: 1},
-		{user: 'john doe', age: 2},
-		{user: 'john doe', age: 3},
-		{user: 'john doe', age: 4},
-		{user: 'john doe', age: 5}
-	], 'john', {limit: 2})).toEqual([
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1},
+				{user: 'john doe', age: 2},
+				{user: 'john doe', age: 3},
+				{user: 'john doe', age: 4},
+				{user: 'john doe', age: 5}
+			],
+			'john',
+			{limit: 2}
+		)
+	).toEqual([
 		{user: 'john doe', age: 1},
 		{user: 'john doe', age: 2}
 	])
+	const activeList = [
+		{id: 1, is_active: true},
+		{id: 2, is_active: false}
+	]
+	expect(activeList.filter((aL) => FindIsActive(aL.is_active, null))).toEqual(activeList)
+	expect(activeList.filter((aL) => FindIsActive(aL.is_active, true))).toEqual([{id: 1, is_active: true}])
+	expect(activeList.filter((aL) => FindIsActive(aL.is_active, false))).toEqual([{id: 2, is_active: false}])
 })
