@@ -1,4 +1,4 @@
-import {CleanNumber} from './Functions'
+import {CleanNumber, GreaterNumber} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -371,7 +371,7 @@ export const SortCompareNull = (
 }
 
 /**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or 0 if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
  *
  * @example
  * [
@@ -394,6 +394,67 @@ export const SortCompare = (
 	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
 ): number => {
 	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal specifically for strings that likely contain version that need to be sorted as [1.1, 1.2, 1.10] instead of [1.1, 1.10, 1.2]
+ *
+ * @example
+ * [
+		{id: 1, version: '1.1'},
+		{id: 2, version: '1.10'},
+		{id: 3, version: '1.2'}
+	]
+ .sort((a, b) =>
+ 		SortSplitItemsNull(a.version, b.version)) = [
+		{id: 1, version: '1.1'},
+		{id: 3, version: '1.2'},
+		{id: 2, version: '1.10'}
+ ]
+ */
+export const SortSplitItemsNull = (
+	beforeValue: any,
+	afterValue: any,
+	split = '.',
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number | null => {
+	const beforeValues = (beforeValue ?? '').toString().split(split)
+	const afterValues = (afterValue ?? '').toString().split(split)
+
+	const highestCount = GreaterNumber(beforeValues.length, afterValues.length)
+
+	for (let i = 0; i < highestCount; i++) {
+		const sortResult = SortCompare(beforeValues[i], afterValues[i], emptyTo)
+
+		if (sortResult !== 0) return sortResult
+	}
+
+	return null
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or 0 if values are equal specifically for strings that likely contain version that need to be sorted as [1.1, 1.2, 1.10] instead of [1.1, 1.10, 1.2]
+ *
+ * @example
+ * [
+		{id: 1, version: '1.1'},
+		{id: 2, version: '1.10'},
+		{id: 3, version: '1.2'}
+	]
+ .sort((a, b) =>
+ 		SortSplitItems(a.version, b.version)) = [
+		{id: 1, version: '1.1'},
+		{id: 3, version: '1.2'},
+		{id: 2, version: '1.10'}
+ ]
+ */
+export const SortSplitItems = (
+	beforeValue: any,
+	afterValue: any,
+	split = '.',
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number => {
+	return SortSplitItemsNull(beforeValue, afterValue, split, emptyTo) ?? 0
 }
 
 /**
