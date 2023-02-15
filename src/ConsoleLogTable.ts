@@ -1,17 +1,29 @@
+/**
+ *
+ */
 export type TConsoleLogTableColumnDef = {characters: number; justify: 'L' | 'R'; padWith?: string}
 
+/**
+ *
+ */
 export type TConsoleLogTableDef = {
 	firstRowIsHeader: boolean
 	surroundingLines: boolean
 	columns?: TConsoleLogTableColumnDef[]
 }
 
+/**
+ *
+ */
 export const initialConsoleLogTableDef: TConsoleLogTableDef = {
 	firstRowIsHeader: true,
 	surroundingLines: true,
 	columns: []
 }
 
+/**
+ *
+ */
 export const ConsoleColor = {
 	Reset: '\x1b[0m',
 	// Bright: '\x1b[1m',
@@ -63,7 +75,7 @@ export const ConsoleColor = {
  *
  * consoleLogTable(data)
  */
-/*export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLogTableDef) => {
+export const consoleLogTable = (arrayData: any[][], tableDef = initialConsoleLogTableDef) => {
 	const nullIndicator = '(null)'
 
 	if (arrayData.length === 0) return
@@ -169,4 +181,4 @@ export const ConsoleColor = {
 		)
 		console.log(' ')
 	}
-} */
+}

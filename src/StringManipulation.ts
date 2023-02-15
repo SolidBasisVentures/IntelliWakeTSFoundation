@@ -3,6 +3,7 @@
  *
  * @example
  * ToSnakeCase('UserToken')  // returns "user_token"
+ *
  */
 import {CleanNumber, CleanNumberNull, ReplaceAll, RoundTo, ToArray} from './Functions'
 
@@ -10,6 +11,7 @@ import {CleanNumber, CleanNumberNull, ReplaceAll, RoundTo, ToArray} from './Func
  * Splits a string into its component words
  * @param str
  * @constructor
+ *
  */
 export const ToWords = (str: string | string[] | undefined | null): string[] => {
 	if (!str) return []
@@ -35,12 +37,24 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 	return results.filter(strText => !!strText)
 }
 
+/**
+ *
+ * @param str
+ * @constructor
+ *
+ */
 export const ToFirstLetterUpper = (str: string | undefined | null): string => {
 	if (!str) return ''
 
 	return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase()
 }
 
+/**
+ *
+ * @param str
+ * @constructor
+ *
+ */
 export const ToFirstLetterUpperSmart = (str: string | undefined | null): string => {
 	if (!str) return ''
 
@@ -55,6 +69,7 @@ export const ToFirstLetterUpperSmart = (str: string | undefined | null): string 
  * To Snake Case ('To Snake Case' = 'to_snake_case')
  * @param str
  * @constructor
+ *
  */
 export const ToSnakeCase = (str: string | string[] | undefined | null): string =>
 	ToWords(str).map(st => st.toLowerCase()).join('_')
@@ -63,6 +78,7 @@ export const ToSnakeCase = (str: string | string[] | undefined | null): string =
  * Converts a string to kebab-case. *
  * @example
  * ToSnakeCase('UserToken')  // returns "user-token"
+ *
  */
 export const ToKebabCase = (str: string | string[] | undefined | null): string =>
 	ToWords(str).map(st => st.toLowerCase()).join('-')
@@ -72,6 +88,7 @@ export const ToKebabCase = (str: string | string[] | undefined | null): string =
  *
  * @example
  * ToCamelCase('user_token') //  returns "userToken
+ *
  */
 export const ToCamelCase = (str: string | string[] | undefined | null): string =>
 	ToWords(str).map((st, idx) => !idx ? st.toLowerCase() : st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join('')
@@ -80,6 +97,7 @@ export const ToCamelCase = (str: string | string[] | undefined | null): string =
  * To Upper Case Words
  * @param str
  * @constructor
+ *
  */
 export const ToUpperCaseWords = (str: string | string[] | undefined | null): string =>
 	ToWords(str).map(st => st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join(' ')
@@ -89,6 +107,7 @@ export const ToUpperCaseWords = (str: string | string[] | undefined | null): str
  *
  * @example
  * ToPascalCase('user_token') //  returns "UserToken
+ *
  */
 export const ToPascalCase = (str: string | string[] | undefined | null): string =>
 	ToWords(str).map(st => st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join('')
@@ -97,6 +116,7 @@ export const ToPascalCase = (str: string | string[] | undefined | null): string 
  * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
  * @param str
  * @constructor
+ *
  */
 export const ToInitials = (str: string | string[] | undefined | null): string => {
 	if (!str) return ''
@@ -117,6 +137,7 @@ export const ToInitials = (str: string | string[] | undefined | null): string =>
  * @example
  * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
  * ReplaceLinks('https://www.google.com')
+ *
  */
 export const ReplaceLinks = function (subject: string | undefined | null): string {
 	if (!subject) return ''
@@ -135,6 +156,7 @@ export const ReplaceLinks = function (subject: string | undefined | null): strin
  * @example
  * // returns "blank"
  * CleanScripts('<script>console.log(1)</script>blank')
+ *
  */
 export const CleanScripts = function (subject: string | undefined | null): string {
 	if (!subject) return ''
@@ -148,6 +170,7 @@ export const CleanScripts = function (subject: string | undefined | null): strin
  * @example
  * // returns "john doe"
  * TextToHTML('<p>john doe</p>')
+ *
  */
 export const TextToHTML = function (subject: string | undefined | null): string {
 	if (!subject) return ''
@@ -162,9 +185,18 @@ export const TextToHTML = function (subject: string | undefined | null): string 
  *
  * @param subject
  * HTMLToText('<p>john doe</p>') // returns john doe
+ *
  */
 export const HTMLToText = (subject: string | undefined | null): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
 
+/**
+ *
+ * @param subject
+ * @param length
+ * @param padString
+ * @constructor
+ *
+ */
 export const LeftPad = (subject: string | undefined | null, length: number, padString: string): string => {
 	let str = subject ?? ''
 
@@ -172,6 +204,14 @@ export const LeftPad = (subject: string | undefined | null, length: number, padS
 
 	return str
 }
+/**
+ *
+ * @param subject
+ * @param length
+ * @param padString
+ * @constructor
+ *
+ */
 export const RightPad = (subject: string | undefined | null, length: number, padString: string): string => {
 	let str = subject ?? ''
 
@@ -186,6 +226,7 @@ export const RightPad = (subject: string | undefined | null, length: number, pad
  * @example
  * // returns $100.00
  * ToCurrency(100)
+ *
  */
 export const ToCurrency = (value: any, decimals: number = 2): string => {
 	return (
@@ -203,6 +244,7 @@ export const ToCurrency = (value: any, decimals: number = 2): string => {
  * @example
  * // returns $100.00
  * ToCurrency(100)
+ *
  */
 export const ToCurrencyMax = (value: any, decimals: number = 2): string => {
 	return (
@@ -219,6 +261,7 @@ export const ToCurrencyMax = (value: any, decimals: number = 2): string => {
  * @example
  * // returns 50%
  * ToPercent(0.5)
+ *
  */
 export const ToPercent = (value: any, decimals: number = 0): string => {
 	return (
@@ -235,6 +278,7 @@ export const ToPercent = (value: any, decimals: number = 0): string => {
  * @example
  * // returns 50%
  * ToPercent(0.5)
+ *
  */
 export const ToPercentMax = (value: any, decimals: number = 0): string => {
 	return (
@@ -253,6 +297,7 @@ export const ToPercentMax = (value: any, decimals: number = 0): string => {
  *
  * // returns ''
  * ToCurrencyBlank('')
+ *
  */
 export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -277,6 +322,7 @@ export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
  *
  * // returns ''
  * ToCurrencyBlank('-')
+ *
  */
 export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -302,6 +348,7 @@ export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
  *
  * // returns ''
  * ToPercent('')
+ *
  */
 export const ToPercentBlank = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -326,6 +373,7 @@ export const ToPercentBlank = (value: any, decimals: number = 2): string => {
  *
  * // returns '-'
  * ToPercent('')
+ *
  */
 export const ToPercentDash = (value: any, decimals: number = 2): string => {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -346,6 +394,7 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
  * @example
  * // return 10.00
  * ToDigits(10)
+ *
  */
 export const ToDigits = function (value: any, decimals: number = 0, minDecimals: number | null = null): string {
 	return CleanNumber(value).toLocaleString(undefined, {
@@ -360,6 +409,7 @@ export const ToDigits = function (value: any, decimals: number = 0, minDecimals:
  * @example
  * // return 10.00
  * ToDigits(10)
+ *
  */
 export const ToDigitsMax = function (value: any, decimals: number = 0): string {
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
@@ -377,6 +427,7 @@ export const ToDigitsMax = function (value: any, decimals: number = 0): string {
  *
  * // returns ''
  * ToDigits('')
+ *
  */
 export const ToDigitsBlank = function (value: any, decimals: number = 0) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -399,6 +450,7 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  *
  * // returns ''
  * ToDigits('')
+ *
  */
 export const ToDigitsBlankMax = function (value: any, decimals: number = 0) {
 	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
@@ -420,6 +472,7 @@ export const ToDigitsBlankMax = function (value: any, decimals: number = 0) {
  *
  * // returns '-'
  * ToDigits('')
+ *
  */
 export const ToDigitsDash = function (value: any, decimals: number = 0) {
 	if (!value || isNaN(value) || CleanNumber(value) === 0) {
@@ -442,6 +495,7 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  *
  * // returns '-'
  * ToDigits('')
+ *
  */
 export const ToDigitsDashMax = function (value: any, decimals: number = 0) {
 	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
@@ -453,6 +507,12 @@ export const ToDigitsDashMax = function (value: any, decimals: number = 0) {
 	})
 }
 
+/**
+ *
+ * @param value
+ * @constructor
+ *
+ */
 export const DigitsNth = (value: any): string | null => {
 	let result = ToDigits(value)
 
@@ -491,6 +551,7 @@ export const DigitsNth = (value: any): string | null => {
  * @example
  * // returns ['john doe']
  * ToStringArray('john doe')
+ *
  */
 export const ToStringArray = (value: string | string[]): string[] => {
 	if (!value) {
@@ -510,6 +571,7 @@ export const ToStringArray = (value: string | string[]): string[] => {
  * @example
  * // returns 123-12-1234
  * FormatSSN('123121234')
+ *
  */
 export const FormatSSN = (ssn: string | null | undefined): string => {
 	// remove all non-dash and non-numerals
@@ -530,6 +592,10 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 	return val.substring(0, 11)
 }
 
+/**
+ *
+ *
+ */
 export interface IPhoneComponents {
 	countryCode: string,
 	areaCode: string,
@@ -538,6 +604,12 @@ export interface IPhoneComponents {
 	extension: string
 }
 
+/**
+ *
+ * @param phone
+ * @constructor
+ *
+ */
 export const PhoneComponents = (phone: string | null | undefined): IPhoneComponents => {
 	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
 
@@ -579,6 +651,7 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
  * @example
  * // returns 123-12-1234
  * FormatSSN('123121234')
+ *
  */
 export const FormatPhoneNumber = (phone: string | null | undefined): string => {
 	const components = PhoneComponents(phone)
@@ -599,6 +672,7 @@ export const FormatPhoneNumber = (phone: string | null | undefined): string => {
  * @example
  * // returns (555) 555-1234
  * FormatPhoneNumber('5555551234')
+ *
  */
 export const FormatPhoneNumberOld = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
@@ -623,6 +697,7 @@ export const FormatPhoneNumberOld = (phone: string, forceNumeric: boolean = fals
  * @example
  * // returns 555.555.1234
  * FormatPhoneNumberDots('5555551234')
+ *
  */
 export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = false) => {
 	//Filter only numbers from the input
@@ -647,6 +722,7 @@ export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = fal
  * @example
  * // returns "12345-6789"
  * FormatZip('123456789')
+ *
  */
 export const FormatZip = (zip: string) => {
 	//Filter only numbers from the input
@@ -666,6 +742,7 @@ export const FormatZip = (zip: string) => {
  * @example
  * // returns "http://www.google.com"
  * FormatExternalURL('www.google.com')
+ *
  */
 export const FormatExternalURL = (url: string): string => {
 	if (!!url) {
@@ -685,6 +762,7 @@ export const FormatExternalURL = (url: string): string => {
  * @example
  * // returns 'Doe, John Smith, Jr.'
  * DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')
+ *
  */
 export const DisplayNameFromFL = (first?: string, last?: string, middle?: string, suffix?: string): string => {
 	let returnName = ''
@@ -737,6 +815,7 @@ export const DisplayNameFromFL = (first?: string, last?: string, middle?: string
  *   middle_name: 'Smith',
  *   suffix_name: 'Jr.',
  * })
+ *
  */
 export const DisplayNameFromObject = (object?: any, prefix?: string): string => {
 	if (!object) return ''
@@ -757,6 +836,7 @@ export const DisplayNameFromObject = (object?: any, prefix?: string): string => 
  * @example
  * // return This Is Awesome
  * UCWords('This is awesome')
+ *
  */
 export const UCWords = (str: string | null): string | null => {
 	if (!str) {
@@ -776,6 +856,7 @@ export const UCWords = (str: string | null): string | null => {
  * @example
  * // returns '32112'
  * RandomString(5, '12345')
+ *
  */
 export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWXYZ2346789') => {
 	let result = ''
@@ -805,6 +886,12 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 	// return result
 }
 
+/**
+ *
+ * @param length
+ * @constructor
+ *
+ */
 export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
 
 /**
@@ -817,6 +904,7 @@ export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklm
  * @param maxDecimals
  * @param minDecimals
  * @constructor
+ *
  */
 export const AddS = (text?: string | null, count?: number | null, showNumber = false, maxDecimals = 0, minDecimals: number | null = null): string => {
 	const checkText = (text ?? '').toLowerCase()
@@ -826,6 +914,14 @@ export const AddS = (text?: string | null, count?: number | null, showNumber = f
 }
 
 
+/**
+ *
+ * @param value
+ * @param decimals
+ * @param round
+ * @constructor
+ *
+ */
 export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'down' = 'round'): string | null => {
 	let calcValue = CleanNumberNull(value)
 
@@ -876,12 +972,26 @@ export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'd
 	return showValue(calcValue, trillions)
 }
 
+/**
+ *
+ * @param value
+ * @param maxCharacters
+ * @constructor
+ *
+ */
 export const EllipsesAtMax = (value: string | null | undefined, maxCharacters: number = 15): string | null | undefined => {
 	if (!value || value.length <= maxCharacters) return value
 
 	return `${value.substring(0, maxCharacters)}...`
 }
 
+/**
+ *
+ * @param value
+ * @param asteriskPattern
+ * @constructor
+ *
+ */
 export const AsteriskMatch = (value: string | null | undefined, asteriskPattern: string): boolean => {
 	if (!value) return false
 
@@ -892,6 +1002,12 @@ export const AsteriskMatch = (value: string | null | undefined, asteriskPattern:
 	return !!value.match(new RegExp(regex))?.length
 }
 
+/**
+ *
+ * @param paths
+ * @constructor
+ *
+ */
 export const BuildPath = (...paths: (string | null)[]) => {
 	let build = paths.map((part, i) => {
 		if (i === 0) {

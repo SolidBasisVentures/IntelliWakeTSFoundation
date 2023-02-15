@@ -1,5 +1,9 @@
 import {TObjectConstraint} from './ObjectConstraint'
 
+/**
+ *
+ *
+ */
 export type TConstaintTest = {
 	id: number
 	name: string
@@ -10,6 +14,10 @@ export type TConstaintTest = {
 	is_active: boolean
 }
 
+/**
+ *
+ *
+ */
 export const ObjectConstraintTest: TObjectConstraint<TConstaintTest> = {
 	id: {type: 'number', nullable: false, default: 0},
 	name: {type: 'string', nullable: false, default: ''},
@@ -20,6 +28,11 @@ export const ObjectConstraintTest: TObjectConstraint<TConstaintTest> = {
 	is_active: {type: 'boolean', default: true}
 }
 
+/**
+ *
+ * @constructor
+ *
+ */
 export const TestFormData = (): FormData => {
 	const formData = new URLSearchParams()
 

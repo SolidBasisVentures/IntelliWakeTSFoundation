@@ -19,6 +19,9 @@ import {IsOn, ReplaceAll} from './Functions'
 const EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^']
 const EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray']
 
+/**
+ *
+ */
 export type TVariables = {[key: string]: any}
 
 /**

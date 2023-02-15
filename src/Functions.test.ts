@@ -29,8 +29,14 @@ import {test, expect} from 'vitest'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
+	expect(IsOn(0)).toBe(false)
 	expect(IsOn(null)).toBe(false)
 	expect(IsOn('active')).toBe(true)
+	expect(IsOn('inactive')).toBe(false)
+	expect(IsOn('t')).toBe(true)
+	expect(IsOn('f')).toBe(false)
+	expect(IsOn('true')).toBe(true)
+	expect(IsOn('false')).toBe(false)
 })
 
 test('RoundTo', () => {
@@ -144,6 +150,7 @@ test('CleanNumber', () => {
 	expect(CleanNumber(1.234)).toBe(1.234)
 	expect(CleanNumber(1.234, 0)).toBe(1)
 	expect(CleanNumber(1.234, 1)).toBe(1.2)
+	expect(CleanNumber(1.254, 1)).toBe(1.3)
 })
 
 

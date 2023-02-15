@@ -2,22 +2,78 @@ import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
 import {DeepEqual} from './DeepEqual'
 
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE = 'YYYY-MM-DD'
+
+/**
+ *
+ */
 export const DATE_FORMAT_TIME_SECONDS = 'HH:mm:ss'
+
+/**
+ *
+ */
 export const DATE_FORMAT_TIME_NO_SECONDS = 'HH:mm'
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE + ' ' + DATE_FORMAT_TIME_SECONDS
 
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_DISPLAY = `MMM D, YYYY`
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_DISPLAY_DOW = `dd, ${DATE_FORMAT_DATE_DISPLAY}`
+
+/**
+ *
+ */
 export const DATE_FORMAT_TIME_DISPLAY = 'h:mm a'
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_TIME_DISPLAY = `${DATE_FORMAT_DATE_DISPLAY}, ${DATE_FORMAT_TIME_DISPLAY}`
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW = `${DATE_FORMAT_DATE_DISPLAY_DOW}, ${DATE_FORMAT_TIME_DISPLAY}`
 
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_DISPLAY_LONG = `MMMM D, YYYY`
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_DISPLAY_DOW_LONG = `dddd, ${DATE_FORMAT_DATE_DISPLAY_LONG}`
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_TIME_DISPLAY_LONG = `${DATE_FORMAT_DATE_DISPLAY_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
+
+/**
+ *
+ */
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLAY_DOW_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 
+
+/**
+ *
+ */
 export type TDateOnlyDuration =
 	| 'year'
 	| 'years'
@@ -30,6 +86,10 @@ export type TDateOnlyDuration =
 	| 'day'
 	| 'days'
 
+
+/**
+ *
+ */
 export type TTimeOnlyDuration =
 	| 'hour'
 	| 'hours'
@@ -40,15 +100,31 @@ export type TTimeOnlyDuration =
 	| 'millisecond'
 	| 'milliseconds'
 
+
+/**
+ *
+ */
 export type TDuration = TDateOnlyDuration | TTimeOnlyDuration
 
+
+/**
+ *
+ */
 export type TDateOnlyAdjustment =
 	| {[key in TDateOnlyDuration]?: number | 'StartOf' | 'EndOf'}
 	| {week?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 	| {weeks?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 
+
+/**
+ *
+ */
 export type TTimeOnlyAdjustment = {[key in TTimeOnlyDuration]?: number | 'StartOf' | 'EndOf'}
 
+
+/**
+ *
+ */
 export type TAdjustment =
 	| {[key in TDuration]?: number | 'StartOf' | 'EndOf'}
 	| {week?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
@@ -59,8 +135,20 @@ export type TAdjustment =
  */
 export const NowISOString = (adjustment?: TAdjustment): string =>
 	!adjustment ? new Date().toISOString() : DateISO('now', adjustment) ?? new Date().toISOString()
+
+/**
+ *
+ * @constructor
+ */
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
+
+/**
+ *
+ * @param timeZone
+ * @param sourceDate
+ * @constructor
+ */
 export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): number | null => {
 	if (!timeZone) return (DateObject(sourceDate ?? 'now', {ignoreIANA: true}) ?? new Date()).getTimezoneOffset()
 
@@ -138,8 +226,26 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 	// return result
 }
 
+
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export const StringHasTimeData = (value: string): boolean => value.includes(':')
+
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
+
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export const StringHasTimeZoneData = (value: string): boolean =>
 	value === 'now' ||
 	value === 'today' ||
@@ -148,6 +254,12 @@ export const StringHasTimeZoneData = (value: string): boolean =>
 	value.includes('+') ||
 	value.substr(15).includes('-')
 
+
+/**
+ *
+ * @param value
+ * @constructor
+ */
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
 
@@ -156,8 +268,18 @@ export const IsDateString = (value: any): boolean => {
 	return !!DateParseTSInternal(value)
 }
 
+
+/**
+ *
+ */
 export type TDateAny = Date | number | 'now' | 'today' | string | null | undefined
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const ManualParse = (date: string): number | null => {
 	const regexps = [
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
@@ -298,8 +420,19 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 	}
 }
 
+
+/**
+ *
+ */
 export type TDateParseOptions = TAdjustment & {timezoneSource?: string; ignoreIANA?: boolean}
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): number | null => {
 	let newDate = DateParseTSInternal(date, adjustments?.timezoneSource, adjustments?.ignoreIANA)
 
@@ -308,6 +441,13 @@ export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): nu
 	return DateAdjustTS(newDate, adjustments)
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateISO = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
 	const parsed = DateParseTS(date, adjustments)
 
@@ -315,6 +455,13 @@ export const DateISO = (date: TDateAny, adjustments?: TDateParseOptions): string
 
 	return new Date(parsed).toISOString()
 }
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Date | null => {
 	const parsed = DateParseTS(date, adjustments)
 
@@ -323,6 +470,13 @@ export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Dat
 	return new Date(parsed)
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateICS = (date: TDateAny, adjustments?: TDateParseOptions): string | null => {
 	const dateISO = DateISO(date, adjustments)
 
@@ -343,6 +497,10 @@ export const DateICS = (date: TDateAny, adjustments?: TDateParseOptions): string
 	return dateICS
 }
 
+
+/**
+ *
+ */
 export type TDateFormat =
 	| 'Local'
 	| 'LocalDoW'
@@ -360,6 +518,15 @@ export type TDateFormat =
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
 
+
+/**
+ *
+ * @param format
+ * @param date
+ * @param timezoneDisplay
+ * @param timezoneSource
+ * @constructor
+ */
 export const DateFormatAny = (
 	format: TDateFormat | string,
 	date: TDateAny,
@@ -590,6 +757,15 @@ export const DateFormatAny = (
 	return result
 }
 
+
+/**
+ *
+ * @param format
+ * @param date
+ * @param timezoneDisplay
+ * @param timezoneSource
+ * @constructor
+ */
 export const DateFormat = (
 	format: TDateFormat,
 	date: TDateAny,
@@ -597,6 +773,12 @@ export const DateFormat = (
 	timezoneSource?: string
 ): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}${(dateObject.getMonth() + 1).toString().padStart(2, '0')}${dateObject
@@ -607,6 +789,12 @@ export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 		.toString()
 		.padStart(2, '0')}${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject
@@ -617,6 +805,12 @@ export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny): string => {
 		.toString()
 		.padStart(2, '0')}-${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const YYYYsMMsDDsHHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject
@@ -627,6 +821,12 @@ export const YYYYsMMsDDsHHcmmcss = (date: TDateAny): string => {
 		.toString()
 		.padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const YYYYsMMsDD = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getFullYear()}/${(dateObject.getMonth() + 1).toString().padStart(2, '0')}/${dateObject
@@ -634,6 +834,12 @@ export const YYYYsMMsDD = (date: TDateAny): string => {
 		.toString()
 		.padStart(2, '0')}`
 }
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const HHcmmcss = (date: TDateAny): string => {
 	const dateObject = DateObject(date) ?? new Date()
 	return `${dateObject.getHours().toString().padStart(2, '0')}:${dateObject
@@ -642,6 +848,10 @@ export const HHcmmcss = (date: TDateAny): string => {
 		.padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 
+
+/**
+ *
+ */
 export const MonthNames = [
 	'January',
 	'February',
@@ -657,23 +867,81 @@ export const MonthNames = [
 	'December'
 ]
 
+
+/**
+ *
+ */
 export const WeekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+
+/**
+ *
+ * @param ts
+ * @constructor
+ */
 export const TSYearsEstimate = (ts: number): number => Math.floor(ts / 365 / 24 / 60 / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @param withinYear
+ * @constructor
+ */
 export const TSMonthsEstimate = (ts: number, withinYear?: boolean): number =>
 	Math.floor((ts - (withinYear ? TSYearsEstimate(ts) * 365 * 24 * 60 * 60 * 1000 : 0)) / 30 / 24 / 60 / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @constructor
+ */
 export const TSWeeks = (ts: number): number => Math.floor(ts / 7 / 24 / 60 / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @param withinMonth
+ * @constructor
+ */
 export const TSDays = (ts: number, withinMonth?: boolean): number =>
 	Math.floor((ts - (withinMonth ? TSMonthsEstimate(ts) * 30 * 24 * 60 * 60 * 1000 : 0)) / 24 / 60 / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @param withinDay
+ * @constructor
+ */
 export const TSHours = (ts: number, withinDay?: boolean): number =>
 	Math.floor((ts - (withinDay ? TSDays(ts) * 24 * 60 * 60 * 1000 : 0)) / 60 / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @param withinHour
+ * @constructor
+ */
 export const TSMinutes = (ts: number, withinHour?: boolean): number =>
 	Math.floor((ts - (withinHour ? TSHours(ts) * 60 * 60 * 1000 : 0)) / 60 / 1000)
+
+/**
+ *
+ * @param ts
+ * @param withinMinute
+ * @constructor
+ */
 export const TSSeconds = (ts: number, withinMinute?: boolean): number =>
 	Math.floor((ts - (withinMinute ? TSMinutes(ts) * 60 * 1000 : 0)) / 1000)
 
 const DateIsLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
 
+
+/**
+ *
+ * @param year
+ * @param month
+ * @constructor
+ */
 export const DaysInMonthYear = (year: number, month: number): number | null => {
 	let monthCalc = month
 	let yearCalc = year
@@ -691,6 +959,12 @@ export const DaysInMonthYear = (year: number, month: number): number | null => {
 	return [31, DateIsLeapYear(yearCalc) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc] ?? null
 }
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const DaysInMonth = (date: TDateAny): number | null => {
 	const originalDateObject = DateObject(date)
 	if (!originalDateObject) return null
@@ -750,6 +1024,13 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 	return dateTS
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number | null => {
 	let dateTS = DateParseTSInternal(date)
 
@@ -1027,6 +1308,14 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 	return dateTS
 }
 
+
+/**
+ *
+ * @param dateFrom
+ * @param dateTo
+ * @param duration
+ * @constructor
+ */
 export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
 	// const isDayRanged = ['year'
 	// 										 , 'years'
@@ -1090,17 +1379,36 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
+
+/**
+ *
+ */
 export interface IWeekNumber {
 	year: number
 	week: number
 }
 
+
+/**
+ *
+ * @param component
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateComponent = (
 	component: 'YYYY' | 'MM' | 'DD' | 'HH' | 'mm' | 'ss',
 	date?: TDateAny,
 	adjustments?: TAdjustment
 ): number => CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)))
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	console.error('Deprecated!  Use: DateWeekISONumber')
 	const currentDate = DateObject(date ?? 'now', {timezoneSource: 'UTC', ...adjustments})
@@ -1117,6 +1425,13 @@ export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWee
 	return {year, week}
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateWeekISONumberNull = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber | null => {
 	const currentDate = DateObject(date ?? 'now', adjustments)
 	if (!currentDate) return null
@@ -1141,6 +1456,11 @@ export const DateWeekISONumberNull = (date?: TDateAny, adjustments?: TAdjustment
 export const DateWeekISONumber = (date?: TDateAny, adjustments?: TAdjustment): IWeekNumber =>
 	DateWeekISONumberNull(date, adjustments) ?? {year: new Date().getFullYear(), week: 1}
 
+/**
+ *
+ * @param weekNumber
+ * @constructor
+ */
 export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	if (!weekNumber?.year) return null
 
@@ -1172,6 +1492,12 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 	return tryDate
 }
 
+
+/**
+ *
+ * @param weekNumber
+ * @constructor
+ */
 export const DatesFromWeekNumberNull = (weekNumber: IWeekNumber): IDates | null => {
 	const start = DateFromWeekNumber(weekNumber)
 
@@ -1214,6 +1540,13 @@ export const WeekNumberAdjust = (
 	return DateWeekISONumber(DateOnly(nextDate, typeof adjustment === 'number' ? {weeks: adjustment} : adjustment))
 }
 
+
+/**
+ *
+ * @param dateFrom
+ * @param dateTo
+ * @constructor
+ */
 export const DateDiffComponents = (
 	dateFrom: TDateAny,
 	dateTo: TDateAny
@@ -1262,6 +1595,15 @@ export const DateDiffComponents = (
 	return returnComponents
 }
 
+
+/**
+ *
+ * @param dateFrom
+ * @param dateTo
+ * @param tripToSecondsOrTwo
+ * @param abbreviated
+ * @constructor
+ */
 export const DateDiffLongDescription = (
 	dateFrom: TDateAny,
 	dateTo: TDateAny,
@@ -1392,6 +1734,15 @@ const checkType = (
 	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 }
 
+
+/**
+ *
+ * @param date1
+ * @param evalType
+ * @param date2
+ * @param minInterval
+ * @constructor
+ */
 export const DateCompare = (
 	date1: TDateAny,
 	evalType: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter',
@@ -1478,6 +1829,14 @@ export const DateCompare = (
 	return checkType(evalType, msDifference)
 }
 
+
+/**
+ *
+ * @param date1
+ * @param date2
+ * @param minInterval
+ * @constructor
+ */
 export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number | null =>
 	DateCompare(date1, 'IsBefore', date2, minInterval)
 		? -1
@@ -1485,9 +1844,21 @@ export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterva
 		? 1
 		: null
 
+
+/**
+ *
+ * @param date1
+ * @param date2
+ * @param minInterval
+ * @constructor
+ */
 export const SortCompareDate = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number =>
 	SortCompareDateNull(date1, date2, minInterval) ?? 0
 
+
+/**
+ *
+ */
 export enum EQuarter {
 	Q1 = 1,
 	Q2 = 2,
@@ -1495,11 +1866,22 @@ export enum EQuarter {
 	Q4 = 4
 }
 
+
+/**
+ *
+ */
 export interface IDates {
 	start: string
 	end: string
 }
 
+
+/**
+ *
+ * @param year
+ * @param quarter
+ * @constructor
+ */
 export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => {
 	const baseDate = DateParseTSInternal(`${year}-${(quarter * 3 - 1).toString().padStart(2, '0')}-01`, 'UTC')
 
@@ -1511,16 +1893,31 @@ export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => 
 	}
 }
 
+
+/**
+ *
+ */
 export interface IQuarter {
 	year: number
 	quarter: EQuarter
 }
 
+
+/**
+ *
+ * @constructor
+ */
 export const InitialDateQuarter = (): IQuarter => ({
 	year: new Date().getFullYear(),
 	quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
 })
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	const dateObj = DateObject(date)
 
@@ -1532,6 +1929,13 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	}
 }
 
+
+/**
+ *
+ * @param year
+ * @param monthOneBased
+ * @constructor
+ */
 export const DatesMonth = (year: number, monthOneBased: number): IDates | null => {
 	const baseDate = DateParseTSInternal(`${year}-${monthOneBased.toString().padStart(2, '0')}-01`, 'UTC')
 
@@ -1543,16 +1947,31 @@ export const DatesMonth = (year: number, monthOneBased: number): IDates | null =
 	}
 }
 
+
+/**
+ *
+ */
 export interface IMonth {
 	year: number
 	monthOneBased: number
 }
 
+
+/**
+ *
+ * @constructor
+ */
 export const InitialDateMonth = (): IMonth => ({
 	year: new Date().getFullYear(),
 	monthOneBased: Math.floor(new Date().getUTCMonth()) + 1
 })
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const DateMonth = (date: TDateAny): IMonth | null => {
 	const dateObj = DateObject(date)
 
@@ -1578,6 +1997,13 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 	return dateObj.getUTCDay()
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateOnlyNull = (
 	date: TDateAny,
 	adjustments?: TDateOnlyAdjustment & {
@@ -1607,6 +2033,13 @@ export const DateOnlyNull = (
 	}
 }
 
+
+/**
+ *
+ * @param date
+ * @param adjustments
+ * @constructor
+ */
 export const DateOnly = (
 	date: TDateAny,
 	adjustments?: TDateOnlyAdjustment & {
@@ -1727,9 +2160,27 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 	}
 }
 
+
+/**
+ *
+ * @constructor
+ */
 export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
+
+/**
+ *
+ * @constructor
+ */
 export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') ?? DateOnly('now')
 
+
+/**
+ *
+ * @param date
+ * @param startOf
+ * @param compareDate
+ * @constructor
+ */
 export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate = 'now'): string => {
 	if (!date) return ''
 
@@ -1747,9 +2198,21 @@ export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', 
 	}
 }
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const DateDoWSundayZero = (date: TDateAny = 'now'): number | null =>
 	CleanNumberNull(DateFormatAny('d', DateOnly(date)))
 
+
+/**
+ *
+ * @param date
+ * @constructor
+ */
 export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 	const dow = DateDoWSundayZero(date)
 
@@ -1758,6 +2221,15 @@ export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 	return dow === 0 || dow === 6
 }
 
+
+/**
+ *
+ * @param start
+ * @param end
+ * @param adjustments
+ * @param limit
+ * @constructor
+ */
 export const DatesBetween = (
 	start: TDateAny,
 	end: TDateAny,
@@ -1778,6 +2250,10 @@ export const DatesBetween = (
 	return dates
 }
 
+
+/**
+ *
+ */
 export type TTimeZoneOlsonStructure = {
 	group: string
 	zones: {
@@ -1786,6 +2262,10 @@ export type TTimeZoneOlsonStructure = {
 	}[]
 }
 
+
+/**
+ *
+ */
 export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 	{
 		group: 'US (Common)',
@@ -2340,12 +2820,29 @@ export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 	}
 ]
 
+
+/**
+ *
+ * @constructor
+ */
 export const TimeZoneOlsonsAmerica = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'America')?.zones ?? []).map((zone) => zone.value)
 
+
+/**
+ *
+ * @constructor
+ */
 export const TimeZoneOlsonsAmericaCommon = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'US (Common)')?.zones ?? []).map((zone) => zone.value)
 
+
+/**
+ *
+ * @param date
+ * @param iana
+ * @constructor
+ */
 export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	const short = today.toLocaleDateString(undefined)

@@ -48,6 +48,9 @@ export function PagesForRange(current: number, length: number, spread: number = 
 	return rangeWithNull
 }
 
+/**
+ *
+ */
 export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz' | 'date'
 
 /**
@@ -141,6 +144,9 @@ export interface IPaginatorRequest<SORT = Record<string, any>, FILTER = Record<s
 	filterValues: FILTER
 }
 
+/**
+ *
+ */
 export const initialFilterSortPaginator: IPaginatorRequest<any> = {
 	page: 1,
 	countPerPage: 50,
@@ -249,6 +255,14 @@ export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn
 
 const isEmpty = (val: any) => val === null || val === undefined || val === ''
 
+/**
+ *
+ * @param beforeValue
+ * @param afterValue
+ * @param indexes
+ * @param emptyTo
+ * @constructor
+ */
 export const SortIndexNull = <T>(
 	beforeValue: T | null | undefined,
 	afterValue: T | null | undefined,
@@ -276,6 +290,14 @@ export const SortIndexNull = <T>(
 	return indexes.indexOf(beforeValue) - indexes.indexOf(afterValue)
 }
 
+/**
+ *
+ * @param beforeValue
+ * @param afterValue
+ * @param indexes
+ * @param emptyTo
+ * @constructor
+ */
 export const SortIndex = <T>(
 	beforeValue: T | null | undefined,
 	afterValue: T | null | undefined,
@@ -643,6 +665,9 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
 	return StringContainsSearchTerms(value, searchTerms)
 }
 
+/**
+ *
+ */
 export interface ISearchOptions {
 	matchSomeTerm?: boolean
 	matchFromTerm?: number

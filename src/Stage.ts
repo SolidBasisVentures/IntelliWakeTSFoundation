@@ -1,5 +1,9 @@
 import {UCWords} from './StringManipulation'
 
+/**
+ *
+ *
+ */
 export enum Stages {
 	Local = 'local',
 	Migrate = 'migrate',
@@ -17,6 +21,7 @@ export enum Stages {
  * @example
  * // If the app is in 'local', it returns true
  * IsStage('local')
+ *
  */
 export const IsStage = (stages: Stages | Stages[]): boolean => {
 	let envs: Stages[]
@@ -31,6 +36,7 @@ export const IsStage = (stages: Stages | Stages[]): boolean => {
 }
 
 /**
+ *
  */
 export const GetStage = (): Stages => {
 	return (process.env.REACT_APP_STAGE ?? process.env.STAGE ?? process.env.VITE_APP_STAGE ?? Stages.Local) as Stages
@@ -41,6 +47,7 @@ export const GetStage = (): Stages => {
  * @example
  * // return Development
  * GetStageName('dev')
+ *
  */
 export const GetStageName = (stage?: Stages): string => {
 	const workingStage = stage ?? GetStage()
@@ -61,6 +68,7 @@ export const GetStageName = (stage?: Stages): string => {
 
 /**
  * Determines whether the stage is one of the following: local, migrate, dev, qa
+ *
  */
 export const IsStageDevFocused = (): boolean => {
 	return IsStage([Stages.Local, Stages.Migrate, Stages.Dev, Stages.QA])
@@ -68,6 +76,7 @@ export const IsStageDevFocused = (): boolean => {
 
 /**
  * Determines whether the stage is one of the following: qa, test
+ *
  */
 export const IsStageTestFocused = (): boolean => {
 	return IsStage([Stages.QA, Stages.Test])
@@ -75,6 +84,7 @@ export const IsStageTestFocused = (): boolean => {
 
 /**
  * Determines whether the stage is one of the following: local, migrate, dev, qa, test
+ *
  */
 export const IsStageDevTestFocused = (): boolean => {
 	return IsStageDevFocused() || IsStageTestFocused()

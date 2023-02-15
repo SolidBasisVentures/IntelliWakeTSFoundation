@@ -5,6 +5,12 @@ function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
 }
 
+/**
+ *
+ * @param object1
+ * @param object2
+ * @constructor
+ */
 export const DeepEqual = (object1: any, object2: any): boolean => {
 	if (object1 === undefined && object2 === undefined) return true
 	if (object1 === null && object2 === null) return true
@@ -68,6 +74,12 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 	}
 }
 
+/**
+ *
+ * @param subset
+ * @param superset
+ * @constructor
+ */
 export const SubsetEqual = (subset: any, superset: any): boolean => {
 	if (subset === undefined && superset === undefined) return true
 	if (subset === null && superset === null) return true
@@ -133,6 +145,12 @@ export const SubsetEqual = (subset: any, superset: any): boolean => {
 	}
 }
 
+/**
+ *
+ * @param subset
+ * @param superset
+ * @constructor
+ */
 export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 	if (subset === undefined && superset === undefined) return true
 	if (subset === null && superset === null) return true
