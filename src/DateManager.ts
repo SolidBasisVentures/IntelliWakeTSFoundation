@@ -1,7 +1,5 @@
 import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
-import {DeepEqual} from './DeepEqual'
-
 
 /**
  *
@@ -22,7 +20,6 @@ export const DATE_FORMAT_TIME_NO_SECONDS = 'HH:mm'
  *
  */
 export const DATE_FORMAT_DATE_TIME = DATE_FORMAT_DATE + ' ' + DATE_FORMAT_TIME_SECONDS
-
 
 /**
  *
@@ -49,7 +46,6 @@ export const DATE_FORMAT_DATE_TIME_DISPLAY = `${DATE_FORMAT_DATE_DISPLAY}, ${DAT
  */
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW = `${DATE_FORMAT_DATE_DISPLAY_DOW}, ${DATE_FORMAT_TIME_DISPLAY}`
 
-
 /**
  *
  */
@@ -70,7 +66,6 @@ export const DATE_FORMAT_DATE_TIME_DISPLAY_LONG = `${DATE_FORMAT_DATE_DISPLAY_LO
  */
 export const DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG = `${DATE_FORMAT_DATE_DISPLAY_DOW_LONG}, ${DATE_FORMAT_TIME_DISPLAY}`
 
-
 /**
  *
  */
@@ -86,7 +81,6 @@ export type TDateOnlyDuration =
 	| 'day'
 	| 'days'
 
-
 /**
  *
  */
@@ -100,12 +94,10 @@ export type TTimeOnlyDuration =
 	| 'millisecond'
 	| 'milliseconds'
 
-
 /**
  *
  */
 export type TDuration = TDateOnlyDuration | TTimeOnlyDuration
-
 
 /**
  *
@@ -115,12 +107,10 @@ export type TDateOnlyAdjustment =
 	| {week?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 	| {weeks?: number | 'StartOf' | 'StartOfMon' | 'EndOf'}
 
-
 /**
  *
  */
 export type TTimeOnlyAdjustment = {[key in TTimeOnlyDuration]?: number | 'StartOf' | 'EndOf'}
-
 
 /**
  *
@@ -141,7 +131,6 @@ export const NowISOString = (adjustment?: TAdjustment): string =>
  * @constructor
  */
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
-
 
 /**
  *
@@ -226,7 +215,6 @@ export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): num
 	// return result
 }
 
-
 /**
  *
  * @param value
@@ -254,7 +242,6 @@ export const StringHasTimeZoneData = (value: string): boolean =>
 	value.includes('+') ||
 	value.substr(15).includes('-')
 
-
 /**
  *
  * @param value
@@ -268,12 +255,10 @@ export const IsDateString = (value: any): boolean => {
 	return !!DateParseTSInternal(value)
 }
 
-
 /**
  *
  */
 export type TDateAny = Date | number | 'now' | 'today' | string | null | undefined
-
 
 /**
  *
@@ -420,12 +405,10 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 	}
 }
 
-
 /**
  *
  */
 export type TDateParseOptions = TAdjustment & {timezoneSource?: string; ignoreIANA?: boolean}
-
 
 /**
  *
@@ -440,7 +423,6 @@ export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): nu
 
 	return DateAdjustTS(newDate, adjustments)
 }
-
 
 /**
  *
@@ -470,7 +452,6 @@ export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Dat
 	return new Date(parsed)
 }
 
-
 /**
  *
  * @param date
@@ -497,7 +478,6 @@ export const DateICS = (date: TDateAny, adjustments?: TDateParseOptions): string
 	return dateICS
 }
 
-
 /**
  *
  */
@@ -517,7 +497,6 @@ export type TDateFormat =
 	| 'DisplayDateDoWLong'
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
-
 
 /**
  *
@@ -757,7 +736,6 @@ export const DateFormatAny = (
 	return result
 }
 
-
 /**
  *
  * @param format
@@ -772,7 +750,6 @@ export const DateFormat = (
 	timezoneDisplay?: string,
 	timezoneSource?: string
 ): string | null => DateFormatAny(format, date, timezoneDisplay, timezoneSource)
-
 
 /**
  *
@@ -848,7 +825,6 @@ export const HHcmmcss = (date: TDateAny): string => {
 		.padStart(2, '0')}:${dateObject.getSeconds().toString().padStart(2, '0')}`
 }
 
-
 /**
  *
  */
@@ -867,12 +843,10 @@ export const MonthNames = [
 	'December'
 ]
 
-
 /**
  *
  */
 export const WeekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 
 /**
  *
@@ -935,7 +909,6 @@ export const TSSeconds = (ts: number, withinMinute?: boolean): number =>
 
 const DateIsLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
 
-
 /**
  *
  * @param year
@@ -958,7 +931,6 @@ export const DaysInMonthYear = (year: number, month: number): number | null => {
 
 	return [31, DateIsLeapYear(yearCalc) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][monthCalc] ?? null
 }
-
 
 /**
  *
@@ -1023,7 +995,6 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
 
 	return dateTS
 }
-
 
 /**
  *
@@ -1308,7 +1279,6 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 	return dateTS
 }
 
-
 /**
  *
  * @param dateFrom
@@ -1379,7 +1349,6 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 	return null
 }
 
-
 /**
  *
  */
@@ -1387,7 +1356,6 @@ export interface IWeekNumber {
 	year: number
 	week: number
 }
-
 
 /**
  *
@@ -1401,7 +1369,6 @@ export const DateComponent = (
 	date?: TDateAny,
 	adjustments?: TAdjustment
 ): number => CleanNumber(DateFormatAny(component, DateParseTS(date, adjustments)))
-
 
 /**
  *
@@ -1424,7 +1391,6 @@ export const DateWeekNumber = (date?: TDateAny, adjustments?: TAdjustment): IWee
 
 	return {year, week}
 }
-
 
 /**
  *
@@ -1471,7 +1437,7 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 
 	let attempts = 0
 
-	while (!DeepEqual(weekNumber, tryWeekNumber)) {
+	while (weekNumber.week !== tryWeekNumber.week || weekNumber.year !== tryWeekNumber.year) {
 		if (attempts > 4) {
 			// console.error(`Could not calculate DateFromWeekNumber ${JSON.stringify(weekNumber)}`)
 			return null
@@ -1491,7 +1457,6 @@ export const DateFromWeekNumber = (weekNumber: IWeekNumber): string | null => {
 
 	return tryDate
 }
-
 
 /**
  *
@@ -1539,7 +1504,6 @@ export const WeekNumberAdjust = (
 
 	return DateWeekISONumber(DateOnly(nextDate, typeof adjustment === 'number' ? {weeks: adjustment} : adjustment))
 }
-
 
 /**
  *
@@ -1594,7 +1558,6 @@ export const DateDiffComponents = (
 
 	return returnComponents
 }
-
 
 /**
  *
@@ -1734,7 +1697,6 @@ const checkType = (
 	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 }
 
-
 /**
  *
  * @param date1
@@ -1829,7 +1791,6 @@ export const DateCompare = (
 	return checkType(evalType, msDifference)
 }
 
-
 /**
  *
  * @param date1
@@ -1844,7 +1805,6 @@ export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterva
 		? 1
 		: null
 
-
 /**
  *
  * @param date1
@@ -1854,7 +1814,6 @@ export const SortCompareDateNull = (date1: TDateAny, date2: TDateAny, minInterva
  */
 export const SortCompareDate = (date1: TDateAny, date2: TDateAny, minInterval?: TDuration): number =>
 	SortCompareDateNull(date1, date2, minInterval) ?? 0
-
 
 /**
  *
@@ -1866,7 +1825,6 @@ export enum EQuarter {
 	Q4 = 4
 }
 
-
 /**
  *
  */
@@ -1874,7 +1832,6 @@ export interface IDates {
 	start: string
 	end: string
 }
-
 
 /**
  *
@@ -1893,7 +1850,6 @@ export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => 
 	}
 }
 
-
 /**
  *
  */
@@ -1901,7 +1857,6 @@ export interface IQuarter {
 	year: number
 	quarter: EQuarter
 }
-
 
 /**
  *
@@ -1911,7 +1866,6 @@ export const InitialDateQuarter = (): IQuarter => ({
 	year: new Date().getFullYear(),
 	quarter: Math.floor(new Date().getUTCMonth() / 3) + 1
 })
-
 
 /**
  *
@@ -1928,7 +1882,6 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 		quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
 	}
 }
-
 
 /**
  *
@@ -1947,7 +1900,6 @@ export const DatesMonth = (year: number, monthOneBased: number): IDates | null =
 	}
 }
 
-
 /**
  *
  */
@@ -1955,7 +1907,6 @@ export interface IMonth {
 	year: number
 	monthOneBased: number
 }
-
 
 /**
  *
@@ -1965,7 +1916,6 @@ export const InitialDateMonth = (): IMonth => ({
 	year: new Date().getFullYear(),
 	monthOneBased: Math.floor(new Date().getUTCMonth()) + 1
 })
-
 
 /**
  *
@@ -1996,7 +1946,6 @@ export const DateDayOfWeek = (date: TDateAny): number | null => {
 
 	return dateObj.getUTCDay()
 }
-
 
 /**
  *
@@ -2032,7 +1981,6 @@ export const DateOnlyNull = (
 		return null
 	}
 }
-
 
 /**
  *
@@ -2160,7 +2108,6 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 	}
 }
 
-
 /**
  *
  * @constructor
@@ -2172,7 +2119,6 @@ export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {t
  * @constructor
  */
 export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') ?? DateOnly('now')
-
 
 /**
  *
@@ -2198,7 +2144,6 @@ export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', 
 	}
 }
 
-
 /**
  *
  * @param date
@@ -2206,7 +2151,6 @@ export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', 
  */
 export const DateDoWSundayZero = (date: TDateAny = 'now'): number | null =>
 	CleanNumberNull(DateFormatAny('d', DateOnly(date)))
-
 
 /**
  *
@@ -2220,7 +2164,6 @@ export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 
 	return dow === 0 || dow === 6
 }
-
 
 /**
  *
@@ -2250,7 +2193,6 @@ export const DatesBetween = (
 	return dates
 }
 
-
 /**
  *
  */
@@ -2261,7 +2203,6 @@ export type TTimeZoneOlsonStructure = {
 		name: string
 	}[]
 }
-
 
 /**
  *
@@ -2820,7 +2761,6 @@ export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 	}
 ]
 
-
 /**
  *
  * @constructor
@@ -2828,14 +2768,12 @@ export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 export const TimeZoneOlsonsAmerica = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'America')?.zones ?? []).map((zone) => zone.value)
 
-
 /**
  *
  * @constructor
  */
 export const TimeZoneOlsonsAmericaCommon = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'US (Common)')?.zones ?? []).map((zone) => zone.value)
-
 
 /**
  *
