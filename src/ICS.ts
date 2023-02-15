@@ -1,7 +1,16 @@
 import {ReplaceAll} from './Functions'
 import {DateParseTS, YYYYMMDDHHmmss} from './DateManager'
 
+/**
+ *
+ *
+ */
 export namespace ICS {
+	/**
+	 *
+	 *
+	 * @group ICS
+	 */
 	export interface IEvent {
 		dateTimeStart: string,
 		dateTimeEnd?: string,
@@ -19,27 +28,51 @@ export namespace ICS {
 		organizerName?: string
 		organizerEmail?: string
 	}
-	
+
+	/**
+	 *
+	 * @param filenameNoExtension
+	 * @constructor
+	 *
+	 * @group ICS
+	 */
 	export const Header = (filenameNoExtension = 'calendar'): {'Content-Type': string, 'Content-Disposition': string} => ({
 		'Content-Type': 'text/Calendar',
 		'Content-Disposition': `inline; filename=${filenameNoExtension}.ics`
 	})
-	
+
+	/**
+	 *
+	 *
+	 * @group ICS
+	 */
 	export const VCALENDAROpen_Text = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN\n'
-	
+
+	/**
+	 *
+	 *
+	 * @group ICS
+	 */
 	export const VCALENDARClose_Text = 'END:VCALENDAR\n'
-	
+
 	const ICSDateFormat = (date: string | null | undefined, timezone?: string): string => !date ? '' : `TZID=${timezone ?? 'America/New_York'}:${YYYYMMDDHHmmss(DateParseTS(date)) ?? ''}`
-	
+
 	const EscapeText = (text: string): string => ReplaceAll('\r\n', '\\n', ReplaceAll('\n', '\\n', ReplaceAll('\r', '\\n', ReplaceAll(',', '\\,', ReplaceAll(';', '\\;', ReplaceAll('\\', '\\\\', text))))))
-	
+
+	/**
+	 *
+	 * @param event
+	 * @constructor
+	 *
+	 * @group ICS
+	 */
 	export const VEVENT_Text = (event: IEvent): string => {
 		let event_text = ''
-		
+
 		event_text += 'BEGIN:VEVENT\n'
 		event_text += 'CLASS:PUBLIC\n'
 		event_text += 'CREATED;' + ICSDateFormat(event.dateTimeCreated ?? new Date().toISOString()) + '\n'
-		
+
 		event_text += 'DESCRIPTION:' + EscapeText(event.description) + '\n'
 		event_text += 'DTSTART;' + ICSDateFormat(event.dateTimeStart) + '\n'
 		if (!!event.durationMinutes) {
@@ -67,7 +100,7 @@ export namespace ICS {
 		event_text += 'SUMMARY:' + EscapeText(event.subject) + '\n'
 		event_text += 'TRANSP:OPAQUE\n'
 		event_text += 'UID:' + event.UID + '\n'
-		
+
 		if (event.alarmTriggerMinutes !== undefined) {
 			event_text += 'BEGIN:VALARM\n'
 			event_text += `TRIGGER:-PT${event.alarmTriggerMinutes}M\n`
@@ -75,11 +108,18 @@ export namespace ICS {
 			event_text += 'DESCRIPTION:Reminder\n'
 			event_text += 'END:VALARM\n'
 		}
-		
+
 		event_text += 'END:VEVENT\n'
-		
+
 		return event_text
 	}
-	
+
+	/**
+	 *
+	 * @param event
+	 * @constructor
+	 *
+	 * @group ICS
+	 */
 	export const ICS_Text = (event: IEvent): string => VCALENDAROpen_Text + VEVENT_Text(event) + VCALENDARClose_Text
 }

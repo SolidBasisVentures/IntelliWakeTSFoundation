@@ -1,12 +1,4 @@
 /**
- * Truncates a string and replaces the remaining characters with ellipsis.
- *
- * @example
- * // returns "Welcome to&hellip;" and shown as "Welcome to..." in HTML
- * Trunc('Welcome to TSFoundation', 11)
- */
-
-/**
  * Replace all occurences of a string.
  *
  * @example
@@ -60,16 +52,41 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	return parseFloat(str)
 }
 
+/**
+ *
+ * @param values
+ * @constructor
+ */
 export const GreaterNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
 	.reduce<number | null>((result, value) => (result === null || value > result) ? value : result, null)
 
+/**
+ *
+ * @param values
+ * @constructor
+ */
 export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
 
+/**
+ *
+ * @param values
+ * @constructor
+ */
 export const LeastNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
 	.reduce<number | null>((result, value) => (result === null || value < result) ? value : result, null)
 
+/**
+ *
+ * @param values
+ * @constructor
+ */
 export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
 
+/**
+ *
+ * @param values
+ * @constructor
+ */
 export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 	let returnValues: number[] = []
 
@@ -89,6 +106,12 @@ export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 	return returnValues
 }
 
+/**
+ *
+ * @param decimals
+ * @param values
+ * @constructor
+ */
 export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]): number | null => {
 	const valids = ValidNumbers(values)
 
@@ -97,8 +120,20 @@ export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]):
 	return CleanNumber(CleanNumbers(decimals, valids) / valids.length, decimals)
 }
 
+/**
+ *
+ * @param decimals
+ * @param values
+ * @constructor
+ */
 export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number => AverageNumberNull(decimals, values) ?? 0
 
+/**
+ *
+ * @param numerator
+ * @param denominator
+ * @constructor
+ */
 export const CleanDivideNull = (numerator: any, denominator: any): number | null => {
 	if (numerator === undefined || numerator === null) return null
 
@@ -109,6 +144,12 @@ export const CleanDivideNull = (numerator: any, denominator: any): number | null
 	return CleanNumber(numerator) / useDenominator
 }
 
+/**
+ *
+ * @param numerator
+ * @param denominator
+ * @constructor
+ */
 export const CleanDivide = (numerator: any, denominator: any): number => CleanDivideNull(numerator, denominator) ?? 0
 
 /**
@@ -179,6 +220,12 @@ export const JSONParse = <T = any>(json: any): T | null => {
 	return returnObj
 }
 
+/**
+ *
+ * @param subject
+ * @param length
+ * @constructor
+ */
 export const Trunc = (subject: string, length: number): string => {
 	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
 }
@@ -284,9 +331,12 @@ export const IsOn = (value: any): boolean => {
 		return floatValue > 0
 	}
 
-	return ['true', 'active', 'on', 'yes', 'y'].includes(value.toString().toLowerCase().trim())
+	return ['true', 'active', 'on', 'yes', 'y', 't'].includes(value.toString().toLowerCase().trim())
 }
 
+/**
+ *
+ */
 export interface IAddress {
 	address_1: string
 	address_2: string
@@ -425,6 +475,11 @@ export const AddressMultiRow = (object: any, prefix?: string): string => {
 	return multiRow
 }
 
+/**
+ *
+ * @param byteArray
+ * @constructor
+ */
 export const ArrayToGuidString = (byteArray: any): string => {
 	return Array.from(byteArray, function (byte: any) {
 		return ('0' + (byte & 0xff).toString(16)).slice(-2)
@@ -433,6 +488,11 @@ export const ArrayToGuidString = (byteArray: any): string => {
 	            .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
 }
 
+/**
+ *
+ * @param str
+ * @constructor
+ */
 export const StringToByteArray = (str: string): any => {
 	let decoded = atob(str)
 	let i, il = decoded.length
@@ -445,15 +505,37 @@ export const StringToByteArray = (str: string): any => {
 	return array
 }
 
+/**
+ *
+ * @param x
+ * @constructor
+ */
 export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
 
+/**
+ *
+ * @param num
+ * @param decimalPlaces
+ * @param roundDir
+ * @constructor
+ */
 export const RoundTo = (num: any, decimalPlaces: number = 0, roundDir: 'round' | 'up' | 'down' = 'round') =>
 	roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 		: roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces) :
 			+Math.ceil((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
 
+/**
+ *
+ * @param val
+ * @constructor
+ */
 export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
 
+/**
+ *
+ * @param val
+ * @constructor
+ */
 export const JSONStringToObject = <T = any>(val: string): T => (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))) as T
 
 // noinspection JSPotentiallyInvalidConstructorUsage
@@ -589,10 +671,27 @@ export const ArrayRange = (end: number, increment = 1, start = 0): number [] => 
 	return results
 }
 
+/**
+ *
+ * @param data
+ * @param keys
+ * @constructor
+ */
 export const PropertiesExist = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data)
 
+/**
+ *
+ * @param data
+ * @param keys
+ */
 export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data && !!data[key])
 
+/**
+ *
+ * @param obj
+ * @param keys
+ * @constructor
+ */
 export function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> {
 	let ret: any = {}
 	const excludeSet: Set<string> = new Set(keys)
@@ -608,6 +707,12 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
 	return ret
 }
 
+/**
+ *
+ * @param obj
+ * @param keys
+ * @constructor
+ */
 export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> & Partial<K> {
 	let ret: Omit<T, K> & Partial<K> = {...obj}
 	const excludeSet: Set<string> = new Set(keys)
@@ -621,6 +726,11 @@ export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>
 	return ret
 }
 
+/**
+ *
+ * @param obj
+ * @constructor
+ */
 export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 	let ret: Partial<T> = {...obj}
 
@@ -633,6 +743,12 @@ export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 	return ret
 }
 
+/**
+ *
+ * @param obj
+ * @param keys
+ * @constructor
+ */
 export function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K> {
 	let ret: any = {}
 	const includeSet: Set<string> = new Set(keys)
@@ -648,6 +764,13 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
 	return ret
 }
 
+/**
+ *
+ * @param remove
+ * @param value
+ * @param recursive
+ * @constructor
+ */
 export function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
 	if (!value || !remove) return ''
 
@@ -666,6 +789,13 @@ export function RemoveStarting(remove: string | string[] | null | undefined, val
 	return newValue
 }
 
+/**
+ *
+ * @param remove
+ * @param value
+ * @param recursive
+ * @constructor
+ */
 export function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
 	if (!value || !remove) return ''
 
@@ -684,6 +814,12 @@ export function RemoveEnding(remove: string | string[] | null | undefined, value
 	return newValue
 }
 
+/**
+ *
+ * @param checkVal
+ * @param otherVals
+ * @constructor
+ */
 export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
 	if (!!checkVal || otherVals.length === 0) return checkVal
 
@@ -777,6 +913,11 @@ export function InvertColorHex(hex: string, bw = false) {
 	return InvertColorRGB(r, g, b, bw)
 }
 
+/**
+ *
+ * @param ms
+ * @constructor
+ */
 export function Sleep(ms = 200) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }

@@ -22,10 +22,12 @@
         "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+	    "resolveJsonModule": true
     },
     "include": [
-        "src"
+        "src",
+	    "./package.json"
     ],
     "exclude": [
         "node_modules",

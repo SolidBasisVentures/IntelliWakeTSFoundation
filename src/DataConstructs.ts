@@ -13,6 +13,10 @@ import {ToUpperCaseWords} from './StringManipulation'
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
 export type IChanges<T> = Partial<T>
+
+/**
+ *
+ */
 export const initialChanges = {}
 
 /**
@@ -76,6 +80,10 @@ export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T => ({
 	...changes
 } as T)
 
+
+/**
+ *
+ */
 export type IIDObject = {
 	id: number
 } & Record<string, any>
@@ -93,6 +101,10 @@ export type IIDObject = {
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
 export type IIDChanges<T> = {[key: number]: IChanges<T>}
+
+/**
+ *
+ */
 export const initialIDChanges = {}
 
 /**
@@ -116,6 +128,14 @@ export const AddIDChange = <T>(id: number, name: keyof T, value: any, idChanges:
 	}
 })
 
+
+/**
+ *
+ * @param id
+ * @param changes
+ * @param idChanges
+ * @constructor
+ */
 export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IIDChanges<T>): IIDChanges<T> => ({
 	...idChanges,
 	[id]: {
@@ -127,7 +147,8 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
 /**
  * Returns a new state for an array with elements uniquely identifiable by id or uuid, leaving it in the same order it found it.
  *
- * const [data, setData] = useState([{id: 1, name: 'Bob', age: 35}, {uuid: 'abcd', name: 'John', age: 40}])
+ * @example
+ * const [data, setData] = useState([\{id: 1, name: 'Bob', age: 35\}, \{uuid: 'abcd', name: 'John', age: 40\}])
  *
  * setData(prevState => ChangeArrayByIDOrUUID(prevState, {id: 1, name: 'Bobby'}))
  * setData(prevState => ChangeArrayByIDOrUUID(prevState, {uuid: 'abcd', age: 42}))
@@ -158,6 +179,7 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
 /**
  * Combines original value arrays with changed values, and produces a new set, in order
  *
+ * @example
  * const original = [{id: 1, name: 'Bob', age: 35}, {id: 2, name: 'Sally', age: 25}]
  * const changes = [{id: 1, name: 'Bobby'}, {uuid: 'abcd', age: 42}]
  *
@@ -283,6 +305,14 @@ export const IsJSON = (json: any): boolean => {
 	}
 }
 
+
+/**
+ *
+ * @param val1
+ * @param val2
+ * @param consoleLog
+ * @constructor
+ */
 export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 	if (val1 === val2) return true
 
@@ -537,8 +567,16 @@ export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: s
 	return results
 }
 
+
+/**
+ *
+ */
 export type Nullable<T> = { [K in keyof T]: T[K] | null }
 
+
+/**
+ *
+ */
 export type DeepNullable<T> = {
 	[K in keyof T]: DeepNullable<T[K]> | null
 }
