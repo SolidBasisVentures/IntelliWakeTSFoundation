@@ -35,7 +35,7 @@ export const ChangeValueChanges = <T>(
 	original?: T
 ) => {
 	if (!!setChanges && !!name) {
-		setChanges(prevState => {
+		setChanges((prevState) => {
 			let nextState = {...prevState}
 
 			if (!!original && IsEqual(original[name], value)) {
@@ -75,10 +75,11 @@ export const AddChange = <T>(name: keyof T, value: any, changes: IChanges<T>): I
  *
  * const updatedEmployee = ObjectWithChanges(employee, changes) // result: {id: 1, name: 'John'}
  */
-export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T => ({
-	...item,
-	...changes
-} as T)
+export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T =>
+	({
+		...item,
+		...changes
+	} as T)
 
 
 /**
@@ -159,10 +160,16 @@ export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IID
  * @param initial
  * @constructor
  */
-export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number, uuid?: string}>(prevState: T[], change: Partial<T>, initial: T): T[] => {
+export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any; id?: number; uuid?: string}>(
+	prevState: T[],
+	change: Partial<T>,
+	initial: T
+): T[] => {
 	let newState = [...prevState]
 
-	let idx = newState.findIndex(nS => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid))
+	let idx = newState.findIndex(
+		(nS) => (!!change.id && change.id === nS.id) || (!!change.uuid && change.uuid === nS.uuid)
+	)
 
 	if (idx >= 0) {
 		newState[idx] = {...newState[idx], ...change}
@@ -191,8 +198,11 @@ export const ChangeArrayByIDOrUUID = <T extends {[key: string]: any, id?: number
  * @param changes
  * @param initial
  */
-export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, id?: number, uuid?: string}>(original: T[], changes: Partial<T>[], initial: T): T[] =>
-	changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change, initial), original)
+export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any; id?: number; uuid?: string}>(
+	original: T[],
+	changes: Partial<T>[],
+	initial: T
+): T[] => changes.reduce<T[]>((result, change) => ChangeArrayByIDOrUUID(result, change, initial), original)
 
 /**
  * IIDChanges provides a structure for tracking changes across an array of items that have a unique "id" column.
@@ -206,19 +216,23 @@ export const CombineArrayWithIDOrUUIDChanges = <T extends {[key: string]: any, i
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: IIDChanges<T>): T[] => items.map(item => ({...item, ...idChanges[item.id]}))
+export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: IIDChanges<T>): T[] =>
+	items.map((item) => ({...item, ...idChanges[item.id]}))
 
 /**
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExport = function(filename: string, csvData: any, blankZeros = true) {
+export const DataToCSVExport = function (filename: string, csvData: any, blankZeros = true) {
 	const csvString = csvData
 		.map((row: any) =>
 			row
 				.map((item: any) =>
-					(blankZeros && ((typeof item === 'number' && !item) || item === '0')) ? '' :
-						typeof item === 'string' ? '"' + ReplaceAll('"', '""', item) + '"' : (item ?? '').toString()
+					blankZeros && ((typeof item === 'number' && !item) || item === '0')
+						? ''
+						: typeof item === 'string'
+						? '"' + ReplaceAll('"', '""', item) + '"'
+						: (item ?? '').toString()
 				)
 				.join(',')
 		)
@@ -235,7 +249,7 @@ export const DataToCSVExport = function(filename: string, csvData: any, blankZer
  * Converts Data to CSV without quotes. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) {
+export const DataToCSVExportNoQuotes = function (filename: string, csvData: any) {
 	const csvString = csvData
 		.map((row: any) =>
 			row.map((item: any) => (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item ?? '')).join(',')
@@ -257,32 +271,48 @@ export const DataToCSVExportNoQuotes = function(filename: string, csvData: any) 
  * @param headerToWords
  * @constructor
  */
-export const DataToTabDelim = <T extends Record<string, any> = Record<string, any>>(datasets: T[], includeHeaders = true, headerToWords = true): string => {
-	const headers: (keyof T)[] = datasets
-		.reduce<(keyof T)[]>((results, dataset) => [...results, ...(Object.keys(dataset) as (keyof T)[]).filter(ds => !results.includes(ds))], [])
+export const DataToTabDelim = <T = Record<string, any>>(
+	datasets: T[],
+	includeHeaders = true,
+	headerToWords = true
+): string => {
+	const headers: (keyof T)[] = datasets.reduce<(keyof T)[]>(
+		(results, dataset) => [
+			...results,
+			...(Object.keys(dataset as any) as (keyof T)[]).filter((ds) => !results.includes(ds))
+		],
+		[]
+	)
 
 	let tabDelim = ''
 
 	if (includeHeaders) {
-		tabDelim += headers.map(header => `"${headerToWords ? ToUpperCaseWords(header as string) : header as string}"`).join('\t')
+		tabDelim += headers
+			.map((header) => `"${headerToWords ? ToUpperCaseWords(header as any) : (header as any)}"`)
+			.join('\t')
 	}
 
 	for (const dataset of datasets) {
 		if (tabDelim) tabDelim += `\r\n`
 
-		tabDelim += headers.map(header => {
-			if (dataset[header] === undefined ||
-				dataset[header] === null ||
-				(typeof dataset[header] === 'string' && (dataset[header] as any).trim() === '')) return ''
+		tabDelim += headers
+			.map((header) => {
+				if (
+					dataset[header] === undefined ||
+					dataset[header] === null ||
+					(typeof dataset[header] === 'string' && (dataset[header] as any).trim() === '')
+				)
+					return ''
 
-			const numberValue = CleanNumberNull(dataset[header])
+				const numberValue = CleanNumberNull(dataset[header])
 
-			if (numberValue !== null) {
-				return numberValue.toString()
-			}
+				if (numberValue !== null) {
+					return numberValue.toString()
+				}
 
-			return `"${dataset[header]}"`
-		}).join('\t')
+				return `"${dataset[header]}"`
+			})
+			.join('\t')
 	}
 
 	return tabDelim
@@ -358,7 +388,7 @@ export const IsEqual = (val1: any, val2: any, consoleLog = false): boolean => {
 			return false
 		}
 
-		const idx = keys1.findIndex(key1 => !IsEqual(val1[key1], val2[key1]))
+		const idx = keys1.findIndex((key1) => !IsEqual(val1[key1], val2[key1]))
 
 		if (idx === -1) return true
 
@@ -571,7 +601,7 @@ export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: s
 /**
  *
  */
-export type Nullable<T> = { [K in keyof T]: T[K] | null }
+export type Nullable<T> = {[K in keyof T]: T[K] | null}
 
 
 /**

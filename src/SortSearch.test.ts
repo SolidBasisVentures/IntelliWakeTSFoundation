@@ -5,6 +5,7 @@ import {
 	SearchRows,
 	SortCompare,
 	SortCompareNull,
+	SortSplitItems,
 	SortIndex,
 	SortPerArray
 } from './SortSearch'
@@ -176,4 +177,15 @@ test('Search', () => {
 	expect(activeList.filter((aL) => FindIsActive(aL.is_active, null))).toEqual(activeList)
 	expect(activeList.filter((aL) => FindIsActive(aL.is_active, true))).toEqual([{id: 1, is_active: true}])
 	expect(activeList.filter((aL) => FindIsActive(aL.is_active, false))).toEqual([{id: 2, is_active: false}])
+	expect(
+		[
+			{id: 1, version: '1.1'},
+			{id: 2, version: '1.10'},
+			{id: 3, version: '1.2'}
+		].sort((a, b) => SortSplitItems(a.version, b.version))
+	).toEqual([
+		{id: 1, version: '1.1'},
+		{id: 3, version: '1.2'},
+		{id: 2, version: '1.10'}
+	])
 })
