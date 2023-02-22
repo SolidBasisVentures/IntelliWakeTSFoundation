@@ -22,20 +22,29 @@ export type TObjectFieldConstraint = {
 /**
  * Defines the constraints to be placed on an object
  */
-export type TObjectConstraint<T extends Record<string, any> = Record<string, any | null>> = Record<keyof T, TObjectFieldConstraint>
+export type TObjectConstraint<T extends Record<string, any> = Record<string, any | null>> = Record<
+	keyof T,
+	TObjectFieldConstraint
+>
 
 const ConstrainType = (value: any, fieldConstraint: TObjectFieldConstraint): any => {
 	if ((fieldConstraint.nullIfFalsey && !value) || value === null || value === undefined) {
 		if (fieldConstraint.nullable || fieldConstraint.nullIfFalsey) {
 			return null
 		} else {
-			return fieldConstraint.type === 'date' ? DateOnly(fieldConstraint.default ?? 'now') :
-				fieldConstraint.type === 'datetime' ? DateISO(fieldConstraint.default ?? 'now') :
-					fieldConstraint.type === 'time' ? TimeOnly(fieldConstraint.default ?? 'now') :
-						fieldConstraint.type === 'number' ? CleanNumber(fieldConstraint.default) :
-							fieldConstraint.type === 'boolean' ? IsOn(fieldConstraint.default ?? true) :
-								fieldConstraint.type === 'object' ? (fieldConstraint.default ?? {}) :
-									(fieldConstraint.default ?? '').toString()
+			return fieldConstraint.type === 'date'
+				? DateOnly(fieldConstraint.default ?? 'now')
+				: fieldConstraint.type === 'datetime'
+				? DateISO(fieldConstraint.default ?? 'now')
+				: fieldConstraint.type === 'time'
+				? TimeOnly(fieldConstraint.default ?? 'now')
+				: fieldConstraint.type === 'number'
+				? CleanNumber(fieldConstraint.default)
+				: fieldConstraint.type === 'boolean'
+				? IsOn(fieldConstraint.default ?? true)
+				: fieldConstraint.type === 'object'
+				? fieldConstraint.default ?? {}
+				: (fieldConstraint.default ?? '').toString()
 		}
 	}
 
@@ -46,9 +55,9 @@ const ConstrainType = (value: any, fieldConstraint: TObjectFieldConstraint): any
 	} else if (fieldConstraint.type === 'date') {
 		return fieldConstraint.nullable ? DateOnlyNull(value) : DateOnly(value)
 	} else if (fieldConstraint.type === 'datetime') {
-		return fieldConstraint.nullable ? DateISO(value) : (DateISO(value) ?? NowISOString())
+		return fieldConstraint.nullable ? DateISO(value) : DateISO(value) ?? NowISOString()
 	} else if (fieldConstraint.type === 'time') {
-		return fieldConstraint.nullable ? TimeOnly(value) : (TimeOnly(value) ?? '00:00')
+		return fieldConstraint.nullable ? TimeOnly(value) : TimeOnly(value) ?? '00:00'
 	} else if (fieldConstraint.type === 'object') {
 		if (typeof value !== 'object') return {}
 	} else {
@@ -96,21 +105,35 @@ const ConstrainOthers = (value: any, fieldConstraint: TObjectFieldConstraint): a
 export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, constraint: TObjectConstraint<T>): T => {
 	const newObj = obj as any
 
-	for (const key of (Object.keys(obj) as (keyof T)[])) {
+	for (const key of Object.keys(obj) as (keyof T)[]) {
 		const fieldConstraint = constraint[key] as TObjectFieldConstraint
 		if (fieldConstraint) {
 			if (fieldConstraint.isArray) {
 				newObj[key] = ToArray(newObj[key])
-					.map(value => ConstrainType(value, fieldConstraint))
-					.filter(value => fieldConstraint.arrayAllowFalsey || !!value)
-					.map(value => ConstrainOthers(value, fieldConstraint))
-					.filter(value => fieldConstraint.arrayAllowFalsey || !!value)
+					.map((value) => ConstrainType(value, fieldConstraint))
+					.filter((value) => fieldConstraint.arrayAllowFalsey || !!value)
+					.map((value) => ConstrainOthers(value, fieldConstraint))
+					.filter((value) => fieldConstraint.arrayAllowFalsey || !!value)
 			} else {
 				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
 			}
 
 			if (fieldConstraint.nullable && !newObj[key]) {
 				newObj[key] = null
+			}
+		} else {
+			delete newObj[key]
+		}
+	}
+
+	for (const key of Object.keys(constraint)) {
+		if (!(key in newObj)) {
+			const fieldConstraint = constraint[key] as TObjectFieldConstraint
+			if (fieldConstraint) {
+				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
+				if (fieldConstraint.isArray && !Array.isArray(newObj[key])) {
+					newObj[key] = ToArray(newObj.key)
+				}
 			}
 		}
 	}
@@ -126,7 +149,7 @@ export type TObjectFromFormDataOptions<T extends Record<string, any> = Record<st
 	includeColumns?: (keyof T)[]
 	arrayFormDataItems?: (keyof T)[]
 	default?: T
-	constraint?: TObjectConstraint<T>
+	constraint?: TObjectConstraint<T> | null
 }
 
 /**
@@ -136,24 +159,26 @@ export type TObjectFromFormDataOptions<T extends Record<string, any> = Record<st
  * @param options
  * @constructor
  */
-export const ObjectFromFormData = <T extends Record<string, any | null> = Record<string, any | null>>(formData: FormData, options?: TObjectFromFormDataOptions<T>): T => {
+export const ObjectFromFormData = <T extends Record<string, any | null> = Record<string, any | null>>(
+	formData: FormData,
+	options?: TObjectFromFormDataOptions<T>
+): T => {
 	let returnObject: any = {}
 
 	if (options?.default) {
-		for (const key of Object.keys(options.default).filter(key => {
+		for (const key of Object.keys(options.default).filter((key) => {
 			if (options.includeColumns?.includes(key)) return true
 
 			return !options.includeColumns && !options.excludeColumns?.includes(key)
 		}) as (keyof T)[]) {
-			let data = (Array.isArray(options.default[key]) || options.arrayFormDataItems?.includes(key))
-				? formData.getAll(key as string) as any ?? options?.default[key] ?? null
-				: formData.get(key as string) as any
+			let data =
+				Array.isArray(options.default[key]) || options.arrayFormDataItems?.includes(key)
+					? (formData.getAll(key as string) as any) ?? options?.default[key] ?? null
+					: (formData.get(key as string) as any)
 
-			if (data !== undefined && typeof options.default[key] === 'boolean')
-				data = IsOn(data)
+			if (data !== undefined && typeof options.default[key] === 'boolean') data = IsOn(data)
 
-			if (data !== undefined && typeof options.default[key] === 'number')
-				data = CleanNumber(data)
+			if (data !== undefined && typeof options.default[key] === 'number') data = CleanNumber(data)
 
 			returnObject[key] = data ?? options?.default[key] ?? null
 		}
