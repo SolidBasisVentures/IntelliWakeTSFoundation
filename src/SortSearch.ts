@@ -1,4 +1,4 @@
-import {CleanNumber} from './Functions'
+import {CleanNumber, GreaterNumber} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -75,7 +75,19 @@ export const initialSortColumn: any = {
 	secondaryEmptyToBottom: null
 }
 
+/**
+ * Type that allows for showing all items (null), active items (true), or inactive items (false)
+ */
 export type TFindIsActive = boolean | null
+
+/**
+ * Function to run in an [array].filter() to determine whether or not to show the item
+ * @param findIsActive
+ * @param isActive
+ * @constructor
+ */
+export const FindIsActive = (isActive: boolean, findIsActive: TFindIsActive): boolean =>
+	findIsActive === null || isActive === findIsActive
 
 /**
  * Converts Find Is Active type to a string
@@ -219,25 +231,30 @@ export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn
 		!sortColumn.primarySort
 			? 0
 			: SortColumnResult(
-				a[sortColumn.primarySort] ?? null,
-				b[sortColumn.primarySort] ?? null,
-				sortColumn.primaryAscending,
-				sortColumn.primaryEmptyToBottom
-			) ??
-			(!sortColumn.secondarySort
-				? 0
-				: SortColumnResult(
-					a[sortColumn.secondarySort as any] ?? null,
-					b[sortColumn.secondarySort as any] ?? null,
-					sortColumn.secondaryAscending,
-					sortColumn.secondaryEmptyToBottom
-				))
+					a[sortColumn.primarySort] ?? null,
+					b[sortColumn.primarySort] ?? null,
+					sortColumn.primaryAscending,
+					sortColumn.primaryEmptyToBottom
+			  ) ??
+			  (!sortColumn.secondarySort
+					? 0
+					: SortColumnResult(
+							a[sortColumn.secondarySort as any] ?? null,
+							b[sortColumn.secondarySort as any] ?? null,
+							sortColumn.secondaryAscending,
+							sortColumn.secondaryEmptyToBottom
+					  ))
 	)
 }
 
 const isEmpty = (val: any) => val === null || val === undefined || val === ''
 
-export const SortIndexNull = <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number | null => {
+export const SortIndexNull = <T>(
+	beforeValue: T | null | undefined,
+	afterValue: T | null | undefined,
+	indexes: T[],
+	emptyTo: 'Top' | 'Bottom' = 'Top'
+): number | null => {
 	const verboseConsole = false //!!emptyTo
 
 	if ((beforeValue ?? null) === (afterValue ?? null)) {
@@ -259,8 +276,12 @@ export const SortIndexNull = <T>(beforeValue: T | null | undefined, afterValue: 
 	return indexes.indexOf(beforeValue) - indexes.indexOf(afterValue)
 }
 
-export const SortIndex = <T>(beforeValue: T | null | undefined, afterValue: T | null | undefined, indexes: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number =>
-	SortIndexNull(beforeValue, afterValue, indexes, emptyTo) ?? 0
+export const SortIndex = <T>(
+	beforeValue: T | null | undefined,
+	afterValue: T | null | undefined,
+	indexes: T[],
+	emptyTo: 'Top' | 'Bottom' = 'Top'
+): number => SortIndexNull(beforeValue, afterValue, indexes, emptyTo) ?? 0
 
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans (false comes BEFORE true), numbers (including currency and percentages), and case-insensitive strings.
@@ -281,7 +302,11 @@ export const SortIndex = <T>(beforeValue: T | null | undefined, afterValue: T | 
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null): number | null => {
+export const SortCompareNull = (
+	beforeValue: any,
+	afterValue: any,
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number | null => {
 	const verboseConsole = false //!!emptyTo
 
 	if (beforeValue === afterValue) {
@@ -332,13 +357,21 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 		return beforeNumber - afterNumber
 	}
 
-	if (verboseConsole) console.log('Strings', beforeValue, afterValue, ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'}))
+	if (verboseConsole)
+		console.log(
+			'Strings',
+			beforeValue,
+			afterValue,
+			(beforeValue ?? '')
+				.toString()
+				.localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
+		)
 
-	return ((beforeValue ?? '').toString()).localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
+	return (beforeValue ?? '').toString().localeCompare((afterValue ?? '').toString(), undefined, {sensitivity: 'base'})
 }
 
 /**
- * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or 0 if values are equal.  Handles booleans, numbers (including currency and percentages), and case-insensitive strings.
  *
  * @example
  * [
@@ -355,8 +388,73 @@ export const SortCompareNull = (beforeValue: any, afterValue: any, emptyTo: null
 		{ id: 2, name: 'ZZZ', prioritized: false }
 	]
  */
-export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null): number => {
+export const SortCompare = (
+	beforeValue: any,
+	afterValue: any,
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number => {
 	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal specifically for strings that likely contain version that need to be sorted as [1.1, 1.2, 1.10] instead of [1.1, 1.10, 1.2]
+ *
+ * @example
+ * [
+		{id: 1, version: '1.1'},
+		{id: 2, version: '1.10'},
+		{id: 3, version: '1.2'}
+	]
+ .sort((a, b) =>
+ 		SortSplitItemsNull(a.version, b.version)) = [
+		{id: 1, version: '1.1'},
+		{id: 3, version: '1.2'},
+		{id: 2, version: '1.10'}
+ ]
+ */
+export const SortSplitItemsNull = (
+	beforeValue: any,
+	afterValue: any,
+	split = '.',
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number | null => {
+	const beforeValues = (beforeValue ?? '').toString().split(split)
+	const afterValues = (afterValue ?? '').toString().split(split)
+
+	const highestCount = GreaterNumber(beforeValues.length, afterValues.length)
+
+	for (let i = 0; i < highestCount; i++) {
+		const sortResult = SortCompare(beforeValues[i], afterValues[i], emptyTo)
+
+		if (sortResult !== 0) return sortResult
+	}
+
+	return null
+}
+
+/**
+ * Returns a case-insensitive sort number of the .sort(a, b) function, or 0 if values are equal specifically for strings that likely contain version that need to be sorted as [1.1, 1.2, 1.10] instead of [1.1, 1.10, 1.2]
+ *
+ * @example
+ * [
+		{id: 1, version: '1.1'},
+		{id: 2, version: '1.10'},
+		{id: 3, version: '1.2'}
+	]
+ .sort((a, b) =>
+ 		SortSplitItems(a.version, b.version)) = [
+		{id: 1, version: '1.1'},
+		{id: 3, version: '1.2'},
+		{id: 2, version: '1.10'}
+ ]
+ */
+export const SortSplitItems = (
+	beforeValue: any,
+	afterValue: any,
+	split = '.',
+	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+): number => {
+	return SortSplitItemsNull(beforeValue, afterValue, split, emptyTo) ?? 0
 }
 
 /**
@@ -366,15 +464,27 @@ export const SortCompare = (beforeValue: any, afterValue: any, emptyTo: null | '
  * @param sortIncrement
  * @constructor
  */
-export const ReSortOrder = <T extends { [key: string]: any, sort_order: number }>(items: T[], sortIncrement = 10): T[] => {
+export const ReSortOrder = <
+	T extends {
+		[key: string]: any
+		sort_order: number
+	}
+>(
+	items: T[],
+	sortIncrement = 10
+): T[] => {
 	let newSort = 0
 
-	return items.sort((a, b) => SortCompare(a.sort_order, b.sort_order)).map(item => ({
-		...item,
-		sort_order: newSort += sortIncrement
-	}), [])
+	return items
+		.sort((a, b) => SortCompare(a.sort_order, b.sort_order))
+		.map(
+			(item) => ({
+				...item,
+				sort_order: (newSort += sortIncrement)
+			}),
+			[]
+		)
 }
-
 
 /**
  * Returns the sort value comparing the before and after as it relates to the order of the array.
@@ -396,7 +506,12 @@ export const ReSortOrder = <T extends { [key: string]: any, sort_order: number }
  		{id: 1, name: 'One'}
 ]
  */
-export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number => {
+export const SortPerArray = <T>(
+	beforeValue: T,
+	afterValue: T,
+	order: T[],
+	emptyTo: 'Top' | 'Bottom' = 'Top'
+): number => {
 	if (order.indexOf(beforeValue) < 0) {
 		if (order.indexOf(afterValue) < 0) {
 			return SortCompare(beforeValue, afterValue)
@@ -426,12 +541,12 @@ export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], empty
 	}
 }
 
-const SortColumnResult = (
-	valueA: any,
-	valueB: any,
-	isAscending: boolean,
-	emptyToBottom: TSortColumnToBottom
-): number => SortCompare(isAscending ? valueA : valueB, isAscending ? valueB : valueA, !!emptyToBottom ? isAscending ? 'Bottom0' : 'Top0' : undefined)
+const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyToBottom: TSortColumnToBottom): number =>
+	SortCompare(
+		isAscending ? valueA : valueB,
+		isAscending ? valueB : valueA,
+		!!emptyToBottom ? (isAscending ? 'Bottom0' : 'Top0') : undefined
+	)
 // {
 // 	if (!!emptyToBottom) {
 // 		if (!valueA && !!valueB) return 1
@@ -469,7 +584,11 @@ export const SearchTerms = (search: string | null | undefined, toLowerCase = tru
  * TermsToSearch(['One ', null, 'Two '])
  * // returns 'One Two'
  */
-export const TermsToSearch = (terms: string | (string | null | undefined)[] | null | undefined, spacer = ' ', toLowerCase = true): string => {
+export const TermsToSearch = (
+	terms: string | (string | null | undefined)[] | null | undefined,
+	spacer = ' ',
+	toLowerCase = true
+): string => {
 	if (!terms) return ''
 
 	let search: string
@@ -478,8 +597,8 @@ export const TermsToSearch = (terms: string | (string | null | undefined)[] | nu
 		search = terms.trim()
 	} else {
 		search = terms
-			.map(term => (term ?? '').trim())
-			.filter(item => !!item)
+			.map((term) => (term ?? '').trim())
+			.filter((item) => !!item)
 			.join(spacer)
 			.trim()
 	}
@@ -541,7 +660,11 @@ export interface ISearchOptions {
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export const ObjectContainsSearchTerms = (checkObject: object | null | undefined | object[], searchTerms: string[], options?: ISearchOptions): boolean => {
+export const ObjectContainsSearchTerms = (
+	checkObject: object | null | undefined | object[],
+	searchTerms: string[],
+	options?: ISearchOptions
+): boolean => {
 	if (searchTerms.length === 0) return true
 
 	if (!checkObject) return false
@@ -575,7 +698,8 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
 
 	if (options?.matchUntilTerm !== undefined) {
 		if (options?.matchFromTerm !== undefined) {
-			if (options.matchFromTerm < options.matchUntilTerm) throw new Error(`Could not match terms from ${options.matchFromTerm} to ${options.matchUntilTerm}`)
+			if (options.matchFromTerm < options.matchUntilTerm)
+				throw new Error(`Could not match terms from ${options.matchFromTerm} to ${options.matchUntilTerm}`)
 			if (options.matchFromTerm + 1 > searchTerms.length) return false
 			useSearchTerms = useSearchTerms.slice(options.matchFromTerm, options.matchUntilTerm + 1)
 		} else {
@@ -601,7 +725,11 @@ export const ObjectContainsSearchTerms = (checkObject: object | null | undefined
  * // returns true
  * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
  */
-export const ObjectContainsSearch = (object: any | null | undefined, search: string | null | undefined, options?: ISearchOptions): boolean => {
+export const ObjectContainsSearch = (
+	object: any | null | undefined,
+	search: string | null | undefined,
+	options?: ISearchOptions
+): boolean => {
 	if (!search) return true
 
 	if (!object) return false
@@ -632,16 +760,16 @@ export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearch
 		return arrayTable
 	}
 
-	return !limit ?
-		(arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
+	return !limit
+		? (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
 		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any) => {
-			if (results.length >= limit) return results
-			if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
-				return [...results, arrayRow]
-			} else {
-				return results
-			}
-		}, [])
+				if (results.length >= limit) return results
+				if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
+					return [...results, arrayRow]
+				} else {
+					return results
+				}
+		  }, [])
 }
 
 /**
@@ -679,8 +807,13 @@ export const SearchRow = (searchItem: object, search: string, options?: ISearchO
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export const SearchSort = <T>(arrayTable: T[], search: string, sortColumn: ISortColumn<T>, options?: ISearchOptions): T[] => {
-	return !!options?.limit ?
-		SearchRows(SortColumns(arrayTable, sortColumn), search, options) :
-		SortColumns(SearchRows(arrayTable, search, options), sortColumn)
+export const SearchSort = <T>(
+	arrayTable: T[],
+	search: string,
+	sortColumn: ISortColumn<T>,
+	options?: ISearchOptions
+): T[] => {
+	return !!options?.limit
+		? SearchRows(SortColumns(arrayTable, sortColumn), search, options)
+		: SortColumns(SearchRows(arrayTable, search, options), sortColumn)
 }

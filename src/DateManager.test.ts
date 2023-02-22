@@ -12,10 +12,12 @@ import {
 	DateOnly,
 	DateParseTS,
 	DateQuarter,
+	DatesFromWeekNumber,
 	DatesQuarter,
 	DateWeekISONumber,
 	IANAZoneAbbr,
 	ManualParse,
+	MonthDatesFromDateISOWeeks,
 	SortCompareDate,
 	SortCompareDateNull,
 	TimeFloorMinute,
@@ -40,22 +42,34 @@ const times = [
 test('Date Managers', () => {
 	expect(DateParseTS('2000-01-01 08:00')).toEqual(DateParseTS('2000-01-01 08:00:00'))
 	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString)).toEqual('Thursday, December 31, 2020, 7:00 pm')
-	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual('Thursday, December 31, 2020, 4:00 pm')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles')).toEqual('Friday, January 1, 2021, 1:00 pm')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Los_Angeles', 'America/Chicago')).toEqual('Friday, January 1, 2021, 7:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual(
+		'Thursday, December 31, 2020, 4:00 pm'
+	)
+	expect(
+		DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/New_York', 'America/Los_Angeles')
+	).toEqual('Friday, January 1, 2021, 1:00 pm')
+	expect(
+		DateFormat('DisplayDateDoWTimeLong', '2021-01-01 09:00:00', 'America/Los_Angeles', 'America/Chicago')
+	).toEqual('Friday, January 1, 2021, 7:00 am')
 	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00')).toEqual('Friday, January 1, 2021, 10:00 am')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago', 'EST')).toEqual('Friday, January 1, 2021, 9:00 am')
-	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'EST')).toEqual('Friday, January 1, 2021, 7:00 am')
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Chicago', 'EST')).toEqual(
+		'Friday, January 1, 2021, 9:00 am'
+	)
+	expect(DateFormat('DisplayDateDoWTimeLong', '2021-01-01 10:00:00', 'America/Los_Angeles', 'EST')).toEqual(
+		'Friday, January 1, 2021, 7:00 am'
+	)
 	expect(DateParseTS(isoLongDateString)).toEqual(1609459200000)
 	expect(dateTS).toEqual(1609459200000)
-	expect(DateAdjustTS(dateTS, {
-		weeks: 1,
-		days: -1,
-		hours: 1,
-		minutes: 1,
-		seconds: 1,
-		milliseconds: 1
-	})).toEqual(1609459200000 + (7 * 24 * 60 * 60 * 1000) - (24 * 60 * 60 * 1000) + (60 * 60 * 1000) + (60 * 1000) + 1000 + 1)
+	expect(
+		DateAdjustTS(dateTS, {
+			weeks: 1,
+			days: -1,
+			hours: 1,
+			minutes: 1,
+			seconds: 1,
+			milliseconds: 1
+		})
+	).toEqual(1609459200000 + 7 * 24 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000 + 60 * 60 * 1000 + 60 * 1000 + 1000 + 1)
 	expect(DateISO('2021-01-01 10:00:00')).toEqual('2021-01-01T15:00:00.000Z')
 	expect(DateISO('2021-01-01 10:00:00', {timezoneSource: 'America/Chicago'})).toEqual('2021-01-01T16:00:00.000Z')
 	expect(DateISO(isoLongDateString, {year: 1})).toEqual('2022-01-01T00:00:00.000Z')
@@ -129,11 +143,15 @@ test('Date Managers', () => {
 	expect(DateWeekISONumber('2023-01-03')).toEqual({year: 2023, week: 1})
 	expect(DateWeekISONumber('2023-01-08')).toEqual({year: 2023, week: 1})
 	expect(DateWeekISONumber('2023-01-09')).toEqual({year: 2023, week: 2})
-	expect(DateFromWeekNumber({year: 2020, week: 52})).toEqual('2020-12-27')
-	expect(DateFromWeekNumber({year: 2020, week: 53})).toEqual('2021-01-03')
-	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2021-01-10')
-	expect(DateFromWeekNumber({year: 2022, week: 52})).toEqual('2023-01-01')
+	expect(DateFromWeekNumber({year: 2023, week: 5})).toEqual('2023-01-30')
+	expect(DateFromWeekNumber({year: 2020, week: 52})).toEqual('2020-12-21')
+	expect(DateFromWeekNumber({year: 2020, week: 53})).toEqual('2020-12-28')
+	expect(DateFromWeekNumber({year: 2021, week: 1})).toEqual('2021-01-04')
+	expect(DateFromWeekNumber({year: 2022, week: 52})).toEqual('2022-12-26')
 	expect(DateFromWeekNumber({year: 0, week: 52})).toEqual(null)
+	expect(DatesFromWeekNumber({year: 2023, week: 5})).toEqual({start: '2023-01-30', end: '2023-02-05'})
+	expect(MonthDatesFromDateISOWeeks('2023-01-10')).toEqual({start: '2023-01-02', end: '2023-02-05'})
+	expect(MonthDatesFromDateISOWeeks('2023-02-10')).toEqual({start: '2023-02-06', end: '2023-03-05'})
 	expect(WeekNumberAdjust({year: 2022, week: 52}, 1)).toEqual({year: 2023, week: 1})
 	expect(WeekNumberAdjust({year: 2023, week: 1}, -1)).toEqual({year: 2022, week: 52})
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsSame', '2021-01-01T00:00:00Z')).toEqual(true)
@@ -176,33 +194,79 @@ test('Date Managers', () => {
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
 	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
-	expect(DateISO('2021-11-12 14:08:54.71', {
-		timezoneSource: 'America/New_York'
-	})).toEqual('2021-11-12T19:08:54.710Z')
-	expect(DateISO('2021-11-12 14:08:54.71', {
-		timezoneSource: 'America/Chicago'
-	})).toEqual('2021-11-12T20:08:54.710Z')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 00:00:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 12:00 am')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 01:00:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 1:00 am')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 11:00:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 11:00 am')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 11:59:59.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 11:59 am')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 12:01:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 12:01 pm')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 12:00:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 12:00 pm')
-	expect(DateFormat('LocalDateTime', DateISO('2021-11-12 13:00:00.00', {
-		timezoneSource: 'America/New_York'
-	}), 'America/New_York')).toEqual('11/12/2021 1:00 pm')
+	expect(
+		DateISO('2021-11-12 14:08:54.71', {
+			timezoneSource: 'America/New_York'
+		})
+	).toEqual('2021-11-12T19:08:54.710Z')
+	expect(
+		DateISO('2021-11-12 14:08:54.71', {
+			timezoneSource: 'America/Chicago'
+		})
+	).toEqual('2021-11-12T20:08:54.710Z')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 00:00:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 12:00 am')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 01:00:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 1:00 am')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 11:00:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 11:00 am')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 11:59:59.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 11:59 am')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 12:01:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 12:01 pm')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 12:00:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 12:00 pm')
+	expect(
+		DateFormat(
+			'LocalDateTime',
+			DateISO('2021-11-12 13:00:00.00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 1:00 pm')
 	expect(DateFormat('Date', DateISO('0021-01-24 01:00:00.00'))).toEqual('0021-01-24')
 	expect(SortCompareDateNull('2021-01-01', '2021-01-02')).toEqual(-1)
 	expect(SortCompareDateNull('2021-01-02', '2021-01-01')).toEqual(1)
@@ -260,8 +324,12 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-07-04', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	expect(DateOnly('2022-07-05', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	const otz = process.env.TZ
-	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
-	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
+		'2022-05-31 17:14'
+	)
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual(
+		'Th, Jan 6, 2022, 5:07 pm'
+	)
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
@@ -272,15 +340,37 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {days: 'EndOf'})).toEqual('2022-02-17')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
-	expect(DateOnly('today')).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
+	expect(DateOnly('today')).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
 	expect(DateOnly(null)).toEqual(new Date().toISOString().substring(0, 10))
-	expect(DateOnly(null, {formatLocale: true})).toEqual(CleanNumber(new Date().toISOString().substring(5, 7)).toString() + '/' + CleanNumber(new Date().toISOString().substring(8, 10)).toString() + '/' + new Date().toISOString().substring(0, 4))
-	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
+	expect(DateOnly(null, {formatLocale: true})).toEqual(
+		CleanNumber(new Date().toISOString().substring(5, 7)).toString() +
+			'/' +
+			CleanNumber(new Date().toISOString().substring(8, 10)).toString() +
+			'/' +
+			new Date().toISOString().substring(0, 4)
+	)
+	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'Asia/Tehran'
-	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
-	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
+		'2022-05-31 17:14'
+	)
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual(
+		'Th, Jan 6, 2022, 5:07 pm'
+	)
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
@@ -291,13 +381,29 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {days: 'EndOf'})).toEqual('2022-02-17')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
-	expect(DateOnly('today')).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
+	expect(DateOnly('today')).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/New_York'
-	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
-	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
+		'2022-05-31 17:14'
+	)
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual(
+		'Th, Jan 6, 2022, 5:07 pm'
+	)
 	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00')).toEqual('2/1/2022 3:18 pm')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
@@ -309,15 +415,31 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {days: 'EndOf'})).toEqual('2022-02-17')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
-	expect(DateOnly('today')).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
+	expect(DateOnly('today')).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	process.env.TZ = 'America/Las_Angeles'
-	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual('2022-05-31 17:14')
-	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual('Th, Jan 6, 2022, 5:07 pm')
+	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
+		'2022-05-31 17:14'
+	)
+	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual(
+		'Th, Jan 6, 2022, 5:07 pm'
+	)
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
@@ -328,10 +450,22 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-02-17', {days: 'EndOf'})).toEqual('2022-02-17')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'StartOf'})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-17', {day: -1, days: 'EndOf'})).toEqual('2022-02-16')
-	expect(DateOnly('today')).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'StartOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	expect(DateOnly('today', {day: 'EndOf'})).toEqual(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`)
-	times.forEach(time => expect(TimeOnly(time[0])).toEqual(time[1]))
+	expect(DateOnly('today')).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'StartOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	expect(DateOnly('today', {day: 'EndOf'})).toEqual(
+		`${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+			.toString()
+			.padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`
+	)
+	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	if (!!otz) {
 		process.env.TZ = otz
 	} else {
