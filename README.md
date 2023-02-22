@@ -9,3 +9,10 @@ are not present in vanilla JavaScript.
 ...
 ## Testing
 ...
+
+Old Scripts
+
+		"BuildDist": "tsc && vite build",
+		"PublishDist": "tsc && vite build && pnpm version patch && git push && npm publish ./dist",
+		"PublishTry": "tsc && vite build && pnpm version patch && git push",
+		"BuildAndPublishOLD": "rm -rf dist/* && rollup -c && npm version patch --no-git-tag-version && npm publish",
