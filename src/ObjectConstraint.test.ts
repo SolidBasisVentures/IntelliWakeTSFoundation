@@ -16,6 +16,7 @@ test('ObjectConstraint', () => {
 			ObjectConstraintTest
 		)
 	).toEqual({
+		features: [],
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',
@@ -40,6 +41,7 @@ test('ObjectConstraint', () => {
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',
+		features: [],
 		ids: [1, 2],
 		salary: 15000,
 		is_active: false
@@ -53,7 +55,6 @@ test('ObjectConstraint', () => {
 				start_date: '1/1/2023',
 				ids: ['1', 2, 0, null, ''],
 				salary: 25000,
-				is_active: 'false',
 				another_field: 'Test'
 			} as any,
 			ObjectConstraintTest
@@ -62,9 +63,10 @@ test('ObjectConstraint', () => {
 		id: 1,
 		name: '',
 		start_date: '2023-01-01',
+		features: [],
 		ids: [1, 2],
 		salary: 20000,
-		is_active: false
+		is_active: true
 	})
 
 	expect(
@@ -87,6 +89,7 @@ test('ObjectConstraint', () => {
 		id: 1,
 		name: null,
 		start_date: '2023-01-01',
+		features: [],
 		ids: [1, 2],
 		salary: null,
 		is_active: false
@@ -112,6 +115,7 @@ test('ObjectConstraint', () => {
 		id: 1,
 		name: null,
 		start_date: '2023-01-01',
+		features: [],
 		ids: [1, 2],
 		salary: null,
 		is_active: false
@@ -127,8 +131,12 @@ test('FormData', () => {
 
 	expect(ObjectFromFormData(TestFormData(), {constraint: ObjectConstraintTest})).toEqual({
 		id: 1,
+		ids: [],
 		features: ['One', 'Two', 'Three'],
-		is_active: false
+		is_active: false,
+		name: '',
+		salary: 10000,
+		start_date: null
 	})
 
 	expect(

@@ -126,6 +126,18 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 		}
 	}
 
+	for (const key of Object.keys(constraint)) {
+		if (!(key in newObj)) {
+			const fieldConstraint = constraint[key] as TObjectFieldConstraint
+			if (fieldConstraint) {
+				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
+				if (fieldConstraint.isArray && !Array.isArray(newObj[key])) {
+					newObj[key] = ToArray(newObj.key)
+				}
+			}
+		}
+	}
+
 	return newObj
 }
 
