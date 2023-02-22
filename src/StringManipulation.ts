@@ -20,21 +20,51 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 
 	let results: string[] = []
 
-	const separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
 
-	loop_array:
-		for (const strItem of strArray) {
-			for (const separator of separators) {
-				if (strItem.includes(separator)) {
-					results = ToWords([...results, ...strItem.split(separator).filter(strText => !!strText)])
-					continue loop_array
-				}
+	loop_array: for (const strItem of strArray) {
+		for (const separator of separators) {
+			if (strItem.includes(separator)) {
+				results = ToWords([...results, ...strItem.split(separator).filter((strText) => !!strText)])
+				continue loop_array
 			}
-
-			results = [...results, ...strItem.replace(/([A-Z]+|[A-Z]?[a-z]+)(?=[A-Z]|\b)/g, '!$&').split('!')].filter(strText => !!strText)
 		}
 
-	return results.filter(strText => !!strText)
+		results = [...results, ...strItem.replace(/([A-Z]+|[A-Z]?[a-z]+)(?=[A-Z]|\b)/g, '!$&').split('!')].filter(
+			(strText) => !!strText
+		)
+	}
+
+	return results.filter((strText) => !!strText)
+}
+
+/**
+ * Splits a string into its component text without whitespaces
+ * @param str
+ * @constructor
+ *
+ */
+export const SplitNonWhiteSpace = (str: string | string[] | undefined | null): string[] => {
+	if (!str) return []
+
+	const strArray = ToArray(str)
+
+	let results: string[] = []
+
+	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+
+	loop_array: for (const strItem of strArray) {
+		for (const separator of separators) {
+			if (strItem.includes(separator)) {
+				results = SplitNonWhiteSpace([...results, ...strItem.split(separator).filter((strText) => !!strText)])
+				continue loop_array
+			}
+		}
+
+		results = [...results, strItem].filter((strText) => !!strText)
+	}
+
+	return results.filter((strText) => !!strText)
 }
 
 /**
@@ -72,7 +102,9 @@ export const ToFirstLetterUpperSmart = (str: string | undefined | null): string 
  *
  */
 export const ToSnakeCase = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map(st => st.toLowerCase()).join('_')
+	ToWords(str)
+		.map((st) => st.toLowerCase())
+		.join('_')
 
 /**
  * Converts a string to kebab-case. *
@@ -81,7 +113,9 @@ export const ToSnakeCase = (str: string | string[] | undefined | null): string =
  *
  */
 export const ToKebabCase = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map(st => st.toLowerCase()).join('-')
+	ToWords(str)
+		.map((st) => st.toLowerCase())
+		.join('-')
 
 /**
  * Converts a string to camelCase.
@@ -91,7 +125,9 @@ export const ToKebabCase = (str: string | string[] | undefined | null): string =
  *
  */
 export const ToCamelCase = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map((st, idx) => !idx ? st.toLowerCase() : st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join('')
+	ToWords(str)
+		.map((st, idx) => (!idx ? st.toLowerCase() : st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)))
+		.join('')
 
 /**
  * To Upper Case Words
@@ -100,7 +136,9 @@ export const ToCamelCase = (str: string | string[] | undefined | null): string =
  *
  */
 export const ToUpperCaseWords = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map(st => st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join(' ')
+	ToWords(str)
+		.map((st) => (st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)))
+		.join(' ')
 
 /**
  * Converts a string to PascalCase.
@@ -110,7 +148,9 @@ export const ToUpperCaseWords = (str: string | string[] | undefined | null): str
  *
  */
 export const ToPascalCase = (str: string | string[] | undefined | null): string =>
-	ToWords(str).map(st => st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)).join('')
+	ToWords(str)
+		.map((st) => (st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)))
+		.join('')
 
 /**
  * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
@@ -124,11 +164,15 @@ export const ToInitials = (str: string | string[] | undefined | null): string =>
 	if (typeof str === 'string') {
 		const commaItems = str.split(',')
 		if (commaItems.length === 2) {
-			return ToWords([commaItems[1], commaItems[0]]).map(st => st.substring(0, 1).toUpperCase()).join('')
+			return ToWords([commaItems[1], commaItems[0]])
+				.map((st) => st.substring(0, 1).toUpperCase())
+				.join('')
 		}
 	}
 
-	return ToWords(str).map(st => st.substring(0, 1).toUpperCase()).join('')
+	return ToWords(str)
+		.map((st) => st.substring(0, 1).toUpperCase())
+		.join('')
 }
 
 /**
@@ -145,7 +189,7 @@ export const ReplaceLinks = function (subject: string | undefined | null): strin
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
-	const target = '<a href=\'$1\' target=\'_blank\'>$1</a>'
+	const target = "<a href='$1' target='_blank'>$1</a>"
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
@@ -525,8 +569,7 @@ export const DigitsNth = (value: any): string | null => {
 			result += 'th'
 			break
 		default:
-			switch
-				(result.substr(-1)) {
+			switch (result.substr(-1)) {
 				case '1':
 					result += 'st'
 					break
@@ -584,9 +627,12 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
 	val = val.replace(/^(\d{3})-?(\d{2})-?(\d{1,4})/, '$1-$2-$3')
 
 	// remove misplaced dashes
-	val = val.split('').filter((val, idx) => {
-		return val !== '-' || idx === 3 || idx === 6
-	}).join('')
+	val = val
+		.split('')
+		.filter((val, idx) => {
+			return val !== '-' || idx === 3 || idx === 6
+		})
+		.join('')
 
 	// enforce max length
 	return val.substring(0, 11)
@@ -597,10 +643,10 @@ export const FormatSSN = (ssn: string | null | undefined): string => {
  *
  */
 export interface IPhoneComponents {
-	countryCode: string,
-	areaCode: string,
-	exchangeNumber: string,
-	subscriberNumber: string,
+	countryCode: string
+	areaCode: string
+	exchangeNumber: string
+	subscriberNumber: string
 	extension: string
 }
 
@@ -632,11 +678,19 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
 		let originalPhone = phone ?? ''
 		let extensionIdx = originalPhone.indexOf(phoneComponents.areaCode)
 		if (extensionIdx >= 0) {
-			extensionIdx = originalPhone.indexOf(phoneComponents.exchangeNumber, extensionIdx + phoneComponents.areaCode.length)
+			extensionIdx = originalPhone.indexOf(
+				phoneComponents.exchangeNumber,
+				extensionIdx + phoneComponents.areaCode.length
+			)
 			if (extensionIdx >= 0) {
-				extensionIdx = originalPhone.indexOf(phoneComponents.subscriberNumber, extensionIdx + phoneComponents.exchangeNumber.length)
+				extensionIdx = originalPhone.indexOf(
+					phoneComponents.subscriberNumber,
+					extensionIdx + phoneComponents.exchangeNumber.length
+				)
 				if (extensionIdx >= 0) {
-					phoneComponents.extension = originalPhone.substr(extensionIdx + phoneComponents.subscriberNumber.length).trim()
+					phoneComponents.extension = originalPhone
+						.substr(extensionIdx + phoneComponents.subscriberNumber.length)
+						.trim()
 				}
 			}
 		}
@@ -863,8 +917,7 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
 
 	const charactersLength = validChars.length
 	for (let i = 0; i < length; i++) {
-		result += validChars.charAt(Math.floor(Math.random() *
-			charactersLength))
+		result += validChars.charAt(Math.floor(Math.random() * charactersLength))
 	}
 	return result
 
@@ -892,7 +945,8 @@ export const RandomString = (length: number, validChars = 'ABCDEFGHJKLMNPQRTUVWX
  * @constructor
  *
  */
-export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
+export const RandomKey = (length: number) =>
+	RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
 
 /**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
@@ -906,13 +960,28 @@ export const RandomKey = (length: number) => RandomString(length, 'abcdefghijklm
  * @constructor
  *
  */
-export const AddS = (text?: string | null, count?: number | null, showNumber = false, maxDecimals = 0, minDecimals: number | null = null): string => {
+export const AddS = (
+	text?: string | null,
+	count?: number | null,
+	showNumber = false,
+	maxDecimals = 0,
+	minDecimals: number | null = null
+): string => {
 	const checkText = (text ?? '').toLowerCase()
 	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
-	let addValue = !text ? 's' : (checkText.endsWith('s') || checkText.endsWith('z') || checkText.endsWith('ch') || checkText.endsWith('sh') || checkText.endsWith('x')) ? 'es' : 's'
-	return !text ? '' : `${showNumber ? numericText : ''} ${text}${(CleanNumber(numericText) !== 1 ? addValue : '')}`.trim()
+	let addValue = !text
+		? 's'
+		: checkText.endsWith('s') ||
+		  checkText.endsWith('z') ||
+		  checkText.endsWith('ch') ||
+		  checkText.endsWith('sh') ||
+		  checkText.endsWith('x')
+		? 'es'
+		: 's'
+	return !text
+		? ''
+		: `${showNumber ? numericText : ''} ${text}${CleanNumber(numericText) !== 1 ? addValue : ''}`.trim()
 }
-
 
 /**
  *
@@ -979,7 +1048,10 @@ export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'd
  * @constructor
  *
  */
-export const EllipsesAtMax = (value: string | null | undefined, maxCharacters: number = 15): string | null | undefined => {
+export const EllipsesAtMax = (
+	value: string | null | undefined,
+	maxCharacters: number = 15
+): string | null | undefined => {
 	if (!value || value.length <= maxCharacters) return value
 
 	return `${value.substring(0, maxCharacters)}...`
@@ -1009,13 +1081,16 @@ export const AsteriskMatch = (value: string | null | undefined, asteriskPattern:
  *
  */
 export const BuildPath = (...paths: (string | null)[]) => {
-	let build = paths.map((part, i) => {
-		if (i === 0) {
-			return (part ?? '').trim().replace(/[\/]*$/g, '')
-		} else {
-			return (part ?? '').trim().replace(/(^[\/]*|[\/]*$)/g, '')
-		}
-	}).filter(x => x.length).join('/')
+	let build = paths
+		.map((part, i) => {
+			if (i === 0) {
+				return (part ?? '').trim().replace(/[\/]*$/g, '')
+			} else {
+				return (part ?? '').trim().replace(/(^[\/]*|[\/]*$)/g, '')
+			}
+		})
+		.filter((x) => x.length)
+		.join('/')
 
 	if (paths[0] === '/' && !build.startsWith('/')) return '/' + build
 

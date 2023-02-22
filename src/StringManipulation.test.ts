@@ -9,19 +9,30 @@ import {
 	FormatZip,
 	RandomString,
 	ReplaceLinks,
-	TextToHTML, ToCamelCase,
+	TextToHTML,
+	ToCamelCase,
 	ToCurrency,
 	ToCurrencyBlank,
-	ToCurrencyDash, ToCurrencyMax,
+	ToCurrencyDash,
+	ToCurrencyMax,
 	ToDigits,
 	ToDigitsBlank,
-	ToDigitsDash, ToKebabCase, ToPascalCase,
+	ToDigitsDash,
+	ToKebabCase,
+	ToPascalCase,
 	ToPercent,
 	ToPercentBlank,
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords, AddS, ShortNumber, ToInitials, AsteriskMatch, BuildPath
+	UCWords,
+	AddS,
+	ShortNumber,
+	ToInitials,
+	AsteriskMatch,
+	BuildPath,
+	ToWords,
+	SplitNonWhiteSpace
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 import {test, expect} from 'vitest'
@@ -49,6 +60,10 @@ test('String Functions', () => {
 	expect(ToPascalCase('user-token')).toBe('UserToken')
 	expect(ToPascalCase('user_id')).toBe('UserID')
 	expect(ToPascalCase('id')).toBe('ID')
+	expect(ToWords('Peters')).toStrictEqual(['Peters'])
+	expect(ToWords('Peters, Dennis J')).toStrictEqual(['Peters', 'Dennis', 'J'])
+	expect(ToWords('PEters, dennis-j')).toStrictEqual(['P', 'Eters', 'dennis', 'j'])
+	expect(SplitNonWhiteSpace('PEters, dennis-j')).toStrictEqual(['PEters', 'dennis', 'j'])
 	expect(ToInitials('id')).toBe('I')
 	expect(ToInitials('dennis peters')).toBe('DP')
 	expect(ToInitials('dennis james peters')).toBe('DJP')
@@ -56,12 +71,12 @@ test('String Functions', () => {
 	expect(ToInitials('peters, dennis')).toBe('DP')
 	{
 		let link = 'https://www.google.com'
-		let anchor = '<a href=\'https://www.google.com\' target=\'_blank\'>https://www.google.com</a>'
+		let anchor = "<a href='https://www.google.com' target='_blank'>https://www.google.com</a>"
 		expect(ReplaceLinks(link)).toBe(anchor)
 	}
 	{
 		let link = 'https://www.google.com\nnew line'
-		let anchor = '<a href=\'https://www.google.com\' target=\'_blank\'>https://www.google.com</a><br />new line'
+		let anchor = "<a href='https://www.google.com' target='_blank'>https://www.google.com</a><br />new line"
 		expect(ReplaceLinks(link)).toBe(anchor)
 	}
 	{
@@ -75,12 +90,47 @@ test('String Functions', () => {
 	}
 	{
 		let symbolFunctions = [
-			{name: 'ToCurrency', method: ToCurrency, value: 100, expected: '$100.00', decimal: '$100.0', empty: '$0.00'},
-			{name: 'ToCurrencyBlank', method: ToCurrencyBlank, value: 100, expected: '$100.00', decimal: '$100.0', empty: ''},
-			{name: 'ToCurrencyDash', method: ToCurrencyDash, value: 100, expected: '$100.00', decimal: '$100.0', empty: '-'},
+			{
+				name: 'ToCurrency',
+				method: ToCurrency,
+				value: 100,
+				expected: '$100.00',
+				decimal: '$100.0',
+				empty: '$0.00'
+			},
+			{
+				name: 'ToCurrencyBlank',
+				method: ToCurrencyBlank,
+				value: 100,
+				expected: '$100.00',
+				decimal: '$100.0',
+				empty: ''
+			},
+			{
+				name: 'ToCurrencyDash',
+				method: ToCurrencyDash,
+				value: 100,
+				expected: '$100.00',
+				decimal: '$100.0',
+				empty: '-'
+			},
 			{name: 'ToPercent', method: ToPercent, value: 1, expected: '100%', decimal: '100.0%', empty: '0%'},
-			{name: 'ToPercentBlank', method: ToPercentBlank, value: 1, expected: '100.00%', decimal: '100.0%', empty: ''},
-			{name: 'ToPercentDash', method: ToPercentDash, value: 1, expected: '100.00%', decimal: '100.0%', empty: '-'},
+			{
+				name: 'ToPercentBlank',
+				method: ToPercentBlank,
+				value: 1,
+				expected: '100.00%',
+				decimal: '100.0%',
+				empty: ''
+			},
+			{
+				name: 'ToPercentDash',
+				method: ToPercentDash,
+				value: 1,
+				expected: '100.00%',
+				decimal: '100.0%',
+				empty: '-'
+			},
 			{name: 'ToDigits', method: ToDigits, value: 10, expected: '10', decimal: '10.0', empty: '0'},
 			{name: 'ToDigitsBlank', method: ToDigitsBlank, value: 10, expected: '10', decimal: '10.0', empty: ''},
 			{name: 'ToDigitsDash', method: ToDigitsDash, value: 10, expected: '10', decimal: '10.0', empty: '-'}
