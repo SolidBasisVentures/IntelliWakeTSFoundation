@@ -5,7 +5,11 @@
  * // returns "john-doe-bob"
  * ReplaceAll(' ', '-', 'john doe bob')
  */
-export const ReplaceAll = function (find: string | string[], replace: string, subject: string | null | undefined): string {
+export const ReplaceAll = function (
+	find: string | string[],
+	replace: string,
+	subject: string | null | undefined
+): string {
 	if (!subject) return ''
 
 	if (Array.isArray(find)) {
@@ -57,8 +61,11 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
  * @param values
  * @constructor
  */
-export const GreaterNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
-	.reduce<number | null>((result, value) => (result === null || value > result) ? value : result, null)
+export const GreaterNumberNull = (...values: (any | any[])[]): number | null =>
+	ValidNumbers(values).reduce<number | null>(
+		(result, value) => (result === null || value > result ? value : result),
+		null
+	)
 
 /**
  *
@@ -72,8 +79,11 @@ export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumb
  * @param values
  * @constructor
  */
-export const LeastNumberNull = (...values: (any | any[])[]): number | null => ValidNumbers(values)
-	.reduce<number | null>((result, value) => (result === null || value < result) ? value : result, null)
+export const LeastNumberNull = (...values: (any | any[])[]): number | null =>
+	ValidNumbers(values).reduce<number | null>(
+		(result, value) => (result === null || value < result ? value : result),
+		null
+	)
 
 /**
  *
@@ -126,7 +136,8 @@ export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]):
  * @param values
  * @constructor
  */
-export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number => AverageNumberNull(decimals, values) ?? 0
+export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number =>
+	AverageNumberNull(decimals, values) ?? 0
 
 /**
  *
@@ -166,8 +177,7 @@ export const CleanDivide = (numerator: any, denominator: any): number => CleanDi
  * CleanNumbers(0, '$1,000', 12.236)
  */
 export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): number =>
-	ValidNumbers(values)
-		.reduce<number>((result, value) => CleanNumber(result + value, roundTo), 0)
+	ValidNumbers(values).reduce<number>((result, value) => CleanNumber(result + value, roundTo), 0)
 
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
@@ -227,7 +237,7 @@ export const JSONParse = <T = any>(json: any): T | null => {
  * @constructor
  */
 export const Trunc = (subject: string, length: number): string => {
-	return subject.length > length ? subject.substr(0, length - 1) + '&hellip;' : subject
+	return subject.length > length ? subject.substring(0, length - 1) + '&hellip;' : subject
 }
 
 /**
@@ -484,8 +494,8 @@ export const ArrayToGuidString = (byteArray: any): string => {
 	return Array.from(byteArray, function (byte: any) {
 		return ('0' + (byte & 0xff).toString(16)).slice(-2)
 	})
-	            .join('')
-	            .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
+		.join('')
+		.replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
 }
 
 /**
@@ -495,7 +505,8 @@ export const ArrayToGuidString = (byteArray: any): string => {
  */
 export const StringToByteArray = (str: string): any => {
 	let decoded = atob(str)
-	let i, il = decoded.length
+	let i,
+		il = decoded.length
 	let array = new Uint8Array(il)
 
 	for (i = 0; i < il; ++i) {
@@ -520,9 +531,11 @@ export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&
  * @constructor
  */
 export const RoundTo = (num: any, decimalPlaces: number = 0, roundDir: 'round' | 'up' | 'down' = 'round') =>
-	roundDir === 'round' ? +Math.round((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
-		: roundDir === 'down' ? +Math.floor((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces) :
-			+Math.ceil((CleanNumber(num) + Number.EPSILON) * (10 ** decimalPlaces)) / (10 ** decimalPlaces)
+	roundDir === 'round'
+		? +Math.round((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
+		: roundDir === 'down'
+		? +Math.floor((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
+		: +Math.ceil((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
 
 /**
  *
@@ -536,20 +549,29 @@ export const ObjectToJSONString = (val: any) => `json:${JSON.stringify(val)}`
  * @param val
  * @constructor
  */
-export const JSONStringToObject = <T = any>(val: string): T => (!val ? undefined : val === 'json:undefined' ? undefined : val === 'json:null' ? null : JSONParse(val.toString().substr(5))) as T
+export const JSONStringToObject = <T = any>(val: string): T =>
+	(!val
+		? undefined
+		: val === 'json:undefined'
+		? undefined
+		: val === 'json:null'
+		? null
+		: JSONParse(val.toString().substring(5))) as T
 
 // noinspection JSPotentiallyInvalidConstructorUsage
 /**
  * Is ArrayBuffer
  * @param buf
  */
-export const isAB = (buf: ArrayBuffer | string): boolean => buf instanceof (new Uint16Array()).constructor.prototype.__proto__.constructor
+export const isAB = (buf: ArrayBuffer | string): boolean =>
+	buf instanceof new Uint16Array().constructor.prototype.__proto__.constructor
 
 /**
  * ArrayBuffer to String
  * @param buf
  */
-export const ab2str = (buf: ArrayBuffer | string): string => isAB(buf) ? String.fromCharCode.apply(null, new Uint16Array(buf as ArrayBuffer) as any) as any : buf as any
+export const ab2str = (buf: ArrayBuffer | string): string =>
+	isAB(buf) ? (String.fromCharCode.apply(null, new Uint16Array(buf as ArrayBuffer) as any) as any) : (buf as any)
 
 /**
  * String to ArrayBuffer
@@ -569,10 +591,7 @@ export const str2ab = (str: string): ArrayBuffer => {
  * @param array
  * @param predicate
  */
-export const findAsync = async <T>(
-	array: T[],
-	predicate: (t: T) => Promise<boolean>
-): Promise<T | undefined> => {
+export const findAsync = async <T>(array: T[], predicate: (t: T) => Promise<boolean>): Promise<T | undefined> => {
 	for (const t of array) {
 		if (await predicate(t)) {
 			return t
@@ -586,10 +605,7 @@ export const findAsync = async <T>(
  * @param array
  * @param predicate
  */
-export const someAsync = async <T>(
-	array: T[],
-	predicate: (t: T) => Promise<boolean>
-): Promise<boolean> => {
+export const someAsync = async <T>(array: T[], predicate: (t: T) => Promise<boolean>): Promise<boolean> => {
 	for (const t of array) {
 		if (await predicate(t)) {
 			return true
@@ -603,12 +619,9 @@ export const someAsync = async <T>(
  * @param array
  * @param predicate
  */
-export const everyAsync = async <T>(
-	array: T[],
-	predicate: (t: T) => Promise<boolean>
-): Promise<boolean> => {
+export const everyAsync = async <T>(array: T[], predicate: (t: T) => Promise<boolean>): Promise<boolean> => {
 	for (const t of array) {
-		if (!await predicate(t)) {
+		if (!(await predicate(t))) {
 			return false
 		}
 	}
@@ -620,10 +633,7 @@ export const everyAsync = async <T>(
  * @param array
  * @param predicate
  */
-export const filterAsync = async <T>(
-	array: T[],
-	predicate: (t: T) => Promise<boolean>
-): Promise<T[]> => {
+export const filterAsync = async <T>(array: T[], predicate: (t: T) => Promise<boolean>): Promise<T[]> => {
 	let returnArray: T[] = []
 
 	for (const t of array) {
@@ -645,7 +655,8 @@ export const filterAsync = async <T>(
  * @param value
  * @constructor
  */
-export const ToArray = <T>(value: T | T[]): T[] => (value === null || value === undefined) ? [] : Array.isArray(value) ? value : [value]
+export const ToArray = <T>(value: T | T[]): T[] =>
+	value === null || value === undefined ? [] : Array.isArray(value) ? value : [value]
 
 /**
  * Generates a range of numbers
@@ -655,9 +666,15 @@ export const ToArray = <T>(value: T | T[]): T[] => (value === null || value === 
  * @param start
  * @constructor
  */
-export const ArrayRange = (end: number, increment = 1, start = 0): number [] => {
-	const useIncrement = end > start ? increment > 0 ? increment : GreaterNumber(increment * -1, 1)
-		: increment < 0 ? increment : LeastNumber(increment * -1, -1)
+export const ArrayRange = (end: number, increment = 1, start = 0): number[] => {
+	const useIncrement =
+		end > start
+			? increment > 0
+				? increment
+				: GreaterNumber(increment * -1, 1)
+			: increment < 0
+			? increment
+			: LeastNumber(increment * -1, -1)
 
 	let results: number[] = []
 
@@ -677,14 +694,16 @@ export const ArrayRange = (end: number, increment = 1, start = 0): number [] => 
  * @param keys
  * @constructor
  */
-export const PropertiesExist = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data)
+export const PropertiesExist = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) =>
+	keys.every((key) => key in data)
 
 /**
  *
  * @param data
  * @param keys
  */
-export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) => keys.every(key => key in data && !!data[key])
+export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T, string>>(data: T, ...keys: K[]) =>
+	keys.every((key) => key in data && !!data[key])
 
 /**
  *
@@ -713,7 +732,10 @@ export function OmitProperty<T extends object, K extends Extract<keyof T, string
  * @param keys
  * @constructor
  */
-export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> & Partial<K> {
+export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(
+	obj: T,
+	...keys: K[]
+): Omit<T, K> & Partial<K> {
 	let ret: Omit<T, K> & Partial<K> = {...obj}
 	const excludeSet: Set<string> = new Set(keys)
 
@@ -771,7 +793,11 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
  * @param recursive
  * @constructor
  */
-export function RemoveStarting(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
+export function RemoveStarting(
+	remove: string | string[] | null | undefined,
+	value: string | null | undefined,
+	recursive = false
+): string {
 	if (!value || !remove) return ''
 
 	const arrayRemove = ToArray(remove)
@@ -784,7 +810,7 @@ export function RemoveStarting(remove: string | string[] | null | undefined, val
 				newValue = newValue.substring(aRemove.length)
 			}
 		}
-	} while (recursive && arrayRemove.some(aRemove => newValue.startsWith(aRemove)))
+	} while (recursive && arrayRemove.some((aRemove) => newValue.startsWith(aRemove)))
 
 	return newValue
 }
@@ -796,7 +822,11 @@ export function RemoveStarting(remove: string | string[] | null | undefined, val
  * @param recursive
  * @constructor
  */
-export function RemoveEnding(remove: string | string[] | null | undefined, value: string | null | undefined, recursive = false): string {
+export function RemoveEnding(
+	remove: string | string[] | null | undefined,
+	value: string | null | undefined,
+	recursive = false
+): string {
 	if (!value || !remove) return ''
 
 	const arrayRemove = ToArray(remove)
@@ -809,7 +839,7 @@ export function RemoveEnding(remove: string | string[] | null | undefined, value
 				newValue = newValue.substring(0, newValue.length - aRemove.length)
 			}
 		}
-	} while (recursive && arrayRemove.some(aRemove => newValue.endsWith(aRemove)))
+	} while (recursive && arrayRemove.some((aRemove) => newValue.endsWith(aRemove)))
 
 	return newValue
 }
@@ -838,7 +868,7 @@ export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
  * @param b
  * @constructor
  */
-export const ColorBrightnessRGB = (r: number, g: number, b: number): number => (r * 0.299 + g * 0.587 + b * 0.114)
+export const ColorBrightnessRGB = (r: number, g: number, b: number): number => r * 0.299 + g * 0.587 + b * 0.114
 
 /**
  * Get RGB from hex
@@ -857,11 +887,7 @@ export const RBGFromHex = (hex: string): [r: number, g: number, b: number] => {
 	if (hex.length !== 6) {
 		return [0, 0, 0]
 	}
-	return [
-		parseInt(hex.slice(0, 2), 16),
-		parseInt(hex.slice(2, 4), 16),
-		parseInt(hex.slice(4, 6), 16)
-	]
+	return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)]
 }
 
 /**
@@ -887,9 +913,7 @@ export const ColorBrightnessHex = (hex: string): number => {
  */
 export function InvertColorRGB(r: number, g: number, b: number, bw = false) {
 	if (bw) {
-		return ColorBrightnessRGB(r, g, b) > 186
-			? '#000000'
-			: '#FFFFFF'
+		return ColorBrightnessRGB(r, g, b) > 186 ? '#000000' : '#FFFFFF'
 	}
 
 	// invert color components
@@ -919,5 +943,5 @@ export function InvertColorHex(hex: string, bw = false) {
  * @constructor
  */
 export function Sleep(ms = 200) {
-	return new Promise(resolve => setTimeout(resolve, ms))
+	return new Promise((resolve) => setTimeout(resolve, ms))
 }

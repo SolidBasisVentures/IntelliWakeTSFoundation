@@ -16,6 +16,7 @@
  *
  */
 import {IsOn, ReplaceAll} from './Functions'
+
 const EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^']
 const EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray']
 
@@ -84,9 +85,9 @@ const FindInnerSetLocations = (
 		let openingLocation = null as number | null
 
 		for (let i = 0; i < len; i++) {
-			if (stringItem.substr(i, 1) === setStart) {
+			if (stringItem.substring(i, i + 1) === setStart) {
 				openingLocation = i
-			} else if (openingLocation !== null && stringItem.substr(i, 1) === setEnd) {
+			} else if (openingLocation !== null && stringItem.substring(i, i + 1) === setEnd) {
 				return [openingLocation, i]
 			}
 		}
@@ -108,22 +109,22 @@ const ProcessPMDAS = (expression: string): string => {
 
 	let innerSet = FindInnerSetLocations(returnValue, '(', ')')
 	while (!!innerSet) {
-		let newExpression = returnValue.substr(0, innerSet[0])
+		let newExpression = returnValue.substring(0, innerSet[0])
 		if (
 			newExpression.length > 0 &&
-			preOperators.indexOf(newExpression.substr(-1, 1)) === -1 &&
-			preOperators.indexOf(newExpression.substr(-2, 2)) === -1
+			preOperators.indexOf(newExpression.substring(newExpression.length - 1)) === -1 &&
+			preOperators.indexOf(newExpression.substring(newExpression.length - 2)) === -1
 		) {
 			newExpression = newExpression.concat('*')
 		}
 		newExpression = newExpression.concat(
-			ProcessPMDAS(returnValue.substr(innerSet[0] + 1, innerSet[1] - innerSet[0] - 1))
+			ProcessPMDAS(returnValue.substring(innerSet[0] + 1, innerSet[0] + 1 + (innerSet[1] - innerSet[0] - 1)))
 		)
-		let lastSegment = returnValue.substr(innerSet[1] + 1, returnValue.length - innerSet[1])
+		let lastSegment = returnValue.substring(innerSet[1] + 1, innerSet[1] + 1 + (returnValue.length - innerSet[1]))
 		if (
 			lastSegment.length > 0 &&
-			postOperators.indexOf(lastSegment.substr(0, 1)) === -1 &&
-			postOperators.indexOf(lastSegment.substr(0, 2)) === -1
+			postOperators.indexOf(lastSegment.substring(0, 1)) === -1 &&
+			postOperators.indexOf(lastSegment.substring(0, 2)) === -1
 		) {
 			newExpression = newExpression.concat('*')
 		}
@@ -139,17 +140,20 @@ const ProcessPMDAS = (expression: string): string => {
 		let items = returnValue.split(operator)
 
 		if (items.length > 1) {
-			if (operator === '-' && EvaluatorOperators.indexOf(items[0].substr(-1)) > -1) {
-				processOperator = items[0].substr(-1)
-				items[0] = items[0].substr(0, items[0].length - 1)
+			if (operator === '-' && EvaluatorOperators.indexOf(items[0].substring(items[0].length - 1)) > -1) {
+				processOperator = items[0].substring(items[0].length - 1)
+				items[0] = items[0].substring(0, items[0].length - 1)
 				items[1] = '-' + items[1]
 			}
 			let result = ProcessPMDAS(items[0])
 			for (let itempos = 1; itempos < items.length; itempos++) {
 				nextOperator = operator
-				if (operator === '-' && EvaluatorOperators.indexOf(items[itempos].substr(-1)) > -1) {
-					nextOperator = items[itempos].substr(-1)
-					items[itempos] = items[itempos].substr(0, items[itempos].length - 1)
+				if (
+					operator === '-' &&
+					EvaluatorOperators.indexOf(items[itempos].substring(items[itempos].length - 1)) > -1
+				) {
+					nextOperator = items[itempos].substring(items[itempos].length - 1)
+					items[itempos] = items[itempos].substring(0, items[itempos].length - 1)
 					items[itempos + 1] = '-' + items[itempos + 1]
 				}
 
@@ -272,16 +276,16 @@ const FindFunction = (expression: string, startPosition: number): IFoundFunction
 		const pos = ('' + expression.toLowerCase()).indexOf(evaluatorFunction + '(', startPosition)
 
 		if (pos >= 0) {
-			const postFunctionName = expression.substr(pos + evaluatorFunction.length).toLowerCase()
+			const postFunctionName = expression.substring(pos + evaluatorFunction.length).toLowerCase()
 			const parens = FindInnerSetLocations(postFunctionName, '(', ')')
 			if (!!parens) {
-				const argumentText = postFunctionName.substr(1, parens[1] - 1)
+				const argumentText = postFunctionName.substring(1, parens[1])
 
 				return {
 					expression: expression,
 					pos: pos,
-					pre: expression.substr(0, pos).trim(),
-					post: postFunctionName.substr(parens[1] + 1).trim(),
+					pre: expression.substring(0, pos).trim(),
+					post: postFunctionName.substring(parens[1] + 1).trim(),
 					function: evaluatorFunction,
 					argumentText: argumentText,
 					arguments: argumentText.split(',').map((arg) => arg.trim())

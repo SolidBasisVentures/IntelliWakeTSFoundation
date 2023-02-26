@@ -76,7 +76,7 @@ export const SplitNonWhiteSpace = (str: string | string[] | undefined | null): s
 export const ToFirstLetterUpper = (str: string | undefined | null): string => {
 	if (!str) return ''
 
-	return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase()
+	return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase()
 }
 
 /**
@@ -562,14 +562,14 @@ export const DigitsNth = (value: any): string | null => {
 
 	if (!result) return null
 
-	switch (result.substr(-2)) {
+	switch (result.substring(result.length - 2)) {
 		case '11':
 		case '12':
 		case '13':
 			result += 'th'
 			break
 		default:
-			switch (result.substr(-1)) {
+			switch (result.substring(result.length - 1)) {
 				case '1':
 					result += 'st'
 					break
@@ -663,14 +663,14 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
 
 	while ((cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) && cleanNumber.length !== 10) {
 		countryCode += cleanNumber[0]
-		cleanNumber = cleanNumber.substr(1)
+		cleanNumber = cleanNumber.substring(1)
 	}
 
 	let phoneComponents: IPhoneComponents = {
 		countryCode: countryCode,
-		areaCode: cleanNumber.substr(0, 3),
-		exchangeNumber: cleanNumber.substr(3, 3),
-		subscriberNumber: cleanNumber.substr(6, 4),
+		areaCode: cleanNumber.substring(0, 3),
+		exchangeNumber: cleanNumber.substring(3, 6),
+		subscriberNumber: cleanNumber.substring(6, 10),
 		extension: ''
 	}
 
@@ -689,7 +689,7 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
 				)
 				if (extensionIdx >= 0) {
 					phoneComponents.extension = originalPhone
-						.substr(extensionIdx + phoneComponents.subscriberNumber.length)
+						.substring(extensionIdx + phoneComponents.subscriberNumber.length)
 						.trim()
 				}
 			}
@@ -1000,8 +1000,8 @@ export const ShortNumber = (value: any, decimals = 0, round: 'round' | 'up' | 'd
 		let returnVal = ToDigits(RoundTo(val, decimals, round), decimals)
 
 		if (!!decimals) {
-			while (returnVal.endsWith('0')) returnVal = returnVal.substr(0, returnVal.length - 1)
-			while (returnVal.endsWith('.')) returnVal = returnVal.substr(0, returnVal.length - 1)
+			while (returnVal.endsWith('0')) returnVal = returnVal.substring(0, returnVal.length - 1)
+			while (returnVal.endsWith('.')) returnVal = returnVal.substring(0, returnVal.length - 1)
 		}
 
 		return returnVal + extension

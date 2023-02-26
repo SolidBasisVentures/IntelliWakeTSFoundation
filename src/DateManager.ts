@@ -238,9 +238,9 @@ export const StringHasTimeZoneData = (value: string): boolean =>
 	value === 'now' ||
 	value === 'today' ||
 	value.includes('T') ||
-	value.substr(15).includes('Z') ||
+	value.substring(15).includes('Z') ||
 	value.includes('+') ||
-	value.substr(15).includes('-')
+	value.substring(15).includes('-')
 
 /**
  *
@@ -316,7 +316,7 @@ export const ManualParse = (date: string): number | null => {
 	// }
 
 	// if (d[12]) {
-	dateObj.setUTCMilliseconds(CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substr(0, 3)))
+	dateObj.setUTCMilliseconds(CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substring(0, 3)))
 	// }
 
 	let offsetHours = 0
@@ -561,7 +561,7 @@ export const DateFormatAny = (
 			case 'YYYY':
 				return dateApply.getFullYear().toString().padStart(4, '0')
 			case 'YY':
-				return dateApply.getFullYear().toString().substr(2).padStart(2, '0')
+				return dateApply.getFullYear().toString().substring(2).padStart(2, '0')
 			case 'Q':
 				return Math.ceil((dateApply.getMonth() + 1) / 3).toString()
 			case 'Qo':
@@ -569,7 +569,7 @@ export const DateFormatAny = (
 			case 'MMMM':
 				return MonthNames[dateApply.getMonth()] ?? ''
 			case 'MMM':
-				return (MonthNames[dateApply.getMonth()] ?? '').substr(0, 3)
+				return (MonthNames[dateApply.getMonth()] ?? '').substring(0, 3)
 			case 'MM':
 				return (dateApply.getMonth() + 1).toString().padStart(2, '0')
 			case 'Mo':
@@ -600,9 +600,9 @@ export const DateFormatAny = (
 			case 'do':
 				return DigitsNth(dateApply.getDay()) ?? ''
 			case 'dd':
-				return (WeekDays[dateApply.getDay()] ?? '').substr(0, 2)
+				return (WeekDays[dateApply.getDay()] ?? '').substring(0, 2)
 			case 'ddd':
-				return (WeekDays[dateApply.getDay()] ?? '').substr(0, 3)
+				return (WeekDays[dateApply.getDay()] ?? '').substring(0, 3)
 			case 'dddd':
 				return WeekDays[dateApply.getDay()] ?? ''
 			case 'HH':
@@ -717,7 +717,9 @@ export const DateFormatAny = (
 				previousChar === '' ||
 				(command.length > 0 &&
 					patterns.some(
-						(pattern) => pattern.startsWith(command) && formatChar === pattern.substr(command.length, 1)
+						(pattern) =>
+							pattern.startsWith(command) &&
+							formatChar === pattern.substring(command.length, command.length + 1)
 					))
 			) {
 				command += formatChar
@@ -1845,8 +1847,8 @@ export const DatesQuarter = (year: number, quarter: EQuarter): IDates | null => 
 	if (!baseDate) return null
 
 	return {
-		start: (DateISO(baseDate, {quarter: 'StartOf'}) ?? '').substr(0, 10),
-		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substr(0, 10)
+		start: (DateISO(baseDate, {quarter: 'StartOf'}) ?? '').substring(0, 10),
+		end: (DateISO(baseDate, {quarter: 'EndOf'}) ?? '').substring(0, 10)
 	}
 }
 
@@ -1895,8 +1897,8 @@ export const DatesMonth = (year: number, monthOneBased: number): IDates | null =
 	if (!baseDate) return null
 
 	return {
-		start: (DateISO(baseDate, {month: 'StartOf'}) ?? '').substr(0, 10),
-		end: (DateISO(baseDate, {month: 'EndOf'}) ?? '').substr(0, 10)
+		start: (DateISO(baseDate, {month: 'StartOf'}) ?? '').substring(0, 10),
+		end: (DateISO(baseDate, {month: 'EndOf'}) ?? '').substring(0, 10)
 	}
 }
 

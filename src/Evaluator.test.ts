@@ -26,6 +26,7 @@ const evalStrings: [string, any][] = [
 	['abs(-[Four] * [Two])', '8'],
 	['[([Five] + 3) / [Four]]', '2'],
 	['[[OneAndHalf] * -1]', '-1.5'],
+	['[1 + 1]', '2'],
 	['abs(-[Four] * [Two])', '8']
 ]
 

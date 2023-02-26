@@ -32,7 +32,8 @@ import {
 	AsteriskMatch,
 	BuildPath,
 	ToWords,
-	SplitNonWhiteSpace
+	SplitNonWhiteSpace,
+	DigitsNth
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 import {test, expect} from 'vitest'
@@ -224,6 +225,11 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('2231231234x333')).toEqual('(223) 123-1234 x333')
 	expect(FormatPhoneNumber('2231231234 At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
 	expect(FormatPhoneNumber('2231231234At office Extension 321')).toEqual('(223) 123-1234 At office Extension 321')
+	expect(DigitsNth(1)).toEqual('1st')
+	expect(DigitsNth(2)).toEqual('2nd')
+	expect(DigitsNth(11)).toEqual('11th')
+	expect(DigitsNth(21)).toEqual('21st')
+	expect(DigitsNth(33)).toEqual('33rd')
 })
 
 test('AddS', () => {
