@@ -1794,6 +1794,21 @@ export const DateCompare = (
 }
 
 /**
+ * Checks if a data is between two other dates (inclusive)
+ *
+ * @param checkDate
+ * @param startDate
+ * @param endDate
+ * @constructor
+ */
+export const DateIsBetween = (checkDate: TDateAny, startDate: TDateAny, endDate: TDateAny): boolean => {
+	return (
+		DateCompare(checkDate, 'IsSameOrAfter', startDate, 'day') &&
+		DateCompare(checkDate, 'IsSameOrBefore', endDate, 'day')
+	)
+}
+
+/**
  *
  * @param date1
  * @param date2
