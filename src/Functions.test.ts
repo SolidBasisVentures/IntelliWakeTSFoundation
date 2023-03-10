@@ -6,6 +6,7 @@ import {
 	CleanNumber,
 	CleanNumbers,
 	CoalesceFalsey,
+	ConsoleAsyncTime,
 	GreaterNumber,
 	GreaterNumberNull,
 	IsOn,
@@ -22,6 +23,7 @@ import {
 	RemoveStarting,
 	ReplaceAll,
 	RoundTo,
+	Sleep,
 	ToArray
 } from './Functions'
 import {DeepEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
@@ -58,10 +60,7 @@ const item = {
 		valA: 1,
 		valB: 'Two'
 	},
-	val5: [
-		'One',
-		'Two'
-	],
+	val5: ['One', 'Two'],
 	val6: [
 		{item1: 1, item2: 'One'},
 		{item1: 2, item2: 'Two'}
@@ -83,27 +82,37 @@ test('Subset Equal', () => {
 	expect(SubsetEqual(item, {...item})).toBe(true)
 	expect(SubsetEqual(item, {...item, valZZZ: false})).toBe(true)
 	expect(SubsetEqual(item, {...item, val3: 'Ones'})).toBe(false)
-	expect(SubsetEqual({
-		"id": "7",
-		"description": "Audit Support"
-	}, {
-		"id": 7,
-		"description": "Audit Support"
-	})).toBe(true)
-	expect(SubsetEqual({
-		"id": "7",
-		"description": "Audit Support"
-	}, {
-		"id": 7,
-		"description": "Audit Supports"
-	})).toBe(false)
+	expect(
+		SubsetEqual(
+			{
+				id: '7',
+				description: 'Audit Support'
+			},
+			{
+				id: 7,
+				description: 'Audit Support'
+			}
+		)
+	).toBe(true)
+	expect(
+		SubsetEqual(
+			{
+				id: '7',
+				description: 'Audit Support'
+			},
+			{
+				id: 7,
+				description: 'Audit Supports'
+			}
+		)
+	).toBe(false)
 	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetEqual({...item, val1: false}, item)).toBe(false)
 	expect(SubsetEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
 	expect(SubsetEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetEqual(item, {...item, val1: true})).toBe(true)
-	expect(SubsetEqual(item, {...item, val1: "true"})).toBe(true)
-	expect(SubsetEqual(item, {...item, val1: "false"})).toBe(false)
+	expect(SubsetEqual(item, {...item, val1: 'true'})).toBe(true)
+	expect(SubsetEqual(item, {...item, val1: 'false'})).toBe(false)
 	expect(SubsetEqual(item, {...item, val1: 1})).toBe(true)
 	expect(SubsetEqual(item, {...item, val1: 0})).toBe(false)
 })
@@ -112,27 +121,37 @@ test('Subset Form Equal', () => {
 	expect(SubsetFormEqual(item, {...item})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, valZZZ: false})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, val3: 'Ones'})).toBe(false)
-	expect(SubsetFormEqual({
-		"id": "7",
-		"description": "Audit Support"
-	}, {
-		"id": 7,
-		"description": "Audit Support"
-	})).toBe(true)
-	expect(SubsetFormEqual({
-		"id": "7",
-		"description": "Audit Support"
-	}, {
-		"id": 7,
-		"description": "Audit Supports"
-	})).toBe(false)
+	expect(
+		SubsetFormEqual(
+			{
+				id: '7',
+				description: 'Audit Support'
+			},
+			{
+				id: 7,
+				description: 'Audit Support'
+			}
+		)
+	).toBe(true)
+	expect(
+		SubsetFormEqual(
+			{
+				id: '7',
+				description: 'Audit Support'
+			},
+			{
+				id: 7,
+				description: 'Audit Supports'
+			}
+		)
+	).toBe(false)
 	expect(SubsetFormEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetFormEqual({...item, val1: false}, item)).toBe(false)
 	expect(SubsetFormEqual('2021-12-20T17:12:36.370Z', '2021-12-20 12:12:36.37-05')).toBe(true)
 	expect(SubsetFormEqual(item, {...item, val1: false})).toBe(false)
 	expect(SubsetFormEqual(item, {...item, val1: true})).toBe(true)
-	expect(SubsetFormEqual(item, {...item, val1: "true"})).toBe(true)
-	expect(SubsetFormEqual(item, {...item, val1: "false"})).toBe(false)
+	expect(SubsetFormEqual(item, {...item, val1: 'true'})).toBe(true)
+	expect(SubsetFormEqual(item, {...item, val1: 'false'})).toBe(false)
 	expect(SubsetFormEqual(item, {...item, val1: 1})).toBe(true)
 	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
 	expect(SubsetFormEqual(item, {...item, val1: 0})).toBe(false)
@@ -153,7 +172,6 @@ test('CleanNumber', () => {
 	expect(CleanNumber(1.254, 1)).toBe(1.3)
 })
 
-
 // const omitObject = {
 // 	id: 1,
 // 	name: 'My Name',
@@ -163,24 +181,37 @@ test('CleanNumber', () => {
 // const omittedObject = OmitProperty(omitObject, 'id',  'is_active')
 
 test('Omits', () => {
-	expect(OmitProperty({
-		id: 1,
-		name: 'My Name',
-		is_active: true
-	}, 'id', 'is_active')).toEqual({name: 'My Name'})
+	expect(
+		OmitProperty(
+			{
+				id: 1,
+				name: 'My Name',
+				is_active: true
+			},
+			'id',
+			'is_active'
+		)
+	).toEqual({name: 'My Name'})
 })
 
 test('Picks', () => {
-	expect(PickProperty({
-		id: 1,
-		name: 'My Name',
-		is_active: true
-	}, 'name')).toEqual({name: 'My Name'})
-	expect(OmitUndefined({
-		id: 1,
-		name: undefined,
-		is_active: false
-	})).toEqual({id: 1, is_active: false})
+	expect(
+		PickProperty(
+			{
+				id: 1,
+				name: 'My Name',
+				is_active: true
+			},
+			'name'
+		)
+	).toEqual({name: 'My Name'})
+	expect(
+		OmitUndefined({
+			id: 1,
+			name: undefined,
+			is_active: false
+		})
+	).toEqual({id: 1, is_active: false})
 })
 
 test('JSONParse', () => {
@@ -190,10 +221,10 @@ test('JSONParse', () => {
 })
 
 test('JSONString', () => {
-	expect(ObjectToJSONString({'id': 1})).toEqual('json:{"id":1}')
+	expect(ObjectToJSONString({id: 1})).toEqual('json:{"id":1}')
 	expect(ObjectToJSONString(null)).toEqual('json:null')
 	expect(ObjectToJSONString(undefined)).toEqual('json:undefined')
-	expect(JSONStringToObject(ObjectToJSONString({'id': 1}))).toEqual({'id': 1})
+	expect(JSONStringToObject(ObjectToJSONString({id: 1}))).toEqual({id: 1})
 	expect(JSONStringToObject(ObjectToJSONString(null))).toEqual(null)
 	expect(JSONStringToObject(ObjectToJSONString(undefined))).toEqual(undefined)
 })
@@ -220,7 +251,7 @@ test('RemoveStartEnd', () => {
 	expect(RemoveEnding(['/', 'se'], '/Test/Case//', true)).toEqual('/Test/Ca')
 })
 
-test('Other', () => {
+test('Other', async () => {
 	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name', 'description')).toEqual({id: 1, name: 'Test'})
 	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name')).toEqual({id: 1, name: 'Test', description: ''})
 	expect(OmitFalsey({id: 0, name: 'Test', description: ''}, 'name', 'id')).toEqual({name: 'Test', description: ''})
@@ -278,4 +309,11 @@ test('Other', () => {
 	expect(ArrayRange(-10)).toEqual([0, -1, -2, -3, -4, -5, -6, -7, -8, -9])
 	expect(ArrayRange(-10, 2)).toEqual([0, -2, -4, -6, -8])
 	expect(ArrayRange(-10, 2, -1)).toEqual([-1, -3, -5, -7, -9])
+
+	async function timesTwo(x: number): Promise<number> {
+		await Sleep(200)
+		return x * 2
+	}
+
+	expect(await ConsoleAsyncTime('Test Time', timesTwo(2))).toEqual(4)
 })

@@ -1,3 +1,5 @@
+import {DateDiffLongDescription} from './DateManager'
+
 /**
  * Replace all occurences of a string.
  *
@@ -944,4 +946,14 @@ export function InvertColorHex(hex: string, bw = false) {
  */
 export function Sleep(ms = 200) {
 	return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export async function ConsoleAsyncTime<T>(name: string, asyncFunction: Promise<T>): Promise<T> {
+	const start = new Date()
+
+	const result = await asyncFunction
+
+	console.log(name, DateDiffLongDescription(start, 'now'))
+
+	return result
 }
