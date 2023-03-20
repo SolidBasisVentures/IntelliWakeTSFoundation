@@ -5,6 +5,49 @@ function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
 }
 
+export type TDifferences = Record<string, {val1?: any; val2?: any}>
+
+/**
+ *
+ * @param object1
+ * @param object2
+ * @constructor
+ */
+export const Differences = (object1: any, object2: any): TDifferences => {
+	const differences: TDifferences = {}
+
+	if (isObject(object1)) {
+		if (isObject(object2)) {
+			Object.keys(object1).forEach((key) => {
+				if (key in object2) {
+					if (!DeepEqual(object1[key], object2[key])) {
+						differences[key] = {val1: object1[key], val2: object2[key]}
+					}
+				} else {
+					differences[key] = {val1: object1[key]}
+				}
+			})
+			Object.keys(object2)
+				.filter((key) => !(key in object1))
+				.forEach((key) => {
+					differences[key] = {val2: object2[key]}
+				})
+		} else {
+			Object.keys(object1).forEach((key) => {
+				differences[key] = {val1: object1[key]}
+			})
+		}
+	} else {
+		if (isObject(object2)) {
+			Object.keys(object2).forEach((key) => {
+				differences[key] = {val1: object2[key]}
+			})
+		}
+	}
+
+	return differences
+}
+
 /**
  *
  * @param object1
@@ -48,10 +91,7 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 				if (typeof val1 !== typeof val2) return false
 
 				const areObjects = isObject(val1) && isObject(val2)
-				if (
-					(areObjects && !DeepEqual(val1, val2)) ||
-					(!areObjects && val1 !== val2)
-				) {
+				if ((areObjects && !DeepEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
 					return false
 				}
 			}
@@ -180,7 +220,6 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 			if (typeof superset === 'object' && (superset as any).type?.toString().includes('react.')) return true
 
 			const keysSub = Object.keys(subset)
-
 
 			for (const key of keysSub) {
 				if (!SubsetFormEqual(subset[key], superset[key])) return false
