@@ -5,6 +5,23 @@ function isObject(object: any) {
 	return object !== null && object !== undefined && typeof object === 'object'
 }
 
+export const StringOrNumberEqual = (object1: any, object2: any): boolean => {
+	switch (typeof object1) {
+		case 'function':
+		case 'object':
+			return false
+		default:
+			const cn1 = CleanNumberNull(object1)
+			const cn2 = cn1 === null ? null : CleanNumberNull(object2)
+
+			if (cn1 !== null && cn2 !== null) {
+				return cn1 == cn2
+			}
+
+			return object1 == object2
+	}
+}
+
 export type TDifferences = Record<string, {val1?: any; val2?: any}>
 
 /**
@@ -58,7 +75,7 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 	if (object1 === undefined && object2 === undefined) return true
 	if (object1 === null && object2 === null) return true
 
-	if ((!object1 && !!object2) || (!!object1 && !object2) || typeof object1 !== typeof object2) return false
+	if ((!object1 && !!object2) || (!!object1 && !object2) /* || typeof object1 !== typeof object2*/) return false
 
 	if (Array.isArray(object1)) {
 		if (object1.length !== object2.length) return false
@@ -72,8 +89,10 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 
 	switch (typeof object1) {
 		case 'function':
-			return true
+			return typeof object2 === 'function'
 		case 'object':
+			if (typeof object2 !== 'object') return false
+
 			if (typeof object1 === 'object' && (object1 as any).type?.toString().includes('react.')) return true
 			if (typeof object2 === 'object' && (object2 as any).type?.toString().includes('react.')) return true
 
@@ -85,19 +104,13 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 			}
 
 			for (const key of keys1) {
-				const val1 = object1[key]
-				const val2 = object2[key]
-
-				if (typeof val1 !== typeof val2) return false
-
-				const areObjects = isObject(val1) && isObject(val2)
-				if ((areObjects && !DeepEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
+				if (!DeepEqual(object1[key], object2[key])) {
 					return false
 				}
 			}
 
 			return true
-		case 'string':
+		case 'string': {
 			if (typeof object2 === 'string') {
 				const ts1 = DateParseTS(object1)
 				if (!!ts1) {
@@ -108,9 +121,10 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 				}
 			}
 
-			return object1 === object2
+			return StringOrNumberEqual(object1, object2)
+		}
 		default:
-			return object1 === object2
+			return StringOrNumberEqual(object1, object2)
 	}
 }
 

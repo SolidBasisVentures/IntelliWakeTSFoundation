@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest'
-import {DeepEqual, Differences, SubsetEqual, SubsetFormEqual} from './DeepEqual'
+import {DeepEqual, Differences, StringOrNumberEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
 import {OmitProperty, ReplaceAll} from './Functions'
 
 const item = {
@@ -18,8 +18,20 @@ const item = {
 	valBlank: ''
 }
 
+test('StringOrNumberEqual', () => {
+	expect(StringOrNumberEqual(1, 1)).toBe(true)
+	expect(StringOrNumberEqual(1, 2)).toBe(false)
+	expect(StringOrNumberEqual('1', '1')).toBe(true)
+	expect(StringOrNumberEqual('1', '2')).toBe(false)
+	expect(StringOrNumberEqual('A', 'A')).toBe(true)
+	expect(StringOrNumberEqual('A', 'B')).toBe(false)
+	expect(StringOrNumberEqual(1, '1')).toBe(true)
+	expect(StringOrNumberEqual(1, '2')).toBe(false)
+})
+
 test('Differences', () => {
 	expect(Differences(item, item)).toStrictEqual({})
+	expect(Differences(item, {...item, val2: '1'})).toStrictEqual({})
 	expect(Differences(item, {...item, val1: false})).toStrictEqual({val1: {val1: true, val2: false}})
 	expect(Differences(item, OmitProperty(item, 'val1'))).toStrictEqual({val1: {val1: true}})
 	expect(Differences(item, {...item, valOther: 'Here'})).toStrictEqual({valOther: {val2: 'Here'}})
@@ -28,6 +40,7 @@ test('Differences', () => {
 test('Deep Equal', () => {
 	expect(DeepEqual(item, {...item})).toBe(true)
 	expect(DeepEqual(item, {...item, val1: false})).toBe(false)
+	expect(DeepEqual(item, {...item, val2: '1'})).toBe(true)
 	expect(DeepEqual(item, {...item, val4: {...item.val4, valA: 2}})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['Two', 'One']})).toBe(false)
 	expect(DeepEqual(item, {...item, val5: ['One']})).toBe(false)
