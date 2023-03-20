@@ -28,14 +28,12 @@
 	},
 	"devDependencies": {
 		"@types/node": "^14.18.36",
-		"@types/split2": "^3.2.1",
 		"prettier": "^2.8.3",
 		"ts-node": "^9.1.1",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "^4.9.5",
 		"vite": "^4.1.1",
 		"vite-plugin-dts": "^1.7.2",
-		"vitest": "^0.28.4",
-		"split2": "^4.1.0"
+		"vitest": "^0.28.4"
 	}
 }
