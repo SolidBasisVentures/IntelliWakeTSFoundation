@@ -33,7 +33,8 @@ import {
 	BuildPath,
 	ToWords,
 	SplitNonWhiteSpace,
-	DigitsNth
+	DigitsNth,
+	FormatPhoneNumberDashes
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 import {test, expect} from 'vitest'
@@ -185,7 +186,17 @@ test('String Functions', () => {
 		extension: 'x321'
 	})
 	expect(FormatPhoneNumberDots('5555551234')).toStrictEqual('555.555.1234')
-	expect(FormatPhoneNumberDots('555555123')).toStrictEqual('555555123')
+	expect(FormatPhoneNumberDots('555555123')).toStrictEqual('555.555.123')
+	expect(FormatPhoneNumberDashes('5555551234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('5555551234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('15555551234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('+15555551234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('+1-555-555-1234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('+1 (555) 555-1234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('(555) 555-1234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('(555)555-1234')).toStrictEqual('555-555-1234')
+	expect(FormatPhoneNumberDashes('555555123')).toStrictEqual('555-555-123')
+	expect(FormatPhoneNumberDashes('555555123', false)).toStrictEqual(null)
 	expect(FormatZip('123456789')).toBe('12345-6789')
 	expect(FormatZip('12345')).toBe('12345')
 	expect(FormatZip('12345-6789')).toBe('12345-6789')

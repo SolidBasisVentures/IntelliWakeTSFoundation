@@ -656,7 +656,9 @@ export interface IPhoneComponents {
  * @constructor
  *
  */
-export const PhoneComponents = (phone: string | null | undefined): IPhoneComponents => {
+export const PhoneComponents = (phone: string | null | undefined, bestGuess = true): IPhoneComponents | null => {
+	if (!phone) return null
+
 	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
 
 	let countryCode = ''
@@ -672,6 +674,15 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
 		exchangeNumber: cleanNumber.substring(3, 6),
 		subscriberNumber: cleanNumber.substring(6, 10),
 		extension: ''
+	}
+
+	if (
+		!bestGuess &&
+		(phoneComponents.areaCode?.length != 3 ||
+			phoneComponents.exchangeNumber?.length != 3 ||
+			phoneComponents.subscriberNumber?.length != 4)
+	) {
+		return null
 	}
 
 	if (!!phoneComponents.areaCode && !!phoneComponents.exchangeNumber && !!phoneComponents.subscriberNumber) {
@@ -707,8 +718,10 @@ export const PhoneComponents = (phone: string | null | undefined): IPhoneCompone
  * FormatSSN('123121234')
  *
  */
-export const FormatPhoneNumber = (phone: string | null | undefined): string => {
-	const components = PhoneComponents(phone)
+export const FormatPhoneNumber = (phone: string | null | undefined, bestGuess = true): string | null => {
+	const components = PhoneComponents(phone, bestGuess)
+
+	if (!components) return null
 
 	let val = ''
 
@@ -753,21 +766,64 @@ export const FormatPhoneNumberOld = (phone: string, forceNumeric: boolean = fals
  * FormatPhoneNumberDots('5555551234')
  *
  */
-export const FormatPhoneNumberDots = (phone: string, forceNumeric: boolean = false) => {
-	//Filter only numbers from the input
-	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
+export const FormatPhoneNumberDots = (phone: string | null | undefined, bestGuess = true) => {
+	const components = PhoneComponents(phone, bestGuess)
 
-	//Check if the input is of correct
-	const match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+	if (!components) return null
 
-	if (match) {
-		//Remove the matched extension code
-		//Change this to format for any country code.
-		let intlCode = match[1] ? '+1 ' : ''
-		return [intlCode, match[2], '.', match[3], '.', match[4]].join('')
-	}
+	if (!components.areaCode || !components.exchangeNumber || !components.subscriberNumber) return null
 
-	return phone
+	return `${components.areaCode}.${components.exchangeNumber}.${components.subscriberNumber}`
+
+	// 	//Filter only numbers from the input
+	// 	const cleaned = forceNumeric ? ('' + phone).replace(/\D/g, '') : '' + phone
+	//
+	// 	//Check if the input is of correct
+	// 	const match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+	//
+	// 	if (match) {
+	// 		//Remove the matched extension code
+	// 		//Change this to format for any country code.
+	// 		let intlCode = match[1] ? '+1 ' : ''
+	// 		return [intlCode, match[2], '.', match[3], '.', match[4]].join('')
+	// 	}
+	//
+	// 	return phone
+}
+
+/**
+ * Returns a formatted phone number with dashes.
+ *
+ * @example
+ * // returns 555-555-1234
+ * FormatPhoneNumberDashes('5555551234')
+ *
+ */
+export const FormatPhoneNumberDashes = (phone: string | null | undefined, bestGuess = true) => {
+	const components = PhoneComponents(phone, bestGuess)
+
+	if (!components) return null
+
+	if (!components.areaCode || !components.exchangeNumber || !components.subscriberNumber) return null
+
+	return `${components.areaCode}-${components.exchangeNumber}-${components.subscriberNumber}`
+
+	// console.log('PHONE', phone, components)
+	//
+	// //Filter only numbers from the input
+	// const cleaned = '' + phone.toString()
+	//
+	// //Check if the input is of correct
+	// const match = cleaned.match(/^\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/)
+	//
+	// // console.log('MATCH', phone, match)
+	//
+	// if (match) {
+	// 	let intlCode = match[1] ? '+1 ' : ''
+	// 	return [intlCode, match[2], '-', match[3], '-', match[4]].join('')
+	// }
+	//
+	// return null
 }
 
 /**
