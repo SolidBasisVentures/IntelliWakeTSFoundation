@@ -1152,3 +1152,26 @@ export const BuildPath = (...paths: (string | null)[]) => {
 
 	return build
 }
+
+/**
+ * Checks if the provided string contains any numeric digit.
+ *
+ * @param {string|number|null|undefined} value - The string to be evaluated.
+ * @returns {boolean} - Returns true if the provided string contains any numeric digit, otherwise false.
+ */
+export const HasDigits = (value: string | number | null | undefined): boolean => {
+	if (!value) return false
+
+	return !!value.toString().match(/\d/)
+}
+
+/**
+ * Check if a string contains at least one alphabetical character.
+ * @param {string|number|null|undefined} value - The input string to check.
+ * @return {boolean} - Returns true if the string contains at least one alphabetical character, false otherwise.
+ */
+export const HasAlpha = (value: string | number | null | undefined): boolean => {
+	if (!value) return false
+
+	return !!value.toString().match(/[a-zA-Z]/)
+}

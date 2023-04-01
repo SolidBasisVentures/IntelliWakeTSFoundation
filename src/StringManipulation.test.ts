@@ -1,14 +1,23 @@
 import {
-	PhoneComponents,
+	AddS,
+	AsteriskMatch,
+	BuildPath,
 	CleanScripts,
+	DigitsNth,
 	DisplayNameFromFL,
 	DisplayNameFromObject,
 	FormatExternalURL,
 	FormatPhoneNumber,
+	FormatPhoneNumberDashes,
 	FormatPhoneNumberDots,
 	FormatZip,
+	HasAlpha,
+	HasDigits,
+	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
+	ShortNumber,
+	SplitNonWhiteSpace,
 	TextToHTML,
 	ToCamelCase,
 	ToCurrency,
@@ -18,6 +27,7 @@ import {
 	ToDigits,
 	ToDigitsBlank,
 	ToDigitsDash,
+	ToInitials,
 	ToKebabCase,
 	ToPascalCase,
 	ToPercent,
@@ -25,19 +35,11 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	UCWords,
-	AddS,
-	ShortNumber,
-	ToInitials,
-	AsteriskMatch,
-	BuildPath,
 	ToWords,
-	SplitNonWhiteSpace,
-	DigitsNth,
-	FormatPhoneNumberDashes
+	UCWords
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
-import {test, expect} from 'vitest'
+import {expect, test, describe} from 'vitest'
 
 test('String Functions', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
@@ -287,4 +289,71 @@ test('ShortNumber', () => {
 	expect(BuildPath('Test/', '/', '/1/')).toBe('Test/1')
 	expect(BuildPath('/Test/', '/', '/1/')).toBe('/Test/1')
 	expect(BuildPath('/Test/', '/~/', '/1/')).toBe('/Test/~/1')
+})
+
+describe('HasAlpha', () => {
+	test('returns true if value is a string that contains alphabets', () => {
+		const result = HasAlpha('Hello world')
+		expect(result).toBeTruthy()
+	})
+
+	test('returns false if value is a string that does not contain alphabets', () => {
+		const result = HasAlpha('1234')
+		expect(result).toBeFalsy()
+	})
+
+	test('returns false if value is null', () => {
+		const result = HasAlpha(null)
+		expect(result).toBeFalsy()
+	})
+
+	test('returns false if value is undefined', () => {
+		const result = HasAlpha(undefined)
+		expect(result).toBeFalsy()
+	})
+
+	test('returns false if value is an empty string', () => {
+		const result = HasAlpha('')
+		expect(result).toBeFalsy()
+	})
+
+	test('returns false if value is a string that contains only numbers and special characters', () => {
+		const result = HasAlpha('$#@&^%!()1234')
+		expect(result).toBeFalsy()
+	})
+
+	test('returns true if value is a string that contains both alphabets and non-alphabets', () => {
+		const result = HasAlpha('12abc31')
+		expect(result).toBeTruthy()
+	})
+})
+
+describe('HasDigits', () => {
+	test('Empty string returns false', () => {
+		expect(HasDigits('')).toBe(false)
+	})
+
+	test('Null value returns false', () => {
+		expect(HasDigits(null)).toBe(false)
+	})
+
+	test('Undefined value returns false', () => {
+		expect(HasDigits(undefined)).toBe(false)
+	})
+
+	test('String without digits returns false', () => {
+		expect(HasDigits('abc')).toBe(false)
+	})
+
+	test('String with digits returns true', () => {
+		expect(HasDigits('a1b2c3')).toBe(true)
+	})
+
+	test('String with non-digit characters returns true if there are also digits present', () => {
+		expect(HasDigits('a1b2c')).toBe(true)
+	})
+
+	test('String with only non-digit characters returns false', () => {
+		expect(HasDigits('abcde')).toBe(false)
+	})
 })
