@@ -253,7 +253,21 @@ export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn
 	)
 }
 
+/**
+ * Checks if a value is empty.
+ *
+ * @param {*} val - The value to check for emptiness.
+ * @returns {boolean} True if the value is empty, false otherwise.
+ */
 const isEmpty = (val: any) => val === null || val === undefined || val === ''
+
+/**
+ * Checks whether a value is null or undefined
+ *
+ * @param {*} val - The value to check
+ * @returns {boolean} - Returns true if the value is null or undefined, else false.
+ */
+export const isNullUndefined = (val: any) => val === null || val === undefined
 
 /**
  *

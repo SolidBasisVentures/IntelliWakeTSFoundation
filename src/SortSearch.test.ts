@@ -7,9 +7,10 @@ import {
 	SortCompareNull,
 	SortSplitItems,
 	SortIndex,
-	SortPerArray
+	SortPerArray,
+	isNullUndefined
 } from './SortSearch'
-import {test, expect} from 'vitest'
+import {test, expect, describe} from 'vitest'
 
 test('SortCompare', () => {
 	expect(
@@ -188,4 +189,22 @@ test('Search', () => {
 		{id: 3, version: '1.2'},
 		{id: 2, version: '1.10'}
 	])
+})
+
+describe('isNullUndefined', () => {
+	test('should return true for null values', () => {
+		expect(isNullUndefined(null)).toBe(true)
+	})
+
+	test('should return true for undefined values', () => {
+		expect(isNullUndefined(undefined)).toBe(true)
+	})
+
+	test('should return false for non-null or non-undefined values', () => {
+		expect(isNullUndefined(0)).toBe(false)
+		expect(isNullUndefined(false)).toBe(false)
+		expect(isNullUndefined('')).toBe(false)
+		expect(isNullUndefined([])).toBe(false)
+		expect(isNullUndefined({})).toBe(false)
+	})
 })
