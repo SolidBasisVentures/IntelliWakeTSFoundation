@@ -12,6 +12,7 @@ import {
 	DateOnly,
 	DateParseTS,
 	DateQuarter,
+	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
 	DateWeekISONumber,
@@ -495,4 +496,6 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	expect(IANAZoneAbbr('2022-06-01', 'America/Denver')).toEqual('MDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/Denver')).toEqual('MST')
+	expect(DatesBetween('2023-03-31', '2023-04-02')).toEqual(['2023-03-31', '2023-04-01', '2023-04-02'])
+	expect(DatesBetween('2023-04-02', '2023-03-31')).toEqual(['2023-04-02', '2023-04-01', '2023-03-31'])
 })

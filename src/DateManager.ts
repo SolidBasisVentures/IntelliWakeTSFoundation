@@ -2183,12 +2183,12 @@ export const DateIsWeekend = (date: TDateAny = 'now'): boolean => {
 }
 
 /**
- *
- * @param start
- * @param end
- * @param adjustments
- * @param limit
- * @constructor
+ * Returns an array of dates between given start and end dates.
+ * @param {TDateAny} start - The starting date.
+ * @param {TDateAny} end - The ending date.
+ * @param {TDateOnlyAdjustment} [adjustments={day: 1}] - Adjustments to make to each date in the array.
+ * @param {number} [limit=1000] - The maximum number of dates to return.
+ * @returns {string[]} An array of date strings sorted in the order based on the start and end dates.
  */
 export const DatesBetween = (
 	start: TDateAny,
@@ -2198,16 +2198,18 @@ export const DatesBetween = (
 ): string[] => {
 	if (!Object.values(adjustments).some((val) => CleanNumber(val) > 0)) return []
 
-	let addDate = DateOnly(start)
+	const isReversed = DateCompare(start, 'IsAfter', end, 'day')
+
+	let addDate = DateOnly(isReversed ? end : start)
 	let dates: string[] = []
 
-	while (DateCompare(addDate, 'IsSameOrBefore', end, 'day')) {
+	while (DateCompare(addDate, 'IsSameOrBefore', isReversed ? start : end, 'day')) {
 		dates.push(addDate)
 		addDate = DateOnly(addDate, adjustments)
 		if (dates.length >= limit) break
 	}
 
-	return dates
+	return dates.sort((a, b) => SortCompareDate(isReversed ? b : a, isReversed ? a : b))
 }
 
 /**
