@@ -1,7 +1,7 @@
 import {DateDiffLongDescription} from './DateManager'
 
 /**
- * Replace all occurences of a string.
+ * Replace all occurrences of a string.
  *
  * @example
  * // returns "john-doe-bob"
@@ -23,6 +23,34 @@ export const ReplaceAll = function (
 	}
 	// eslint-disable-next-line no-useless-escape
 	return subject.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'), 'g'), replace)
+}
+
+/**
+ * Replaces multiple strings in a subject string.
+ *
+ * @param {([string, string] | Record<string, string>)[]} findReplace - Array of tuples or objects containing the strings to find and replace.
+ * @param {string|null|undefined} subject - The subject string to perform replacements on.
+ * @returns {string} - The subject string with all replacements made.
+ */
+export const ReplaceAllMultiple = function (
+	findReplace: (string[] | Record<string, any>)[] | null | undefined,
+	subject: string | null | undefined
+): string {
+	if (!findReplace || !findReplace.length) return ''
+
+	const replaces = ToArray(findReplace)
+
+	let newSubject = subject ?? ''
+
+	for (const replace of replaces) {
+		if (Array.isArray(replace)) {
+			newSubject = ReplaceAll(replace[0], replace[1], newSubject)
+		} else {
+			newSubject = ReplaceAll(Object.keys(replace)[0], Object.values(replace)[0], newSubject)
+		}
+	}
+
+	return newSubject
 }
 
 /**

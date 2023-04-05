@@ -21,11 +21,13 @@ import {
 	PickProperty,
 	RemoveEnding,
 	RemoveStarting,
+	ReplaceAll,
+	ReplaceAllMultiple,
 	RoundTo,
 	Sleep,
 	ToArray
 } from './Functions'
-import {expect, test} from 'vitest'
+import {expect, test, describe} from 'vitest'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
@@ -138,6 +140,57 @@ test('RemoveStartEnd', () => {
 	expect(RemoveEnding('/', '/Test/Case//', true)).toEqual('/Test/Case')
 	expect(RemoveEnding(['/', 'se'], '/Test/Case/', true)).toEqual('/Test/Ca')
 	expect(RemoveEnding(['/', 'se'], '/Test/Case//', true)).toEqual('/Test/Ca')
+})
+
+describe('ReplaceAll', () => {
+	test('should replace all occurrences of a string with another', () => {
+		expect(ReplaceAll('foo', 'bar', 'foo foo foo')).toBe('bar bar bar')
+		expect(ReplaceAll('foo', 'baz', 'foo bar foo')).toBe('baz bar baz')
+		expect(ReplaceAll('foo', '', 'foo bar foo')).toBe(' bar ')
+		expect(ReplaceAll('foo', 'ba$r', 'foo $foo foo')).toBe('ba$r $ba$r ba$r')
+	})
+
+	test('should handle arrays of strings to replace', () => {
+		expect(ReplaceAll(['foo'], 'bar', 'foo foo foo')).toBe('bar bar bar')
+		expect(ReplaceAll(['foo', 'bar'], 'baz', 'foo bar foo bar baz foo baz')).toBe('baz baz baz baz baz baz baz')
+	})
+
+	test('should return an empty string if the input subject is null or undefined', () => {
+		expect(ReplaceAll('foo', 'bar', null)).toBe('')
+		expect(ReplaceAll('foo', 'bar', undefined)).toBe('')
+	})
+})
+
+describe('ReplaceAllMultiple', () => {
+	test('replaces multiple substrings with corresponding replacements', () => {
+		const findReplace = [
+			['foo', 'bar'],
+			['baz', 'qux']
+		]
+		const subject = 'foo baz'
+		expect(ReplaceAllMultiple(findReplace, subject)).toEqual('bar qux')
+	})
+
+	test('replaces multiple substrings with corresponding replacements in object format', () => {
+		const findReplace = [{foo: 'bar'}, {baz: 'qux'}]
+		const subject = 'foo baz'
+		expect(ReplaceAllMultiple(findReplace, subject)).toEqual('bar qux')
+	})
+
+	test('returns empty string if findReplace is falsy or empty', () => {
+		const subject = 'foo baz'
+		expect(ReplaceAllMultiple(null, subject)).toEqual('')
+		expect(ReplaceAllMultiple([], subject)).toEqual('')
+	})
+
+	test('returns the original subject if it is null or undefined', () => {
+		const findReplace = [
+			['foo', 'bar'],
+			['baz', 'qux']
+		]
+		expect(ReplaceAllMultiple(findReplace, null)).toBe('')
+		expect(ReplaceAllMultiple(findReplace, undefined)).toBe('')
+	})
 })
 
 test('Other', async () => {
