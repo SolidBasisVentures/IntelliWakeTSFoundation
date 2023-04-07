@@ -76,7 +76,6 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 	if (object1 === null && object2 === null) return true
 
 	if ((!object1 && !!object2) || (!!object1 && !object2) /* || typeof object1 !== typeof object2*/) return false
-
 	if (Array.isArray(object1)) {
 		if (object1.length !== object2.length) return false
 
@@ -111,7 +110,7 @@ export const DeepEqual = (object1: any, object2: any): boolean => {
 
 			return true
 		case 'string': {
-			if (typeof object2 === 'string') {
+			if (typeof object2 === 'string' && (object1.includes('-') || object1.includes('/'))) {
 				const ts1 = DateParseTS(object1)
 				if (!!ts1) {
 					const ts2 = DateParseTS(object2)
