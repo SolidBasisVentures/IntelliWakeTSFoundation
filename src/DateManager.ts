@@ -2026,6 +2026,7 @@ export const TimeOnly = (
 	time: TDateAny,
 	adjustments?: TTimeOnlyAdjustment & {
 		formatLocale?: boolean
+		timezoneSource?: string
 	}
 ): string | null => {
 	if ((!time || (typeof time === 'string' && !StringHasTimeData(time))) && time !== 'now' && time !== 'today')
@@ -2034,7 +2035,8 @@ export const TimeOnly = (
 	try {
 		let timeValue = DateFormatAny(
 			!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss',
-			DateParseTS(time, adjustments)
+			DateParseTS(time, adjustments),
+			adjustments?.timezoneSource ?? undefined
 		)
 		if (!!timeValue) return timeValue
 
@@ -2062,7 +2064,7 @@ export const TimeOnly = (
 			let newValue = DateFormatAny(
 				!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss',
 				tsValue + changeHours * 60 * 60 * 1000,
-				'UTC'
+				adjustments?.timezoneSource ?? 'UTC'
 			)
 			if (!!newValue) return newValue
 		}
