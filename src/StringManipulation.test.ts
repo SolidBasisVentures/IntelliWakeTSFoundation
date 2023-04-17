@@ -13,6 +13,8 @@ import {
 	FormatZip,
 	HasAlpha,
 	HasDigits,
+	HTMLToText,
+	IncludesHTML,
 	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
@@ -89,8 +91,16 @@ test('String Functions', () => {
 	}
 	{
 		expect(CleanScripts('<script>console.log(1)</script>something')).toBe('something')
-		expect(TextToHTML('<p>john doe</p>')).toBe('john doe')
-		expect(TextToHTML('<p>john doe\nnew line</p>')).toBe('john doe<br />new line')
+		expect(CleanScripts('<script lang="ts">console.log(1)</script>something')).toBe('something')
+		expect(CleanScripts('something<script lang="ts">console.log(1)</script>')).toBe('something')
+		expect(CleanScripts('<p>something</p><script lang="ts">console.log(1)</script>')).toBe('<p>something</p>')
+		expect(IncludesHTML('<p>john doe</p>')).toBe(true)
+		expect(IncludesHTML('john<br/>doe')).toBe(true)
+		expect(IncludesHTML('john doe')).toBe(false)
+		expect(HTMLToText('<p>john doe</p>')).toBe('john doe')
+		expect(HTMLToText('<p>john doe</p><script lang="ts">console.log(1)</script>')).toBe('john doe')
+		expect(TextToHTML('john doe\nnew line')).toBe('john doe<br />new line')
+		expect(TextToHTML('<p>john doe\nnew line</p>')).toBe('<p>john doe<br />new line</p>')
 	}
 	{
 		let symbolFunctions = [

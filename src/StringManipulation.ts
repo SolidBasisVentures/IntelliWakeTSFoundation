@@ -155,8 +155,7 @@ export const ToPascalCase = (str: string | string[] | undefined | null): string 
 /**
  * Takes a string and returns the initials, like "Dennis J Peters" = "DJP", and "Peters, Dennis J" = "DJP"
  * @param str
- * @constructor
- *
+ * @constructor *
  */
 export const ToInitials = (str: string | string[] | undefined | null): string => {
 	if (!str) return ''
@@ -173,6 +172,18 @@ export const ToInitials = (str: string | string[] | undefined | null): string =>
 	return ToWords(str)
 		.map((st) => st.substring(0, 1).toUpperCase())
 		.join('')
+}
+
+/**
+ * Checks if a string contains HTML tags
+ *
+ * @param {string | undefined | null} str - The string to check for HTML tags
+ * @returns {boolean} True if the string contains HTML tags, False otherwise
+ */
+export const IncludesHTML = (str: string | undefined | null): boolean => {
+	if (!str) return false
+
+	return /<[^>]*>/.test(str)
 }
 
 /**
@@ -205,7 +216,8 @@ export const ReplaceLinks = function (subject: string | undefined | null): strin
 export const CleanScripts = function (subject: string | undefined | null): string {
 	if (!subject) return ''
 
-	return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
+	return subject.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+	// return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
 
 /**
@@ -219,7 +231,7 @@ export const CleanScripts = function (subject: string | undefined | null): strin
 export const TextToHTML = function (subject: string | undefined | null): string {
 	if (!subject) return ''
 
-	let str = subject.replace(/(<([^>]+)>)/gi, '')
+	let str = CleanScripts(subject) //.replace(/(<([^>]+)>)/gi, '')
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	return str.replace(/(?:\r\n|\r|\n)/g, '<br />')
 }
