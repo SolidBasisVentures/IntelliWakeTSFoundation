@@ -90,6 +90,21 @@ test('String Functions', () => {
 		expect(ReplaceLinks(link)).toBe(link)
 	}
 	{
+		let link = 'https://www.google.com'
+		let anchor = "<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a>"
+		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
+	}
+	{
+		let link = 'https://www.google.com\nnew line'
+		let anchor =
+			"<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a><br />new line"
+		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
+	}
+	{
+		let link = 'www.google.com'
+		expect(ReplaceLinks(link, 'testClass')).toBe(link)
+	}
+	{
 		expect(CleanScripts('<script>console.log(1)</script>something')).toBe('something')
 		expect(CleanScripts('<script lang="ts">console.log(1)</script>something')).toBe('something')
 		expect(CleanScripts('something<script lang="ts">console.log(1)</script>')).toBe('something')

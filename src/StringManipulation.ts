@@ -187,20 +187,25 @@ export const IncludesHTML = (str: string | undefined | null): boolean => {
 }
 
 /**
- * Replaces links to an anchor tag.
+ * Replaces all URLs in a string with anchor tags.
+ * @param {string|null|undefined} subject - The string to replace the links in.
+ * @param {string|null} [classes] - Optional classes to add to the anchor tag.
+ * @returns {string} - The updated string with anchor tags replacing URLs.
  *
  * @example
- * // returns <a href='https://www.google.com' target='_blank'>https://www.google.com</a>
- * ReplaceLinks('https://www.google.com')
+ * // returns <a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a>
+ * ReplaceLinks('https://www.google.com', 'testClass')
  *
  */
-export const ReplaceLinks = function (subject: string | undefined | null): string {
+export const ReplaceLinks = function (subject: string | undefined | null, classes?: string | null): string {
 	if (!subject) return ''
 
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
-	const target = "<a href='$1' target='_blank'>$1</a>"
+	const target = !classes
+		? "<a href='$1' target='_blank'>$1</a>"
+		: `<a href='$1' target='_blank' class='${classes}'>$1</a>`
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
