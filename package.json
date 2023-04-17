@@ -14,9 +14,9 @@
 	"scripts": {
 		"Vitest-Watch": "vitest",
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
-		"Publish": "tsc && vite build && pnpm version patch && git push && npm publish",
 		"Install-IntelliWake": "pnpm install",
-		"Version-Minor-Advance": "pnpm version minor"
+		"Version-Minor-Advance": "pnpm version minor",
+		"Publish": "tsc && vite build && pnpm version patch && git push && npm publish"
 	},
 	"files": [
 		"dist"
