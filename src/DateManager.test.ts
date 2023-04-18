@@ -321,6 +321,8 @@ test('Date Managers', () => {
 	expect(TimeOnly(null)).toEqual(null)
 	expect(TimeOnly('blah')).toEqual(null)
 	expect(DateOnly('2022-07-02', {week: 'StartOf'})).toEqual('2022-06-26')
+	expect(DateOnly('2023-03-08', {week: 'StartOf'})).toEqual('2023-03-05')
+	expect(DateOnly('2023-03-08', {week: 'StartOf', timezoneDisplay: 'America/New_York'})).toEqual('2023-03-05')
 	expect(DateOnly('2022-07-03', {week: 'StartOf'})).toEqual('2022-07-03')
 	expect(DateOnly('2022-07-04', {week: 'StartOf'})).toEqual('2022-07-03')
 	expect(DateOnly('2022-07-05', {week: 'StartOf'})).toEqual('2022-07-03')

@@ -1981,7 +1981,7 @@ export const DateOnlyNull = (
 	try {
 		const useDate =
 			!date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
-				? DateFormat('Date', date, CurrentTimeZone()) ?? ''
+				? DateFormat('Date', date, adjustments?.timezoneDisplay ?? CurrentTimeZone()) ?? ''
 				: (date ?? '').substring(0, 10)
 
 		if (!date) return null
@@ -1993,7 +1993,7 @@ export const DateOnlyNull = (
 			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 		}
 
-		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, adjustments?.timezoneDisplay ?? 'UTC')
+		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
 	} catch (err) {
 		return null
 	}
