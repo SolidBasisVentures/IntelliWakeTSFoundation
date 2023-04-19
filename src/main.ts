@@ -1,3 +1,4 @@
+export * from './Colors'
 export * from './ConsoleLogTable'
 export * from './DataConstructs'
 export * from './DateManager'
