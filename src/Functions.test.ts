@@ -5,6 +5,7 @@ import {
 	CleanDivideNull,
 	CleanNumber,
 	CleanNumbers,
+	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
 	GreaterNumber,
@@ -27,7 +28,7 @@ import {
 	Sleep,
 	ToArray
 } from './Functions'
-import {expect, test, describe} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
@@ -242,6 +243,9 @@ test('Other', async () => {
 	expect(CleanNumbers(0, [1, 2, 3, null])).toEqual(6)
 	expect(CleanNumbers(0, 1, [1, 2, 3, null])).toEqual(7)
 	expect(CleanNumbers(0, null)).toEqual(0)
+	expect(CleanSubtractNumbers(0, [5, 2, 1, null])).toEqual(2)
+	expect(CleanSubtractNumbers(0, 10, [5, 2, 1, null])).toEqual(2)
+	expect(CleanSubtractNumbers(0, null)).toEqual(0)
 	expect(AverageNumberNull(0, [1, 2, '3', null])).toEqual(2)
 	expect(AverageNumberNull(1, [1, '2', 4, null])).toEqual(2.3)
 	expect(AverageNumberNull(1, 5, ['6', null])).toEqual(5.5)
