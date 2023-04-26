@@ -76,8 +76,33 @@ const ConstrainOthers = (value: any, fieldConstraint: TObjectFieldConstraint): a
 				newValue = value.substring(0, fieldConstraint.length)
 				break
 			case 'number':
-				if (value.toString().length > fieldConstraint.length) {
-					throw new Error(`Value ${value} longer than ${ToDigits(fieldConstraint.length)}`)
+				const stringVal = value.toString()
+				if (!stringVal.includes('.') && value.toString().length > fieldConstraint.length) {
+					throw new Error(
+						`Value ${value} longer than ${ToDigits(fieldConstraint.length)}, is ${stringVal.length}`
+					)
+				}
+
+				if (stringVal.toString().length > fieldConstraint.length + 1) {
+					const stringWhole = stringVal.split('.')[0]
+
+					if (stringWhole.toString().length > fieldConstraint.length) {
+						throw new Error(
+							`Whole value ${value} longer than ${ToDigits(fieldConstraint.length)}, is ${
+								stringVal.length
+							}`
+						)
+					}
+
+					newValue = CleanNumber(value, fieldConstraint.length - stringWhole.length)
+
+					if (newValue.toString().length > fieldConstraint.length + 1) {
+						throw new Error(
+							`Value ${newValue} longer than ${ToDigits(fieldConstraint.length)}, is ${
+								newValue.toString().length
+							}`
+						)
+					}
 				}
 		}
 	}

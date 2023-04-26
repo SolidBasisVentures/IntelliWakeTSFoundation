@@ -1,6 +1,6 @@
 import {ConstrainObject, ObjectFromFormData} from './ObjectConstraint'
 import {ObjectConstraintTest, TestFormData} from './TestDatum'
-import {test, expect} from 'vitest'
+import {expect, test} from 'vitest'
 
 test('ObjectConstraint', () => {
 	expect(
@@ -119,6 +119,26 @@ test('ObjectConstraint', () => {
 		ids: [1, 2],
 		salary: null,
 		is_active: false
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				denorm_avg_cost: '1.1577777777777778'
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				denorm_avg_cost: {
+					type: 'number',
+					length: 16,
+					nullable: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		denorm_avg_cost: 1.157777777777778
 	})
 })
 
