@@ -194,7 +194,7 @@ export const CleanDivideNull = (numerator: any, denominator: any): number | null
 export const CleanDivide = (numerator: any, denominator: any): number => CleanDivideNull(numerator, denominator) ?? 0
 
 /**
- * Cleans a multiple numbers and rounds them
+ * Cleans a multiple numbers, adding and rounds them
  *
  * @example
  * // return 112.23
@@ -208,6 +208,16 @@ export const CleanDivide = (numerator: any, denominator: any): number => CleanDi
  */
 export const CleanNumbers = (roundTo: number, ...values: (any | any[])[]): number =>
 	ValidNumbers(values).reduce<number>((result, value) => CleanNumber(result + value, roundTo), 0)
+
+/**
+ * Cleans a multiple numbers, subtracting and rounds them
+ *
+ */
+export const CleanSubtractNumbers = (roundTo: number, ...values: (any | any[])[]): number =>
+	ValidNumbers(values).reduce<number>(
+		(result, value, idx) => (!idx ? value : CleanNumber(result - value, roundTo)),
+		0
+	)
 
 /**
  * Cleans a number with a symbol like '$', ',' or '%'.
