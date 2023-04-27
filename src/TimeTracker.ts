@@ -16,7 +16,7 @@ export type TTimeTrackerOptions = {
 export class TimeTracker {
 	public events: TTimeEvent[]
 	public offendingMS: number
-	public warnAutomatically = true
+	public warnAutomatically = false
 
 	constructor(options?: TTimeTrackerOptions) {
 		this.events = [
@@ -28,7 +28,7 @@ export class TimeTracker {
 		]
 
 		this.offendingMS = options?.offendingMS ?? 500
-		this.warnAutomatically = options?.warnAutomatically ?? true
+		this.warnAutomatically = options?.warnAutomatically ?? false
 	}
 
 	/**
