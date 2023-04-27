@@ -139,15 +139,17 @@ export class TimeTracker {
 
 	/**
 	 * Analyze events, and if any are offending, or if the sum offends, then display those events and return them
-	 * @param options
+	 * @param label
+	 * @param offendingMS
+	 * @param showAll
 	 */
-	public consoleDurationOffends(options?: TTimeTrackerOptions & {label?: string; showAll?: boolean}) {
+	public consoleDurationOffends(label: string, offendingMS?: number, showAll = false) {
 		const offendingEvents = this.offendingEvents
 
-		if (offendingEvents.length || this.duration > (options?.offendingMS ?? this.offendingMS)) {
-			const useEvents = options?.showAll ? this.events.filter((event) => event.durationMS) : offendingEvents
+		if (offendingEvents.length || this.duration > (offendingMS ?? this.offendingMS)) {
+			const useEvents = showAll ? this.events.filter((event) => event.durationMS) : offendingEvents
 
-			console.warn(`"${options?.label ?? 'Unknown Event'}" took ${ToDigits(this.duration)}ms`)
+			console.warn(`"${label}" took ${ToDigits(this.duration)}ms`)
 			console.table(useEvents.map((oe) => OmitProperty(oe, 'eventMS')))
 			return useEvents
 		}
