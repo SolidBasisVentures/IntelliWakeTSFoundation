@@ -150,7 +150,9 @@ export class TimeTracker {
 			const useEvents = showAll ? this.events.filter((event) => event.durationMS) : offendingEvents
 
 			console.warn(`"${label}" took ${ToDigits(this.duration)}ms`)
-			console.table(useEvents.map((oe) => OmitProperty(oe, 'eventMS')))
+			if (useEvents.length) {
+				console.table(useEvents.map((oe) => OmitProperty(oe, 'eventMS')))
+			}
 			return useEvents
 		}
 
