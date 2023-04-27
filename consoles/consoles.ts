@@ -7,7 +7,7 @@ require('source-map-support').install()
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-const timeTracker = new TimeTracker({offendingMS: 350, warnAutomatically: false})
+const timeTracker = new TimeTracker({offendingMS: 350})
 
 Sleep(300)
 	.then(() => timeTracker.mark('First Event'))
