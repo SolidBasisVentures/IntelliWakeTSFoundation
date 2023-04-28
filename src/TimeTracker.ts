@@ -1,4 +1,4 @@
-import {GreaterNumber, LeastNumber, OmitProperty} from './Functions'
+import {CleanNumberNull, GreaterNumber, LeastNumber, OmitProperty} from './Functions'
 import {ESTTodayDateTimeLabel} from './DateManager'
 import {ToDigits} from './StringManipulation'
 
@@ -160,17 +160,14 @@ export class TimeTracker {
 	}
 }
 
-export function TimeTrackResolved(
-	label: string,
-	offendingMS: number | null | undefined,
-	promiseFunction: Promise<any>
-) {
+export function TimeTrackResolved(label: string, offendingMS: any | null | undefined, promiseFunction: Promise<any>) {
 	const startMS = new Date().valueOf()
+	const useOffendingMS = CleanNumberNull(offendingMS)
 
 	promiseFunction.then(() => {
 		const durationMS = new Date().valueOf() - startMS
 
-		if (offendingMS && durationMS > offendingMS) {
+		if (useOffendingMS && durationMS > useOffendingMS) {
 			console.warn(`Time Exceeded - ${label} - ${ToDigits(durationMS)}ms (${ESTTodayDateTimeLabel()})`)
 		}
 	})
