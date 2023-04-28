@@ -160,13 +160,17 @@ export class TimeTracker {
 	}
 }
 
-export function TimeTrackResolved(label: string, offendingMS: number, promiseFunction: Promise<any>) {
+export function TimeTrackResolved(
+	label: string,
+	offendingMS: number | null | undefined,
+	promiseFunction: Promise<any>
+) {
 	const startMS = new Date().valueOf()
 
 	promiseFunction.then(() => {
 		const durationMS = new Date().valueOf() - startMS
 
-		if (durationMS > offendingMS) {
+		if (offendingMS && durationMS > offendingMS) {
 			console.warn(`Time Exceeded - ${label} - ${ToDigits(durationMS)}ms (${ESTTodayDateTimeLabel()})`)
 		}
 	})
