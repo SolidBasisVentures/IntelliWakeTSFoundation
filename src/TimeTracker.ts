@@ -84,7 +84,7 @@ export class TimeTracker {
 			(options?.warnAutomatically ?? this.warnAutomatically) &&
 			event.durationMS > (options?.offendingMS ?? this.offendingMS)
 		) {
-			console.warn(`Time exceeded - ${label} - ${ToDigits(event.durationMS)}ms (${ESTTodayDateTimeLabel()})`)
+			console.info(`Time exceeded - ${label} - ${ToDigits(event.durationMS)}ms (${ESTTodayDateTimeLabel()})`)
 		}
 
 		return event
@@ -128,7 +128,7 @@ export class TimeTracker {
 			const useEvents = options?.showAll ? this.events.filter((event) => event.durationMS) : offendingEvents
 
 			if (options?.warnAutomatically ?? this.warnAutomatically) {
-				console.warn(`"${options?.label ?? 'Unknown Event'}" took ${ToDigits(this.duration)}ms`)
+				console.info(`"${options?.label ?? 'Unknown Event'}" took ${ToDigits(this.duration)}ms`)
 				console.table(useEvents.map((oe) => OmitProperty(oe, 'eventMS')))
 			}
 			return useEvents
@@ -149,7 +149,7 @@ export class TimeTracker {
 		if (offendingEvents.length || this.duration > (offendingMS ?? this.offendingMS)) {
 			const useEvents = showAll ? this.events.filter((event) => event.durationMS) : offendingEvents
 
-			console.warn(`"${label}" took ${ToDigits(this.duration)}ms`)
+			console.info(`"${label}" took ${ToDigits(this.duration)}ms`)
 			if (useEvents.length) {
 				console.table(useEvents.map((oe) => OmitProperty(oe, 'eventMS')))
 			}
@@ -168,7 +168,7 @@ export function TimeTrackResolved(label: string, offendingMS: any | null | undef
 		const durationMS = new Date().valueOf() - startMS
 
 		if (useOffendingMS && durationMS > useOffendingMS) {
-			console.warn(`Time Exceeded - ${label} - ${ToDigits(durationMS)}ms (${ESTTodayDateTimeLabel()})`)
+			console.info(`Time Exceeded - ${label} - ${ToDigits(durationMS)}ms (${ESTTodayDateTimeLabel()})`)
 		}
 	})
 
