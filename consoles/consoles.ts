@@ -1,6 +1,7 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
 import {TimeTracker} from '../src/TimeTracker'
 import {Sleep} from '../src/Functions'
+import {ToDigitsMax} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -8,6 +9,8 @@ console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
 const timeTracker = new TimeTracker({offendingMS: 350})
+
+console.log(ToDigitsMax(10))
 
 Sleep(300)
 	.then(() => timeTracker.mark('First Event'))

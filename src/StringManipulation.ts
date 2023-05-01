@@ -307,7 +307,7 @@ export const ToCurrency = (value: any, decimals: number = 2): string => {
  * ToCurrency(100)
  *
  */
-export const ToCurrencyMax = (value: any, decimals: number = 2): string => {
+export const ToCurrencyMax = (value: any, decimals: number = 9): string => {
 	return (
 		'$' +
 		CleanNumber(value).toLocaleString(undefined, {
@@ -341,7 +341,7 @@ export const ToPercent = (value: any, decimals: number = 0): string => {
  * ToPercent(0.5)
  *
  */
-export const ToPercentMax = (value: any, decimals: number = 0): string => {
+export const ToPercentMax = (value: any, decimals: number = 9): string => {
 	return (
 		(CleanNumber(value) * 100).toLocaleString(undefined, {
 			maximumFractionDigits: decimals
@@ -472,7 +472,7 @@ export const ToDigits = function (value: any, decimals: number = 0, minDecimals:
  * ToDigits(10)
  *
  */
-export const ToDigitsMax = function (value: any, decimals: number = 0): string {
+export const ToDigitsMax = function (value: any, decimals: number = 9): string {
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals
 	})
@@ -513,7 +513,7 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsBlankMax = function (value: any, decimals: number = 0) {
+export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
 	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
@@ -558,7 +558,7 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsDashMax = function (value: any, decimals: number = 0) {
+export const ToDigitsDashMax = function (value: any, decimals: number = 9) {
 	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
