@@ -160,7 +160,11 @@ export class TimeTracker {
 	}
 }
 
-export function TimeTrackResolved(label: string, offendingMS: any | null | undefined, promiseFunction: Promise<any>) {
+export function TimeTrackResolved<T>(
+	label: string,
+	offendingMS: any | null | undefined,
+	promiseFunction: Promise<T>
+): Promise<T> {
 	const startMS = new Date().valueOf()
 	const useOffendingMS = CleanNumberNull(offendingMS)
 
