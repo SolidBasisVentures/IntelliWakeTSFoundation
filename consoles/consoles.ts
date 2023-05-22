@@ -1,38 +1,25 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
 import {TimeTracker} from '../src/TimeTracker'
-import {Sleep} from '../src/Functions'
-import {ToDigitsMax} from '../src/StringManipulation'
+import {ConstrainObject} from '../src/ObjectConstraint'
+import {ObjectConstraintTest} from '../src/TestDatum'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-const timeTracker = new TimeTracker({offendingMS: 350})
+console.log(
+	ConstrainObject(
+		{
+			id: '1',
+			name: null,
+			start_date: '1/1/2023',
+			ids: ['1', 2, 0, null, ''],
+			salary: '15000',
+			is_active: 'false'
+		} as any,
+		ObjectConstraintTest
+	)
+)
 
-console.log(ToDigitsMax(10))
-
-Sleep(300)
-	.then(() => timeTracker.mark('First Event'))
-	.then(() => Sleep(400))
-	.then(() => timeTracker.mark('Second Event'))
-	.then(() => Sleep(600))
-	.then(() => timeTracker.mark('Third Event'))
-	.then(() =>
-		timeTracker.markResolved(
-			'Sleep Two-Fifty',
-			Sleep(250).then(() => 'Sleep 250')
-		)
-	)
-	.then((res) => console.log('Resolved', res))
-	.then(() =>
-		timeTracker.markResolved(
-			'Sleep Four Hundred',
-			Sleep(400).then(() => 'Sleep 400')
-		)
-	)
-	.then((res) => console.log('Resolved', res))
-	.then(() =>
-		timeTracker.durationOffends({label: 'Test Event', offendingMS: 1000, warnAutomatically: true, showAll: true})
-	)
-	.then(() => console.timeEnd('Consoles'))
+console.timeEnd('Consoles')

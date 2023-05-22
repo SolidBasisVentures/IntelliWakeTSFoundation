@@ -42,7 +42,7 @@ test('ObjectConstraint', () => {
 		name: '',
 		start_date: '2023-01-01',
 		features: [],
-		ids: [1, 2],
+		ids: [1, 2, 0],
 		salary: 15000,
 		is_active: false
 	})
@@ -64,7 +64,7 @@ test('ObjectConstraint', () => {
 		name: '',
 		start_date: '2023-01-01',
 		features: [],
-		ids: [1, 2],
+		ids: [1, 2, 0],
 		salary: 20000,
 		is_active: true
 	})
@@ -90,7 +90,7 @@ test('ObjectConstraint', () => {
 		name: null,
 		start_date: '2023-01-01',
 		features: [],
-		ids: [1, 2],
+		ids: [1, 2, 0],
 		salary: null,
 		is_active: false
 	})
@@ -101,7 +101,7 @@ test('ObjectConstraint', () => {
 				id: '1',
 				name: '',
 				start_date: '1/1/2023',
-				ids: ['1', 2, 0, null, ''],
+				ids: ['1', 2, '0', null, ''],
 				salary: 0,
 				is_active: 'false'
 			},
@@ -116,7 +116,7 @@ test('ObjectConstraint', () => {
 		name: null,
 		start_date: '2023-01-01',
 		features: [],
-		ids: [1, 2],
+		ids: [1, 2, 0],
 		salary: null,
 		is_active: false
 	})

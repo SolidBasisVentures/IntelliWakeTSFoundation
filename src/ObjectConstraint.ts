@@ -1,6 +1,7 @@
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
 import {CleanNumber, CleanNumberNull, IsOn, ToArray} from './Functions'
 import {ToDigits} from './StringManipulation'
+import {isNullUndefined} from './SortSearch'
 
 /**
  * Defines the constraints to be placed on a field of an object
@@ -135,10 +136,19 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 		if (fieldConstraint) {
 			if (fieldConstraint.isArray) {
 				newObj[key] = ToArray(newObj[key])
+					.filter((value) => fieldConstraint.type !== 'number' || (value !== '' && !isNullUndefined(value)))
 					.map((value) => ConstrainType(value, fieldConstraint))
-					.filter((value) => fieldConstraint.arrayAllowFalsey || !!value)
+					.filter(
+						(value) =>
+							fieldConstraint.arrayAllowFalsey ||
+							(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
+					)
 					.map((value) => ConstrainOthers(value, fieldConstraint))
-					.filter((value) => fieldConstraint.arrayAllowFalsey || !!value)
+					.filter(
+						(value) =>
+							fieldConstraint.arrayAllowFalsey ||
+							(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
+					)
 			} else {
 				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
 			}
