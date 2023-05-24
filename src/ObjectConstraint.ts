@@ -135,20 +135,26 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 		const fieldConstraint = constraint[key] as TObjectFieldConstraint
 		if (fieldConstraint) {
 			if (fieldConstraint.isArray) {
-				newObj[key] = ToArray(newObj[key])
-					.filter((value) => fieldConstraint.type !== 'number' || (value !== '' && !isNullUndefined(value)))
-					.map((value) => ConstrainType(value, fieldConstraint))
-					.filter(
-						(value) =>
-							fieldConstraint.arrayAllowFalsey ||
-							(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
-					)
-					.map((value) => ConstrainOthers(value, fieldConstraint))
-					.filter(
-						(value) =>
-							fieldConstraint.arrayAllowFalsey ||
-							(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
-					)
+				if (!newObj[key] && fieldConstraint.nullable) {
+					newObj[key] = null
+				} else {
+					newObj[key] = ToArray(newObj[key])
+						.filter(
+							(value) => fieldConstraint.type !== 'number' || (value !== '' && !isNullUndefined(value))
+						)
+						.map((value) => ConstrainType(value, fieldConstraint))
+						.filter(
+							(value) =>
+								fieldConstraint.arrayAllowFalsey ||
+								(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
+						)
+						.map((value) => ConstrainOthers(value, fieldConstraint))
+						.filter(
+							(value) =>
+								fieldConstraint.arrayAllowFalsey ||
+								(fieldConstraint.type === 'number' ? !isNullUndefined(value) : !!value)
+						)
+				}
 			} else {
 				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
 			}
