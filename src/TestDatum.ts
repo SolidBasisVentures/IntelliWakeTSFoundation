@@ -9,7 +9,6 @@ export type TConstaintTest = {
 	name: string
 	start_date: string | null
 	ids: number[]
-	ids_null: number[] | null
 	features: string[]
 	salary: number
 	is_active: boolean
@@ -24,7 +23,6 @@ export const ObjectConstraintTest: TObjectConstraint<TConstaintTest> = {
 	name: {type: 'string', nullable: false, default: ''},
 	start_date: {type: 'date', nullable: true, default: 'now'},
 	ids: {type: 'number', nullable: false, isArray: true},
-	ids_null: {type: 'number', nullable: true, isArray: true},
 	features: {type: 'string', nullable: false, isArray: true},
 	salary: {type: 'number', nullable: false, minValue: 10000, maxValue: 20000},
 	is_active: {type: 'boolean', default: true}
