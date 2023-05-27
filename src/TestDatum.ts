@@ -37,6 +37,9 @@ export const TestFormData = (): FormData => {
 	const formData = new URLSearchParams()
 
 	formData.append('id', '1')
+	formData.append('ids', '0')
+	formData.append('ids', '1')
+	formData.append('ids', '2')
 	formData.append('features', 'One')
 	formData.append('features', 'Two')
 	formData.append('features', 'Three')

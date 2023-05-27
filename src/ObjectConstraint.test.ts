@@ -145,13 +145,14 @@ test('ObjectConstraint', () => {
 test('FormData', () => {
 	expect(ObjectFromFormData(TestFormData())).toEqual({
 		id: '1',
+		ids: ['0', '1', '2'],
 		features: ['One', 'Two', 'Three'],
 		is_active: 'false'
 	})
 
 	expect(ObjectFromFormData(TestFormData(), {constraint: ObjectConstraintTest})).toEqual({
 		id: 1,
-		ids: [],
+		ids: [0, 1, 2],
 		features: ['One', 'Two', 'Three'],
 		is_active: false,
 		name: '',
