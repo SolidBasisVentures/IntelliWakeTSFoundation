@@ -259,6 +259,7 @@ test('Other', async () => {
 	expect(ArrayRange(-10, 2, -1)).toEqual([-1, -3, -5, -7, -9])
 	expect(ValidNumbers(0, 1, 2)).toEqual([0, 1, 2])
 	expect(ValidNumbers([0, 1], 2)).toEqual([0, 1, 2])
+	expect(ValidNumbers([0, '1'], 2, 'Dennis')).toEqual([0, 1, 2])
 
 	async function timesTwo(x: number): Promise<number> {
 		await Sleep(200)
