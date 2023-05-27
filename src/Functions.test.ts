@@ -26,7 +26,8 @@ import {
 	ReplaceAllMultiple,
 	RoundTo,
 	Sleep,
-	ToArray
+	ToArray,
+	ValidNumbers
 } from './Functions'
 import {describe, expect, test} from 'vitest'
 
@@ -256,6 +257,8 @@ test('Other', async () => {
 	expect(ArrayRange(-10)).toEqual([0, -1, -2, -3, -4, -5, -6, -7, -8, -9])
 	expect(ArrayRange(-10, 2)).toEqual([0, -2, -4, -6, -8])
 	expect(ArrayRange(-10, 2, -1)).toEqual([-1, -3, -5, -7, -9])
+	expect(ValidNumbers(0, 1, 2)).toEqual([0, 1, 2])
+	expect(ValidNumbers([0, 1], 2)).toEqual([0, 1, 2])
 
 	async function timesTwo(x: number): Promise<number> {
 		await Sleep(200)
