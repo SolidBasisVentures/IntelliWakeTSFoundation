@@ -122,6 +122,7 @@ export type TAdjustment =
 
 /**
  * Current time in ISO string format
+ * @returns {string} String of the date/time in ISO format.
  */
 export const NowISOString = (adjustment?: TAdjustment): string =>
 	!adjustment ? new Date().toISOString() : DateISO('now', adjustment) ?? new Date().toISOString()
