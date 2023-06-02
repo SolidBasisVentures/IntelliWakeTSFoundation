@@ -81,6 +81,10 @@ test('String Functions', () => {
 		expect(ReplaceLinks(link)).toBe(anchor)
 	}
 	{
+		let link = '<img href="https://google.png" />'
+		expect(ReplaceLinks(link)).toBe(link)
+	}
+	{
 		let link = 'https://www.google.com\nnew line'
 		let anchor = "<a href='https://www.google.com' target='_blank'>https://www.google.com</a><br />new line"
 		expect(ReplaceLinks(link)).toBe(anchor)

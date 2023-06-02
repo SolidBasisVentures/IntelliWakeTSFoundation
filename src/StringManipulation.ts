@@ -187,7 +187,7 @@ export const IncludesHTML = (str: string | undefined | null): boolean => {
 }
 
 /**
- * Replaces all URLs in a string with anchor tags.
+ * Replaces all URLs in a string with anchor tags, unless there is an "<img " item in the string
  * @param {string|null|undefined} subject - The string to replace the links in.
  * @param {string|null} [classes] - Optional classes to add to the anchor tag.
  * @returns {string} - The updated string with anchor tags replacing URLs.
@@ -199,6 +199,8 @@ export const IncludesHTML = (str: string | undefined | null): boolean => {
  */
 export const ReplaceLinks = function (subject: string | undefined | null, classes?: string | null): string {
 	if (!subject) return ''
+
+	if (subject.includes('<img ')) return subject
 
 	// noinspection RegExpUnnecessaryNonCapturingGroup
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
