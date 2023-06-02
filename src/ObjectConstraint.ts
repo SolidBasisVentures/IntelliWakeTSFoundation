@@ -160,7 +160,8 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 			}
 
 			if (fieldConstraint.nullable && !newObj[key]) {
-				newObj[key] = null
+				if(typeof newObj[key] !== 'boolean')
+					newObj[key] = null
 			}
 		} else {
 			delete newObj[key]
