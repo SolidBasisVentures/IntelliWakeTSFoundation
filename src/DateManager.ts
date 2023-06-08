@@ -1,4 +1,4 @@
-import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
+import {CleanNumber, CleanNumberNull, OmitProperty, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
 
 /**
@@ -1976,6 +1976,7 @@ export const DateOnlyNull = (
 	adjustments?: TDateOnlyAdjustment & {
 		formatLocale?: boolean
 		timezoneDisplay?: string
+		fromFormat?: string
 	}
 ): string | null => {
 	if (!date) return null
@@ -1985,16 +1986,45 @@ export const DateOnlyNull = (
 				? DateFormat('Date', date, adjustments?.timezoneDisplay ?? CurrentTimeZone()) ?? ''
 				: (date ?? '').substring(0, 10)
 
-		if (!date) return null
+		if (!date || !useDate) return null
+
+		if (adjustments?.fromFormat) {
+			if (useDate.length && useDate.length === adjustments.fromFormat.length) {
+				const yearIndex = adjustments.fromFormat.indexOf('Y')
+				const yearIndexEnd = adjustments.fromFormat.lastIndexOf('Y')
+				const monthIndex = adjustments.fromFormat.indexOf('M')
+				const monthIndexEnd = adjustments.fromFormat.lastIndexOf('M')
+				const dayIndex = adjustments.fromFormat.indexOf('D')
+				const dayIndexEnd = adjustments.fromFormat.lastIndexOf('D')
+
+				const year = useDate.slice(yearIndex, yearIndexEnd + 1)
+				const month = useDate.slice(monthIndex, monthIndexEnd + 1)
+				const day = useDate.slice(dayIndex, dayIndexEnd + 1)
+
+				if (CleanNumber(year) && CleanNumber(month) && CleanNumber(year)) {
+					return DateOnlyNull(
+						`${year.padStart(4, '20')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
+						OmitProperty(adjustments, 'fromFormat')
+					)
+				}
+			}
+			return null
+		}
 
 		let dateObj = new Date(useDate)
 
-		if (!!adjustments) {
-			dateObj = DateObject(dateObj, adjustments) ?? dateObj
-			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
-		}
+		// @ts-ignore
+		// noinspection SuspiciousTypeOfGuard
+		if (dateObj instanceof Date && isFinite(dateObj)) {
+			if (!!adjustments) {
+				dateObj = DateObject(dateObj, adjustments) ?? dateObj
+				if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
+			}
 
-		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
+			return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
+		} else {
+			return null
+		}
 	} catch (err) {
 		return null
 	}

@@ -1,24 +1,13 @@
-import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ConstrainObject} from '../src/ObjectConstraint'
-import {ObjectConstraintTest} from '../src/TestDatum'
+import {DateOnlyNull, ESTTodayDateTimeLabel} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(
-	ConstrainObject(
-		{
-			id: '1',
-			name: null,
-			start_date: '1/1/2023',
-			ids: ['1', 2, 0, null, ''],
-			salary: '15000',
-			is_active: 'false'
-		} as any,
-		ObjectConstraintTest
-	)
-)
+console.log(DateOnlyNull('2023-04-05'))
+console.log(DateOnlyNull('20230405', {fromFormat: 'YYYYMMDD'}))
+console.log(DateOnlyNull('04052023', {fromFormat: 'MMDDYYYY'}))
+console.log(DateOnlyNull('230405', {fromFormat: 'YYMMDD'}))
 
 console.timeEnd('Consoles')
