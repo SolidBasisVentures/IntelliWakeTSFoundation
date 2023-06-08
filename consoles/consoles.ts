@@ -1,13 +1,12 @@
-import {DateOnlyNull, ESTTodayDateTimeLabel} from '../src/DateManager'
+import {DateFormatAny, DateOnlyNull, ESTTodayDateTimeLabel, TimeOnly} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(DateOnlyNull('2023-04-05'))
-console.log(DateOnlyNull('20230405', {fromFormat: 'YYYYMMDD'}))
-console.log(DateOnlyNull('04052023', {fromFormat: 'MMDDYYYY'}))
-console.log(DateOnlyNull('230405', {fromFormat: 'YYMMDD'}))
+console.log(DateFormatAny('MMDDYYYY', '2023-04-05'))
+console.log(DateFormatAny('HH:mm', '2023-04-05 08:00:00'))
+console.log(DateFormatAny('HH:mm', '08:00:00'))
 
 console.timeEnd('Consoles')

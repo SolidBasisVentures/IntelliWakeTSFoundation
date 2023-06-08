@@ -515,7 +515,12 @@ export const DateFormatAny = (
 ): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 
-	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined))
+	const useDate =
+		typeof date === 'string' && !StringHasDateData(date) && StringHasTimeData(date)
+			? `${DateOnly('now')} ${date}`
+			: date
+
+	let dateObject = DateObject(DateParseTSInternal(useDate, noTZInfo ? timezoneSource : undefined))
 
 	// console.log('DFA', date, dateObject)
 
@@ -525,7 +530,7 @@ export const DateFormatAny = (
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
 
-			const sourceDate = !!date && date !== 'now' && date !== 'today' ? dateObject : undefined
+			const sourceDate = !!useDate && useDate !== 'now' && useDate !== 'today' ? dateObject : undefined
 
 			const sourceOffset = IANAOffset(timezoneSource, sourceDate) ?? 0 // Chic 5
 			const displayOffset = IANAOffset(timezoneDisplay, sourceDate) ?? 0 // Chic 6

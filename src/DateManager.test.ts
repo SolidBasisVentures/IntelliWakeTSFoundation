@@ -279,6 +279,9 @@ test('Date Managers', () => {
 	expect(DateOnlyNull('040523', {fromFormat: 'MMDDYY'})).toEqual('2023-04-05')
 	expect(DateOnlyNull('040500', {fromFormat: 'MMDDYY'})).toEqual(null)
 
+	expect(DateFormatAny('HH:mm', '2023-04-05 08:00:00')).toEqual('08:00')
+	expect(DateFormatAny('HH:mm', '08:00:00')).toEqual('08:00')
+
 	expect(SortCompareDateNull('2021-01-01', '2021-01-02')).toEqual(-1)
 	expect(SortCompareDateNull('2021-01-02', '2021-01-01')).toEqual(1)
 	expect(SortCompareDateNull('2021-01-01', '2021-01-01')).toEqual(null)
