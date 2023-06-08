@@ -500,7 +500,7 @@ export type TDateFormat =
 	| 'DisplayDateDoWTimeLong'
 
 /**
- *
+ * Converts just about any valid type of date, time, or date/time object, string, or MS number into the format provided
  * @param format
  * @param date
  * @param timezoneDisplay
