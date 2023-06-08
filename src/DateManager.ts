@@ -2041,6 +2041,7 @@ export const DateOnly = (
 	adjustments?: TDateOnlyAdjustment & {
 		formatLocale?: boolean
 		timezoneDisplay?: string
+		fromFormat?: string
 	}
 ): string =>
 	DateOnlyNull(date, adjustments) ??
