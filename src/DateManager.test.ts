@@ -9,6 +9,7 @@ import {
 	DateISO,
 	DateIsWeekend,
 	DateMonth,
+	DateObject,
 	DateOnly,
 	DateOnlyNull,
 	DateParseTS,
@@ -343,6 +344,9 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-07-04', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	expect(DateOnly('2022-07-05', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	const otz = process.env.TZ
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -387,6 +391,9 @@ test('Date Managers', () => {
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'Asia/Tehran'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -423,6 +430,9 @@ test('Date Managers', () => {
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/New_York'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -462,6 +472,9 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	process.env.TZ = 'America/Las_Angeles'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)

@@ -231,7 +231,7 @@ export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
 
 /**
- *
+ * Determines if the string provided likely includes information about what timezone should be addressed, such as the '+4' in '2023-01-01 10:00:00 +4'
  * @param value
  * @constructor
  */
@@ -242,6 +242,14 @@ export const StringHasTimeZoneData = (value: string): boolean =>
 	value.substring(15).includes('Z') ||
 	value.includes('+') ||
 	value.substring(15).includes('-')
+
+/**
+ * Determines if the string provided is likely an IANA timezone reference, by checking if it has a / and is otherwise all alpha non-numeric
+ * @param value
+ * @constructor
+ */
+export const StringIsIANA = (value: string | null | undefined): boolean =>
+	!!value?.includes('/') && /^[a-zA-Z_\/]*$/.test(value)
 
 /**
  *
@@ -391,13 +399,20 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 
 		// Set a time string with no other timezone data to the current timezone
 		if (!ignoreIANA && !StringHasTimeZoneData(date)) {
-			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
-			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-			// console.log(date, date.length)
-			// if (date.length > 10) {
-			result += (IANAOffset(timezoneSource, date) ?? 0) * 60000
-			// }
-			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
+			let useTimezoneSource = timezoneSource
+
+			if (!useTimezoneSource) {
+				const dateComponents = date.split(' ')
+				const lastElement = dateComponents[dateComponents.length - 1]
+
+				if (StringIsIANA(lastElement)) {
+					useTimezoneSource = lastElement
+				}
+			}
+
+			console.log('Using', useTimezoneSource)
+
+			result += (IANAOffset(useTimezoneSource, date) ?? 0) * 60000
 		}
 
 		return result
