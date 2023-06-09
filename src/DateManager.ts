@@ -410,8 +410,6 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 				}
 			}
 
-			console.log('Using', useTimezoneSource)
-
 			result += (IANAOffset(useTimezoneSource, date) ?? 0) * 60000
 		}
 

@@ -97,8 +97,6 @@ const FindInnerSetLocations = (
 }
 
 const ProcessPMDAS = (expression: string): string => {
-	// console.log(expression);
-
 	let returnValue = ExecuteFunctions(expression)
 
 	returnValue = ReplaceAll(' ', '', returnValue)
