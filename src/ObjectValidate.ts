@@ -48,11 +48,9 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 					const result = validation(data[field], data)
 					if (!!result) {
 						if(field in errors) {
-							console.log(result,field, 'funcif')
-							errors?[field].push(result as never) : ''
+							errors[field]?.push(result as never)
 						}
 						else{
-							console.log(result ,field, 'funcelse')
 							errors[field] = [result]
 						}
 					}
@@ -63,33 +61,27 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.Required:
 								if (!data[field]) {
 									if (field in errors) {
-										console.log(validation[defaultCheck],field, '1if')
-										errors?[field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
-										console.log(validation[defaultCheck],field, '1else')
 									}
 								}
-								//console.log(validation[defaultCheck],field, '1none')
 								break
 
 							case EDefaultCheck.AtLeast1Character:
 								if ((data[field]?.length ?? 0) < 1) {
 									if (field in errors) {
-										 console.log(validation[defaultCheck],field, '2if')
-										errors?['id'].push(validation[defaultCheck]): ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
-										console.log(validation[defaultCheck],field, '2else')
 									}
 								}
-								//console.log(validation[defaultCheck],field, '2none')
 								break
 
 							case EDefaultCheck.AtLeast5Characters:
 								if ((data[field]?.length ?? 0) < 5) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -99,7 +91,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.GreaterThan0:
 								if (CleanNumber(data[field]) <= 0) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -109,7 +101,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.GreaterOrEqual0:
 								if (CleanNumber(data[field]) < 0) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -119,7 +111,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.IsDate:
 								if (!DateOnlyNull(data[field])) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -129,7 +121,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.IsPastDate:
 								if (!DateCompare(data[field], 'IsBefore', 'now', 'millisecond')) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -139,7 +131,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.IsFutureDate:
 								if (!DateCompare(data[field], 'IsAfter', 'now', 'millisecond')) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -149,7 +141,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.IsNumber:
 								if (CleanNumberNull(data[field]) === null) {
 									if (field in errors) {
-										errors ? [field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									} else {
 										errors[field] = [validation[defaultCheck]]
 									}
@@ -159,7 +151,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 							case EDefaultCheck.IsEmail:
 								if (!(/@.*\./.test(data[field]))) {
 									if(field in errors) {
-										errors?[field].push(validation[defaultCheck]) : ''
+										errors[field]?.push(validation[defaultCheck])
 									}
 									else{
 										errors[field] = [validation[defaultCheck]]
@@ -167,7 +159,6 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 								}
 								break
 						}
-						console.log(errors)
 					}
 				}
 			}
