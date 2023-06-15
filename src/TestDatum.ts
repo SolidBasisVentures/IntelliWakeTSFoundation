@@ -1,4 +1,5 @@
 import {TObjectConstraint} from './ObjectConstraint'
+import {TObjectValidator} from './ObjectValidate'
 
 /**
  *
