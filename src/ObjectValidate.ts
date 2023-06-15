@@ -4,6 +4,7 @@ import {DateCompare, DateOnlyNull} from './DateManager'
 
 export enum EDefaultCheck {
 	Required = 'Required',
+	Truthy = 'Truthy',
 	AtLeast1Character = 'AtLeast1Character',
 	AtLeast5Characters ='AtLeast5Characters',
 	GreaterThan0 ='GreaterThan0',
@@ -59,6 +60,16 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 					for (const defaultCheck of defaultChecks) {
 						switch (defaultCheck) {
 							case EDefaultCheck.Required:
+								if ((data[field] == '' || data[field] == null) && typeof data[field] != 'boolean' && typeof data[field] != 'number') {
+									if (field in errors) {
+										errors[field]?.push(validation[defaultCheck])
+									} else {
+										errors[field] = [validation[defaultCheck]]
+									}
+								}
+								break
+
+							case EDefaultCheck.Truthy:
 								if (!data[field]) {
 									if (field in errors) {
 										errors[field]?.push(validation[defaultCheck])
@@ -119,7 +130,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 								break
 
 							case EDefaultCheck.IsPastDate:
-								if (!DateCompare(data[field], 'IsBefore', 'now', 'millisecond')) {
+								if (!DateOnlyNull(data[field]) || !DateCompare(data[field], 'IsBefore', 'now', 'millisecond')) {
 									if (field in errors) {
 										errors[field]?.push(validation[defaultCheck])
 									} else {
@@ -129,7 +140,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 								break
 
 							case EDefaultCheck.IsFutureDate:
-								if (!DateCompare(data[field], 'IsAfter', 'now', 'millisecond')) {
+								if (!DateOnlyNull(data[field]) || !DateCompare(data[field], 'IsAfter', 'now', 'millisecond')) {
 									if (field in errors) {
 										errors[field]?.push(validation[defaultCheck])
 									} else {
