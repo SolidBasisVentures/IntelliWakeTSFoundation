@@ -458,6 +458,7 @@ test('Date Managers', () => {
 	)
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
+	expect(DateOnly('2021-7-9')).toEqual('2021-07-09')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
 	expect(DateOnly('2022-02-17', {weeks: 'StartOf'})).toEqual('2022-02-13')
 	expect(DateOnly('2022-02-17', {weeks: 'EndOf'})).toEqual('2022-02-19')
