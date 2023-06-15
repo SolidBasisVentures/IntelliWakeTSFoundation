@@ -1,5 +1,6 @@
 import {CleanNumber, CleanNumberNull, ToArray} from './Functions'
 import {DateCompare, DateOnlyNull} from './DateManager'
+import {isNullUndefined} from './SortSearch'
 
 
 export enum EDefaultCheck {
@@ -60,7 +61,7 @@ export const Validator = <T extends Record<string, any | null>>(data: T, objectV
 					for (const defaultCheck of defaultChecks) {
 						switch (defaultCheck) {
 							case EDefaultCheck.Required:
-								if ((data[field] == '' || data[field] == null) && typeof data[field] != 'boolean' && typeof data[field] != 'number') {
+								if (isNullUndefined(data[field]) || data[field] === '') {
 									if (field in errors) {
 										errors[field]?.push(validation[defaultCheck])
 									} else {
