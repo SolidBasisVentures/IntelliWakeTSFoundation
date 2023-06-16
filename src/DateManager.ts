@@ -1,4 +1,4 @@
-import {CleanNumber, CleanNumberNull, ReplaceAll} from './Functions'
+import {CleanNumber, CleanNumberNull, OmitProperty, ReplaceAll} from './Functions'
 import {AddS, DigitsNth, ToDigits} from './StringManipulation'
 
 /**
@@ -231,7 +231,7 @@ export const StringHasTimeData = (value: string): boolean => value.includes(':')
 export const StringHasDateData = (value: string): boolean => value.includes('-') || /\d{8}/.test(value)
 
 /**
- *
+ * Determines if the string provided likely includes information about what timezone should be addressed, such as the '+4' in '2023-01-01 10:00:00 +4'
  * @param value
  * @constructor
  */
@@ -242,6 +242,14 @@ export const StringHasTimeZoneData = (value: string): boolean =>
 	value.substring(15).includes('Z') ||
 	value.includes('+') ||
 	value.substring(15).includes('-')
+
+/**
+ * Determines if the string provided is likely an IANA timezone reference, by checking if it has a / and is otherwise all alpha non-numeric
+ * @param value
+ * @constructor
+ */
+export const StringIsIANA = (value: string | null | undefined): boolean =>
+	!!value?.includes('/') && /^[a-zA-Z_\/]*$/.test(value)
 
 /**
  *
@@ -391,13 +399,18 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 
 		// Set a time string with no other timezone data to the current timezone
 		if (!ignoreIANA && !StringHasTimeZoneData(date)) {
-			// console.log('Here', date, (IANAOffset(timezoneSource) ?? 0), (IANAOffset() ?? 0))
-			// console.log('Processing', date, timezoneSource, DateISO(result), DateISO(result + (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)))
-			// console.log(date, date.length)
-			// if (date.length > 10) {
-			result += (IANAOffset(timezoneSource, date) ?? 0) * 60000
-			// }
-			// result += (((IANAOffset(timezoneSource) ?? 0) - (IANAOffset() ?? 0)) * 60 * 1000)
+			let useTimezoneSource = timezoneSource
+
+			if (!useTimezoneSource) {
+				const dateComponents = date.split(' ')
+				const lastElement = dateComponents[dateComponents.length - 1]
+
+				if (StringIsIANA(lastElement)) {
+					useTimezoneSource = lastElement
+				}
+			}
+
+			result += (IANAOffset(useTimezoneSource, date) ?? 0) * 60000
 		}
 
 		return result
@@ -500,7 +513,7 @@ export type TDateFormat =
 	| 'DisplayDateDoWTimeLong'
 
 /**
- *
+ * Converts just about any valid type of date, time, or date/time object, string, or MS number into the format provided
  * @param format
  * @param date
  * @param timezoneDisplay
@@ -515,7 +528,12 @@ export const DateFormatAny = (
 ): string | null => {
 	const noTZInfo = typeof date === 'string' && !StringHasTimeZoneData(date)
 
-	let dateObject = DateObject(DateParseTSInternal(date, noTZInfo ? timezoneSource : undefined))
+	const useDate =
+		typeof date === 'string' && !StringHasDateData(date) && StringHasTimeData(date)
+			? `${DateOnly('now')} ${date}`
+			: date
+
+	let dateObject = DateObject(DateParseTSInternal(useDate, noTZInfo ? timezoneSource : undefined))
 
 	// console.log('DFA', date, dateObject)
 
@@ -525,7 +543,7 @@ export const DateFormatAny = (
 		try {
 			if (!dateObject || dateObject.valueOf() === 0) return null
 
-			const sourceDate = !!date && date !== 'now' && date !== 'today' ? dateObject : undefined
+			const sourceDate = !!useDate && useDate !== 'now' && useDate !== 'today' ? dateObject : undefined
 
 			const sourceOffset = IANAOffset(timezoneSource, sourceDate) ?? 0 // Chic 5
 			const displayOffset = IANAOffset(timezoneDisplay, sourceDate) ?? 0 // Chic 6
@@ -1976,6 +1994,7 @@ export const DateOnlyNull = (
 	adjustments?: TDateOnlyAdjustment & {
 		formatLocale?: boolean
 		timezoneDisplay?: string
+		fromFormat?: string
 	}
 ): string | null => {
 	if (!date) return null
@@ -1985,16 +2004,45 @@ export const DateOnlyNull = (
 				? DateFormat('Date', date, adjustments?.timezoneDisplay ?? CurrentTimeZone()) ?? ''
 				: (date ?? '').substring(0, 10)
 
-		if (!date) return null
+		if (!date || !useDate) return null
+
+		if (adjustments?.fromFormat) {
+			if (useDate.length && useDate.length === adjustments.fromFormat.length) {
+				const yearIndex = adjustments.fromFormat.indexOf('Y')
+				const yearIndexEnd = adjustments.fromFormat.lastIndexOf('Y')
+				const monthIndex = adjustments.fromFormat.indexOf('M')
+				const monthIndexEnd = adjustments.fromFormat.lastIndexOf('M')
+				const dayIndex = adjustments.fromFormat.indexOf('D')
+				const dayIndexEnd = adjustments.fromFormat.lastIndexOf('D')
+
+				const year = useDate.slice(yearIndex, yearIndexEnd + 1)
+				const month = useDate.slice(monthIndex, monthIndexEnd + 1)
+				const day = useDate.slice(dayIndex, dayIndexEnd + 1)
+
+				if (CleanNumber(year) && CleanNumber(month) && CleanNumber(year)) {
+					return DateOnlyNull(
+						`${year.padStart(4, '20')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
+						OmitProperty(adjustments, 'fromFormat')
+					)
+				}
+			}
+			return null
+		}
 
 		let dateObj = new Date(useDate)
 
-		if (!!adjustments) {
-			dateObj = DateObject(dateObj, adjustments) ?? dateObj
-			if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
-		}
+		// @ts-ignore
+		// noinspection SuspiciousTypeOfGuard
+		if (dateObj instanceof Date && isFinite(dateObj)) {
+			if (!!adjustments) {
+				dateObj = DateObject(dateObj, adjustments) ?? dateObj
+				if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
+			}
 
-		return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
+			return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
+		} else {
+			return null
+		}
 	} catch (err) {
 		return null
 	}
@@ -2011,6 +2059,7 @@ export const DateOnly = (
 	adjustments?: TDateOnlyAdjustment & {
 		formatLocale?: boolean
 		timezoneDisplay?: string
+		fromFormat?: string
 	}
 ): string =>
 	DateOnlyNull(date, adjustments) ??

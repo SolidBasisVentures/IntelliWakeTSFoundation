@@ -173,25 +173,30 @@ export const AverageNumber = (decimals: number, ...values: (any | any[])[]): num
  *
  * @param numerator
  * @param denominator
+ * @param decimals
  * @constructor
  */
-export const CleanDivideNull = (numerator: any, denominator: any): number | null => {
+export const CleanDivideNull = (numerator: any, denominator: any, decimals?: number): number | null => {
 	if (numerator === undefined || numerator === null) return null
 
 	const useDenominator = CleanNumber(denominator)
 
 	if (useDenominator === 0) return null
 
-	return CleanNumber(numerator) / useDenominator
+	return decimals !== undefined
+		? CleanNumber(CleanNumber(numerator) / useDenominator, decimals)
+		: CleanNumber(numerator) / useDenominator
 }
 
 /**
  *
  * @param numerator
  * @param denominator
+ * @param decimals
  * @constructor
  */
-export const CleanDivide = (numerator: any, denominator: any): number => CleanDivideNull(numerator, denominator) ?? 0
+export const CleanDivide = (numerator: any, denominator: any, decimals?: number): number =>
+	CleanDivideNull(numerator, denominator, decimals) ?? 0
 
 /**
  * Cleans a multiple numbers, adding and rounds them

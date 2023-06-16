@@ -3,6 +3,23 @@ import {ObjectConstraintTest, TestFormData} from './TestDatum'
 import {expect, test} from 'vitest'
 
 test('ObjectConstraint', () => {
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				is_active: false
+			} as any,
+			{
+				id: {type: 'number', nullable: false, default: 0},
+				is_active: {type: 'boolean', default: true, nullable: true}
+			}
+		)
+	).toEqual({
+		id: 1,
+		is_active: false
+	})
+
 	expect(
 		ConstrainObject(
 			{
@@ -24,6 +41,23 @@ test('ObjectConstraint', () => {
 		salary: 10000,
 		is_active: false
 	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				is_active: null
+			} as any,
+			{
+				id: {type: 'number', nullable: false, default: 0},
+				is_active: {type: 'boolean', default: true, nullable: true}
+			}
+		)
+	).toEqual({
+		id: 1,
+		is_active: null
+	})
+
 
 	expect(
 		ConstrainObject(

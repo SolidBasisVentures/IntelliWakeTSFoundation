@@ -1,24 +1,22 @@
-import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ConstrainObject} from '../src/ObjectConstraint'
-import {ObjectConstraintTest} from '../src/TestDatum'
+import {
+	DateFormat,
+	DateFormatAny,
+	DateObject,
+	DateOnly,
+	DateOnlyNull,
+	ESTTodayDateTimeLabel,
+	TimeOnly
+} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(
-	ConstrainObject(
-		{
-			id: '1',
-			name: null,
-			start_date: '1/1/2023',
-			ids: ['1', 2, 0, null, ''],
-			salary: '15000',
-			is_active: 'false'
-		} as any,
-		ObjectConstraintTest
-	)
-)
+process.env.TZ = 'UTC'
+
+console.log(DateObject(`${DateOnly('now')} 12:00:00`))
+console.log(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'}))
+console.log(DateObject(`${DateOnly('now')} 12:00:00 America/New_York`))
 
 console.timeEnd('Consoles')

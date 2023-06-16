@@ -9,7 +9,9 @@ import {
 	DateISO,
 	DateIsWeekend,
 	DateMonth,
+	DateObject,
 	DateOnly,
+	DateOnlyNull,
 	DateParseTS,
 	DateQuarter,
 	DatesBetween,
@@ -27,7 +29,7 @@ import {
 	WeekNumberAdjust
 } from './DateManager'
 import {CleanNumber} from './Functions'
-import {test, expect} from 'vitest'
+import {expect, test} from 'vitest'
 
 const isoLongDateString = '2021-01-01T00:00:00Z'
 const dt = '2021-12-22T14:41:24Z'
@@ -270,6 +272,17 @@ test('Date Managers', () => {
 		)
 	).toEqual('11/12/2021 1:00 pm')
 	expect(DateFormat('Date', DateISO('0021-01-24 01:00:00.00'))).toEqual('0021-01-24')
+
+	expect(DateOnlyNull('2023-04-05')).toEqual('2023-04-05')
+	expect(DateOnlyNull('20230405', {fromFormat: 'YYYYMMDD'})).toEqual('2023-04-05')
+	expect(DateOnlyNull('04052023', {fromFormat: 'MMDDYYYY'})).toEqual('2023-04-05')
+	expect(DateOnlyNull('230405', {fromFormat: 'YYMMDD'})).toEqual('2023-04-05')
+	expect(DateOnlyNull('040523', {fromFormat: 'MMDDYY'})).toEqual('2023-04-05')
+	expect(DateOnlyNull('040500', {fromFormat: 'MMDDYY'})).toEqual(null)
+
+	expect(DateFormatAny('HH:mm', '2023-04-05 08:00:00')).toEqual('08:00')
+	expect(DateFormatAny('HH:mm', '08:00:00')).toEqual('08:00')
+
 	expect(SortCompareDateNull('2021-01-01', '2021-01-02')).toEqual(-1)
 	expect(SortCompareDateNull('2021-01-02', '2021-01-01')).toEqual(1)
 	expect(SortCompareDateNull('2021-01-01', '2021-01-01')).toEqual(null)
@@ -331,6 +344,9 @@ test('Date Managers', () => {
 	expect(DateOnly('2022-07-04', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	expect(DateOnly('2022-07-05', {week: 'StartOfMon'})).toEqual('2022-07-04')
 	const otz = process.env.TZ
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -375,6 +391,9 @@ test('Date Managers', () => {
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'Asia/Tehran'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -411,6 +430,9 @@ test('Date Managers', () => {
 	)
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	process.env.TZ = 'America/New_York'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -450,6 +472,9 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	process.env.TZ = 'America/Las_Angeles'
+	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
+		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
+	)
 	expect(DateFormatAny('YYYY-MM-DD HH:mm', '2022-06-01 00:14:33.903000 +00:00', 'America/Los_Angeles')).toEqual(
 		'2022-05-31 17:14'
 	)
@@ -458,6 +483,7 @@ test('Date Managers', () => {
 	)
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
+	expect(DateOnly('2021-7-9')).toEqual('2021-07-09')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
 	expect(DateOnly('2022-02-17', {weeks: 'StartOf'})).toEqual('2022-02-13')
 	expect(DateOnly('2022-02-17', {weeks: 'EndOf'})).toEqual('2022-02-19')
