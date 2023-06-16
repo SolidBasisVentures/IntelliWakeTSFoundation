@@ -542,12 +542,14 @@ export const ReSortOrder = <
  		{id: 1, name: 'One'}
 ]
  */
-export const SortPerArray = <T>(
+export const SortPerArrayNull = <T>(
 	beforeValue: T,
 	afterValue: T,
 	order: T[],
 	emptyTo: 'Top' | 'Bottom' = 'Top'
-): number => {
+): number | null => {
+	if (beforeValue == afterValue) return null
+
 	if (order.indexOf(beforeValue) < 0) {
 		if (order.indexOf(afterValue) < 0) {
 			return SortCompare(beforeValue, afterValue)
@@ -576,6 +578,29 @@ export const SortPerArray = <T>(
 		}
 	}
 }
+
+/**
+ * Returns the sort value comparing the before and after as it relates to the order of the array.
+ *
+ * @example
+ * [
+		{id: 1, name: 'One'},
+		{id: 2, name: 'Two'},
+		{id: 3, name: 'Three'},
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'}
+	]
+ .sort((a, b) =>
+ 		SortPerArray(a.id, b.id, [4, 5, 3, 2, 1])) = [
+		{id: 4, name: 'Four'},
+		{id: 5, name: 'Five'},
+		{id: 3, name: 'Three'},
+		{id: 2, name: 'Two'},
+ 		{id: 1, name: 'One'}
+]
+ */
+export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number =>
+	SortPerArrayNull(beforeValue, afterValue, order, emptyTo) ?? 0
 
 const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyToBottom: TSortColumnToBottom): number =>
 	SortCompare(
