@@ -1259,76 +1259,71 @@ export function StringCompares(
 	let starts = (startString ?? '').split(/[\r\n]+/g)
 	let ends = (endString ?? '').split(/[\r\n]+/g)
 
-	let loops = 0
-
 	while (starts.length || ends.length) {
-		loops++
-		if (loops < 100) {
-			if (!ends.length) {
-				comparisons = [
-					...comparisons,
-					...starts.map((start) => ({result: EStringComparisonResult.Deleted, value: start}))
-				]
-				starts = []
-				continue
-			}
-			if (!starts.length) {
-				comparisons = [
-					...comparisons,
-					...ends.map((start) => ({result: EStringComparisonResult.Inserted, value: start}))
-				]
-				ends = []
-				continue
-			}
-			if (starts[0] === ends[0]) {
-				comparisons = [
-					...comparisons,
-					{
-						result: EStringComparisonResult.Same,
-						value: starts[0]
-					}
-				]
-				starts = starts.slice(1)
-				ends = ends.slice(1)
-				continue
-			}
-			let found = false
-			for (let i = 0; i < ends.length; i++) {
-				const nextStartIdx = starts.findIndex((start) => ends[i] === start)
-				if (nextStartIdx > 0) {
-					comparisons = [
-						...comparisons,
-						...starts
-							.filter((_, idx) => idx < nextStartIdx)
-							.map((start) => ({
-								result: EStringComparisonResult.Deleted,
-								value: start
-							}))
-					]
-					starts = starts.slice(nextStartIdx)
-					found = true
-					break
-				}
-			}
-			if (found) continue
-			{
-				const nextEndIdx = ends.findIndex((end) => starts[0] === end)
-				if (nextEndIdx >= 0) {
-					comparisons = [
-						...comparisons,
-						...ends
-							.filter((_, idx) => idx < nextEndIdx)
-							.map((end) => ({
-								result: EStringComparisonResult.Inserted,
-								value: end
-							}))
-					]
-					ends = ends.slice(nextEndIdx)
-					found = true
-				}
-			}
-			if (found) continue
+		if (!ends.length) {
+			comparisons = [
+				...comparisons,
+				...starts.map((start) => ({result: EStringComparisonResult.Deleted, value: start}))
+			]
+			starts = []
+			continue
 		}
+		if (!starts.length) {
+			comparisons = [
+				...comparisons,
+				...ends.map((start) => ({result: EStringComparisonResult.Inserted, value: start}))
+			]
+			ends = []
+			continue
+		}
+		if (starts[0] === ends[0]) {
+			comparisons = [
+				...comparisons,
+				{
+					result: EStringComparisonResult.Same,
+					value: starts[0]
+				}
+			]
+			starts = starts.slice(1)
+			ends = ends.slice(1)
+			continue
+		}
+		let found = false
+		for (let i = 0; i < ends.length; i++) {
+			const nextStartIdx = starts.findIndex((start) => ends[i] === start)
+			if (nextStartIdx > 0) {
+				comparisons = [
+					...comparisons,
+					...starts
+						.filter((_, idx) => idx < nextStartIdx)
+						.map((start) => ({
+							result: EStringComparisonResult.Deleted,
+							value: start
+						}))
+				]
+				starts = starts.slice(nextStartIdx)
+				found = true
+				break
+			}
+		}
+		if (found) continue
+		{
+			const nextEndIdx = ends.findIndex((end) => starts[0] === end)
+			if (nextEndIdx >= 0) {
+				comparisons = [
+					...comparisons,
+					...ends
+						.filter((_, idx) => idx < nextEndIdx)
+						.map((end) => ({
+							result: EStringComparisonResult.Inserted,
+							value: end
+						}))
+				]
+				ends = ends.slice(nextEndIdx)
+				found = true
+			}
+		}
+		if (found) continue
 		console.log('-------------- Could not compare')
 		console.log(comparisons)
 		console.log(starts)
