@@ -1,13 +1,14 @@
-import {DateFormat, DateOnly, ESTTodayDateTimeLabel} from '../src/DateManager'
+import {ESTTodayDateTimeLabel} from '../src/DateManager'
+import {StringCompares} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-process.env.TZ = 'UTC'
+const start = [1, 2, 3, 4, 7, 8].map((id) => `Test${id}`).join('\r\n')
+const end = [1, 2, 5, 6, 8].map((id) => `Test${id}`).join('\r\n')
 
-console.log(DateFormat('Local', '2023-07-13'))
-console.log(DateOnly('2023-07-13', {formatLocale: true}))
+console.log(StringCompares(start, end))
 
 console.timeEnd('Consoles')

@@ -20,6 +20,7 @@ import {
 	ReplaceLinks,
 	ShortNumber,
 	SplitNonWhiteSpace,
+	StringCompares,
 	TextToHTML,
 	ToCamelCase,
 	ToCurrency,
@@ -81,7 +82,7 @@ test('String Functions', () => {
 		expect(ReplaceLinks(link)).toBe(anchor)
 	}
 	{
-		let link = '<img href="https://google.png" />'
+		let link = '<img alt="Test" src="https://google.png" />'
 		expect(ReplaceLinks(link)).toBe(link)
 	}
 	{
@@ -95,13 +96,13 @@ test('String Functions', () => {
 	}
 	{
 		let link = 'https://www.google.com'
-		let anchor = "<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a>"
+		let anchor = '<a href="https://www.google.com" target="_blank" class="testClass">https://www.google.com</a>'
 		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
 	}
 	{
 		let link = 'https://www.google.com\nnew line'
 		let anchor =
-			"<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a><br />new line"
+			'<a href="https://www.google.com" target="_blank" class="testClass">https://www.google.com</a><br />new line'
 		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
 	}
 	{
@@ -384,5 +385,23 @@ describe('HasDigits', () => {
 
 	test('String with only non-digit characters returns false', () => {
 		expect(HasDigits('abcde')).toBe(false)
+	})
+})
+
+describe('StringCompares', () => {
+	test('Two strings', () => {
+		const start = [1, 2, 3, 4, 7, 8].map((id) => `Test${id}`).join('\r\n')
+		const end = [1, 2, 5, 6, 8].map((id) => `Test${id}`).join('\r\n')
+
+		expect(StringCompares(start, end)).toStrictEqual([
+			{result: 'Same', value: 'Test1'},
+			{result: 'Same', value: 'Test2'},
+			{result: 'Deleted', value: 'Test3'},
+			{result: 'Deleted', value: 'Test4'},
+			{result: 'Deleted', value: 'Test7'},
+			{result: 'Inserted', value: 'Test5'},
+			{result: 'Inserted', value: 'Test6'},
+			{result: 'Same', value: 'Test8'}
+		])
 	})
 })

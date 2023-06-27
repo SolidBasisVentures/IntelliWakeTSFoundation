@@ -207,7 +207,7 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
 	// noinspection HtmlUnknownTarget
 	const target = !classes
 		? "<a href='$1' target='_blank'>$1</a>"
-		: `<a href='$1' target='_blank' class='${classes}'>$1</a>`
+		: `<a href="$1" target="_blank" class="${classes}">$1</a>`
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
@@ -670,10 +670,39 @@ export interface IPhoneComponents {
 }
 
 /**
+ * Extracts and returns the components of a phone number.
  *
- * @param phone
- * @constructor
+ * @param phone - The input phone number as a string, which can be `null` or `undefined`.
+ * @param bestGuess - An optional boolean flag (default is `true`) that determines
+ *                    whether to return an object with the best guess of the
+ *                    components if the input phone format is incorrect.
+ * @returns An `IPhoneComponents` object with the extracted components, or `null`
+ *          if the input phone number is not provided or cannot be parsed under
+ *          the specified conditions.
  *
+ * @remarks
+ * The function takes a phone number string and extracts its components:
+ * - countryCode
+ * - areaCode
+ * - exchangeNumber
+ * - subscriberNumber
+ * - extension
+ *
+ * The `bestGuess` flag allows choosing between returning an object with potential
+ * partially correct components (if set to `true`) or refusing to return anything
+ * (`null`) if the format is incorrect.
+ *
+ * Example usage:
+ *
+ * const phoneComponents = PhoneComponents("(123) 456-7890", false);
+ * console.log(phoneComponents);
+ * // Output: {
+ * //   countryCode: "",
+ * //   areaCode: "123",
+ * //   exchangeNumber: "456",
+ * //   subscriberNumber: "7890",
+ * //   extension: ""
+ * // }
  */
 export const PhoneComponents = (phone: string | null | undefined, bestGuess = true): IPhoneComponents | null => {
 	if (!phone) return null
@@ -1193,4 +1222,120 @@ export const HasAlpha = (value: string | number | null | undefined): boolean => 
 	if (!value) return false
 
 	return !!value.toString().match(/[a-zA-Z]/)
+}
+
+export enum EStringComparisonResult {
+	Same = 'Same',
+	Inserted = 'Inserted',
+	Deleted = 'Deleted'
+	// Modified = 'Modified'
+}
+
+export type TStringComparison = {
+	result: EStringComparisonResult
+	value: string
+	newValue?: string
+}
+
+/**
+ * Compares two strings line by line and returns an array of comparison results.
+ *
+ * @param startString - The starting string for comparison. Can be a string, null, or undefined.
+ * @param endString - The ending string for comparison. Can be a string, null, or undefined.
+ * @returns {TStringComparison[]} - An array of TStringComparison objects summarizing the differences between the two input strings.
+ * Each object contains a `result` (EStringComparisonResult) and a `value` (string) that indicates the line content.
+ *
+ * The EStringComparisonResult has the following possibilities:
+ * - EStringComparisonResult.Same: The line is the same in both strings.
+ * - EStringComparisonResult.Inserted: The line is inserted in the `endString` compared to the `startString`.
+ * - EStringComparisonResult.Deleted: The line is deleted in the `endString` compared to the `startString`.
+ */
+export function StringCompares(
+	startString: string | null | undefined,
+	endString: string | null | undefined
+): TStringComparison[] {
+	let comparisons: TStringComparison[] = []
+
+	let starts = (startString ?? '').split(/[\r\n]+/g)
+	let ends = (endString ?? '').split(/[\r\n]+/g)
+
+	let loops = 0
+
+	while (starts.length || ends.length) {
+		loops++
+		if (loops < 100) {
+			if (!ends.length) {
+				comparisons = [
+					...comparisons,
+					...starts.map((start) => ({result: EStringComparisonResult.Deleted, value: start}))
+				]
+				starts = []
+				continue
+			}
+			if (!starts.length) {
+				comparisons = [
+					...comparisons,
+					...ends.map((start) => ({result: EStringComparisonResult.Inserted, value: start}))
+				]
+				ends = []
+				continue
+			}
+			if (starts[0] === ends[0]) {
+				comparisons = [
+					...comparisons,
+					{
+						result: EStringComparisonResult.Same,
+						value: starts[0]
+					}
+				]
+				starts = starts.slice(1)
+				ends = ends.slice(1)
+				continue
+			}
+			let found = false
+			for (let i = 0; i < ends.length; i++) {
+				const nextStartIdx = starts.findIndex((start) => ends[i] === start)
+				if (nextStartIdx > 0) {
+					comparisons = [
+						...comparisons,
+						...starts
+							.filter((_, idx) => idx < nextStartIdx)
+							.map((start) => ({
+								result: EStringComparisonResult.Deleted,
+								value: start
+							}))
+					]
+					starts = starts.slice(nextStartIdx)
+					found = true
+					break
+				}
+			}
+			if (found) continue
+			{
+				const nextEndIdx = ends.findIndex((end) => starts[0] === end)
+				if (nextEndIdx >= 0) {
+					comparisons = [
+						...comparisons,
+						...ends
+							.filter((_, idx) => idx < nextEndIdx)
+							.map((end) => ({
+								result: EStringComparisonResult.Inserted,
+								value: end
+							}))
+					]
+					ends = ends.slice(nextEndIdx)
+					found = true
+				}
+			}
+			if (found) continue
+		}
+		console.log('-------------- Could not compare')
+		console.log(comparisons)
+		console.log(starts)
+		console.log(ends)
+		console.log('--------------')
+		// break
+		throw new Error('Could not finish comparing')
+	}
+	return comparisons
 }
