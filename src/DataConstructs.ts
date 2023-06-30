@@ -81,7 +81,6 @@ export const ObjectWithChanges = <T>(item: T, changes: IChanges<T>): T =>
 		...changes
 	} as T)
 
-
 /**
  *
  */
@@ -121,25 +120,38 @@ export const initialIDChanges = {}
  *
  * const updatedEmployees = ArrayWithIDChanges(employees, idChanges) // result: [{id: 1, name: 'Bobby'}, {id: 2, name: 'Johnny'}]
  */
-export const AddIDChange = <T>(id: number, name: keyof T, value: any, idChanges: IIDChanges<T>): IIDChanges<T> => ({
+export const AddIDChange = <T>(
+	id: number,
+	name: keyof T,
+	value: any,
+	idChanges: IIDChanges<T>,
+	baselines: IChanges<T> = {}
+): IIDChanges<T> => ({
 	...idChanges,
 	[id]: {
+		...baselines,
 		...idChanges[id],
 		[name]: value
 	}
 })
-
 
 /**
  *
  * @param id
  * @param changes
  * @param idChanges
+ * @param baselines
  * @constructor
  */
-export const AddIDChanges = <T>(id: number, changes: IChanges<T>, idChanges: IIDChanges<T>): IIDChanges<T> => ({
+export const AddIDChanges = <T>(
+	id: number,
+	changes: IChanges<T>,
+	idChanges: IIDChanges<T>,
+	baselines: IChanges<T> = {}
+): IIDChanges<T> => ({
 	...idChanges,
 	[id]: {
+		...baselines,
 		...idChanges[id],
 		...changes
 	}
@@ -334,7 +346,6 @@ export const IsJSON = (json: any): boolean => {
 		return false
 	}
 }
-
 
 /**
  *
@@ -597,12 +608,10 @@ export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: s
 	return results
 }
 
-
 /**
  *
  */
 export type Nullable<T> = {[K in keyof T]: T[K] | null}
-
 
 /**
  *
