@@ -232,6 +232,8 @@ test('Other', async () => {
 	expect(LeastNumber('2', ['qwer', 'zxcv'])).toEqual(2)
 	expect(LeastNumber('2', 5)).toEqual(2)
 	expect(LeastNumber(5, 2)).toEqual(2)
+	expect(LeastNumber(null, 5, 2)).toEqual(2)
+	expect(LeastNumber(5, 2, null)).toEqual(2)
 	expect(CleanDivideNull(1, 2)).toEqual(0.5)
 	expect(CleanDivideNull(1, 0)).toEqual(null)
 	expect(CleanDivideNull(1, null)).toEqual(null)

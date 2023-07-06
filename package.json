@@ -30,11 +30,11 @@
 	"devDependencies": {
 		"@types/node": "^14.18.36",
 		"prettier": "^2.8.3",
-		"ts-node": "^9.1.1",
+		"ts-node": "^10.9.1",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "^4.9.5",
-		"vite": "^4.3.9",
-		"vite-plugin-dts": "^1.7.2",
-		"vitest": "^0.28.4"
+		"vite": "^4.4.0",
+		"vite-plugin-dts": "^3.1.0",
+		"vitest": "^0.33.0"
 	}
 }

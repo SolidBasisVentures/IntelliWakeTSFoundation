@@ -12,7 +12,7 @@ import {
 import {ReSortOrder} from './SortSearch'
 import {test, expect} from 'vitest'
 
-test('Data Contructs', () => {
+test('Data Constructs', () => {
 	expect(AddChange('name', 'Bob', {})).toEqual({name: 'Bob'})
 	expect(AddChange('name', 'Bob', {name: 'John'})).toEqual({name: 'Bob'})
 	expect(ObjectWithChanges({id: 1, name: 'Bob'}, {name: 'John'})).toEqual({id: 1, name: 'John'})
