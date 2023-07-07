@@ -167,7 +167,7 @@ export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]):
  * @constructor
  */
 export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number =>
-	AverageNumberNull(decimals, values) ?? 0
+	AverageNumberNull(decimals, ...values) ?? 0
 
 /**
  *

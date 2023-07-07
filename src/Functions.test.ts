@@ -1,5 +1,6 @@
 import {
 	ArrayRange,
+	AverageNumber,
 	AverageNumberNull,
 	CleanDivide,
 	CleanDivideNull,
@@ -258,6 +259,11 @@ test('Other', async () => {
 	expect(AverageNumberNull(0, [1, 2, '3', null])).toEqual(2)
 	expect(AverageNumberNull(1, [1, '2', 4, null])).toEqual(2.3)
 	expect(AverageNumberNull(1, 5, ['6', null])).toEqual(5.5)
+	expect(AverageNumberNull(1, null)).toEqual(null)
+	expect(AverageNumber(0, [1, 2, '3', null])).toEqual(2)
+	expect(AverageNumber(1, [1, '2', 4, null])).toEqual(2.3)
+	expect(AverageNumber(1, 5, ['6', null])).toEqual(5.5)
+	expect(AverageNumber(1, null)).toEqual(0)
 	expect(ArrayRange(10)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 	expect(ArrayRange(10, 2)).toEqual([0, 2, 4, 6, 8])
 	expect(ArrayRange(10, 1, 1)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9])
