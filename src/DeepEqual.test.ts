@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest'
-import {DeepEqual, Differences, StringOrNumberEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
+import {DeepClone, DeepEqual, Differences, StringOrNumberEqual, SubsetEqual, SubsetFormEqual} from './DeepEqual'
 import {OmitProperty, ReplaceAll} from './Functions'
 
 const item = {
@@ -131,4 +131,17 @@ test('Subset Form Equal', () => {
 	expect(SubsetFormEqual(item, {...item, valBlank: null})).toBe(true)
 	expect(SubsetFormEqual({smsphone: '3344'}, {smsphone: '3344'})).toBe(true)
 	expect(SubsetFormEqual({smsphone: '3344'}, {smsphone: '334455'})).toBe(false)
+})
+
+test('DeepClone', () => {
+	expect(DeepClone(1)).toStrictEqual(1)
+	expect(DeepClone('Two')).toStrictEqual('Two')
+	expect(DeepClone(null)).toStrictEqual(null)
+	expect(DeepClone(undefined)).toStrictEqual(undefined)
+	expect(DeepClone({})).toStrictEqual({})
+	expect(DeepClone({one: 1})).toStrictEqual({one: 1})
+	expect(DeepClone({one: 1, two: [1, 2]})).toStrictEqual({one: 1, two: [1, 2]})
+	expect(DeepClone([])).toStrictEqual([])
+	expect(DeepClone([1, 2])).toStrictEqual([1, 2])
+	expect(DeepClone([1, {one: 1, two: [1, 2]}])).toStrictEqual([1, {one: 1, two: [1, 2]}])
 })
