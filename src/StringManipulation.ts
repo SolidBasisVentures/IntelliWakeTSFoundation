@@ -1064,13 +1064,13 @@ export const RandomKey = (length: number) =>
  * @constructor
  *
  */
-export const AddS = (
+export function AddS(
 	text?: string | null,
 	count?: number | null,
 	showNumber = false,
 	maxDecimals = 0,
 	minDecimals: number | null = null
-): string => {
+): string {
 	const checkText = (text ?? '').toLowerCase()
 	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
 	let addValue = !text
@@ -1085,6 +1085,30 @@ export const AddS = (
 	return !text
 		? ''
 		: `${showNumber ? numericText : ''} ${text}${CleanNumber(numericText) !== 1 ? addValue : ''}`.trim()
+}
+
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is > 1
+ * If the count is zero, returns null
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
+ * @param text
+ * @param count
+ * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
+ * @constructor
+ *
+ */
+export function AddSNull(
+	text?: string | null,
+	count?: number | null,
+	showNumber = false,
+	maxDecimals = 0,
+	minDecimals: number | null = null
+): string | null {
+	if (!count) return null
+	return AddS(text, count, showNumber, maxDecimals, minDecimals)
 }
 
 /**

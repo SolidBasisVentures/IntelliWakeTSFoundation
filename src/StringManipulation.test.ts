@@ -1,5 +1,6 @@
 import {
 	AddS,
+	AddSNull,
 	AsteriskMatch,
 	BuildPath,
 	CleanScripts,
@@ -282,6 +283,15 @@ test('AddS', () => {
 	expect(AddS('Patch', 0)).toBe('Patches')
 	expect(AddS('Patch', 1)).toBe('Patch')
 	expect(AddS('Patch', 2)).toBe('Patches')
+})
+
+test('AddSNull', () => {
+	expect(AddSNull('Row', 0)).toBe(null)
+	expect(AddSNull('Row', 1)).toBe('Row')
+	expect(AddSNull('Row', 2)).toBe('Rows')
+	expect(AddSNull('Patch', 0)).toBe(null)
+	expect(AddSNull('Patch', 1)).toBe('Patch')
+	expect(AddSNull('Patch', 2)).toBe('Patches')
 })
 
 test('ShortNumber', () => {
