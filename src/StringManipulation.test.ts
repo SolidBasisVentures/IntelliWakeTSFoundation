@@ -1,5 +1,6 @@
 import {
 	AddS,
+	AddSBlank,
 	AddSNull,
 	AsteriskMatch,
 	BuildPath,
@@ -43,7 +44,7 @@ import {
 	UCWords
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
-import {expect, test, describe} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 test('String Functions', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
@@ -280,9 +281,15 @@ test('AddS', () => {
 	expect(AddS('Row', 0)).toBe('Rows')
 	expect(AddS('Row', 1)).toBe('Row')
 	expect(AddS('Row', 2)).toBe('Rows')
+	expect(AddS('Row', 0, true)).toBe('0 Rows')
+	expect(AddS('Row', 1, true)).toBe('1 Row')
+	expect(AddS('Row', 2, true)).toBe('2 Rows')
 	expect(AddS('Patch', 0)).toBe('Patches')
 	expect(AddS('Patch', 1)).toBe('Patch')
 	expect(AddS('Patch', 2)).toBe('Patches')
+	expect(AddS('Patch', 0, true)).toBe('0 Patches')
+	expect(AddS('Patch', 1, true)).toBe('1 Patch')
+	expect(AddS('Patch', 2, true)).toBe('2 Patches')
 })
 
 test('AddSNull', () => {
@@ -292,6 +299,15 @@ test('AddSNull', () => {
 	expect(AddSNull('Patch', 0)).toBe(null)
 	expect(AddSNull('Patch', 1)).toBe('Patch')
 	expect(AddSNull('Patch', 2)).toBe('Patches')
+})
+
+test('AddSBlank', () => {
+	expect(AddSBlank('Row', 0)).toBe('')
+	expect(AddSBlank('Row', 1)).toBe('Row')
+	expect(AddSBlank('Row', 2)).toBe('Rows')
+	expect(AddSBlank('Patch', 0)).toBe('')
+	expect(AddSBlank('Patch', 1)).toBe('Patch')
+	expect(AddSBlank('Patch', 2)).toBe('Patches')
 })
 
 test('ShortNumber', () => {

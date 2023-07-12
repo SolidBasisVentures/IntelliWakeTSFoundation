@@ -1112,6 +1112,29 @@ export function AddSNull(
 }
 
 /**
+ * Takes in text, and adds an "s" to the end of it if the count is > 1
+ * If the count is zero, returns a blank string
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
+ * @param text
+ * @param count
+ * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
+ * @constructor
+ *
+ */
+export function AddSBlank(
+	text?: string | null,
+	count?: number | null,
+	showNumber = false,
+	maxDecimals = 0,
+	minDecimals: number | null = null
+): string {
+	return AddSNull(text, count, showNumber, maxDecimals, minDecimals) ?? ''
+}
+
+/**
  *
  * @param value
  * @param decimals
