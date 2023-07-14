@@ -9,6 +9,7 @@ import {
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
+	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
 	IsOn,
@@ -195,6 +196,19 @@ describe('ReplaceAllMultiple', () => {
 		expect(ReplaceAllMultiple(findReplace, null)).toBe('')
 		expect(ReplaceAllMultiple(findReplace, undefined)).toBe('')
 	})
+})
+
+test('GetPropertyValueCaseInsensitive', () => {
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'One')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'one')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'ONE')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, 'One')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, 'one')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, 'ONE')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, ['Two', 'TWO'])).toEqual(undefined)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'TWO'])).toEqual(undefined)
 })
 
 test('Other', async () => {

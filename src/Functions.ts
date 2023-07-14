@@ -832,6 +832,35 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
 }
 
 /**
+ * Retrieves the value of the property or properties from a given object, comparing keys in a case-insensitive manner.
+ * Works with a single property or an array of properties. The function returns the value of the first matching property found.
+ * It can process null, undefined, or actual values for both input object and properties.
+ *
+ * @param obj - The object to examine. This can be any JS object, or null, or undefined.
+ * @param props - The single string or array of strings specifying the name(s) of the property or properties to retrieve.
+ * This also accepts null or undefined. The comparison with object keys is case-insensitive.
+ *
+ * @return The value of the first property found in the object that matches one of the input properties; `undefined` otherwise.
+ */
+export function GetPropertyValueCaseInsensitive(
+	obj: any | null | undefined,
+	props: string | string[] | null | undefined
+): any {
+	if (obj) {
+		for (const prop of ToArray(props)) {
+			if (prop) {
+				for (const key of Object.keys(obj)) {
+					if (key.toLowerCase() === prop.toLowerCase()) {
+						return obj[key]
+					}
+				}
+			}
+		}
+	}
+	return undefined
+}
+
+/**
  *
  * @param remove
  * @param value
