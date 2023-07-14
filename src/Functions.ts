@@ -846,17 +846,29 @@ export function GetPropertyValueCaseInsensitive(
 	obj: any | null | undefined,
 	props: string | string[] | null | undefined
 ): any {
-	if (obj) {
-		for (const prop of ToArray(props)) {
-			if (prop) {
-				for (const key of Object.keys(obj)) {
-					if (key.toLowerCase().trim() === prop.toLowerCase().trim()) {
-						return obj[key]
-					}
+	let values: any[] = []
+
+	const useProps = ToArray(props)
+		.map((prop) => prop?.toString().toLowerCase().trim())
+		.filter((prop) => !!prop) as string[]
+	if (obj && useProps.length) {
+		const keys = Object.keys(obj)
+		for (const prop of useProps) {
+			for (const key of keys) {
+				if (key.toLowerCase().trim() === prop) {
+					values.push(obj[key])
 				}
 			}
 		}
 	}
+
+	// console.info(obj, props, values)
+
+	if (values.length) {
+		const validIdx = values.findIndex((val) => !!val)
+		return validIdx >= 0 ? values[validIdx] : values[0]
+	}
+
 	return undefined
 }
 

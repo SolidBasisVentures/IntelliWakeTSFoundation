@@ -209,6 +209,11 @@ test('GetPropertyValueCaseInsensitive', () => {
 	expect(GetPropertyValueCaseInsensitive({One: 1}, ['Two', 'TWO'])).toEqual(undefined)
 	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'ONE'])).toEqual(1)
 	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'TWO'])).toEqual(undefined)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: ''}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: null}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: 2}, ['Two', 'ONE'])).toEqual(2)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: 2}, ['one', 'tWo'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: '', two: ''}, ['one', 'tWo'])).toEqual('')
 })
 
 test('Other', async () => {
