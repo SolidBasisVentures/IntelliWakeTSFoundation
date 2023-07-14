@@ -865,6 +865,7 @@ export function GetPropertyValueCaseInsensitive(
 	// console.info(obj, props, values)
 
 	if (values.length) {
+		// Prioritize fields with truthy values over falsey values, otherwise go with the first found value according to the list of props
 		const validIdx = values.findIndex((val) => !!val && !!val.toString().trim().length)
 		return validIdx >= 0 ? values[validIdx] : values[0]
 	}
