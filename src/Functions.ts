@@ -865,7 +865,7 @@ export function GetPropertyValueCaseInsensitive(
 	// console.info(obj, props, values)
 
 	if (values.length) {
-		const validIdx = values.findIndex((val) => !!val)
+		const validIdx = values.findIndex((val) => !!val && !!val.toString().trim().length)
 		return validIdx >= 0 ? values[validIdx] : values[0]
 	}
 
