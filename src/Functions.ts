@@ -850,7 +850,7 @@ export function GetPropertyValueCaseInsensitive(
 		for (const prop of ToArray(props)) {
 			if (prop) {
 				for (const key of Object.keys(obj)) {
-					if (key.toLowerCase() === prop.toLowerCase()) {
+					if (key.toLowerCase().trim() === prop.toLowerCase().trim()) {
 						return obj[key]
 					}
 				}
