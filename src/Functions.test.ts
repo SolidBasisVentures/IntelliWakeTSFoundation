@@ -43,6 +43,13 @@ test('IsOn', () => {
 	expect(IsOn('f')).toBe(false)
 	expect(IsOn('true')).toBe(true)
 	expect(IsOn('false')).toBe(false)
+	expect(IsOn('no')).toBe(false)
+	expect(IsOn('no', {nos: ['no']})).toBe(false)
+	expect(IsOn('yes')).toBe(true)
+	expect(IsOn('y')).toBe(true)
+	expect(IsOn('yes', {nos: ['yes']})).toBe(false)
+	expect(IsOn('new')).toBe(false)
+	expect(IsOn('new', {yeses: ['new']})).toBe(true)
 })
 
 test('RoundTo', () => {

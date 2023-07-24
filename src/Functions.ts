@@ -360,19 +360,25 @@ export const GenerateUUID = () => {
 	})
 }
 
+export type TIsOnOptions = {
+	yeses?: string[]
+	nos?: string[]
+}
+
 /**
- * Determines a value is active or on. Returns true when the value
- * is one of the following:
- * 'true', 'active', 'on', 'yes', 'y'
- *
+ * Function `IsOn` checks if a given value can be considered as a boolean 'true' value.
+ * It performs various checks on the given value to determine if it can be considered 'on' or 'true'.
+ * By default, the values considered as 'true' are 'true', 'active', 'on', 'yes', 'y', 't' and all positive numbers.
+ * @param value - The value to be checked.
+ * @param options - (Optional) An object that you can use to specify additional 'true' or 'false' values. 'nos' key for 'false' and 'yeses' key for 'true'.
+ * @returns A boolean indicating whether the value can be considered as a 'true' or 'positive'.
  * @example
- * // return true
- * IsOn('active')
  *
- * // return false
- * IsOn('inactive')
+ * const result = IsOn('active'); // result is true.
+ * const result2 = IsOn(15); // result2 is true.
+ * const result3 = IsOn('new', {yeses: ['new']}); // result3 is true.
  */
-export const IsOn = (value: any): boolean => {
+export const IsOn = (value: any, options?: TIsOnOptions): boolean => {
 	if (!value) {
 		return false
 	}
@@ -386,7 +392,14 @@ export const IsOn = (value: any): boolean => {
 		return floatValue > 0
 	}
 
-	return ['true', 'active', 'on', 'yes', 'y', 't'].includes(value.toString().toLowerCase().trim())
+	let useValue = value.toString().toLowerCase().trim()
+
+	return (
+		!(options?.nos ?? []).some((no) => no.toString().toLowerCase().trim() === useValue) &&
+		['true', 'active', 'on', 'yes', 'y', 't', ...(options?.yeses ?? [])].some(
+			(yes) => yes.toString().toLowerCase().trim() === useValue
+		)
+	)
 }
 
 /**
