@@ -284,7 +284,13 @@ export const FormDataFromObject = (obj: Record<string, any> | FormData): FormDat
 	const formData = new FormData()
 
 	for (const key of Object.keys(obj)) {
-		formData.append(key, obj[key])
+		if (Array.isArray(obj[key])) {
+			for (const item of obj[key]) {
+				formData.append(key, item)
+			}
+		} else {
+			formData.append(key, obj[key])
+		}
 	}
 
 	return formData
