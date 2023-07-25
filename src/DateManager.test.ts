@@ -441,6 +441,10 @@ test('Date Managers', () => {
 		'Th, Jan 6, 2022, 5:07 pm'
 	)
 	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00')).toEqual('2/1/2022 3:18 pm')
+	expect(DateFormat('LocalDateTime', '1970-01-01T00:00:00-05:00')).toEqual('1/1/1970 12:00 am')
+	expect(DateFormat('LocalDateTime', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970 8:00 am')
+	expect(DateFormat('Local', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970')
+	expect(DateFormat('Local', '1970-01-01')).toEqual('1/1/1970')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
