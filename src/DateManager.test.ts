@@ -273,6 +273,7 @@ test('Date Managers', () => {
 	).toEqual('11/12/2021 1:00 pm')
 	expect(DateFormat('Date', DateISO('0021-01-24 01:00:00.00'))).toEqual('0021-01-24')
 
+	expect(DateOnlyNull('1970-01-01')).toEqual('1970-01-01')
 	expect(DateOnlyNull('2023-04-05')).toEqual('2023-04-05')
 	expect(DateOnlyNull('20230405', {fromFormat: 'YYYYMMDD'})).toEqual('2023-04-05')
 	expect(DateOnlyNull('04052023', {fromFormat: 'MMDDYYYY'})).toEqual('2023-04-05')

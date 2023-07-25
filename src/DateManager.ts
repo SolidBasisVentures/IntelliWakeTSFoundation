@@ -369,7 +369,7 @@ export const ManualParse = (date: string): number | null => {
 }
 
 const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA?: boolean): number | null => {
-	if (!date) return null // new Date().valueOf() // Date.parse(new Date().toString())
+	if (!date && date !== 0 && date !== '0') return null // new Date().valueOf() // Date.parse(new Date().toString())
 
 	if (typeof date === 'number') return date
 
@@ -381,19 +381,20 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 	try {
 		let result = ManualParse(date)
 
-		if (!result) {
+		if (result === null || isNaN(result)) {
 			result = Date.parse(date.toString())
 
 			if (isNaN(result)) {
 				const check = new Date(date)
 
-				if (!check.valueOf()) {
-					result = ManualParse(date) ?? 0
+				if (isNaN(check.valueOf())) {
+					return null
+					// result = ManualParse(date) ?? 0
 				}
 			}
 		}
 
-		if (!result) return null
+		if (isNaN(result)) return null
 
 		// console.log('hasTZ', StringHasTimeZoneData(date))
 
@@ -433,7 +434,7 @@ export type TDateParseOptions = TAdjustment & {timezoneSource?: string; ignoreIA
 export const DateParseTS = (date: TDateAny, adjustments?: TDateParseOptions): number | null => {
 	let newDate = DateParseTSInternal(date, adjustments?.timezoneSource, adjustments?.ignoreIANA)
 
-	if (!newDate || !adjustments) return newDate
+	if ((!newDate && newDate !== 0) || !adjustments) return newDate
 
 	return DateAdjustTS(newDate, adjustments)
 }
@@ -461,7 +462,7 @@ export const DateISO = (date: TDateAny, adjustments?: TDateParseOptions): string
 export const DateObject = (date: TDateAny, adjustments?: TDateParseOptions): Date | null => {
 	const parsed = DateParseTS(date, adjustments)
 
-	if (!parsed) return null
+	if (!parsed && parsed !== 0) return null
 
 	return new Date(parsed)
 }
@@ -541,7 +542,7 @@ export const DateFormatAny = (
 
 	if (timezoneDisplay) {
 		try {
-			if (!dateObject || dateObject.valueOf() === 0) return null
+			if (!dateObject || isNaN(dateObject.valueOf())) return null
 
 			const sourceDate = !!useDate && useDate !== 'now' && useDate !== 'today' ? dateObject : undefined
 
@@ -573,83 +574,161 @@ export const DateFormatAny = (
 		}
 	}
 
-	if (!dateObject || dateObject.valueOf() === 0) return null
+	if (!dateObject || isNaN(dateObject.valueOf())) return null
 
 	const applyCommand = (command: string, dateApply: Date): string => {
-		switch (command) {
-			case 'YYYY':
-				return dateApply.getFullYear().toString().padStart(4, '0')
-			case 'YY':
-				return dateApply.getFullYear().toString().substring(2).padStart(2, '0')
-			case 'Q':
-				return Math.ceil((dateApply.getMonth() + 1) / 3).toString()
-			case 'Qo':
-				return DigitsNth(Math.ceil((dateApply.getMonth() + 1) / 3)) ?? ''
-			case 'MMMM':
-				return MonthNames[dateApply.getMonth()] ?? ''
-			case 'MMM':
-				return (MonthNames[dateApply.getMonth()] ?? '').substring(0, 3)
-			case 'MM':
-				return (dateApply.getMonth() + 1).toString().padStart(2, '0')
-			case 'Mo':
-				return DigitsNth(dateApply.getMonth() + 1) ?? ''
-			case 'M':
-				return (dateApply.getMonth() + 1).toString()
-			/**
-			 * Week of Year	w	1 2 ... 52 53
-			 * wo	1st 2nd ... 52nd 53rd
-			 * ww	01 02 ... 52 53
-			 * Week of Year (ISO)	W	1 2 ... 52 53
-			 * Wo	1st 2nd ... 52nd 53rd
-			 * WW	01 02 ... 52 53
-			 */
-			/**
-			 * Day of Year	DDD	1 2 ... 364 365
-			 * DDDo	1st 2nd ... 364th 365th
-			 * DDDD	001 002 ... 364 365
-			 */
-			case 'DD':
-				return dateApply.getDate().toString().padStart(2, '0')
-			case 'Do':
-				return DigitsNth(dateApply.getDate()) ?? ''
-			case 'D':
-				return dateApply.getDate().toString()
-			case 'd':
-				return dateApply.getDay().toString()
-			case 'do':
-				return DigitsNth(dateApply.getDay()) ?? ''
-			case 'dd':
-				return (WeekDays[dateApply.getDay()] ?? '').substring(0, 2)
-			case 'ddd':
-				return (WeekDays[dateApply.getDay()] ?? '').substring(0, 3)
-			case 'dddd':
-				return WeekDays[dateApply.getDay()] ?? ''
-			case 'HH':
-				return dateApply.getHours().toString().padStart(2, '0')
-			case 'H':
-				return dateApply.getHours().toString()
-			case 'hh':
-				return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours())
-					.toString()
-					.padStart(2, '0')
-			case 'h': {
-				const hour = dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()
-				return (hour === 0 ? 12 : hour).toString()
+		if (timezoneDisplay === 'UTC') {
+			switch (command) {
+				case 'YYYY':
+					return dateApply.getUTCFullYear().toString().padStart(4, '0')
+				case 'YY':
+					return dateApply.getUTCFullYear().toString().substring(2).padStart(2, '0')
+				case 'Q':
+					return Math.ceil((dateApply.getUTCMonth() + 1) / 3).toString()
+				case 'Qo':
+					return DigitsNth(Math.ceil((dateApply.getUTCMonth() + 1) / 3)) ?? ''
+				case 'MMMM':
+					return MonthNames[dateApply.getUTCMonth()] ?? ''
+				case 'MMM':
+					return (MonthNames[dateApply.getUTCMonth()] ?? '').substring(0, 3)
+				case 'MM':
+					return (dateApply.getUTCMonth() + 1).toString().padStart(2, '0')
+				case 'Mo':
+					return DigitsNth(dateApply.getUTCMonth() + 1) ?? ''
+				case 'M':
+					return (dateApply.getUTCMonth() + 1).toString()
+				/**
+				 * Week of Year	w	1 2 ... 52 53
+				 * wo	1st 2nd ... 52nd 53rd
+				 * ww	01 02 ... 52 53
+				 * Week of Year (ISO)	W	1 2 ... 52 53
+				 * Wo	1st 2nd ... 52nd 53rd
+				 * WW	01 02 ... 52 53
+				 */
+				/**
+				 * Day of Year	DDD	1 2 ... 364 365
+				 * DDDo	1st 2nd ... 364th 365th
+				 * DDDD	001 002 ... 364 365
+				 */
+				case 'DD':
+					return dateApply.getUTCDate().toString().padStart(2, '0')
+				case 'Do':
+					return DigitsNth(dateApply.getUTCDate()) ?? ''
+				case 'D':
+					return dateApply.getUTCDate().toString()
+				case 'd':
+					return dateApply.getUTCDay().toString()
+				case 'do':
+					return DigitsNth(dateApply.getUTCDay()) ?? ''
+				case 'dd':
+					return (WeekDays[dateApply.getUTCDay()] ?? '').substring(0, 2)
+				case 'ddd':
+					return (WeekDays[dateApply.getUTCDay()] ?? '').substring(0, 3)
+				case 'dddd':
+					return WeekDays[dateApply.getUTCDay()] ?? ''
+				case 'HH':
+					return dateApply.getUTCHours().toString().padStart(2, '0')
+				case 'H':
+					return dateApply.getUTCHours().toString()
+				case 'hh':
+					return (dateApply.getUTCHours() > 12 ? dateApply.getUTCHours() - 12 : dateApply.getUTCHours())
+						.toString()
+						.padStart(2, '0')
+				case 'h': {
+					const hour = dateApply.getUTCHours() > 12 ? dateApply.getUTCHours() - 12 : dateApply.getUTCHours()
+					return (hour === 0 ? 12 : hour).toString()
+				}
+				case 'mm':
+					return dateApply.getUTCMinutes().toString().padStart(2, '0')
+				case 'm':
+					return dateApply.getUTCMinutes().toString()
+				case 'ss':
+					return dateApply.getUTCSeconds().toString().padStart(2, '0')
+				case 's':
+					return dateApply.getUTCSeconds().toString()
+				case 'A':
+					return dateApply.getUTCHours() >= 12 ? 'PM' : 'AM'
+				case 'a':
+					return dateApply.getUTCHours() >= 12 ? 'pm' : 'am'
+				default:
+					return command
 			}
-			case 'mm':
-				return dateApply.getMinutes().toString().padStart(2, '0')
-			case 'm':
-				return dateApply.getMinutes().toString()
-			case 'ss':
-				return dateApply.getSeconds().toString().padStart(2, '0')
-			case 's':
-				return dateApply.getSeconds().toString()
-			case 'A':
-				return dateApply.getHours() >= 12 ? 'PM' : 'AM'
-			case 'a':
-				return dateApply.getHours() >= 12 ? 'pm' : 'am'
-			default:
-				return command
+		} else {
+			switch (command) {
+				case 'YYYY':
+					return dateApply.getFullYear().toString().padStart(4, '0')
+				case 'YY':
+					return dateApply.getFullYear().toString().substring(2).padStart(2, '0')
+				case 'Q':
+					return Math.ceil((dateApply.getMonth() + 1) / 3).toString()
+				case 'Qo':
+					return DigitsNth(Math.ceil((dateApply.getMonth() + 1) / 3)) ?? ''
+				case 'MMMM':
+					return MonthNames[dateApply.getMonth()] ?? ''
+				case 'MMM':
+					return (MonthNames[dateApply.getMonth()] ?? '').substring(0, 3)
+				case 'MM':
+					return (dateApply.getMonth() + 1).toString().padStart(2, '0')
+				case 'Mo':
+					return DigitsNth(dateApply.getMonth() + 1) ?? ''
+				case 'M':
+					return (dateApply.getMonth() + 1).toString()
+				/**
+				 * Week of Year	w	1 2 ... 52 53
+				 * wo	1st 2nd ... 52nd 53rd
+				 * ww	01 02 ... 52 53
+				 * Week of Year (ISO)	W	1 2 ... 52 53
+				 * Wo	1st 2nd ... 52nd 53rd
+				 * WW	01 02 ... 52 53
+				 */
+				/**
+				 * Day of Year	DDD	1 2 ... 364 365
+				 * DDDo	1st 2nd ... 364th 365th
+				 * DDDD	001 002 ... 364 365
+				 */
+				case 'DD':
+					return dateApply.getDate().toString().padStart(2, '0')
+				case 'Do':
+					return DigitsNth(dateApply.getDate()) ?? ''
+				case 'D':
+					return dateApply.getDate().toString()
+				case 'd':
+					return dateApply.getDay().toString()
+				case 'do':
+					return DigitsNth(dateApply.getDay()) ?? ''
+				case 'dd':
+					return (WeekDays[dateApply.getDay()] ?? '').substring(0, 2)
+				case 'ddd':
+					return (WeekDays[dateApply.getDay()] ?? '').substring(0, 3)
+				case 'dddd':
+					return WeekDays[dateApply.getDay()] ?? ''
+				case 'HH':
+					return dateApply.getHours().toString().padStart(2, '0')
+				case 'H':
+					return dateApply.getHours().toString()
+				case 'hh':
+					return (dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours())
+						.toString()
+						.padStart(2, '0')
+				case 'h': {
+					const hour = dateApply.getHours() > 12 ? dateApply.getHours() - 12 : dateApply.getHours()
+					return (hour === 0 ? 12 : hour).toString()
+				}
+				case 'mm':
+					return dateApply.getMinutes().toString().padStart(2, '0')
+				case 'm':
+					return dateApply.getMinutes().toString()
+				case 'ss':
+					return dateApply.getSeconds().toString().padStart(2, '0')
+				case 's':
+					return dateApply.getSeconds().toString()
+				case 'A':
+					return dateApply.getHours() >= 12 ? 'PM' : 'AM'
+				case 'a':
+					return dateApply.getHours() >= 12 ? 'pm' : 'am'
+				default:
+					return command
+			}
 		}
 	}
 
@@ -1027,7 +1106,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 	let dateTS = DateParseTSInternal(date)
 
 	for (const key of Object.keys(adjustments)) {
-		if (!dateTS) return null
+		if (dateTS === null) return null
 
 		switch (key) {
 			case 'year':
@@ -1117,7 +1196,8 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 				}
 				break
 			default:
-				if (!dateTS) return null
+				// noinspection PointlessBooleanExpressionJS
+				if (dateTS === null) return null
 
 				switch (key) {
 					case 'week':
@@ -2026,6 +2106,7 @@ export const DateOnlyNull = (
 					)
 				}
 			}
+
 			return null
 		}
 
@@ -2038,7 +2119,6 @@ export const DateOnlyNull = (
 				dateObj = DateObject(dateObj, adjustments) ?? dateObj
 				if (Object.values(adjustments).includes('EndOf')) dateObj.setUTCHours(10)
 			}
-
 			return DateFormat(adjustments?.formatLocale ? 'Local' : 'Date', dateObj, 'UTC')
 		} else {
 			return null
@@ -2110,10 +2190,12 @@ export const TimeOnly = (
 		useTime = DateOnly('now') + 'T' + useTime
 
 		let tsValue = DateParseTS(useTime, adjustments)
+
 		if (!!tsValue) {
 			let newValue = DateFormatAny(
 				!!adjustments?.formatLocale ? DATE_FORMAT_TIME_DISPLAY : 'HH:mm:ss',
 				tsValue + changeHours * 60 * 60 * 1000,
+				adjustments?.timezoneSource ?? 'UTC',
 				adjustments?.timezoneSource ?? 'UTC'
 			)
 			if (!!newValue) return newValue
