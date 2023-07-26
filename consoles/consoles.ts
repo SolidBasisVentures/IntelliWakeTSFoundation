@@ -9,6 +9,9 @@ console.time('Consoles')
 //
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
-console.log('Time', TimeOnly('20:00:00'))
+console.log(
+	'Time',
+	TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource: 'America/Los_Angeles'})
+)
 
 console.timeEnd('Consoles')
