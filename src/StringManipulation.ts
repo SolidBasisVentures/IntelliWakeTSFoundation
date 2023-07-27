@@ -1053,8 +1053,23 @@ export const RandomKey = (length: number) =>
 	RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
 
 /**
+ * Checks if a character is a vowel.
+ *
+ * @param {string} char - The character to check.
+ * @returns {boolean} True if the character is a vowel, false otherwise.
+ * @example
+ * IsVowel('a'); // returns true
+ * IsVowel('b'); // returns false
+ * @export
+ */
+export function IsVowel(char: string) {
+	return 'aeiou'.indexOf(char.toLowerCase()) !== -1
+}
+
+/**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
  * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ * Note: An ending 'y' is changed to ies if the previous letter to the 'y' is not a vowel
  *
  * @param text
  * @param count
@@ -1071,20 +1086,29 @@ export function AddS(
 	maxDecimals = 0,
 	minDecimals: number | null = null
 ): string {
-	const checkText = (text ?? '').toLowerCase()
+	if (!text) return ''
+
+	let useText = text
+	let checkText = (text ?? '').toLowerCase()
 	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
-	let addValue = !text
-		? 's'
-		: checkText.endsWith('s') ||
-		  checkText.endsWith('z') ||
-		  checkText.endsWith('ch') ||
-		  checkText.endsWith('sh') ||
-		  checkText.endsWith('x')
-		? 'es'
-		: 's'
-	return !text
-		? ''
-		: `${showNumber ? numericText : ''} ${text}${CleanNumber(numericText) !== 1 ? addValue : ''}`.trim()
+	let addValue = ''
+	if (CleanNumber(numericText) !== 1) {
+		if (checkText.endsWith('y') && !IsVowel(checkText.charAt(checkText.length - 2))) {
+			useText = useText.substring(0, useText.length - 1)
+			addValue = 'ies'
+		} else {
+			addValue = !text
+				? 's'
+				: checkText.endsWith('s') ||
+				  checkText.endsWith('z') ||
+				  checkText.endsWith('ch') ||
+				  checkText.endsWith('sh') ||
+				  checkText.endsWith('x')
+				? 'es'
+				: 's'
+		}
+	}
+	return `${showNumber ? numericText : ''} ${useText}${addValue}`.trim()
 }
 
 /**

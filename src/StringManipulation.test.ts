@@ -290,6 +290,18 @@ test('AddS', () => {
 	expect(AddS('Patch', 0, true)).toBe('0 Patches')
 	expect(AddS('Patch', 1, true)).toBe('1 Patch')
 	expect(AddS('Patch', 2, true)).toBe('2 Patches')
+	expect(AddS('Journey', 0)).toBe('Journeys')
+	expect(AddS('Journey', 1)).toBe('Journey')
+	expect(AddS('Journey', 2)).toBe('Journeys')
+	expect(AddS('Journey', 0, true)).toBe('0 Journeys')
+	expect(AddS('Journey', 1, true)).toBe('1 Journey')
+	expect(AddS('Journey', 2, true)).toBe('2 Journeys')
+	expect(AddS('Category', 0)).toBe('Categories')
+	expect(AddS('Category', 1)).toBe('Category')
+	expect(AddS('Category', 2)).toBe('Categories')
+	expect(AddS('Category', 0, true)).toBe('0 Categories')
+	expect(AddS('Category', 1, true)).toBe('1 Category')
+	expect(AddS('Category', 2, true)).toBe('2 Categories')
 })
 
 test('AddSNull', () => {
