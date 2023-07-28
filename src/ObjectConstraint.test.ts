@@ -1,8 +1,24 @@
 import {ConstrainObject, ObjectFromFormData} from './ObjectConstraint'
 import {ObjectConstraintTest, TestFormData} from './TestDatum'
 import {expect, test} from 'vitest'
+import {OmitProperty} from './Functions'
 
 test('ObjectConstraint', () => {
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				value: '0.00'
+			} as any,
+			{
+				id: {type: 'number', nullable: false, default: 0},
+				value: {type: 'number', default: 0, nullable: true}
+			}
+		)
+	).toEqual({
+		id: 1,
+		value: 0
+	})
 
 	expect(
 		ConstrainObject(
@@ -57,7 +73,6 @@ test('ObjectConstraint', () => {
 		id: 1,
 		is_active: null
 	})
-
 
 	expect(
 		ConstrainObject(
@@ -143,6 +158,32 @@ test('ObjectConstraint', () => {
 				...ObjectConstraintTest,
 				name: {...ObjectConstraintTest.name, nullable: true},
 				salary: {...ObjectConstraintTest.salary, nullable: true}
+			}
+		)
+	).toEqual({
+		id: 1,
+		name: null,
+		start_date: '2023-01-01',
+		features: [],
+		ids: [1, 2, 0],
+		salary: 0,
+		is_active: false
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				name: '',
+				start_date: '1/1/2023',
+				ids: ['1', 2, '0', null, ''],
+				salary: 0,
+				is_active: 'false'
+			},
+			{
+				...ObjectConstraintTest,
+				name: {...ObjectConstraintTest.name, nullable: true},
+				salary: OmitProperty({...ObjectConstraintTest.salary, nullIfFalsey: true}, 'minValue')
 			}
 		)
 	).toEqual({

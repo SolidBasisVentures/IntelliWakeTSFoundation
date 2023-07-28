@@ -1,4 +1,6 @@
 import {ESTTodayDateTimeLabel, TimeOnly} from '../src/DateManager'
+import {ConstrainObject} from '../src/ObjectConstraint'
+import {CleanNumberNull} from '../src/Functions'
 
 require('source-map-support').install()
 
@@ -10,8 +12,17 @@ console.time('Consoles')
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
 console.log(
-	'Time',
-	TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource: 'America/Los_Angeles'})
+	CleanNumberNull('0.00'),
+	ConstrainObject(
+		{
+			id: '1',
+			value: '0.00'
+		} as any,
+		{
+			id: {type: 'number', nullable: false, default: 0},
+			value: {type: 'number', default: 0, nullable: true}
+		}
+	)
 )
 
 console.timeEnd('Consoles')
