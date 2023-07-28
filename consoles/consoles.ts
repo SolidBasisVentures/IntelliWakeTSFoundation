@@ -1,4 +1,4 @@
-import {ESTTodayDateTimeLabel, TimeOnly} from '../src/DateManager'
+import {ESTTodayDateTimeLabel} from '../src/DateManager'
 import {ConstrainObject} from '../src/ObjectConstraint'
 import {CleanNumberNull} from '../src/Functions'
 
