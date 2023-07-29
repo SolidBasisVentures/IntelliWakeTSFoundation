@@ -12,11 +12,31 @@ console.time('Consoles')
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
 console.log(
-	CleanNumberNull('0.00'),
+	CleanNumberNull(''),
 	ConstrainObject(
 		{
 			id: '1',
 			value: '0.00'
+		} as any,
+		{
+			id: {type: 'number', nullable: false, default: 0},
+			value: {type: 'number', default: 0, nullable: true}
+		}
+	),
+	ConstrainObject(
+		{
+			id: '1',
+			value: null
+		} as any,
+		{
+			id: {type: 'number', nullable: false, default: 0},
+			value: {type: 'number', default: 0, nullable: true}
+		}
+	),
+	ConstrainObject(
+		{
+			id: '1',
+			value: ''
 		} as any,
 		{
 			id: {type: 'number', nullable: false, default: 0},

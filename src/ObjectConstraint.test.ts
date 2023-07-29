@@ -19,6 +19,21 @@ test('ObjectConstraint', () => {
 		id: 1,
 		value: 0
 	})
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				value: ''
+			} as any,
+			{
+				id: {type: 'number', nullable: false, default: 0},
+				value: {type: 'number', default: 0, nullable: true}
+			}
+		)
+	).toEqual({
+		id: 1,
+		value: null
+	})
 
 	expect(
 		ConstrainObject(

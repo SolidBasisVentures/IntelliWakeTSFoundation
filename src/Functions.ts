@@ -147,10 +147,16 @@ export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 }
 
 /**
- *
- * @param decimals
- * @param values
- * @constructor
+ * Calculates the average of a set of values or an array of values.
+ * If no valid numbers are given, it returns `null`.
+ * @param decimals - The number of decimal places to be used in the final average calculation result.
+ * @param values - The spread parameter representing numbers, or array of numbers, whose average is to be calculated.
+ * @returns The average of the provided numbers (based on the number of valid numbers). Returns `null` if no valid numbers are found.
+ * @function AverageNumberNull
+ * @example
+ * AverageNumberNull(2, 3, 4, 5, 6); // Returns 4.50
+ * AverageNumberNull(2, [3, 4, 5, 6]); // Returns 4.50
+ * AverageNumberNull(2, null, undefined, "five"); // Returns null
  */
 export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]): number | null => {
 	const valids = ValidNumbers(values)
@@ -161,39 +167,60 @@ export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]):
 }
 
 /**
- *
- * @param decimals
- * @param values
- * @constructor
+ * Computes the arithmetic mean of a set of values or array of values and returns the result.
+ * If the average is `null`, result will be `0`.
+ * @param decimals - The number of decimal places to be used in the final average calculation result.
+ * @param values - The spread parameter representing numbers whose average is to be calculated.
+ * This may consist of individual numbers or arrays of numbers.
+ * @returns The calculated average of the supplied numbers.
+ * @function AverageNumber
+ * @example
+ * AverageNumber(2, 3, 4, 5, 6); // Returns 4.50
+ * AverageNumber(2, [3, 4, 5, 6]); // Returns 4.50
+ * AverageNumber(2, null, 4, 5, 6); // Returns 0
  */
 export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number =>
 	AverageNumberNull(decimals, ...values) ?? 0
 
 /**
+ * Performs division operation and returns the quotient. Takes care of `null` and `0` denominator cases.
  *
- * @param numerator
- * @param denominator
- * @param decimals
- * @constructor
+ * @param numerator - The top number in a division.
+ * @param denominator - The bottom number in a division.
+ * @param decimals - The number of decimal places to include in the quotient. Optional.
+ * @returns The resulting quotient of the division if denominator is not `0` or `null`, otherwise returns `null`.
+ * @function CleanDivideNull
+ * @example
+ * CleanDivideNull(10, 2, 2); // Returns 5.00
+ * CleanDivideNull(10, 0); // Returns null
+ * CleanDivideNull(10, null); // Returns null
+ * CleanDivideNull(null, 2); // Returns null
  */
 export const CleanDivideNull = (numerator: any, denominator: any, decimals?: number): number | null => {
-	if (numerator === undefined || numerator === null) return null
+	const useNumerator = CleanNumberNull(numerator)
+	if (useNumerator === null) return null
 
 	const useDenominator = CleanNumber(denominator)
 
 	if (useDenominator === 0) return null
 
 	return decimals !== undefined
-		? CleanNumber(CleanNumber(numerator) / useDenominator, decimals)
-		: CleanNumber(numerator) / useDenominator
+		? CleanNumber(CleanNumber(useNumerator) / useDenominator, decimals)
+		: CleanNumber(useNumerator) / useDenominator
 }
 
 /**
- *
- * @param numerator
- * @param denominator
- * @param decimals
- * @constructor
+ * Performs division operation and returns the result. Takes care of `null` and `0` denominator cases.
+ * @param numerator - The top number in a division.
+ * @param denominator - The bottom number in a division.
+ * @param decimals - The number of decimal places to include in the quotient. Optional.
+ * @returns The quotient of the division if denominator is not `0` or `null`, otherwise returns `0`.
+ * @function CleanDivide
+ * @example
+ * CleanDivide(5, 2, 1); // Returns 2.5
+ * CleanDivide(5, 0); // Returns 0
+ * CleanDivide(5, null); // Returns 0
+ * CleanDivide(null, 2); // Returns 0
  */
 export const CleanDivide = (numerator: any, denominator: any, decimals?: number): number =>
 	CleanDivideNull(numerator, denominator, decimals) ?? 0
@@ -243,7 +270,7 @@ export const CleanSubtractNumbers = (roundTo: number, ...values: (any | any[])[]
  * CleanNumberNull('100.12', 1)
  */
 export const CleanNumberNull = (value: any, roundClean?: number): number | null => {
-	if (value === undefined || value === null) return null
+	if (value === undefined || value === null || value === '') return null
 
 	let parsed = CleanNumber(value, roundClean, true)
 
@@ -253,7 +280,17 @@ export const CleanNumberNull = (value: any, roundClean?: number): number | null 
 }
 
 /**
- * A wrapper function for JSON.parse with try/catch.
+ * Tries to parse a JSON string into an object and returns it.
+ * If parsing fails or the input is not a valid JSON, it returns `null`.
+ * Already parsed objects are returned as is.
+ * @param json - The JSON string to parse.
+ * @returns The parsed object of type `T` or `null` if parsing fails or input is not a valid JSON.
+ * @template T - The expected type of the parsed object.
+ * @function JSONParse
+ * @example
+ * JSONParse<{ name: string }>('{"name": "Bob"}'); // Returns { name: 'Bob' }
+ * JSONParse('invalid JSON'); // Returns null
+ * JSONParse(null); // Returns null
  */
 export const JSONParse = <T = any>(json: any): T | null => {
 	if (!json) {

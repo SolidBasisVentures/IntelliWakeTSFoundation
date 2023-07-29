@@ -5,6 +5,7 @@ import {
 	CleanDivide,
 	CleanDivideNull,
 	CleanNumber,
+	CleanNumberNull,
 	CleanNumbers,
 	CleanSubtractNumbers,
 	CoalesceFalsey,
@@ -261,10 +262,19 @@ test('Other', async () => {
 	expect(LeastNumber(5, 2)).toEqual(2)
 	expect(LeastNumber(null, 5, 2)).toEqual(2)
 	expect(LeastNumber(5, 2, null)).toEqual(2)
+	expect(CleanNumberNull('')).toEqual(null)
+	expect(CleanNumberNull('a')).toEqual(null)
+	expect(CleanNumberNull('$')).toEqual(null)
+	expect(CleanNumberNull('0')).toEqual(0)
+	expect(CleanNumberNull(0, 2)).toEqual(0)
 	expect(CleanDivideNull(1, 2)).toEqual(0.5)
 	expect(CleanDivideNull(1, 0)).toEqual(null)
 	expect(CleanDivideNull(1, null)).toEqual(null)
 	expect(CleanDivideNull(null, 2)).toEqual(null)
+	expect(CleanDivideNull('', 2)).toEqual(null)
+	expect(CleanDivideNull('a', 2)).toEqual(null)
+	expect(CleanDivideNull('$', 2)).toEqual(null)
+	expect(CleanDivideNull('0', 2)).toEqual(0)
 	expect(CleanDivideNull(0, 2)).toEqual(0)
 	expect(CleanDivide(1, 2)).toEqual(0.5)
 	expect(CleanDivide(1, 2, 1)).toEqual(0.5)

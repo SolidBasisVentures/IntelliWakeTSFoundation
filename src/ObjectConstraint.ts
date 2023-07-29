@@ -162,7 +162,7 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 			if (
 				!fieldConstraint.nullIfFalsey &&
 				fieldConstraint.nullable &&
-				(fieldConstraint.type === 'number' ? isNullUndefined(newObj[key]) : !newObj[key])
+				(fieldConstraint.type === 'number' ? isNullUndefined(newObj[key]) || newObj[key] === '' : !newObj[key])
 			) {
 				if (typeof newObj[key] !== 'boolean') newObj[key] = null
 			}
