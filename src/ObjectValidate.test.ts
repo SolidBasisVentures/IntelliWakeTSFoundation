@@ -135,7 +135,12 @@ test('ObjectValidate', () => {
 						[EDefaultCheck.AtLeast5Characters]: 'Must have 5 chars'
 					}
 				],
-				email: [{[EDefaultCheck.Required]: 'Must have an email', [EDefaultCheck.IsEmail]: 'Not a valid email'}],
+				email: [
+					{
+						[EDefaultCheck.Required]: 'Must have an email',
+						[EDefaultCheck.IsEmail]: 'Not a valid email'
+					}
+				],
 				hire_date: [
 					{[EDefaultCheck.Required]: 'Must have hire date', [EDefaultCheck.IsDate]: 'Not a valid date'}
 				],
@@ -243,3 +248,8 @@ test('ObjectValidate', () => {
 
 	})
 })
+
+
+
+
+
