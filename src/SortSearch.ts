@@ -3,6 +3,12 @@ import {CleanNumber, GreaterNumber} from './Functions'
 /**
  * Returns an array of numbers to be used for pagination links.
  *
+ * @param {number} current - The current page number.
+ * @param {number} length - The total length of pages.
+ * @param {number} [spread=2] - The spread of pages to include on either side of the current page.
+ *
+ * @returns {(number | null)[]} An array of pages. The pages outside of the spread will have gaps represented by nulls.
+ *
  * @example
  * // returns [1, 2, 3, null, 10]
  * PagesForRange(1, 10)
@@ -12,6 +18,10 @@ import {CleanNumber, GreaterNumber} from './Functions'
  *
  * // returns [1, 2, 3, 4, null, 10]
  * PagesForRange(1, 10, 3)
+ *
+ * @remarks If the length is not greater than 0, the function will return an empty array.
+ * If the current page is less than 1 it's set to 1. If it's greater than length, then it's set to be equal to length.
+ * The spread is either equal to the given spread if it doesn't exceed the length or half, if it exceeds.
  */
 export function PagesForRange(current: number, length: number, spread: number = 2): (number | null)[] {
 	if (!(+length > 0)) {
@@ -49,14 +59,43 @@ export function PagesForRange(current: number, length: number, spread: number = 
 }
 
 /**
+ * Represents a sorting column type to the bottom for SQL statements.  This helps the SQL generator know how to handlesorting conditions
+ * @typedef {null | 'string' | 'number' | 'null' | 'timestamptz' | 'date'} TSortColumnToBottom
  *
+ * @example
+ * let nameSortOrder: TSortColumnToBottom = 'string';
+ * let ageSortOrder: TSortColumnToBottom = 'number';
+ *
+ * @remarks This type can be used to define the type of column used for sorting operations.
  */
 export type TSortColumnToBottom = null | 'string' | 'number' | 'null' | 'timestamptz' | 'date'
 
 /**
- * An interface that defines a primary and secondary sort.
+ * Interface representing the sort details of a column.
  *
- * Use SortColumnUpdate() to automatically move the primary sort to the secondary
+ * @typeParam T - An indexable type, defaulting to an object with string keys mapped to any value.
+ *
+ * @property {keyof T} primarySort - The primary key used for sorting.
+ * @property {boolean} primaryAscending - Whether the primary sorting is in ascending order.
+ * @property {TSortColumnToBottom} primaryEmptyToBottom - The sort order of the primary column with empty values.
+ * @property {keyof T | null} secondarySort - The secondary key used for sorting.
+ * @property {boolean} secondaryAscending - Whether the secondary sorting is in ascending order.
+ * @property {TSortColumnToBottom} secondaryEmptyToBottom - The sort order of the secondary column with empty values.
+ *
+ * @example
+ *  const sortColumn: ISortColumn = {
+ *      primarySort: 'name',
+ *      primaryAscending: true,
+ *      primaryEmptyToBottom: 'string',
+ *      secondarySort: 'age',
+ *      secondaryAscending: false,
+ *      secondaryEmptyToBottom: 'number',
+ *  };
+ *
+ * @remarks
+ * This interface can be used to provide better structure and typing for sorting operations.
+ * Note: Use with initialSortColumn to create an instance, such as {...initialSortColumn, primarySort: 'name'}
+ * Be aware that the primarySort is required, as initialSortColumn does not contain this value
  */
 export interface ISortColumn<T = Record<string, any>> {
 	primarySort: keyof T
