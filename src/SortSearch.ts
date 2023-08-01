@@ -10,14 +10,17 @@ import {CleanNumber, GreaterNumber} from './Functions'
  * @returns {(number | null)[]} An array of pages. The pages outside of the spread will have gaps represented by nulls.
  *
  * @example
- * // returns [1, 2, 3, null, 10]
  * PagesForRange(1, 10)
+ * // returns [1, 2, 3, null, 10]
  *
- * // returns [1, null, 7, 8, 9, 10]
  * PagesForRange(9, 10)
+ * // returns [1, null, 7, 8, 9, 10]
  *
- * // returns [1, 2, 3, 4, null, 10]
  * PagesForRange(1, 10, 3)
+ * // returns [1, 2, 3, 4, null, 10]
+ *
+ * PagesForRange(50, 100)
+ * // returns [1, null, 49, 50, 51, null, 100]
  *
  * @remarks If the length is not greater than 0, the function will return an empty array.
  * If the current page is less than 1 it's set to 1. If it's greater than length, then it's set to be equal to length.
