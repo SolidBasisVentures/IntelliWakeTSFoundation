@@ -143,6 +143,14 @@ test('String Functions', () => {
 				empty: ''
 			},
 			{
+				name: 'ToCurrencyBlank',
+				method: ToCurrencyBlank,
+				value: -100,
+				expected: '$-100.00',
+				decimal: '$-100.0',
+				empty: ''
+			},
+			{
 				name: 'ToCurrencyDash',
 				method: ToCurrencyDash,
 				value: 100,

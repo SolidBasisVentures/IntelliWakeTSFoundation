@@ -1,6 +1,5 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ConstrainObject} from '../src/ObjectConstraint'
-import {CleanNumberNull} from '../src/Functions'
+import {ToCurrencyBlank} from '../src/StringManipulation'
 
 require('source-map-support').install()
 
@@ -11,38 +10,6 @@ console.time('Consoles')
 //
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
-console.log(
-	CleanNumberNull(''),
-	ConstrainObject(
-		{
-			id: '1',
-			value: '0.00'
-		} as any,
-		{
-			id: {type: 'number', nullable: false, default: 0},
-			value: {type: 'number', default: 0, nullable: true}
-		}
-	),
-	ConstrainObject(
-		{
-			id: '1',
-			value: null
-		} as any,
-		{
-			id: {type: 'number', nullable: false, default: 0},
-			value: {type: 'number', default: 0, nullable: true}
-		}
-	),
-	ConstrainObject(
-		{
-			id: '1',
-			value: ''
-		} as any,
-		{
-			id: {type: 'number', nullable: false, default: 0},
-			value: {type: 'number', default: 0, nullable: true}
-		}
-	)
-)
+console.log(ToCurrencyBlank(-100, 2))
 
 console.timeEnd('Consoles')
