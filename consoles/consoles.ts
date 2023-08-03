@@ -10,6 +10,6 @@ console.time('Consoles')
 //
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
-console.log(ToCurrencyBlank(-100, 2))
+console.log(ToCurrencyBlank('$-100', 2))
 
 console.timeEnd('Consoles')

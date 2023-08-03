@@ -364,7 +364,7 @@ export const ToPercentMax = (value: any, decimals: number = 9): string => {
  *
  */
 export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -389,7 +389,7 @@ export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -415,7 +415,7 @@ export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToPercentBlank = (value: any, decimals: number = 2): string => {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -440,7 +440,7 @@ export const ToPercentBlank = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToPercentDash = (value: any, decimals: number = 2): string => {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -494,7 +494,7 @@ export const ToDigitsMax = function (value: any, decimals: number = 9): string {
  *
  */
 export const ToDigitsBlank = function (value: any, decimals: number = 0) {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -517,7 +517,7 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  *
  */
 export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value, decimals) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
 
@@ -539,7 +539,7 @@ export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
  *
  */
 export const ToDigitsDash = function (value: any, decimals: number = 0) {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -562,7 +562,7 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  *
  */
 export const ToDigitsDashMax = function (value: any, decimals: number = 9) {
-	if (isNullUndefined(value) || isNaN(value) || CleanNumber(value, decimals) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
 
