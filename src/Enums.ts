@@ -1,3 +1,5 @@
+import {ReplaceAll} from './Functions'
+
 type EnumKeys<Enum> = Exclude<keyof Enum, number>
 
 /**
@@ -138,6 +140,7 @@ export const EnumValueFromKey = <Enum extends Record<string, number | string>>(
  * @template Enum The enumeration type.
  * @param {Enum} e The enumeration to check within.
  * @param {Enum[EnumKeys<Enum>] | string | null | undefined} value The value to validate.
+ * @param {{ignoreSpace?: boolean}} options Options that can be passed to change the behavior of the validation.
  * @return {boolean} true if the value is found within the enumeration, false otherwise.
  *
  * @example
@@ -152,7 +155,17 @@ export const EnumValueFromKey = <Enum extends Record<string, number | string>>(
  */
 export function EnumValidValue<Enum extends Record<string, number | string>>(
 	e: Enum,
-	value: Enum[EnumKeys<Enum>] | string | null | undefined
+	value: Enum[EnumKeys<Enum>] | string | null | undefined,
+	options?: {
+		ignoreSpace?: boolean
+	}
 ) {
-	return !!value && EnumValues(e).some((val) => val === value)
+	return (
+		!!value &&
+		EnumValues(e).some((val) =>
+			options?.ignoreSpace
+				? ReplaceAll(' ', '', val?.toString()) === ReplaceAll(' ', '', value?.toString())
+				: val === value
+		)
+	)
 }
