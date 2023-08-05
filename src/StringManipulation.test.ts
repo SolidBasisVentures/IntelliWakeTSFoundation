@@ -12,6 +12,7 @@ import {
 	FormatPhoneNumber,
 	FormatPhoneNumberDashes,
 	FormatPhoneNumberDots,
+	FormatTaxID,
 	FormatZip,
 	HasAlpha,
 	HasDigits,
@@ -242,6 +243,8 @@ test('String Functions', () => {
 	expect(FormatZip('123456789')).toBe('12345-6789')
 	expect(FormatZip('12345')).toBe('12345')
 	expect(FormatZip('12345-6789')).toBe('12345-6789')
+	expect(FormatTaxID('112222223')).toBe('11-2222223')
+	expect(FormatTaxID('11-2222223')).toBe('11-2222223')
 	expect(FormatExternalURL('www.google.com')).toBe('http://www.google.com')
 	expect(DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')).toBe('Doe, John Smith, Jr.')
 	expect(

@@ -896,6 +896,26 @@ export const FormatZip = (zip: string) => {
 }
 
 /**
+ * Formats a tax number by adding a hyphen.
+ *
+ * @example
+ * // returns "11-2222222"
+ * FormatTaxID('112222222')
+ *
+ */
+export const FormatTaxID = (taxID: string) => {
+	//Filter only numbers from the input
+	let cleaned = ('' + taxID).replace(/\D/g, '')
+
+	// check if the input is a 9 digit code
+	if (cleaned.length === 9) {
+		cleaned = cleaned.replace(/(\d{2})/, '$1-')
+	}
+
+	return cleaned
+}
+
+/**
  * Adds "http" on urls that don't have it.
  *
  * @example
