@@ -1092,3 +1092,22 @@ export async function ConsoleAsyncTime<T>(name: string, asyncFunction: Promise<T
 
 	return result
 }
+
+/**
+ * `AddPrefixToObject` is a TypeScript utility type that adds a specified
+ * string prefix to the keys of an object.
+ *
+ * @template T - The original object type.
+ * @template P - The string prefix to be added to the keys of the object.
+ *
+ * @typedef {{
+ *   [K in keyof T as K extends string ? `${P}${K}` : never]: T[K]
+ * }} AddPrefixToObject
+ *
+ * @example
+ * // If T is `{ foo: number, bar: boolean }` and P is `'prefix_'`,
+ * // then `AddPrefixToObject<T, P>` will be `{ prefix_foo: number, prefix_bar: boolean }`.
+ */
+export type AddPrefixToObject<T, P extends string> = {
+	[K in keyof T as K extends string ? `${P}${K}` : never]: T[K]
+}

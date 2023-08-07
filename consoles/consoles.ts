@@ -1,5 +1,6 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
 import {ToCurrencyBlank} from '../src/StringManipulation'
+import {AddPrefixToObject} from '../src/Functions'
 
 require('source-map-support').install()
 
@@ -11,5 +12,11 @@ console.time('Consoles')
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
 console.log(ToCurrencyBlank('$-100', 2))
+
+type TTest = AddPrefixToObject<{name: string}, 'test_'>
+
+const test: TTest = {
+	test_name: 'Test'
+}
 
 console.timeEnd('Consoles')
