@@ -883,13 +883,34 @@ export const FormatPhoneNumberDashes = (phone: string | null | undefined, bestGu
  * FormatZip('123456789')
  *
  */
-export const FormatZip = (zip: string) => {
+export const FormatZip = (zip: string | number | null | undefined) => {
 	//Filter only numbers from the input
-	let cleaned = ('' + zip).replace(/\D/g, '')
+	let cleaned = ('' + (zip ?? '')).toString().replace(/\D/g, '')
 
 	// check if the input is a 9 digit code
 	if (cleaned.length === 9) {
 		cleaned = cleaned.replace(/(\d{5})/, '$1-')
+	}
+
+	return cleaned
+}
+
+/**
+ * Formats a tax number by adding a hyphen.
+ *
+ * @example
+ * // returns "11-2222222"
+ * FormatTaxID('112222222')
+ *
+ */
+export const FormatTaxID = (taxID: string | number | null | undefined) => {
+	if (!taxID) return null
+	//Filter only numbers from the input
+	let cleaned = ('' + (taxID ?? '')).toString().replace(/\D/g, '')
+
+	// check if the input is a 9 digit code
+	if (cleaned.length === 9) {
+		cleaned = cleaned.replace(/(\d{2})/, '$1-')
 	}
 
 	return cleaned
@@ -903,7 +924,7 @@ export const FormatZip = (zip: string) => {
  * FormatExternalURL('www.google.com')
  *
  */
-export const FormatExternalURL = (url: string): string => {
+export const FormatExternalURL = (url: string | null | undefined): string => {
 	if (!!url) {
 		if (!url.startsWith('http')) {
 			return 'http://' + url
