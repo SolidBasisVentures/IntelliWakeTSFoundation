@@ -221,10 +221,10 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
  * CleanScripts('<script>console.log(1)</script>blank')
  *
  */
-export const CleanScripts = function (subject: string | undefined | null): string {
+export const CleanScripts = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
-	return subject.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+	return subject.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
 	// return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
 
@@ -236,7 +236,7 @@ export const CleanScripts = function (subject: string | undefined | null): strin
  * TextToHTML('<p>john doe</p>')
  *
  */
-export const TextToHTML = function (subject: string | undefined | null): string {
+export const TextToHTML = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	let str = CleanScripts(subject) //.replace(/(<([^>]+)>)/gi, '')
@@ -251,7 +251,8 @@ export const TextToHTML = function (subject: string | undefined | null): string 
  * HTMLToText('<p>john doe</p>') // returns john doe
  *
  */
-export const HTMLToText = (subject: string | undefined | null): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
+export const HTMLToText = (subject: string | number | undefined | null): string =>
+	CleanScripts(subject).replace(/<[^>]*>/g, '')
 
 /**
  *
@@ -261,8 +262,8 @@ export const HTMLToText = (subject: string | undefined | null): string => CleanS
  * @constructor
  *
  */
-export const LeftPad = (subject: string | undefined | null, length: number, padString: string): string => {
-	let str = subject ?? ''
+export const LeftPad = (subject: string | number | undefined | null, length: number, padString: string): string => {
+	let str = (subject ?? '').toString()
 
 	while (str.length < length) str = padString + str
 
@@ -276,8 +277,8 @@ export const LeftPad = (subject: string | undefined | null, length: number, padS
  * @constructor
  *
  */
-export const RightPad = (subject: string | undefined | null, length: number, padString: string): string => {
-	let str = subject ?? ''
+export const RightPad = (subject: string | number | undefined | null, length: number, padString: string): string => {
+	let str = (subject ?? '').toString()
 
 	while (str.length < length) str = str + padString
 

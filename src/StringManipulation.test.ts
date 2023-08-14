@@ -123,6 +123,7 @@ test('String Functions', () => {
 		expect(HTMLToText('<p>john doe</p>')).toBe('john doe')
 		expect(HTMLToText('<p>john doe</p><script lang="ts">console.log(1)</script>')).toBe('john doe')
 		expect(TextToHTML('john doe\nnew line')).toBe('john doe<br />new line')
+		expect(TextToHTML(2)).toBe('2')
 		expect(TextToHTML('<p>john doe\nnew line</p>')).toBe('<p>john doe<br />new line</p>')
 	}
 	{
