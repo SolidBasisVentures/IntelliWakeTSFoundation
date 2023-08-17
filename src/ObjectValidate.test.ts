@@ -216,9 +216,7 @@ test('ObjectValidate', () => {
 				falsey: {[EDefaultCheck.Required]: 'Falsey not available'}
 			}
 		)
-	).toEqual({
-
-	})
+	).toEqual({})
 
 	expect(
 		Validator(
@@ -238,15 +236,28 @@ test('ObjectValidate', () => {
 	expect(
 		Validator(
 			{
-				name: 0,
+				truthy: true,
+				falsey: false
 			},
 			{
-				name: {[EDefaultCheck.Required]: 'Name is required'},
+				truthy: {[EDefaultCheck.Falsey]: 'Truthy not available'},
+				falsey: {[EDefaultCheck.Falsey]: 'Falsey not available'}
 			}
 		)
 	).toEqual({
-
+		truthy: ['Truthy not available']
 	})
+
+	expect(
+		Validator(
+			{
+				name: 0
+			},
+			{
+				name: {[EDefaultCheck.Required]: 'Name is required'}
+			}
+		)
+	).toEqual({})
 })
 
 
