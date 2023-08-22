@@ -1,4 +1,5 @@
 import {DateDiffLongDescription} from './DateManager'
+import {FormatZip} from './StringManipulation'
 
 /**
  * Replace all occurrences of a string.
@@ -542,7 +543,7 @@ export const AddressSingleRow = (object: any, prefix?: string): string => {
 	if (!!(object[usePrefix + 'address_2'] ?? '')) singleRow += ', ' + object[usePrefix + 'address_2']
 	if (!!(object[usePrefix + 'city'] ?? '')) singleRow += ', ' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) singleRow += ', ' + object[usePrefix + 'state']
-	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + object[usePrefix + 'zip']
+	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + FormatZip(object[usePrefix + 'zip'])
 
 	return singleRow
 }
@@ -575,7 +576,7 @@ export const AddressMultiRow = (object: any, prefix?: string): string => {
 
 	if (!!(object[usePrefix + 'city'] ?? '')) multiRow += '\n' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) multiRow += ', ' + object[usePrefix + 'state']
-	if (!!(object[usePrefix + 'zip'] ?? '')) multiRow += '  ' + object[usePrefix + 'zip']
+	if (!!(object[usePrefix + 'zip'] ?? '')) multiRow += '  ' + FormatZip(object[usePrefix + 'zip'])
 
 	return multiRow
 }
