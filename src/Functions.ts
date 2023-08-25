@@ -1112,3 +1112,50 @@ export async function ConsoleAsyncTime<T>(name: string, asyncFunction: Promise<T
 export type AddPrefixToObject<T, P extends string> = {
 	[K in keyof T as K extends string ? `${P}${K}` : never]: T[K]
 }
+
+/**
+ * Adds a prefix to each key in an object.
+ * @param {Object} obj - The input object.
+ * @param {string} prefix - The prefix to add.
+ * @return {Object} - The object with the keys prefixed.
+ */
+export function PrefixKeys<T extends Record<string, any>, S extends string>(
+	obj: T,
+	prefix: S
+): AddPrefixToObject<T, S> {
+	return Object.keys(obj).reduce<AddPrefixToObject<T, S>>((acc: any, key) => {
+		acc[`${prefix}${key}`] = obj[key]
+		return acc
+	}, {} as any)
+}
+
+/**
+ * Represents a type that prefixes keys of an object with a specified string.
+ * @template T - the original object type
+ * @template U - the prefix string type
+ */
+export type PrefixedKeys<T, U extends string> = {
+	[P in keyof T as P extends `${U}${infer Rest}` ? Rest : never]: T[P]
+}
+
+/**
+ * Extracts all keys from an object that have a specified prefix.
+ *
+ * @param {Record<string, any>} obj - The object from which to extract keys.
+ * @param {string} prefix - The prefix to match when extracting keys.
+ * @returns {Record<string, any>} - An object containing the extracted keys and their values.
+ */
+export function ExtractPrefixedKeys<T extends Record<string, any>, S extends string>(
+	obj: T,
+	prefix: S
+): PrefixedKeys<T, S> {
+	const extracted: any = {}
+
+	for (const key in obj) {
+		if (key.startsWith(prefix)) {
+			extracted[key.slice(prefix.length)] = obj[key]
+		}
+	}
+
+	return extracted
+}

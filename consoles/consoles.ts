@@ -1,6 +1,5 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {FormatTaxID} from '../src/StringManipulation'
-import {AddPrefixToObject} from '../src/Functions'
+import {PrefixKeys} from '../src/Functions'
 
 require('source-map-support').install()
 
@@ -11,13 +10,13 @@ console.time('Consoles')
 //
 // dates.forEach((date) => console.log(date, '=', DateOnlyNull(date)))
 
-console.log(FormatTaxID('112222223'))
-console.log(FormatTaxID('11-2222223'))
-
-type TTest = AddPrefixToObject<{name: string}, 'test_'>
-
-const test: TTest = {
-	test_name: 'Test'
+const testObject = {
+	id: 1,
+	name: 'Dennis'
 }
+
+const result = PrefixKeys(testObject, 'employee_')
+
+console.log(result)
 
 console.timeEnd('Consoles')

@@ -10,6 +10,7 @@ import {
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
+	ExtractPrefixedKeys,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
@@ -23,6 +24,7 @@ import {
 	OmitProperty,
 	OmitUndefined,
 	PickProperty,
+	PrefixKeys,
 	RemoveEnding,
 	RemoveStarting,
 	ReplaceAll,
@@ -316,4 +318,12 @@ test('Other', async () => {
 	}
 
 	expect(await ConsoleAsyncTime('Test Time', timesTwo(2))).toEqual(4)
+})
+
+test('Other', async () => {
+	expect(PrefixKeys({id: 1, name: 'Dennis'}, 'employee_')).toStrictEqual({employee_id: 1, employee_name: 'Dennis'})
+	expect(ExtractPrefixedKeys({employee_id: 1, employee_name: 'Dennis'}, 'employee_')).toStrictEqual({
+		id: 1,
+		name: 'Dennis'
+	})
 })
