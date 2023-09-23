@@ -1,13 +1,17 @@
 import {
 	ArrayRange,
+	AverageNumber,
 	AverageNumberNull,
 	CleanDivide,
 	CleanDivideNull,
 	CleanNumber,
+	CleanNumberNull,
 	CleanNumbers,
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
+	ExtractPrefixedKeys,
+	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
 	IsOn,
@@ -20,6 +24,7 @@ import {
 	OmitProperty,
 	OmitUndefined,
 	PickProperty,
+	PrefixKeys,
 	RemoveEnding,
 	RemoveStarting,
 	ReplaceAll,
@@ -41,6 +46,13 @@ test('IsOn', () => {
 	expect(IsOn('f')).toBe(false)
 	expect(IsOn('true')).toBe(true)
 	expect(IsOn('false')).toBe(false)
+	expect(IsOn('no')).toBe(false)
+	expect(IsOn('no', {nos: ['no']})).toBe(false)
+	expect(IsOn('yes')).toBe(true)
+	expect(IsOn('y')).toBe(true)
+	expect(IsOn('yes', {nos: ['yes']})).toBe(false)
+	expect(IsOn('new')).toBe(false)
+	expect(IsOn('new', {yeses: ['new']})).toBe(true)
 })
 
 test('RoundTo', () => {
@@ -196,6 +208,24 @@ describe('ReplaceAllMultiple', () => {
 	})
 })
 
+test('GetPropertyValueCaseInsensitive', () => {
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'One')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'one')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, 'ONE')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, 'One')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({'one ': 1}, 'one')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, 'ONE ')).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({One: 1}, ['Two', 'TWO'])).toEqual(undefined)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1}, ['Two', 'TWO'])).toEqual(undefined)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: ' '}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: null}, ['Two', 'ONE'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: 2}, ['Two', 'ONE'])).toEqual(2)
+	expect(GetPropertyValueCaseInsensitive({one: 1, two: 2}, ['one', 'tWo'])).toEqual(1)
+	expect(GetPropertyValueCaseInsensitive({one: '', two: ''}, ['one', 'tWo'])).toEqual('')
+})
+
 test('Other', async () => {
 	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name', 'description')).toEqual({id: 1, name: 'Test'})
 	expect(OmitFalsey({id: 1, name: 'Test', description: ''}, 'name')).toEqual({id: 1, name: 'Test', description: ''})
@@ -232,10 +262,21 @@ test('Other', async () => {
 	expect(LeastNumber('2', ['qwer', 'zxcv'])).toEqual(2)
 	expect(LeastNumber('2', 5)).toEqual(2)
 	expect(LeastNumber(5, 2)).toEqual(2)
+	expect(LeastNumber(null, 5, 2)).toEqual(2)
+	expect(LeastNumber(5, 2, null)).toEqual(2)
+	expect(CleanNumberNull('')).toEqual(null)
+	expect(CleanNumberNull('a')).toEqual(null)
+	expect(CleanNumberNull('$')).toEqual(null)
+	expect(CleanNumberNull('0')).toEqual(0)
+	expect(CleanNumberNull(0, 2)).toEqual(0)
 	expect(CleanDivideNull(1, 2)).toEqual(0.5)
 	expect(CleanDivideNull(1, 0)).toEqual(null)
 	expect(CleanDivideNull(1, null)).toEqual(null)
 	expect(CleanDivideNull(null, 2)).toEqual(null)
+	expect(CleanDivideNull('', 2)).toEqual(null)
+	expect(CleanDivideNull('a', 2)).toEqual(null)
+	expect(CleanDivideNull('$', 2)).toEqual(null)
+	expect(CleanDivideNull('0', 2)).toEqual(0)
 	expect(CleanDivideNull(0, 2)).toEqual(0)
 	expect(CleanDivide(1, 2)).toEqual(0.5)
 	expect(CleanDivide(1, 2, 1)).toEqual(0.5)
@@ -256,6 +297,11 @@ test('Other', async () => {
 	expect(AverageNumberNull(0, [1, 2, '3', null])).toEqual(2)
 	expect(AverageNumberNull(1, [1, '2', 4, null])).toEqual(2.3)
 	expect(AverageNumberNull(1, 5, ['6', null])).toEqual(5.5)
+	expect(AverageNumberNull(1, null)).toEqual(null)
+	expect(AverageNumber(0, [1, 2, '3', null])).toEqual(2)
+	expect(AverageNumber(1, [1, '2', 4, null])).toEqual(2.3)
+	expect(AverageNumber(1, 5, ['6', null])).toEqual(5.5)
+	expect(AverageNumber(1, null)).toEqual(0)
 	expect(ArrayRange(10)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 	expect(ArrayRange(10, 2)).toEqual([0, 2, 4, 6, 8])
 	expect(ArrayRange(10, 1, 1)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9])
@@ -272,4 +318,12 @@ test('Other', async () => {
 	}
 
 	expect(await ConsoleAsyncTime('Test Time', timesTwo(2))).toEqual(4)
+})
+
+test('Other', async () => {
+	expect(PrefixKeys({id: 1, name: 'Dennis'}, 'employee_')).toStrictEqual({employee_id: 1, employee_name: 'Dennis'})
+	expect(ExtractPrefixedKeys({employee_id: 1, employee_name: 'Dennis'}, 'employee_')).toStrictEqual({
+		id: 1,
+		name: 'Dennis'
+	})
 })

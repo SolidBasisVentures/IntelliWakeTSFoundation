@@ -273,6 +273,7 @@ test('Date Managers', () => {
 	).toEqual('11/12/2021 1:00 pm')
 	expect(DateFormat('Date', DateISO('0021-01-24 01:00:00.00'))).toEqual('0021-01-24')
 
+	expect(DateOnlyNull('1970-01-01')).toEqual('1970-01-01')
 	expect(DateOnlyNull('2023-04-05')).toEqual('2023-04-05')
 	expect(DateOnlyNull('20230405', {fromFormat: 'YYYYMMDD'})).toEqual('2023-04-05')
 	expect(DateOnlyNull('04052023', {fromFormat: 'MMDDYYYY'})).toEqual('2023-04-05')
@@ -440,6 +441,11 @@ test('Date Managers', () => {
 		'Th, Jan 6, 2022, 5:07 pm'
 	)
 	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00')).toEqual('2/1/2022 3:18 pm')
+	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true})).toEqual('3:18 pm')
+	expect(DateFormat('LocalDateTime', '1970-01-01T00:00:00-05:00')).toEqual('1/1/1970 12:00 am')
+	expect(DateFormat('LocalDateTime', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970 8:00 am')
+	expect(DateFormat('Local', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970')
+	expect(DateFormat('Local', '1970-01-01')).toEqual('1/1/1970')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
 	expect(DateOnly('02/17/2022', {days: -1})).toEqual('2022-02-16')
 	expect(DateOnly('2022-02-01', {days: -1})).toEqual('2022-01-31')
@@ -471,7 +477,11 @@ test('Date Managers', () => {
 	times.forEach((time) => expect(TimeOnly(time[0])).toEqual(time[1]))
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
-	process.env.TZ = 'America/Las_Angeles'
+	process.env.TZ = 'America/Los_Angeles'
+	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true})).toEqual('3:18 pm')
+	expect(
+		TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource: 'America/Los_Angeles'})
+	).toEqual('12:18 pm')
 	expect(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'})).toEqual(
 		DateObject(`${DateOnly('now')} 12:00:00 America/New_York`)
 	)

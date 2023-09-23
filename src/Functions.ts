@@ -1,4 +1,5 @@
 import {DateDiffLongDescription} from './DateManager'
+import {FormatZip} from './StringManipulation'
 
 /**
  * Replace all occurrences of a string.
@@ -147,10 +148,16 @@ export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 }
 
 /**
- *
- * @param decimals
- * @param values
- * @constructor
+ * Calculates the average of a set of values or an array of values.
+ * If no valid numbers are given, it returns `null`.
+ * @param decimals - The number of decimal places to be used in the final average calculation result.
+ * @param values - The spread parameter representing numbers, or array of numbers, whose average is to be calculated.
+ * @returns The average of the provided numbers (based on the number of valid numbers). Returns `null` if no valid numbers are found.
+ * @function AverageNumberNull
+ * @example
+ * AverageNumberNull(2, 3, 4, 5, 6); // Returns 4.50
+ * AverageNumberNull(2, [3, 4, 5, 6]); // Returns 4.50
+ * AverageNumberNull(2, null, undefined, "five"); // Returns null
  */
 export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]): number | null => {
 	const valids = ValidNumbers(values)
@@ -161,39 +168,60 @@ export const AverageNumberNull = (decimals: number, ...values: (any | any[])[]):
 }
 
 /**
- *
- * @param decimals
- * @param values
- * @constructor
+ * Computes the arithmetic mean of a set of values or array of values and returns the result.
+ * If the average is `null`, result will be `0`.
+ * @param decimals - The number of decimal places to be used in the final average calculation result.
+ * @param values - The spread parameter representing numbers whose average is to be calculated.
+ * This may consist of individual numbers or arrays of numbers.
+ * @returns The calculated average of the supplied numbers.
+ * @function AverageNumber
+ * @example
+ * AverageNumber(2, 3, 4, 5, 6); // Returns 4.50
+ * AverageNumber(2, [3, 4, 5, 6]); // Returns 4.50
+ * AverageNumber(2, null, 4, 5, 6); // Returns 0
  */
 export const AverageNumber = (decimals: number, ...values: (any | any[])[]): number =>
-	AverageNumberNull(decimals, values) ?? 0
+	AverageNumberNull(decimals, ...values) ?? 0
 
 /**
+ * Performs division operation and returns the quotient. Takes care of `null` and `0` denominator cases.
  *
- * @param numerator
- * @param denominator
- * @param decimals
- * @constructor
+ * @param numerator - The top number in a division.
+ * @param denominator - The bottom number in a division.
+ * @param decimals - The number of decimal places to include in the quotient. Optional.
+ * @returns The resulting quotient of the division if denominator is not `0` or `null`, otherwise returns `null`.
+ * @function CleanDivideNull
+ * @example
+ * CleanDivideNull(10, 2, 2); // Returns 5.00
+ * CleanDivideNull(10, 0); // Returns null
+ * CleanDivideNull(10, null); // Returns null
+ * CleanDivideNull(null, 2); // Returns null
  */
 export const CleanDivideNull = (numerator: any, denominator: any, decimals?: number): number | null => {
-	if (numerator === undefined || numerator === null) return null
+	const useNumerator = CleanNumberNull(numerator)
+	if (useNumerator === null) return null
 
 	const useDenominator = CleanNumber(denominator)
 
 	if (useDenominator === 0) return null
 
 	return decimals !== undefined
-		? CleanNumber(CleanNumber(numerator) / useDenominator, decimals)
-		: CleanNumber(numerator) / useDenominator
+		? CleanNumber(CleanNumber(useNumerator) / useDenominator, decimals)
+		: CleanNumber(useNumerator) / useDenominator
 }
 
 /**
- *
- * @param numerator
- * @param denominator
- * @param decimals
- * @constructor
+ * Performs division operation and returns the result. Takes care of `null` and `0` denominator cases.
+ * @param numerator - The top number in a division.
+ * @param denominator - The bottom number in a division.
+ * @param decimals - The number of decimal places to include in the quotient. Optional.
+ * @returns The quotient of the division if denominator is not `0` or `null`, otherwise returns `0`.
+ * @function CleanDivide
+ * @example
+ * CleanDivide(5, 2, 1); // Returns 2.5
+ * CleanDivide(5, 0); // Returns 0
+ * CleanDivide(5, null); // Returns 0
+ * CleanDivide(null, 2); // Returns 0
  */
 export const CleanDivide = (numerator: any, denominator: any, decimals?: number): number =>
 	CleanDivideNull(numerator, denominator, decimals) ?? 0
@@ -243,7 +271,7 @@ export const CleanSubtractNumbers = (roundTo: number, ...values: (any | any[])[]
  * CleanNumberNull('100.12', 1)
  */
 export const CleanNumberNull = (value: any, roundClean?: number): number | null => {
-	if (value === undefined || value === null) return null
+	if (value === undefined || value === null || value === '') return null
 
 	let parsed = CleanNumber(value, roundClean, true)
 
@@ -253,7 +281,17 @@ export const CleanNumberNull = (value: any, roundClean?: number): number | null 
 }
 
 /**
- * A wrapper function for JSON.parse with try/catch.
+ * Tries to parse a JSON string into an object and returns it.
+ * If parsing fails or the input is not a valid JSON, it returns `null`.
+ * Already parsed objects are returned as is.
+ * @param json - The JSON string to parse.
+ * @returns The parsed object of type `T` or `null` if parsing fails or input is not a valid JSON.
+ * @template T - The expected type of the parsed object.
+ * @function JSONParse
+ * @example
+ * JSONParse<{ name: string }>('{"name": "Bob"}'); // Returns { name: 'Bob' }
+ * JSONParse('invalid JSON'); // Returns null
+ * JSONParse(null); // Returns null
  */
 export const JSONParse = <T = any>(json: any): T | null => {
 	if (!json) {
@@ -360,19 +398,25 @@ export const GenerateUUID = () => {
 	})
 }
 
+export type TIsOnOptions = {
+	yeses?: string[]
+	nos?: string[]
+}
+
 /**
- * Determines a value is active or on. Returns true when the value
- * is one of the following:
- * 'true', 'active', 'on', 'yes', 'y'
- *
+ * Function `IsOn` checks if a given value can be considered as a boolean 'true' value.
+ * It performs various checks on the given value to determine if it can be considered 'on' or 'true'.
+ * By default, the values considered as 'true' are 'true', 'active', 'on', 'yes', 'y', 't' and all positive numbers.
+ * @param value - The value to be checked.
+ * @param options - (Optional) An object that you can use to specify additional 'true' or 'false' values. 'nos' key for 'false' and 'yeses' key for 'true'.
+ * @returns A boolean indicating whether the value can be considered as a 'true' or 'positive'.
  * @example
- * // return true
- * IsOn('active')
  *
- * // return false
- * IsOn('inactive')
+ * const result = IsOn('active'); // result is true.
+ * const result2 = IsOn(15); // result2 is true.
+ * const result3 = IsOn('new', {yeses: ['new']}); // result3 is true.
  */
-export const IsOn = (value: any): boolean => {
+export const IsOn = (value: any, options?: TIsOnOptions): boolean => {
 	if (!value) {
 		return false
 	}
@@ -386,7 +430,14 @@ export const IsOn = (value: any): boolean => {
 		return floatValue > 0
 	}
 
-	return ['true', 'active', 'on', 'yes', 'y', 't'].includes(value.toString().toLowerCase().trim())
+	let useValue = value.toString().toLowerCase().trim()
+
+	return (
+		!(options?.nos ?? []).some((no) => no.toString().toLowerCase().trim() === useValue) &&
+		['true', 'active', 'on', 'yes', 'y', 't', ...(options?.yeses ?? [])].some(
+			(yes) => yes.toString().toLowerCase().trim() === useValue
+		)
+	)
 }
 
 /**
@@ -492,7 +543,7 @@ export const AddressSingleRow = (object: any, prefix?: string): string => {
 	if (!!(object[usePrefix + 'address_2'] ?? '')) singleRow += ', ' + object[usePrefix + 'address_2']
 	if (!!(object[usePrefix + 'city'] ?? '')) singleRow += ', ' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) singleRow += ', ' + object[usePrefix + 'state']
-	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + object[usePrefix + 'zip']
+	if (!!(object[usePrefix + 'zip'] ?? '')) singleRow += '  ' + FormatZip(object[usePrefix + 'zip'])
 
 	return singleRow
 }
@@ -525,7 +576,7 @@ export const AddressMultiRow = (object: any, prefix?: string): string => {
 
 	if (!!(object[usePrefix + 'city'] ?? '')) multiRow += '\n' + object[usePrefix + 'city']
 	if (!!(object[usePrefix + 'state'] ?? '')) multiRow += ', ' + object[usePrefix + 'state']
-	if (!!(object[usePrefix + 'zip'] ?? '')) multiRow += '  ' + object[usePrefix + 'zip']
+	if (!!(object[usePrefix + 'zip'] ?? '')) multiRow += '  ' + FormatZip(object[usePrefix + 'zip'])
 
 	return multiRow
 }
@@ -832,6 +883,48 @@ export function PickProperty<T extends object, K extends Extract<keyof T, string
 }
 
 /**
+ * Retrieves the value of the property or properties from a given object, comparing keys in a case-insensitive manner.
+ * Works with a single property or an array of properties. The function returns the value of the first matching property found.
+ * It can process null, undefined, or actual values for both input object and properties.
+ *
+ * @param obj - The object to examine. This can be any JS object, or null, or undefined.
+ * @param props - The single string or array of strings specifying the name(s) of the property or properties to retrieve.
+ * This also accepts null or undefined. The comparison with object keys is case-insensitive.
+ *
+ * @return The value of the first property found in the object that matches one of the input properties; `undefined` otherwise.
+ */
+export function GetPropertyValueCaseInsensitive(
+	obj: any | null | undefined,
+	props: string | string[] | null | undefined
+): any {
+	let values: any[] = []
+
+	const useProps = ToArray(props)
+		.map((prop) => prop?.toString().toLowerCase().trim())
+		.filter((prop) => !!prop) as string[]
+	if (obj && useProps.length) {
+		const keys = Object.keys(obj)
+		for (const prop of useProps) {
+			for (const key of keys) {
+				if (key.toLowerCase().trim() === prop) {
+					values.push(obj[key])
+				}
+			}
+		}
+	}
+
+	// console.info(obj, props, values)
+
+	if (values.length) {
+		// Prioritize fields with truthy values over falsey values, otherwise go with the first found value according to the list of props
+		const validIdx = values.findIndex((val) => !!val && !!val.toString().trim().length)
+		return validIdx >= 0 ? values[validIdx] : values[0]
+	}
+
+	return undefined
+}
+
+/**
  *
  * @param remove
  * @param value
@@ -999,4 +1092,70 @@ export async function ConsoleAsyncTime<T>(name: string, asyncFunction: Promise<T
 	console.log(name, DateDiffLongDescription(start, 'now'))
 
 	return result
+}
+
+/**
+ * `AddPrefixToObject` is a TypeScript utility type that adds a specified
+ * string prefix to the keys of an object.
+ *
+ * @template T - The original object type.
+ * @template P - The string prefix to be added to the keys of the object.
+ *
+ * @typedef {{
+ *   [K in keyof T as K extends string ? `${P}${K}` : never]: T[K]
+ * }} AddPrefixToObject
+ *
+ * @example
+ * // If T is `{ foo: number, bar: boolean }` and P is `'prefix_'`,
+ * // then `AddPrefixToObject<T, P>` will be `{ prefix_foo: number, prefix_bar: boolean }`.
+ */
+export type AddPrefixToObject<T, P extends string> = {
+	[K in keyof T as K extends string ? `${P}${K}` : never]: T[K]
+}
+
+/**
+ * Adds a prefix to each key in an object.
+ * @param {Object} obj - The input object.
+ * @param {string} prefix - The prefix to add.
+ * @return {Object} - The object with the keys prefixed.
+ */
+export function PrefixKeys<T extends Record<string, any>, S extends string>(
+	obj: T,
+	prefix: S
+): AddPrefixToObject<T, S> {
+	return Object.keys(obj).reduce<AddPrefixToObject<T, S>>((acc: any, key) => {
+		acc[`${prefix}${key}`] = obj[key]
+		return acc
+	}, {} as any)
+}
+
+/**
+ * Represents a type that prefixes keys of an object with a specified string.
+ * @template T - the original object type
+ * @template U - the prefix string type
+ */
+export type PrefixedKeys<T, U extends string> = {
+	[P in keyof T as P extends `${U}${infer Rest}` ? Rest : never]: T[P]
+}
+
+/**
+ * Extracts all keys from an object that have a specified prefix.
+ *
+ * @param {Record<string, any>} obj - The object from which to extract keys.
+ * @param {string} prefix - The prefix to match when extracting keys.
+ * @returns {Record<string, any>} - An object containing the extracted keys and their values.
+ */
+export function ExtractPrefixedKeys<T extends Record<string, any>, S extends string>(
+	obj: T,
+	prefix: S
+): PrefixedKeys<T, S> {
+	const extracted: any = {}
+
+	for (const key in obj) {
+		if (key.startsWith(prefix)) {
+			extracted[key.slice(prefix.length)] = obj[key]
+		}
+	}
+
+	return extracted
 }

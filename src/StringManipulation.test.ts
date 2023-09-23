@@ -1,5 +1,7 @@
 import {
 	AddS,
+	AddSBlank,
+	AddSNull,
 	AsteriskMatch,
 	BuildPath,
 	CleanScripts,
@@ -10,6 +12,7 @@ import {
 	FormatPhoneNumber,
 	FormatPhoneNumberDashes,
 	FormatPhoneNumberDots,
+	FormatTaxID,
 	FormatZip,
 	HasAlpha,
 	HasDigits,
@@ -20,6 +23,7 @@ import {
 	ReplaceLinks,
 	ShortNumber,
 	SplitNonWhiteSpace,
+	StringCompares,
 	TextToHTML,
 	ToCamelCase,
 	ToCurrency,
@@ -41,7 +45,7 @@ import {
 	UCWords
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
-import {expect, test, describe} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 test('String Functions', () => {
 	expect(ToSnakeCase('UserToken')).toBe('user_token')
@@ -81,7 +85,7 @@ test('String Functions', () => {
 		expect(ReplaceLinks(link)).toBe(anchor)
 	}
 	{
-		let link = '<img href="https://google.png" />'
+		let link = '<img alt="Test" src="https://google.png" />'
 		expect(ReplaceLinks(link)).toBe(link)
 	}
 	{
@@ -95,13 +99,13 @@ test('String Functions', () => {
 	}
 	{
 		let link = 'https://www.google.com'
-		let anchor = "<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a>"
+		let anchor = '<a href="https://www.google.com" target="_blank" class="testClass">https://www.google.com</a>'
 		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
 	}
 	{
 		let link = 'https://www.google.com\nnew line'
 		let anchor =
-			"<a href='https://www.google.com' target='_blank' class='testClass'>https://www.google.com</a><br />new line"
+			'<a href="https://www.google.com" target="_blank" class="testClass">https://www.google.com</a><br />new line'
 		expect(ReplaceLinks(link, 'testClass')).toBe(anchor)
 	}
 	{
@@ -119,6 +123,7 @@ test('String Functions', () => {
 		expect(HTMLToText('<p>john doe</p>')).toBe('john doe')
 		expect(HTMLToText('<p>john doe</p><script lang="ts">console.log(1)</script>')).toBe('john doe')
 		expect(TextToHTML('john doe\nnew line')).toBe('john doe<br />new line')
+		expect(TextToHTML(2)).toBe('2')
 		expect(TextToHTML('<p>john doe\nnew line</p>')).toBe('<p>john doe<br />new line</p>')
 	}
 	{
@@ -137,6 +142,14 @@ test('String Functions', () => {
 				value: 100,
 				expected: '$100.00',
 				decimal: '$100.0',
+				empty: ''
+			},
+			{
+				name: 'ToCurrencyBlank',
+				method: ToCurrencyBlank,
+				value: -100,
+				expected: '$-100.00',
+				decimal: '$-100.0',
 				empty: ''
 			},
 			{
@@ -231,6 +244,8 @@ test('String Functions', () => {
 	expect(FormatZip('123456789')).toBe('12345-6789')
 	expect(FormatZip('12345')).toBe('12345')
 	expect(FormatZip('12345-6789')).toBe('12345-6789')
+	expect(FormatTaxID('112222223')).toBe('11-2222223')
+	expect(FormatTaxID('11-2222223')).toBe('11-2222223')
 	expect(FormatExternalURL('www.google.com')).toBe('http://www.google.com')
 	expect(DisplayNameFromFL('John', 'Doe', 'Smith', 'Jr.')).toBe('Doe, John Smith, Jr.')
 	expect(
@@ -278,9 +293,45 @@ test('AddS', () => {
 	expect(AddS('Row', 0)).toBe('Rows')
 	expect(AddS('Row', 1)).toBe('Row')
 	expect(AddS('Row', 2)).toBe('Rows')
+	expect(AddS('Row', 0, true)).toBe('0 Rows')
+	expect(AddS('Row', 1, true)).toBe('1 Row')
+	expect(AddS('Row', 2, true)).toBe('2 Rows')
 	expect(AddS('Patch', 0)).toBe('Patches')
 	expect(AddS('Patch', 1)).toBe('Patch')
 	expect(AddS('Patch', 2)).toBe('Patches')
+	expect(AddS('Patch', 0, true)).toBe('0 Patches')
+	expect(AddS('Patch', 1, true)).toBe('1 Patch')
+	expect(AddS('Patch', 2, true)).toBe('2 Patches')
+	expect(AddS('Journey', 0)).toBe('Journeys')
+	expect(AddS('Journey', 1)).toBe('Journey')
+	expect(AddS('Journey', 2)).toBe('Journeys')
+	expect(AddS('Journey', 0, true)).toBe('0 Journeys')
+	expect(AddS('Journey', 1, true)).toBe('1 Journey')
+	expect(AddS('Journey', 2, true)).toBe('2 Journeys')
+	expect(AddS('Category', 0)).toBe('Categories')
+	expect(AddS('Category', 1)).toBe('Category')
+	expect(AddS('Category', 2)).toBe('Categories')
+	expect(AddS('Category', 0, true)).toBe('0 Categories')
+	expect(AddS('Category', 1, true)).toBe('1 Category')
+	expect(AddS('Category', 2, true)).toBe('2 Categories')
+})
+
+test('AddSNull', () => {
+	expect(AddSNull('Row', 0)).toBe(null)
+	expect(AddSNull('Row', 1)).toBe('Row')
+	expect(AddSNull('Row', 2)).toBe('Rows')
+	expect(AddSNull('Patch', 0)).toBe(null)
+	expect(AddSNull('Patch', 1)).toBe('Patch')
+	expect(AddSNull('Patch', 2)).toBe('Patches')
+})
+
+test('AddSBlank', () => {
+	expect(AddSBlank('Row', 0)).toBe('')
+	expect(AddSBlank('Row', 1)).toBe('Row')
+	expect(AddSBlank('Row', 2)).toBe('Rows')
+	expect(AddSBlank('Patch', 0)).toBe('')
+	expect(AddSBlank('Patch', 1)).toBe('Patch')
+	expect(AddSBlank('Patch', 2)).toBe('Patches')
 })
 
 test('ShortNumber', () => {
@@ -384,5 +435,23 @@ describe('HasDigits', () => {
 
 	test('String with only non-digit characters returns false', () => {
 		expect(HasDigits('abcde')).toBe(false)
+	})
+})
+
+describe('StringCompares', () => {
+	test('Two strings', () => {
+		const start = [1, 2, 3, 4, 7, 8].map((id) => `Test${id}`).join('\r\n')
+		const end = [1, 2, 5, 6, 8].map((id) => `Test${id}`).join('\r\n')
+
+		expect(StringCompares(start, end)).toStrictEqual([
+			{result: 'Same', value: 'Test1'},
+			{result: 'Same', value: 'Test2'},
+			{result: 'Deleted', value: 'Test3'},
+			{result: 'Deleted', value: 'Test4'},
+			{result: 'Deleted', value: 'Test7'},
+			{result: 'Inserted', value: 'Test5'},
+			{result: 'Inserted', value: 'Test6'},
+			{result: 'Same', value: 'Test8'}
+		])
 	})
 })

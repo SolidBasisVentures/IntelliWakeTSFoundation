@@ -159,9 +159,16 @@ export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, co
 				newObj[key] = ConstrainOthers(ConstrainType(newObj[key], fieldConstraint), fieldConstraint)
 			}
 
-			if (fieldConstraint.nullable && !newObj[key]) {
-				if(typeof newObj[key] !== 'boolean')
-					newObj[key] = null
+			if (
+				!fieldConstraint.nullIfFalsey &&
+				fieldConstraint.nullable &&
+				(fieldConstraint.type === 'number' ? isNullUndefined(newObj[key]) || newObj[key] === '' : !newObj[key])
+			) {
+				if (typeof newObj[key] !== 'boolean') newObj[key] = null
+			}
+
+			if (fieldConstraint.nullIfFalsey && !newObj[key]) {
+				newObj[key] = null
 			}
 		} else {
 			delete newObj[key]
@@ -195,11 +202,32 @@ export type TObjectFromFormDataOptions<T extends Record<string, any> = Record<st
 }
 
 /**
- * Converts FormData to an object... Recommend using "constraint" option
+ * This function transforms FormData into an object of type T. It allows for selective inclusion or
+ * exclusion of form data entries and provides functionality for default values and constraints.
  *
- * @param formData
- * @param options
- * @constructor
+ * @template T - The type of the return object. Must extend Record<string, any | null>.
+ *               Defaults to Record<string, any | null> if not provided.
+ *
+ * @param {FormData} formData - The FormData instance to transform into an object.
+ * @param {TObjectFromFormDataOptions<T>} [options] - Optional configuration for the transformation.
+ *   These options can include default values for keys, include/exclude certain keys, or set certain keys
+ *   to be treated as array. It also allows to apply generic constraints on resulting object. If not provided,
+ *   all keys and their respective values in the FormData will be included in the returned object.
+ *
+ * @returns {T} - The transformed input FormData as an object of type T.
+ *
+ * @example
+ *  const formData = new FormData();
+ *  formData.append("key1", "value1");
+ *  formData.append("key2", "value2");
+ *  const options = {
+ *    default: {
+ *      key1: "default1",
+ *      key2: "default2",
+ *    },
+ *    includeColumns: ["key1"]
+ *  };
+ *  const obj = ObjectFromFormData(formData, options);
  */
 export const ObjectFromFormData = <T extends Record<string, any | null> = Record<string, any | null>>(
 	formData: FormData,
@@ -240,4 +268,38 @@ export const ObjectFromFormData = <T extends Record<string, any | null> = Record
 	}
 
 	return returnObject
+}
+
+/**
+ * Converts an object into a FormData instance. If the input is already an instance of FormData, returns the
+ * given FormData instance.
+ *
+ * @param {Record<string, any> | FormData} obj - An object or FormData instance to be transformed into FormData.
+ *
+ * @returns {FormData} - The transformed input object as a FormData instance or the input FormData instance itself.
+ *
+ * @example
+ *  const obj = {
+ *    key1: "value1",
+ *    key2: "value2",
+ *  };
+ *  const formData = FormDataFromObject(obj);
+ *  // formData is now a FormData instance with key1 and key2 appended
+ */
+export const FormDataFromObject = (obj: Record<string, any> | FormData): FormData => {
+	if (obj instanceof FormData) return obj
+
+	const formData = new FormData()
+
+	for (const key of Object.keys(obj)) {
+		if (Array.isArray(obj[key])) {
+			for (const item of obj[key]) {
+				formData.append(key, item)
+			}
+		} else {
+			formData.append(key, obj[key])
+		}
+	}
+
+	return formData
 }

@@ -6,6 +6,7 @@
  *
  */
 import {CleanNumber, CleanNumberNull, ReplaceAll, RoundTo, ToArray} from './Functions'
+import {isNullUndefined} from './SortSearch'
 
 /**
  * Splits a string into its component words
@@ -207,7 +208,7 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
 	// noinspection HtmlUnknownTarget
 	const target = !classes
 		? "<a href='$1' target='_blank'>$1</a>"
-		: `<a href='$1' target='_blank' class='${classes}'>$1</a>`
+		: `<a href="$1" target="_blank" class="${classes}">$1</a>`
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
 }
@@ -220,10 +221,10 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
  * CleanScripts('<script>console.log(1)</script>blank')
  *
  */
-export const CleanScripts = function (subject: string | undefined | null): string {
+export const CleanScripts = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
-	return subject.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+	return subject.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
 	// return subject.replace(/<.*?script.*?>.*?<\/.*?script.*?>/gim, '')
 }
 
@@ -235,7 +236,7 @@ export const CleanScripts = function (subject: string | undefined | null): strin
  * TextToHTML('<p>john doe</p>')
  *
  */
-export const TextToHTML = function (subject: string | undefined | null): string {
+export const TextToHTML = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	let str = CleanScripts(subject) //.replace(/(<([^>]+)>)/gi, '')
@@ -250,7 +251,8 @@ export const TextToHTML = function (subject: string | undefined | null): string 
  * HTMLToText('<p>john doe</p>') // returns john doe
  *
  */
-export const HTMLToText = (subject: string | undefined | null): string => CleanScripts(subject).replace(/<[^>]*>/g, '')
+export const HTMLToText = (subject: string | number | undefined | null): string =>
+	CleanScripts(subject).replace(/<[^>]*>/g, '')
 
 /**
  *
@@ -260,8 +262,8 @@ export const HTMLToText = (subject: string | undefined | null): string => CleanS
  * @constructor
  *
  */
-export const LeftPad = (subject: string | undefined | null, length: number, padString: string): string => {
-	let str = subject ?? ''
+export const LeftPad = (subject: string | number | undefined | null, length: number, padString: string): string => {
+	let str = (subject ?? '').toString()
 
 	while (str.length < length) str = padString + str
 
@@ -275,8 +277,8 @@ export const LeftPad = (subject: string | undefined | null, length: number, padS
  * @constructor
  *
  */
-export const RightPad = (subject: string | undefined | null, length: number, padString: string): string => {
-	let str = subject ?? ''
+export const RightPad = (subject: string | number | undefined | null, length: number, padString: string): string => {
+	let str = (subject ?? '').toString()
 
 	while (str.length < length) str = str + padString
 
@@ -363,7 +365,7 @@ export const ToPercentMax = (value: any, decimals: number = 9): string => {
  *
  */
 export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -388,7 +390,7 @@ export const ToCurrencyBlank = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -414,7 +416,7 @@ export const ToCurrencyDash = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToPercentBlank = (value: any, decimals: number = 2): string => {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -439,7 +441,7 @@ export const ToPercentBlank = (value: any, decimals: number = 2): string => {
  *
  */
 export const ToPercentDash = (value: any, decimals: number = 2): string => {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -493,7 +495,7 @@ export const ToDigitsMax = function (value: any, decimals: number = 9): string {
  *
  */
 export const ToDigitsBlank = function (value: any, decimals: number = 0) {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
 
@@ -516,7 +518,7 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  *
  */
 export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
-	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
 
@@ -538,7 +540,7 @@ export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
  *
  */
 export const ToDigitsDash = function (value: any, decimals: number = 0) {
-	if (!value || isNaN(value) || CleanNumber(value) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
 
@@ -561,7 +563,7 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  *
  */
 export const ToDigitsDashMax = function (value: any, decimals: number = 9) {
-	if (!value || isNaN(value) || CleanNumber(value, decimals) === 0) {
+	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
 
@@ -670,10 +672,39 @@ export interface IPhoneComponents {
 }
 
 /**
+ * Extracts and returns the components of a phone number.
  *
- * @param phone
- * @constructor
+ * @param phone - The input phone number as a string, which can be `null` or `undefined`.
+ * @param bestGuess - An optional boolean flag (default is `true`) that determines
+ *                    whether to return an object with the best guess of the
+ *                    components if the input phone format is incorrect.
+ * @returns An `IPhoneComponents` object with the extracted components, or `null`
+ *          if the input phone number is not provided or cannot be parsed under
+ *          the specified conditions.
  *
+ * @remarks
+ * The function takes a phone number string and extracts its components:
+ * - countryCode
+ * - areaCode
+ * - exchangeNumber
+ * - subscriberNumber
+ * - extension
+ *
+ * The `bestGuess` flag allows choosing between returning an object with potential
+ * partially correct components (if set to `true`) or refusing to return anything
+ * (`null`) if the format is incorrect.
+ *
+ * Example usage:
+ *
+ * const phoneComponents = PhoneComponents("(123) 456-7890", false);
+ * console.log(phoneComponents);
+ * // Output: {
+ * //   countryCode: "",
+ * //   areaCode: "123",
+ * //   exchangeNumber: "456",
+ * //   subscriberNumber: "7890",
+ * //   extension: ""
+ * // }
  */
 export const PhoneComponents = (phone: string | null | undefined, bestGuess = true): IPhoneComponents | null => {
 	if (!phone) return null
@@ -853,13 +884,34 @@ export const FormatPhoneNumberDashes = (phone: string | null | undefined, bestGu
  * FormatZip('123456789')
  *
  */
-export const FormatZip = (zip: string) => {
+export const FormatZip = (zip: string | number | null | undefined) => {
 	//Filter only numbers from the input
-	let cleaned = ('' + zip).replace(/\D/g, '')
+	let cleaned = ('' + (zip ?? '')).toString().replace(/\D/g, '')
 
 	// check if the input is a 9 digit code
 	if (cleaned.length === 9) {
 		cleaned = cleaned.replace(/(\d{5})/, '$1-')
+	}
+
+	return cleaned
+}
+
+/**
+ * Formats a tax number by adding a hyphen.
+ *
+ * @example
+ * // returns "11-2222222"
+ * FormatTaxID('112222222')
+ *
+ */
+export const FormatTaxID = (taxID: string | number | null | undefined) => {
+	if (!taxID) return null
+	//Filter only numbers from the input
+	let cleaned = ('' + (taxID ?? '')).toString().replace(/\D/g, '')
+
+	// check if the input is a 9 digit code
+	if (cleaned.length === 9) {
+		cleaned = cleaned.replace(/(\d{2})/, '$1-')
 	}
 
 	return cleaned
@@ -873,7 +925,7 @@ export const FormatZip = (zip: string) => {
  * FormatExternalURL('www.google.com')
  *
  */
-export const FormatExternalURL = (url: string): string => {
+export const FormatExternalURL = (url: string | null | undefined): string => {
 	if (!!url) {
 		if (!url.startsWith('http')) {
 			return 'http://' + url
@@ -1024,7 +1076,67 @@ export const RandomKey = (length: number) =>
 	RandomString(length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12346789')
 
 /**
+ * Checks if a character is a vowel.
+ *
+ * @param {string} char - The character to check.
+ * @returns {boolean} True if the character is a vowel, false otherwise.
+ * @example
+ * IsVowel('a'); // returns true
+ * IsVowel('b'); // returns false
+ * @export
+ */
+export function IsVowel(char: string) {
+	return 'aeiou'.indexOf(char.toLowerCase()) !== -1
+}
+
+/**
  * Takes in text, and adds an "s" to the end of it if the count is zero or > 1
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ * Note: An ending 'y' is changed to ies if the previous letter to the 'y' is not a vowel
+ *
+ * @param text
+ * @param count
+ * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
+ * @constructor
+ *
+ */
+export function AddS(
+	text?: string | null,
+	count?: number | null,
+	showNumber = false,
+	maxDecimals = 0,
+	minDecimals: number | null = null
+): string {
+	if (!text) return ''
+
+	let useText = text
+	let checkText = (text ?? '').toLowerCase()
+	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
+	let addValue = ''
+	if (CleanNumber(numericText) !== 1) {
+		if (checkText.endsWith('y') && !IsVowel(checkText.charAt(checkText.length - 2))) {
+			useText = useText.substring(0, useText.length - 1)
+			addValue = 'ies'
+		} else {
+			addValue = !text
+				? 's'
+				: checkText.endsWith('s') ||
+				  checkText.endsWith('z') ||
+				  checkText.endsWith('ch') ||
+				  checkText.endsWith('sh') ||
+				  checkText.endsWith('x')
+				? 'es'
+				: 's'
+		}
+	}
+	return `${showNumber ? numericText : ''} ${useText}${addValue}`.trim()
+}
+
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is > 1
+ * If the count is zero, returns null
  * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
  *
  * @param text
@@ -1035,27 +1147,38 @@ export const RandomKey = (length: number) =>
  * @constructor
  *
  */
-export const AddS = (
+export function AddSNull(
 	text?: string | null,
 	count?: number | null,
 	showNumber = false,
 	maxDecimals = 0,
 	minDecimals: number | null = null
-): string => {
-	const checkText = (text ?? '').toLowerCase()
-	const numericText = ToDigits(count ?? 0, maxDecimals, minDecimals)
-	let addValue = !text
-		? 's'
-		: checkText.endsWith('s') ||
-		  checkText.endsWith('z') ||
-		  checkText.endsWith('ch') ||
-		  checkText.endsWith('sh') ||
-		  checkText.endsWith('x')
-		? 'es'
-		: 's'
-	return !text
-		? ''
-		: `${showNumber ? numericText : ''} ${text}${CleanNumber(numericText) !== 1 ? addValue : ''}`.trim()
+): string | null {
+	if (!count) return null
+	return AddS(text, count, showNumber, maxDecimals, minDecimals)
+}
+
+/**
+ * Takes in text, and adds an "s" to the end of it if the count is > 1
+ * If the count is zero, returns a blank string
+ * Note: An 'es' is added if the word ends in: s, ss, z, ch, sh, or x
+ *
+ * @param text
+ * @param count
+ * @param showNumber
+ * @param maxDecimals
+ * @param minDecimals
+ * @constructor
+ *
+ */
+export function AddSBlank(
+	text?: string | null,
+	count?: number | null,
+	showNumber = false,
+	maxDecimals = 0,
+	minDecimals: number | null = null
+): string {
+	return AddSNull(text, count, showNumber, maxDecimals, minDecimals) ?? ''
 }
 
 /**
@@ -1193,4 +1316,115 @@ export const HasAlpha = (value: string | number | null | undefined): boolean => 
 	if (!value) return false
 
 	return !!value.toString().match(/[a-zA-Z]/)
+}
+
+export enum EStringComparisonResult {
+	Same = 'Same',
+	Inserted = 'Inserted',
+	Deleted = 'Deleted'
+	// Modified = 'Modified'
+}
+
+export type TStringComparison = {
+	result: EStringComparisonResult
+	value: string
+	newValue?: string
+}
+
+/**
+ * Compares two strings line by line and returns an array of comparison results.
+ *
+ * @param startString - The starting string for comparison. Can be a string, null, or undefined.
+ * @param endString - The ending string for comparison. Can be a string, null, or undefined.
+ * @returns {TStringComparison[]} - An array of TStringComparison objects summarizing the differences between the two input strings.
+ * Each object contains a `result` (EStringComparisonResult) and a `value` (string) that indicates the line content.
+ *
+ * The EStringComparisonResult has the following possibilities:
+ * - EStringComparisonResult.Same: The line is the same in both strings.
+ * - EStringComparisonResult.Inserted: The line is inserted in the `endString` compared to the `startString`.
+ * - EStringComparisonResult.Deleted: The line is deleted in the `endString` compared to the `startString`.
+ */
+export function StringCompares(
+	startString: string | null | undefined,
+	endString: string | null | undefined
+): TStringComparison[] {
+	let comparisons: TStringComparison[] = []
+
+	let starts = (startString ?? '').split(/[\r\n]+/g)
+	let ends = (endString ?? '').split(/[\r\n]+/g)
+
+	while (starts.length || ends.length) {
+		if (!ends.length) {
+			comparisons = [
+				...comparisons,
+				...starts.map((start) => ({result: EStringComparisonResult.Deleted, value: start}))
+			]
+			starts = []
+			continue
+		}
+		if (!starts.length) {
+			comparisons = [
+				...comparisons,
+				...ends.map((start) => ({result: EStringComparisonResult.Inserted, value: start}))
+			]
+			ends = []
+			continue
+		}
+		if (starts[0] === ends[0]) {
+			comparisons = [
+				...comparisons,
+				{
+					result: EStringComparisonResult.Same,
+					value: starts[0]
+				}
+			]
+			starts = starts.slice(1)
+			ends = ends.slice(1)
+			continue
+		}
+		let found = false
+		for (let i = 0; i < ends.length; i++) {
+			const nextStartIdx = starts.findIndex((start) => ends[i] === start)
+			if (nextStartIdx > 0) {
+				comparisons = [
+					...comparisons,
+					...starts
+						.filter((_, idx) => idx < nextStartIdx)
+						.map((start) => ({
+							result: EStringComparisonResult.Deleted,
+							value: start
+						}))
+				]
+				starts = starts.slice(nextStartIdx)
+				found = true
+				break
+			}
+		}
+		if (found) continue
+		{
+			const nextEndIdx = ends.findIndex((end) => starts[0] === end)
+			if (nextEndIdx >= 0) {
+				comparisons = [
+					...comparisons,
+					...ends
+						.filter((_, idx) => idx < nextEndIdx)
+						.map((end) => ({
+							result: EStringComparisonResult.Inserted,
+							value: end
+						}))
+				]
+				ends = ends.slice(nextEndIdx)
+				found = true
+			}
+		}
+		if (found) continue
+		console.log('-------------- Could not compare')
+		console.log(comparisons)
+		console.log(starts)
+		console.log(ends)
+		console.log('--------------')
+		// break
+		throw new Error('Could not finish comparing')
+	}
+	return comparisons
 }
