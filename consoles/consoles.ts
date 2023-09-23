@@ -7,16 +7,13 @@ import {
 	ESTTodayDateTimeLabel,
 	TimeOnly
 } from '../src/DateManager'
+import {StringGetSets} from '../src/Evaluator'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-process.env.TZ = 'UTC'
-
-console.log(DateObject(`${DateOnly('now')} 12:00:00`))
-console.log(DateObject(`${DateOnly('now')} 12:00:00`, {timezoneSource: 'America/New_York'}))
-console.log(DateObject(`${DateOnly('now')} 12:00:00 America/New_York`))
+console.log('Sets', StringGetSets('Test[1]-[2][3]-[4[1]][[1]5]', '[', ']'))
 
 console.timeEnd('Consoles')

@@ -1,4 +1,4 @@
-import {EvaluateCondition, EvaluateString, TVariables} from './Evaluator'
+import {EvaluateCondition, EvaluateString, StringGetSets, TVariables} from './Evaluator'
 import {test, expect} from 'vitest'
 
 const variables: TVariables = {
@@ -60,3 +60,7 @@ for (const evalCondition of evalConditions) {
 		expect(EvaluateCondition(evalCondition[0], variables)).toBe(evalCondition[1])
 	})
 }
+
+test('StringGetSets', () => {
+	expect(StringGetSets('Test[1]-[2][3]-[4[1]][[1]5]', '[', ']')).toEqual(['1', '2', '3', '4[1]', '[1]5'])
+})

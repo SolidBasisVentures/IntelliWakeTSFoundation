@@ -96,6 +96,47 @@ const FindInnerSetLocations = (
 	return null
 }
 
+const FindOuterSetLocation = (stringItem: string | null, setStart: string, setEnd: string): [number, number] | null => {
+	if (!!stringItem) {
+		const firstSetIDX = stringItem.indexOf(setStart)
+		if (firstSetIDX >= 0) {
+			let internalSetCount = 0
+			for (let i = firstSetIDX + 1; i < stringItem.length; i++) {
+				if (stringItem.charAt(i) === setStart) {
+					internalSetCount++
+				} else if (stringItem.charAt(i) === setEnd) {
+					if (internalSetCount) {
+						internalSetCount--
+					} else {
+						return [firstSetIDX, i]
+					}
+				}
+			}
+		}
+	}
+
+	return null
+}
+
+export function StringGetSets(stringItem: string | null, setStart: string, setEnd: string): string[] {
+	if (!stringItem) return []
+
+	let evaluateString = stringItem
+	const returnStrings: string[] = []
+
+	let inners = FindOuterSetLocation(evaluateString, setStart, setEnd)
+
+	while (inners) {
+		returnStrings.push(evaluateString.substring(inners[0] + 1, inners[1]))
+		evaluateString = evaluateString.substring(inners[1] + 1)
+		console.log(evaluateString, FindOuterSetLocation(evaluateString, setStart, setEnd))
+
+		inners = FindOuterSetLocation(evaluateString, setStart, setEnd)
+	}
+
+	return returnStrings
+}
+
 const ProcessPMDAS = (expression: string): string => {
 	let returnValue = ExecuteFunctions(expression)
 
