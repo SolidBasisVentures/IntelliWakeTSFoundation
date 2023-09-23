@@ -128,8 +128,8 @@ export function StringGetSets(stringItem: string | null, setStart: string, setEn
 
 	while (inners) {
 		returnStrings.push(evaluateString.substring(inners[0] + 1, inners[1]))
+
 		evaluateString = evaluateString.substring(inners[1] + 1)
-		console.log(evaluateString, FindOuterSetLocation(evaluateString, setStart, setEnd))
 
 		inners = FindOuterSetLocation(evaluateString, setStart, setEnd)
 	}
