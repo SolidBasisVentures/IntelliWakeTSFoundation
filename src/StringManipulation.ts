@@ -761,11 +761,11 @@ export const PhoneComponents = (phone: string | null | undefined, bestGuess = tr
 }
 
 /**
- * Returns a formatted ssn with dashes.
+ * Returns a formatted phone number.
  *
  * @example
- * // returns 123-12-1234
- * FormatSSN('123121234')
+ * // returns (123) 123-1234
+ * FormatPhoneNumber('1231231234')
  *
  */
 export const FormatPhoneNumber = (phone: string | null | undefined, bestGuess = true): string | null => {
@@ -781,6 +781,22 @@ export const FormatPhoneNumber = (phone: string | null | undefined, bestGuess = 
 	if (!!components.extension) val += ` ${components.extension}`
 
 	return val
+}
+
+/**
+ * Returns a formatted phone number in E.164 format for the US.
+ *
+ * @example
+ * // returns +12231231234
+ * FormatPhoneNumber('2231231234')
+ *
+ */
+export const FormatPhoneNumberE164US = (phone: string | null | undefined, bestGuess = true): string | null => {
+	const components = PhoneComponents(phone, bestGuess)
+
+	if (!components || !components.areaCode || !components.exchangeNumber || !components.subscriberNumber) return null
+
+	return `+1${components.areaCode}${components.exchangeNumber}${components.subscriberNumber}`
 }
 
 /**

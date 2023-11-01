@@ -11,7 +11,7 @@ import {
 	FormatExternalURL,
 	FormatPhoneNumber,
 	FormatPhoneNumberDashes,
-	FormatPhoneNumberDots,
+	FormatPhoneNumberDots, FormatPhoneNumberE164US,
 	FormatTaxID,
 	FormatZip,
 	HasAlpha,
@@ -241,6 +241,11 @@ test('String Functions', () => {
 	expect(FormatPhoneNumberDashes('(555)555-1234')).toStrictEqual('555-555-1234')
 	expect(FormatPhoneNumberDashes('555555123')).toStrictEqual('555-555-123')
 	expect(FormatPhoneNumberDashes('555555123', false)).toStrictEqual(null)
+	expect(FormatPhoneNumberE164US('555555123', false)).toStrictEqual(null)
+	expect(FormatPhoneNumberE164US('5555551234', false)).toStrictEqual('+15555551234')
+	expect(FormatPhoneNumberE164US('(555)555-1234 (Husband)', false)).toStrictEqual('+15555551234')
+	expect(FormatPhoneNumberE164US('555-555-1234 x1234', false)).toStrictEqual('+15555551234')
+	expect(FormatPhoneNumberE164US('+1 555-555-1234 x1234 (Mom)', false)).toStrictEqual('+15555551234')
 	expect(FormatZip('123456789')).toBe('12345-6789')
 	expect(FormatZip('12345')).toBe('12345')
 	expect(FormatZip('12345-6789')).toBe('12345-6789')
