@@ -10,7 +10,7 @@ import {
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
-	ExtractPrefixedKeys,
+	ExtractPrefixedKeys, ExtractWholeDecimal,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
@@ -64,6 +64,14 @@ test('RoundTo', () => {
 	expect(CleanNumbers(2, '$100', 12.234)).toBe(112.23)
 	expect(CleanNumbers(0, '$1,000', 12.236)).toBe(1012)
 	expect(CleanNumbers(0, '$1,000', [10, 2.236])).toBe(1012)
+	expect(ExtractWholeDecimal(1)).toEqual({whole: 1, decimal: 0})
+	expect(ExtractWholeDecimal(100)).toEqual({whole: 100, decimal: 0})
+	expect(ExtractWholeDecimal(0)).toEqual({whole: 0, decimal: 0})
+	expect(ExtractWholeDecimal(-100)).toEqual({whole: -100, decimal: 0})
+	expect(ExtractWholeDecimal(1.52)).toEqual({whole: 1, decimal: 0.52})
+	expect(ExtractWholeDecimal(100.3)).toEqual({whole: 100, decimal: 0.3})
+	expect(ExtractWholeDecimal(0.25)).toEqual({whole: 0, decimal: 0.25})
+	expect(ExtractWholeDecimal(-100.33)).toEqual({whole: -100, decimal: -0.33})
 })
 
 test('CleanNumber', () => {

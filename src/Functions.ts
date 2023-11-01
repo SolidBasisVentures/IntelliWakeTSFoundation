@@ -1159,3 +1159,17 @@ export function ExtractPrefixedKeys<T extends Record<string, any>, S extends str
 
 	return extracted
 }
+
+export function ExtractWholeDecimal(value: any): {whole: number; decimal: number} {
+	const useValue = CleanNumber(value, 5)
+
+	const whole = value < 0 ? Math.ceil(useValue) : Math.floor(useValue)
+
+	const decimal = CleanSubtractNumbers(5, value, whole)
+
+	return {
+		whole,
+		decimal
+	}
+
+}
