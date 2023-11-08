@@ -1160,6 +1160,12 @@ export function ExtractPrefixedKeys<T extends Record<string, any>, S extends str
 	return extracted
 }
 
+/**
+ * Extracts the whole and decimal parts from a given value.
+ *
+ * @param {any} value - The value to extract from.
+ * @returns {{whole: number; decimal: number}} - An object containing the whole and decimal parts of the value.
+ */
 export function ExtractWholeDecimal(value: any): {whole: number; decimal: number} {
 	const useValue = CleanNumber(value, 5)
 
@@ -1171,5 +1177,44 @@ export function ExtractWholeDecimal(value: any): {whole: number; decimal: number
 		whole,
 		decimal
 	}
+}
 
+export type TEvenDistribution = {
+	percentage: number
+	amount: number
+}
+
+/**
+ * Distributes the given amount evenly among the values based on their percentages.
+ *
+ * @param {number} amount - The total amount to be distributed.
+ * @param {number[]} values - An array of numbers representing the values.
+ * @param {number} toDecimals - Number of decimal places
+ * @returns {TEvenDistribution[]} - An array of objects representing the distribution.
+ */
+export function DistributeEvenly(amount: number, values: number[], toDecimals = 2): TEvenDistribution[] {
+	if (amount === 0 || values.some((val) => val < 0) || !values.some(val => !!val)) return []
+
+	let total = values.reduce((sum, value) => sum + value, 0)
+
+	let percentages = values.map((value) => CleanDivide(value, total) * 100)
+	let distribution: TEvenDistribution[] = []
+
+	// Get the last non-zero value
+	let lastIndex = values.reverse().findIndex((value) => value !== 0)
+	lastIndex = lastIndex < 0 ? 0 : values.length - 1 - lastIndex
+
+	let remaining = amount
+	percentages.forEach((percentage, index) => {
+		let distributed = parseFloat((amount * (percentage / 100)).toFixed(toDecimals))
+		remaining -= distributed
+
+		if (index === lastIndex)
+			// Add the remaining to the last non-zero value to take care of any cent discrepancy
+			distributed = CleanNumbers(toDecimals, remaining, distributed)
+
+		distribution.push({percentage, amount: distributed})
+	})
+
+	return distribution
 }

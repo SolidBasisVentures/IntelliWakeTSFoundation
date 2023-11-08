@@ -8,12 +8,13 @@ import {
 	TimeOnly
 } from '../src/DateManager'
 import {StringGetSets} from '../src/Evaluator'
+import {DistributeEvenly} from '../src/Functions'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log('Sets', StringGetSets('Test[1]-[2][3]-[4[1]][[1]5]', '[', ']'))
+console.log('Dist', DistributeEvenly(100, [0, 0, 0]))
 
 console.timeEnd('Consoles')

@@ -10,7 +10,9 @@ import {
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
-	ExtractPrefixedKeys, ExtractWholeDecimal,
+	DistributeEvenly,
+	ExtractPrefixedKeys,
+	ExtractWholeDecimal,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
@@ -333,5 +335,44 @@ test('Other', async () => {
 	expect(ExtractPrefixedKeys({employee_id: 1, employee_name: 'Dennis'}, 'employee_')).toStrictEqual({
 		id: 1,
 		name: 'Dennis'
+	})
+})
+
+describe('DistributeEvenly function', () => {
+	test('should distribute evenly for given input', () => {
+		let res = DistributeEvenly(100, [1, 2, 3])
+		expect(res).toEqual([
+			{percentage: 16.666666666666664, amount: 16.67},
+			{percentage: 33.33333333333333, amount: 33.33},
+			{percentage: 50, amount: 50}
+		])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(100)
+	})
+
+	test('should distribute all amount even if all values are 0', () => {
+		let res = DistributeEvenly(100, [0, 0, 0])
+		expect(res).toEqual([])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(0)
+	})
+
+	test('should handle single element array without error', () => {
+		let res = DistributeEvenly(50, [1])
+		expect(res).toEqual([{percentage: 100, amount: 50}])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(50)
+	})
+
+	test('should return empty array for 0 amount', () => {
+		let res = DistributeEvenly(0, [1, 2, 3])
+		expect(res).toEqual([])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(0)
+	})
+
+	test('should handle decimals correctly', () => {
+		let res = DistributeEvenly(100.51, [1, 1])
+		expect(res).toEqual([
+			{percentage: 50, amount: 50.26},
+			{percentage: 50, amount: 50.25}
+		])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(100.51)
 	})
 })
