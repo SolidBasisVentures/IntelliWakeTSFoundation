@@ -17,8 +17,8 @@ import {
 	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
-	DateWeekISONumber,
-	IANAZoneAbbr,
+	DateWeekISONumber, GreaterDate,
+	IANAZoneAbbr, LeastDate,
 	ManualParse,
 	MonthDatesFromDateISOWeeks,
 	SortCompareDate,
@@ -382,8 +382,8 @@ test('Date Managers', () => {
 			.toString()
 			.padStart(2, '0')}`
 	)
-	expect(DateOnly(null)).toEqual(new Date().toISOString().substring(0, 10))
-	expect(DateOnly(null, {formatLocale: true})).toEqual(
+	expect(DateOnly(null, {timezoneDisplay: process.env.TZ ?? 'America/New_York'})).toEqual(new Date().toISOString().substring(0, 10))
+	expect(DateOnly(null, {formatLocale: true, timezoneDisplay: process.env.TZ ?? 'America/New_York'})).toEqual(
 		CleanNumber(new Date().toISOString().substring(5, 7)).toString() +
 			'/' +
 			CleanNumber(new Date().toISOString().substring(8, 10)).toString() +
@@ -539,4 +539,7 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-12-01', 'America/Denver')).toEqual('MST')
 	expect(DatesBetween('2023-03-31', '2023-04-02')).toEqual(['2023-03-31', '2023-04-01', '2023-04-02'])
 	expect(DatesBetween('2023-04-02', '2023-03-31')).toEqual(['2023-04-02', '2023-04-01', '2023-03-31'])
+
+	expect(LeastDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-03-31')
+	expect(GreaterDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-04-02')
 })

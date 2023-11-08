@@ -1799,12 +1799,13 @@ const checkType = (
 }
 
 /**
+ * Compares two dates based on the specified evaluation type and optional minimum interval.
  *
- * @param date1
- * @param evalType
- * @param date2
- * @param minInterval
- * @constructor
+ * @param {TDateAny} date1 - The first date to compare.
+ * @param {'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter'} evalType - The evaluation type.
+ * @param {TDateAny | TDateParseOptions} date2 - The second date to compare. It can be a string, number, or Date object, or a TDateParseOptions object.
+ * @param {TDuration} [minInterval] - The optional minimum interval to consider when comparing the dates.
+ * @returns {boolean} - Whether the comparison condition is satisfied or not.
  */
 export const DateCompare = (
 	date1: TDateAny,
@@ -1890,6 +1891,50 @@ export const DateCompare = (
 	}
 
 	return checkType(evalType, msDifference)
+}
+
+/**
+ * Finds the least date from the given list of dates.
+ *
+ * @param {...TDateAny[]} dates - The dates to compare.
+ * @returns {string | null} - The least date from the list, or null if the list is empty.
+ */
+export function LeastDate(...dates: TDateAny[]): string | null {
+	return (
+		dates?.reduce<string | null>((result, date) => {
+			const dateOnly = DateOnlyNull(date)
+
+			if (!dateOnly) return result
+
+			if (!result) return dateOnly
+
+			if (DateCompare(dateOnly, 'IsBefore', result, 'day')) return dateOnly
+
+			return result
+		}, null) ?? null
+	)
+}
+
+/**
+ * Finds the greatest date among the given dates.
+ *
+ * @param {...TDateAny} dates - The dates to compare.
+ * @returns {string | null} - The greatest date or null if no valid date is found.
+ */
+export function GreaterDate(...dates: TDateAny[]): string | null {
+	return (
+		dates?.reduce<string | null>((result, date) => {
+			const dateOnly = DateOnlyNull(date)
+
+			if (!dateOnly) return result
+
+			if (!result) return dateOnly
+
+			if (DateCompare(dateOnly, 'IsAfter', result, 'day')) return dateOnly
+
+			return result
+		}, null) ?? null
+	)
 }
 
 /**
