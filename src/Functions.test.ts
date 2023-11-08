@@ -375,4 +375,13 @@ describe('DistributeEvenly function', () => {
 		])
 		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(100.51)
 	})
+
+	test('should handle decimals correctly', () => {
+		let res = DistributeEvenly(100.51, [1, 1], 0)
+		expect(res).toEqual([
+			{percentage: 50, amount: 50},
+			{percentage: 50, amount: 51}
+		])
+		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(101)
+	})
 })
