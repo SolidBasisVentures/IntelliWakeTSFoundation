@@ -9,7 +9,7 @@ import {
 	CleanNumbers,
 	CleanSubtractNumbers,
 	CoalesceFalsey,
-	ConsoleAsyncTime,
+	ConsoleAsyncTime, CountDecimalDigits,
 	DistributeEvenly,
 	ExtractPrefixedKeys,
 	ExtractWholeDecimal,
@@ -383,5 +383,13 @@ describe('DistributeEvenly function', () => {
 			{percentage: 50, amount: 51}
 		])
 		expect(res.reduce((result, re) => CleanNumbers(2, result, re.amount), 0)).toEqual(101)
+	})
+
+	test('Count Decimal Digits', () => {
+		expect(CountDecimalDigits("1")).toEqual(0)
+		expect(CountDecimalDigits("1.12304")).toEqual(5)
+		expect(CountDecimalDigits(1.12304)).toEqual(5)
+		expect(CountDecimalDigits("1.1230")).toEqual(3)
+		expect(CountDecimalDigits(1.1230)).toEqual(3)
 	})
 })

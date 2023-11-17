@@ -88,9 +88,24 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 }
 
 /**
+ * Count the number of decimal digits in a given number.
  *
- * @param values
- * @constructor
+ * @param {any} num - The number to count decimal digits for.
+ * @returns {number} - The number of decimal digits.
+ */
+export function CountDecimalDigits(num: any) {
+	let str = CleanNumber(num, 8).toString();
+	let decimalIndex = str.indexOf('.');
+
+	return decimalIndex === -1 ? 0 : str.length - decimalIndex - 1;
+}
+
+/**
+ * Returns the greatest number from the provided values.
+ * If no valid numbers are found, null is returned.
+ *
+ * @param {...(any | any[])} values - The values to evaluate.
+ * @returns {number | null} - The greatest number or null if no valid numbers are found.
  */
 export const GreaterNumberNull = (...values: (any | any[])[]): number | null =>
 	ValidNumbers(values).reduce<number | null>(
@@ -99,9 +114,10 @@ export const GreaterNumberNull = (...values: (any | any[])[]): number | null =>
 	)
 
 /**
+ * Calculates the greater number among the given values.
  *
- * @param values
- * @constructor
+ * @param {...(any|any[])[]} values - The values to compare.
+ * @returns {number} - The greater number among the given values. Returns 0 if no values are provided.
  */
 export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
 
@@ -117,16 +133,20 @@ export const LeastNumberNull = (...values: (any | any[])[]): number | null =>
 	)
 
 /**
+ * Calculates the least number among the given values.
+ * If any of the values passed are arrays, it considers the minimum value within each array.
+ * If no numbers are found, it returns 0.
  *
- * @param values
- * @constructor
+ * @param {...(any | any[])} values - The values to calculate the least number from.
+ * @returns {number} - The least number among the values.
  */
 export const LeastNumber = (...values: (any | any[])[]): number => LeastNumberNull(...values) ?? 0
 
 /**
+ * Returns an array of valid numbers from the given values.
  *
- * @param values
- * @constructor
+ * @param {...(any|any[])} values - One or more values or arrays of values.
+ * @returns {number[]} - An array of valid numbers.
  */
 export const ValidNumbers = (...values: (any | any[])[]): number[] => {
 	let returnValues: number[] = []
