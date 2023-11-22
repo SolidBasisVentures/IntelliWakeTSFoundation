@@ -1451,7 +1451,7 @@ export function StringCompares(
  * @template T - The type of the object the property belongs to.
  */
 export type TPropertyFixedFields<T extends Record<string, any>> = {
-	property: keyof T
+	property: keyof T | 'FIXED'
 	length: number
 	padCharacter?: string | null
 	rightJustify?: boolean
