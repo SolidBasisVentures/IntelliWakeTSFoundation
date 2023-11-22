@@ -17,7 +17,7 @@ import {
 	HasAlpha,
 	HasDigits,
 	HTMLToText,
-	IncludesHTML,
+	IncludesHTML, ObjectToFixedFields,
 	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
@@ -41,7 +41,7 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	ToWords,
+	ToWords, TPropertyFixedFields,
 	UCWords
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
@@ -458,5 +458,26 @@ describe('StringCompares', () => {
 			{result: 'Inserted', value: 'Test6'},
 			{result: 'Same', value: 'Test8'}
 		])
+	})
+
+
+	test("ObjectToFixedFields should format without transformations", () => {
+		const obj = { name: "John Doe", age: 26 }
+		const settings: TPropertyFixedFields<any>[] = [
+			{ property: "name", length: 10, rightJustify: false, padCharacter: '_'},
+			{ property: "age", length: 3, rightJustify: true }
+		]
+		const result = ObjectToFixedFields(obj, settings)
+		expect(result).toBe("John Doe__ 26")
+	})
+
+	test('ObjectToFixedFields should format with transformations', () => {
+		const obj = { name: "John Doe", age: 26 }
+		const settings: TPropertyFixedFields<any>[] = [
+			{ property: "name", length: 10, rightJustify: false, padCharacter: '_', transform: v => v.toUpperCase() },
+			{ property: "age", length: 3, rightJustify: true, transform: v => v + 1 }
+		]
+		const result = ObjectToFixedFields(obj, settings)
+		expect(result).toBe("JOHN DOE__ 27")
 	})
 })

@@ -1444,3 +1444,64 @@ export function StringCompares(
 	}
 	return comparisons
 }
+
+/**
+ * Represents the fixed fields of a property in a generic object.
+ *
+ * @template T - The type of the object the property belongs to.
+ */
+export type TPropertyFixedFields<T extends Record<string, any>> = {
+	property: keyof T
+	length: number
+	padCharacter?: string | null
+	rightJustify?: boolean
+	transform?: (val: any, obj: T) => string
+}
+
+/**
+ * Converts an object to fixed-length fields based on the provided settings.
+ *
+ * @param {object} obj - The object to convert.
+ * @param {Array<object>} settings - An array of settings that define the fixed-length fields.
+ * @param {string} [separator=''] - The string used to separate the fields.
+ * @returns {string} The fixed-length fields as a single string.
+ */
+export function ObjectToFixedFields<T extends Record<string, any>>(
+	obj: T,
+	settings: TPropertyFixedFields<T>[],
+	separator = ''
+) {
+	return settings
+		.map<string>((setting) => {
+			let val = (
+				(!!setting.transform
+					? setting.transform(obj[setting.property], obj)
+					: obj[setting.property] ?? '') as any
+			).toString()
+			if (setting.rightJustify) {
+				val = LeftPad(val.substring(val.length - setting.length), setting.length, setting.padCharacter ?? ' ')
+			} else {
+				val = RightPad(val.substring(0, setting.length), setting.length, setting.padCharacter ?? ' ')
+			}
+			return val
+		})
+		.join(separator)
+}
+
+/**
+ * Converts an array of objects into a string with fixed fields using the provided settings.
+ *
+ * @param {Array.<Object>} objs - The array of objects to convert.
+ * @param {Array.<Object>} settings - The settings for the fixed fields.
+ * @param {string} [separator=''] - The separator to use between fields. Default is an empty string.
+ * @param {string} [newLine='\r'] - The new line character to use. Default is '\r'.
+ * @return {string} The string with fixed fields.
+ */
+export function ObjectsToFixedFields<T extends Record<string, any>>(
+	objs: T[],
+	settings: TPropertyFixedFields<T>[],
+	separator = '',
+	newLine = '\r'
+) {
+	return objs.map((obj) => ObjectToFixedFields(obj, settings, separator)).join(newLine)
+}
