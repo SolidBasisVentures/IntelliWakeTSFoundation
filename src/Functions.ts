@@ -55,6 +55,18 @@ export const ReplaceAllMultiple = function (
 }
 
 /**
+ * Determines if the given value is a number.
+ *
+ * @param {any} value - The value to be checked.
+ * @returns {boolean} - Returns true if the value is a number, otherwise returns false.
+ */
+export function IsNumber(value: any): boolean {
+	const val = CleanNumber(value, undefined, true)
+
+	return val !== null && !isNaN(val)
+}
+
+/**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
@@ -94,10 +106,10 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
  * @returns {number} - The number of decimal digits.
  */
 export function CountDecimalDigits(num: any) {
-	let str = CleanNumber(num, 8).toString();
-	let decimalIndex = str.indexOf('.');
+	let str = CleanNumber(num, 8).toString()
+	let decimalIndex = str.indexOf('.')
 
-	return decimalIndex === -1 ? 0 : str.length - decimalIndex - 1;
+	return decimalIndex === -1 ? 0 : str.length - decimalIndex - 1
 }
 
 /**
@@ -1213,7 +1225,7 @@ export type TEvenDistribution = {
  * @returns {TEvenDistribution[]} - An array of objects representing the distribution.
  */
 export function DistributeEvenly(amount: number, values: number[], toDecimals = 2): TEvenDistribution[] {
-	if (amount === 0 || values.some((val) => val < 0) || !values.some(val => !!val)) return []
+	if (amount === 0 || values.some((val) => val < 0) || !values.some((val) => !!val)) return []
 
 	let total = values.reduce((sum, value) => sum + value, 0)
 

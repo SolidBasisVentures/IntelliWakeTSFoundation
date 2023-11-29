@@ -15,7 +15,7 @@ import {
 	ExtractWholeDecimal,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
-	GreaterNumberNull,
+	GreaterNumberNull, IsNumber,
 	IsOn,
 	JSONParse,
 	JSONStringToObject,
@@ -391,5 +391,18 @@ describe('DistributeEvenly function', () => {
 		expect(CountDecimalDigits(1.12304)).toEqual(5)
 		expect(CountDecimalDigits("1.1230")).toEqual(3)
 		expect(CountDecimalDigits(1.1230)).toEqual(3)
+	})
+
+	test('Is Number', () => {
+		expect(IsNumber("1")).toEqual(true)
+		expect(IsNumber(1)).toEqual(true)
+		expect(IsNumber("0")).toEqual(true)
+		expect(IsNumber(0)).toEqual(true)
+		expect(IsNumber("-1")).toEqual(true)
+		expect(IsNumber(-1)).toEqual(true)
+		expect(IsNumber("$1,000.22")).toEqual(true)
+		expect(IsNumber("55%")).toEqual(true)
+		expect(IsNumber("Test1")).toEqual(false)
+		expect(IsNumber("Test")).toEqual(false)
 	})
 })
