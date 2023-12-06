@@ -100,6 +100,17 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 }
 
 /**
+ * Determines if two numbers are equal, by default to rounded 2 decimal places.
+ *
+ * @param {any} value1 - The first value to compare.
+ * @param {any} value2 - The second value to compare.
+ * @param {number} roundClean - The number of decimal places to round the numbers to. Default is 2.
+ * @returns {boolean} Returns true if the numbers are equal, false otherwise.
+ */
+export const EqualNumber = (value1: any, value2: any, roundClean = 2): boolean =>
+	CleanNumberNull(value1, roundClean) !== null && CleanNumberNull(value1, roundClean) === CleanNumberNull(value2, roundClean)
+
+/**
  * Count the number of decimal digits in a given number.
  *
  * @param {any} num - The number to count decimal digits for.

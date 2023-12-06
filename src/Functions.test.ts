@@ -10,7 +10,7 @@ import {
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime, CountDecimalDigits,
-	DistributeEvenly,
+	DistributeEvenly, EqualNumber,
 	ExtractPrefixedKeys,
 	ExtractWholeDecimal,
 	GetPropertyValueCaseInsensitive,
@@ -404,5 +404,14 @@ describe('DistributeEvenly function', () => {
 		expect(IsNumber("55%")).toEqual(true)
 		expect(IsNumber("Test1")).toEqual(false)
 		expect(IsNumber("Test")).toEqual(false)
+	})
+
+	test('Equal Number', () => {
+		expect(EqualNumber("1", 1)).toEqual(true)
+		expect(EqualNumber("1.1", 1.1)).toEqual(true)
+		expect(EqualNumber("1.1234", 1.1235)).toEqual(true)
+		expect(EqualNumber("1.12", 1.13)).toEqual(false)
+		expect(EqualNumber("Test", 1.13)).toEqual(false)
+		expect(EqualNumber("Test", "Test 2")).toEqual(false)
 	})
 })
