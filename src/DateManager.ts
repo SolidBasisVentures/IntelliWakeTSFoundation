@@ -2960,24 +2960,27 @@ export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 ]
 
 /**
+ * Retrieves all Olson time zones in America.
  *
- * @constructor
+ * @returns {string[]} Array of Olson time zones in America.
  */
 export const TimeZoneOlsonsAmerica = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'America')?.zones ?? []).map((zone) => zone.value)
 
 /**
+ * Returns an array of Olson timezone strings for common timezones in America.
  *
- * @constructor
+ * @returns {string[]} An array of Olson timezone strings.
  */
 export const TimeZoneOlsonsAmericaCommon = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'US (Common)')?.zones ?? []).map((zone) => zone.value)
 
 /**
+ * Retrieves the abbreviation of the timezone for a given date and IANA timezone identifier.
  *
- * @param date
- * @param iana
- * @constructor
+ * @param {TDateAny} date - The date for which to retrieve the timezone abbreviation.
+ * @param {string|null|undefined} iana - The IANA timezone identifier. If not provided, the local timezone will be used.
+ * @returns {string} The abbreviation of the timezone for the given date and IANA timezone identifier.
  */
 export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()

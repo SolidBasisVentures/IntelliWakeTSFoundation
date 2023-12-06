@@ -55,10 +55,10 @@ export const ReplaceAllMultiple = function (
 }
 
 /**
- * Determines if the given value is a number.
+ * Determines whether a given value is a number.
  *
- * @param {any} value - The value to be checked.
- * @returns {boolean} - Returns true if the value is a number, otherwise returns false.
+ * @param {any} value - The value to check.
+ * @returns {boolean} - Returns true if the value is a number; otherwise, returns false.
  */
 export function IsNumber(value: any): boolean {
 	const val = CleanNumber(value, undefined, true)
