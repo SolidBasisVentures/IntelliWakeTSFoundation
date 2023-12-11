@@ -1501,7 +1501,7 @@ export function ObjectsToFixedFields<T extends Record<string, any>>(
 	objs: T[],
 	settings: TPropertyFixedFields<T>[],
 	separator = '',
-	newLine = '\r\n'
+	newLine = '\r'
 ) {
 	return objs.map((obj) => ObjectToFixedFields(obj, settings, separator)).join(newLine)
 }
