@@ -517,7 +517,7 @@ export type TDateFormat =
  * Formats the given date object or string into a string representation using the specified format.
  *
  * YYYY, YY, Q, Qo (1st), MMMM, MMM, MM, Mo (1st), M, DD, Do (1st), D
- * d (DoW), do (1st), dd (Su), ddd (Sun), dddd
+ * d (DoW), do (1st), dd (Su), ddd (Sun), dddd, w
  * HH (24 hour), H
  * hh (12 hour), h, mm, m, ss, s
  * A, a
@@ -604,6 +604,8 @@ export const DateFormatAny = (
 					return DigitsNth(dateApply.getUTCMonth() + 1) ?? ''
 				case 'M':
 					return (dateApply.getUTCMonth() + 1).toString()
+				case 'w':
+					return CleanNumber(DateWeekISONumber(dateApply)).toString()
 				/**
 				 * Week of Year	w	1 2 ... 52 53
 				 * wo	1st 2nd ... 52nd 53rd
@@ -680,6 +682,8 @@ export const DateFormatAny = (
 					return DigitsNth(dateApply.getMonth() + 1) ?? ''
 				case 'M':
 					return (dateApply.getMonth() + 1).toString()
+				case 'w':
+					return CleanNumber(DateWeekISONumber(dateApply)).toString()
 				/**
 				 * Week of Year	w	1 2 ... 52 53
 				 * wo	1st 2nd ... 52nd 53rd
