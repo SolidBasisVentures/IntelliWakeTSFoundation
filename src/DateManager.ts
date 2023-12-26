@@ -514,12 +514,19 @@ export type TDateFormat =
 	| 'DisplayDateDoWTimeLong'
 
 /**
- * Converts just about any valid type of date, time, or date/time object, string, or MS number into the format provided
- * @param format
- * @param date
- * @param timezoneDisplay
- * @param timezoneSource
- * @constructor
+ * Formats the given date object or string into a string representation using the specified format.
+ *
+ * YYYY, YY, Q, Qo (1st), MMMM, MMM, MM, Mo (1st), M, DD, Do (1st), D
+ * d (DoW), do (1st), dd (Su), ddd (Sun), dddd
+ * HH (24 hour), H
+ * hh (12 hour), h, mm, m, ss, s
+ * A, a
+ *
+ * @param {TDateFormat | string} format - The format to use when formatting the date.
+ * @param {TDateAny} date - The date object or string to format.
+ * @param {string} [timezoneDisplay] - The timezone to display the date in. Defaults to local timezone.
+ * @param {string} [timezoneSource] - The timezone of the source date if provided as a string. Defaults to local timezone.
+ * @returns {string | null} - The formatted date string, or null if the date is invalid.
  */
 export const DateFormatAny = (
 	format: TDateFormat | string,
