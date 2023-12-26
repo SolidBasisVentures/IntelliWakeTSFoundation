@@ -605,7 +605,7 @@ export const DateFormatAny = (
 				case 'M':
 					return (dateApply.getUTCMonth() + 1).toString()
 				case 'w':
-					return CleanNumber(DateWeekISONumber(dateApply)).toString()
+					return CleanNumber(DateWeekISONumber(dateApply)?.week).toString()
 				/**
 				 * Week of Year	w	1 2 ... 52 53
 				 * wo	1st 2nd ... 52nd 53rd
@@ -683,7 +683,7 @@ export const DateFormatAny = (
 				case 'M':
 					return (dateApply.getMonth() + 1).toString()
 				case 'w':
-					return CleanNumber(DateWeekISONumber(dateApply)).toString()
+					return CleanNumber(DateWeekISONumber(dateApply)?.week).toString()
 				/**
 				 * Week of Year	w	1 2 ... 52 53
 				 * wo	1st 2nd ... 52nd 53rd
