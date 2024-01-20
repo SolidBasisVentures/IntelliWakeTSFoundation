@@ -1,18 +1,16 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ObjectToFixedFields} from '../src/StringManipulation'
+import {EnumArray} from '../src/Enums'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(
-	'ObjToFix',
-	ObjectToFixedFields({id: 1, name: 'Test', description: 'Test One'}, [
-		{property: 'id', length: 3, rightJustify: true, padCharacter: '0'},
-		{property: 'name', length: 10},
-		{property: 'description', length: 10}
-	])
-)
+enum Gender {
+	Male = 'm',
+	Female = 'f'
+}
+
+console.log(EnumArray(Gender))
 
 console.timeEnd('Consoles')
