@@ -1,5 +1,5 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {EnumArray} from '../src/Enums'
+import {EnumKeyNames} from '../src/Enums'
 
 require('source-map-support').install()
 
@@ -11,6 +11,6 @@ enum Gender {
 	Female = 'f'
 }
 
-console.log(EnumArray(Gender))
+console.log(EnumKeyNames(Gender))
 
 console.timeEnd('Consoles')

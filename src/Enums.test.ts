@@ -1,4 +1,12 @@
-import {EnumArray, EnumKeyFromValue, EnumKeys, EnumValidValue, EnumValueFromKey, EnumValues} from './Enums'
+import {
+	EnumArray,
+	EnumKeyFromValue,
+	EnumKeyNames,
+	EnumKeys,
+	EnumValidValue,
+	EnumValueFromKey,
+	EnumValues
+} from './Enums'
 import {expect, test} from 'vitest'
 
 enum ETest {
@@ -17,5 +25,9 @@ test('Enums', () => {
 	expect(EnumArray(ETest)).toEqual([
 		{key: 'TestOne', value: 'Test 1'},
 		{key: 'TestTwo', value: 'Test 2'}
+	])
+	expect(EnumKeyNames(ETest)).toEqual([
+		{key: 'Test 1', name: 'TestOne'},
+		{key: 'Test 2', name: 'TestTwo'}
 	])
 })
