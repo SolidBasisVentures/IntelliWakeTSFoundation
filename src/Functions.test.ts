@@ -290,14 +290,17 @@ test('Other', async () => {
 	expect(CleanDivideNull(0, 2)).toEqual(0)
 	expect(CleanDivide(1, 2)).toEqual(0.5)
 	expect(CleanDivide(1, 2, 1)).toEqual(0.5)
-	expect(CleanDivide(1, 2, 0)).toEqual(1)
+	expect(CleanDivide(1, 2, 0)).toEqual(0.5)
 	expect(CleanDivide(1, 4)).toEqual(0.25)
-	expect(CleanDivide(1, 4, 1)).toEqual(0.3)
-	expect(CleanDivide(1, 4, 0)).toEqual(0)
+	expect(CleanDivide(1, 4, 0)).toEqual(0.25)
 	expect(CleanDivide(1, 0)).toEqual(0)
 	expect(CleanDivide(1, null)).toEqual(0)
 	expect(CleanDivide(null, 2)).toEqual(0)
 	expect(CleanDivide(0, 2)).toEqual(0)
+	// expect(CleanDivide(34, 5305)).toEqual(0.01) // 34 / 5305 = 0.006409
+	expect(CleanDivide(34, 5305, 0)).toEqual(0.01) // 34 / 5305 = 0.006409
+	expect(CleanDivide(34, 5305, 1)).toEqual(0.006) // 34 / 5305 = 0.006409
+	expect(CleanDivide(34, 5305, 2)).toEqual(0.0064) // 34 / 5305 = 0.006409
 	expect(CleanNumbers(0, [1, 2, 3, null])).toEqual(6)
 	expect(CleanNumbers(0, 1, [1, 2, 3, null])).toEqual(7)
 	expect(CleanNumbers(0, null)).toEqual(0)

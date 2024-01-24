@@ -251,7 +251,7 @@ export const CleanDivideNull = (numerator: any, denominator: any, decimals?: num
 	if (useDenominator === 0) return null
 
 	return decimals !== undefined
-		? CleanNumber(CleanNumber(useNumerator) / useDenominator, decimals)
+		? CleanNumber(CleanNumber(useNumerator) / useDenominator, decimals + 2)
 		: CleanNumber(useNumerator) / useDenominator
 }
 

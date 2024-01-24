@@ -169,7 +169,7 @@ test('ObjectValidate', () => {
 		Validator(
 			{
 				past_date: '2018-1-7',
-				future_date: '2024-6-12'
+				future_date: '2099-6-12'
 			},
 			{
 				past_date: {[EDefaultCheck.IsPastDate]: 'Not a past date'},
