@@ -1,6 +1,6 @@
 import {DateDiffLongDescription} from './DateManager'
 import {FormatZip} from './StringManipulation'
-import {Readable} from 'node:stream'
+import {Readable} from 'stream'
 
 /**
  * Replace all occurrences of a string.
