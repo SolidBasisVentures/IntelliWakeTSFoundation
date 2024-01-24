@@ -1,18 +1,16 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ObjectToFixedFields} from '../src/StringManipulation'
+import {ArrayParallelProcess} from '../src/Functions'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(
-	'ObjToFix',
-	ObjectToFixedFields({id: 1, name: 'Test', description: 'Test One'}, [
-		{property: 'id', length: 3, rightJustify: true, padCharacter: '0'},
-		{property: 'name', length: 10},
-		{property: 'description', length: 10}
-	])
-)
-
-console.timeEnd('Consoles')
+ArrayParallelProcess(
+	Array.from({length: 100000}, (_, i) => i + 1).map((a) => ({id: a, name: `Name: ${a}`})),
+	async (chunk: {id: number; name: string}) => {
+		console.log(chunk.id)
+	}
+).then(() => {
+	console.timeEnd('Consoles')
+})
