@@ -1,16 +1,16 @@
 import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ArrayParallelProcess} from '../src/Functions'
+import {EnumKeyNames} from '../src/Enums'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-ArrayParallelProcess(
-	Array.from({length: 100000}, (_, i) => i + 1).map((a) => ({id: a, name: `Name: ${a}`})),
-	async (chunk: {id: number; name: string}) => {
-		console.log(chunk.id)
-	}
-).then(() => {
-	console.timeEnd('Consoles')
-})
+enum Gender {
+	Male = 'm',
+	Female = 'f'
+}
+
+console.log(EnumKeyNames(Gender))
+
+console.timeEnd('Consoles')
