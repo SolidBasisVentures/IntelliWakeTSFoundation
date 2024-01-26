@@ -1853,9 +1853,9 @@ export const DateCompare = (
 
 		if (['week', 'weeks'].includes(minInterval)) {
 			if (Math.abs(msDifference) > 7 * 24 * 60 * 60 * 1000) return checkType(evalType, msDifference)
-			const weekDiff = (DateWeekNumber(date1)?.week ?? 0) - (DateWeekNumber(date2ToUse)?.week ?? 0)
+			const weekDiff = (DateWeekISONumber(date1)?.week ?? 0) - (DateWeekISONumber(date2ToUse)?.week ?? 0)
 			// Check if in the same week that spans years
-			if (weekDiff === 0 && (DateWeekNumber(date1)?.week ?? 0) === 1 && Math.abs(yearDiff) > 1) {
+			if (weekDiff === 0 && (DateWeekISONumber(date1)?.week ?? 0) === 1 && Math.abs(yearDiff) > 1) {
 				if (yearDiff !== 0) return checkType(evalType, yearDiff)
 			}
 
