@@ -1,4 +1,12 @@
-import {EvaluateCondition, EvaluateString, StringGetSets, TVariables} from './Evaluator'
+import {
+	EvaluateCondition,
+	EvaluateString,
+	ProcessMath,
+	StringGetSets,
+	TProcessMathOptionsResponse,
+	TProcessMathResults,
+	TVariables
+} from './Evaluator'
 import {test, expect} from 'vitest'
 
 const variables: TVariables = {
@@ -64,3 +72,70 @@ for (const evalCondition of evalConditions) {
 test('StringGetSets', () => {
 	expect(StringGetSets('Test[1]-[2][3]-[4[1]][[1]5]', '[', ']')).toEqual(['1', '2', '3', '4[1]', '[1]5'])
 })
+
+const initialProcessMathResults: TProcessMathResults = {
+	calculation: null,
+	missingVariables: [],
+	variables: {},
+	warnings: [],
+	errors: []
+}
+
+const processMaths: [string, TProcessMathResults, TVariables?][] = [
+	['[1 + 1]', {...initialProcessMathResults, calculation: 2, missingVariables: ['1 + 1']}],
+	['1 + 1', {...initialProcessMathResults, calculation: 2}],
+	['[Two] * [Nine])', {...initialProcessMathResults, calculation: null, missingVariables: ['Nine']}],
+	[
+		'[Two] * [Warn])',
+		{
+			...initialProcessMathResults,
+			calculation: null,
+			missingVariables: ['Warn'],
+			warnings: ['This is a warning']
+		}
+	],
+	[
+		'[Two] * [Err])',
+		{
+			...initialProcessMathResults,
+			calculation: null,
+			missingVariables: ['Err'],
+			errors: ['This is an error']
+		}
+	],
+	['abs(-[Four] * [Six])', {...initialProcessMathResults, calculation: 24}, {Six: 6}],
+	[
+		'abs(-[Four] * [Seven])',
+		{
+			...initialProcessMathResults,
+			calculation: 28,
+			warnings: ['Seven warning']
+		},
+		{Seven: 7}
+	],
+	['-[Four] * [Two]', {...initialProcessMathResults, calculation: -8}],
+]
+
+async function vars(variable: string): Promise<TProcessMathOptionsResponse> {
+	return variable === 'Six'
+		? 6
+		: variable === 'Seven'
+		? {
+				value: 7,
+				warning: 'Seven warning'
+		  }
+		: variable === 'Warn'
+		? {warning: 'This is a warning'}
+		: variable === 'Err'
+		? {error: 'This is an error'}
+		: null
+}
+
+for (const evalString of processMaths) {
+	test(`Process ${evalString[0]}`, async () => {
+		const results = await ProcessMath(evalString[0], variables, {
+			requestVariable: vars
+		})
+		expect(results).toEqual({...evalString[1], variables: {...variables, ...evalString[2]}})
+	})
+}

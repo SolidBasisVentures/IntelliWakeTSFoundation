@@ -15,18 +15,96 @@
  * EvaluateCondition("2 = SomeValue", {SomeValue: 2}) = true
  *
  */
-import {IsOn, ReplaceAll} from './Functions'
+import {CleanNumber, CleanNumberNull, IsOn, ReplaceAll} from './Functions'
+import {isNullUndefined} from './SortSearch'
 
 const EvaluatorOperators = ['&&', '||', '!=', '<>', '>=', '<=', '=', '<', '>', '-', '+', '/', '*', '^']
 const EvaluatorFunctions = ['abs', 'pow', 'int', 'round', 'includes', 'includesinarray']
 
-/**
- *
- */
 export type TVariables = {[key: string]: any}
 
+export type TProcessMathResults = {
+	calculation: number | null
+	missingVariables: string[]
+	variables?: TVariables
+	warnings: string[]
+	errors: string[]
+}
+
+export type TProcessMathOptionsResponse =
+		null | number | {
+				value?: number | null
+				warning?: string
+				error?: string
+		  }
+
+export type TProcessMathOptions = {
+	requestVariable?: (variable: string) => Promise<TProcessMathOptionsResponse>
+}
+
+export async function ProcessMath(
+	expression: string,
+	variables?: TVariables,
+	options?: TProcessMathOptions
+): Promise<TProcessMathResults> {
+	let checkPattern = /\[(.*?)\]/g
+	let missingVariables: string[] = []
+	let match
+
+	const useVariables = {...(variables ?? {})}
+	const warnings: string[] = []
+	const errors: string[] = []
+
+	while ((match = checkPattern.exec(expression)) !== null) {
+		if (useVariables[match[1]] === undefined) {
+			if (options?.requestVariable) {
+				const variableValue = await options.requestVariable(match[1])
+				if (typeof variableValue === 'number' || typeof variableValue === 'string') {
+					useVariables[match[1]] = CleanNumber(variableValue, 5)
+				} else if (typeof variableValue === 'object') {
+					if (!isNullUndefined(variableValue?.value)) {
+						useVariables[match[1]] = CleanNumber(variableValue?.value, 5)
+					} else {
+						missingVariables.push(match[1])
+					}
+					if (variableValue?.warning) {
+						warnings.push(variableValue.warning)
+					}
+					if (variableValue?.error) {
+						errors.push(variableValue.error)
+					}
+				} else {
+					missingVariables.push(match[1])
+				}
+			} else {
+				missingVariables.push(match[1])
+			}
+		}
+	}
+
+	return {
+		calculation: EvaluateMath(expression, useVariables),
+		missingVariables,
+		variables: useVariables,
+		warnings,
+		errors
+	}
+}
+
 /**
- * Accepts a string, and processes varialbes againt it. Everything within square brackets [] will run through a calculation.
+ * Evaluates a mathematical expression and returns the result.
+ * Variables enclosed in square braces are replaced by the appropriate variables.
+ *
+ * @param {string} expression - The expression to be evaluated.
+ * @param {TVariables} [variables] - Variables to be used in the expression.
+ * @returns {number | null} - The result of the evaluation, or null if the expression is invalid.
+ */
+export function EvaluateMath(expression: string, variables?: TVariables): number | null {
+	return CleanNumberNull(EvaluateString(`[${expression}]`, variables))
+}
+
+/**
+ * Accepts a string, and processes variables against it. Everything within square brackets [] will run through a calculation.
  *
  * @example
  * // returns "Hello, Bob"
