@@ -802,10 +802,11 @@ export const DateFormatAny = (
 			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG
 			break
 		case 'ISO':
+			if (dateObject) return dateObject.toISOString()
 			useFormat = 'YYYY-MM-DDTHH:mm:ss.sssZ'
 			break
 		case 'ISOInput':
-			useFormat = 'YYYY-MM-DDThh:mm'
+			useFormat = 'YYYY-MM-DDTHH:mm'
 			break
 		default:
 			useFormat = format ?? 'YYYY-MM-DD h:mm:ss a'
