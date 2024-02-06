@@ -18,6 +18,7 @@ import {
 	DatesFromWeekNumber,
 	DatesQuarter,
 	DateWeekISONumber,
+	EasterDate,
 	GreaterDate,
 	IANAZoneAbbr,
 	LeastDate,
@@ -543,4 +544,20 @@ test('Date Managers', () => {
 
 	expect(LeastDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-03-31')
 	expect(GreaterDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-04-02')
+})
+
+test('Easters', () => {
+	expect(EasterDate(2022)).toEqual('2022-04-17')
+	expect(EasterDate(2023)).toEqual('2023-04-09')
+	expect(EasterDate(2024)).toEqual('2024-03-31')
+	expect(EasterDate(2025)).toEqual('2025-04-20')
+	expect(EasterDate(2026)).toEqual('2026-04-05')
+	expect(EasterDate(2027)).toEqual('2027-03-28')
+	expect(EasterDate(2028)).toEqual('2028-04-16')
+	expect(EasterDate(2029)).toEqual('2029-04-01')
+	expect(EasterDate(2030)).toEqual('2030-04-21')
+	expect(EasterDate(2031)).toEqual('2031-04-13')
+	expect(EasterDate(2032)).toEqual('2032-03-28')
+	expect(EasterDate(2033)).toEqual('2033-04-17')
+	expect(EasterDate(2034)).toEqual('2034-04-09')
 })
