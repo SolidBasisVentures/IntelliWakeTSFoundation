@@ -512,6 +512,8 @@ export type TDateFormat =
 	| 'DisplayDateDoWLong'
 	| 'DisplayDateTimeLong'
 	| 'DisplayDateDoWTimeLong'
+	| 'ISO'
+	| 'ISOInput'
 
 /**
  * Formats the given date object or string into a string representation using the specified format.
@@ -651,6 +653,10 @@ export const DateFormatAny = (
 					return dateApply.getUTCMinutes().toString().padStart(2, '0')
 				case 'm':
 					return dateApply.getUTCMinutes().toString()
+				case 'ssss':
+					return dateApply.getUTCMilliseconds().toString().padStart(4, '0')
+				case 'sss':
+					return dateApply.getUTCMilliseconds().toString().padStart(3, '0')
 				case 'ss':
 					return dateApply.getUTCSeconds().toString().padStart(2, '0')
 				case 's':
@@ -729,6 +735,10 @@ export const DateFormatAny = (
 					return dateApply.getMinutes().toString().padStart(2, '0')
 				case 'm':
 					return dateApply.getMinutes().toString()
+				case 'ssss':
+					return dateApply.getMilliseconds().toString().padStart(4, '0')
+				case 'sss':
+					return dateApply.getMilliseconds().toString().padStart(3, '0')
 				case 'ss':
 					return dateApply.getSeconds().toString().padStart(2, '0')
 				case 's':
@@ -790,6 +800,12 @@ export const DateFormatAny = (
 			break
 		case 'DisplayDateDoWTimeLong':
 			useFormat = DATE_FORMAT_DATE_TIME_DISPLAY_DOW_LONG
+			break
+		case 'ISO':
+			useFormat = 'YYYY-MM-DDTHH:mm:ss.sssZ'
+			break
+		case 'ISOInput':
+			useFormat = 'YYYY-MM-DDThh:mm'
 			break
 		default:
 			useFormat = format ?? 'YYYY-MM-DD h:mm:ss a'
