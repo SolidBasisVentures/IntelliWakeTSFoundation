@@ -62,7 +62,7 @@ const ConstrainType = (value: any, fieldConstraint: TObjectFieldConstraint): any
 	} else if (fieldConstraint.type === 'time') {
 		return fieldConstraint.nullable ? TimeOnly(value) : TimeOnly(value) ?? '00:00'
 	} else if (fieldConstraint.type === 'object') {
-		if (typeof value === 'string') return ! JSONParse(value) ?? (!!fieldConstraint.nullable ? null : {})
+		if (typeof value === 'string') return JSONParse(value) ?? (!!fieldConstraint.nullable ? null : {})
 		if (typeof value !== 'object') return !!fieldConstraint.nullable ? null : {}
 	} else {
 		if (typeof value !== 'string') return !value ? '' : value.toString()
