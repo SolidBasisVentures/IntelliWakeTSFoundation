@@ -1,5 +1,5 @@
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
-import {CleanNumber, CleanNumberNull, IsOn, ToArray} from './Functions'
+import {CleanNumber, CleanNumberNull, IsOn, JSONParse, ToArray} from './Functions'
 import {ToDigits} from './StringManipulation'
 import {isNullUndefined} from './SortSearch'
 
@@ -44,7 +44,9 @@ const ConstrainType = (value: any, fieldConstraint: TObjectFieldConstraint): any
 				: fieldConstraint.type === 'boolean'
 				? IsOn(fieldConstraint.default ?? true)
 				: fieldConstraint.type === 'object'
-				? fieldConstraint.default ?? {}
+				? typeof fieldConstraint.default === 'string'
+					? JSONParse(fieldConstraint.default) ?? {}
+					: fieldConstraint.default ?? {}
 				: (fieldConstraint.default ?? '').toString()
 		}
 	}
@@ -60,6 +62,7 @@ const ConstrainType = (value: any, fieldConstraint: TObjectFieldConstraint): any
 	} else if (fieldConstraint.type === 'time') {
 		return fieldConstraint.nullable ? TimeOnly(value) : TimeOnly(value) ?? '00:00'
 	} else if (fieldConstraint.type === 'object') {
+		if (typeof value === 'string') return JSONParse(value) ?? {}
 		if (typeof value !== 'object') return {}
 	} else {
 		if (typeof value !== 'string') return !value ? '' : value.toString()
