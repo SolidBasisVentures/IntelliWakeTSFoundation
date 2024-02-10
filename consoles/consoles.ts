@@ -1,35 +1,10 @@
-import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {ConstrainObject} from '../src/ObjectConstraint'
+import {DateOnly, ESTTodayDateTimeLabel} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-let obj = ConstrainObject(
-	{
-		id: '1',
-		value: '{"test": "T"}'
-	} as any,
-	{
-		id: {type: 'number', nullable: false, default: 0},
-		value: {type: 'object', nullable: true}
-	}
-)
-
-console.log('has', obj.value)
-
-obj = ConstrainObject(
-	{
-		id: '1',
-		value: ''
-	} as any,
-	{
-		id: {type: 'number', nullable: false, default: 0},
-		value: {type: 'object', nullable: true}
-	}
-)
-
-console.log('not', obj.value)
+console.log(DateOnly('01/01/2000', {years: 1, quarters: 2, weeks: 2, days: 2, week: 'EndOf', formatLocale: true}))
 
 console.timeEnd('Consoles')
