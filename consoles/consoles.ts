@@ -1,10 +1,18 @@
-import {DateOnly, ESTTodayDateTimeLabel} from '../src/DateManager'
+import {
+	DateCompare,
+	DateDiff,
+	DateDiffLongDescription,
+	DateISO,
+	DateParseTS,
+	ESTTodayDateTimeLabel,
+	ManualParse
+} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(DateOnly('01/01/2000', {years: 1, quarters: 2, weeks: 2, days: 2, week: 'EndOf', formatLocale: true}))
+console.log(DateCompare('1/1/2000 12:00:00', 'IsBefore', '1/18/2000 14:00:00', 'days'))
 
 console.timeEnd('Consoles')
