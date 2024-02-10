@@ -1,12 +1,14 @@
 # IntelliWakeTSFoundation
 IntelliwakeTSFoundation, short for the IntelliWake TypeScript Foundation Library provides multiple helper functions that are not present in vanilla JavaScript.
 
-## Date helper functions
+## Date and Date/Time helper functions
 There are lots of date/time packages available, so why add those functions here?
 The simple answer is that those packages that we used before either are no longer maintained, operated in old javascript paradigms that mutated the base object, or when we tried to switch to another package were missing some key feature we needed for some app that we had to code around.
 Eventually, it was easier to take those code arounds and just build out the rest, so that's what we did!
 
 The basic premise of these functions is that you can provide any format you like as an input (Javascript Date object, date string (MM/DD/YYYY, YYYY-MM-DD), date/time string, time string, ISO date time string (in a variety of flavors)) and it can parse, manipulate and format them.
+
+[[Date Functions]]
 ***
 ### Date-only function
 The `DateOnly/DateOnlyNull(date, options)` function provides a significant amount of power when you do not need to deal with times.  DateOnly returns a value in 'YYYY-MM-DD' format (unless `{formatLocale: true}` is passed as an option, in which case it returns the date in the users local format (e.g. reversed M/D, D/M for US vs. Europe).  If the date is invalid, it will return today's date.  `DateOnlyNull()` will return a null if an invalid date is passed.
@@ -30,6 +32,12 @@ DateOnly('now')
 DateOnly(null)
 ```
 Both result in today's date.  I don't know what today's date is since I'm just a piece of documentation, you'll have to figure that out.
+
+The `DateOnlyNull()` function does everything that `DateOnly()` does, except that invalid dates return a null:
+```
+DateOnlyNull('')
+```
+Since '' is invalid, it returns null.  Null is invalid, undefined is invalid, and 'Eggplant' (for instance) is an invalid date.
 
 Adding the formatLocale option changes the format to something you can display to your user: 
 ```
