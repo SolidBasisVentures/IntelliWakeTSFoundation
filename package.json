@@ -15,6 +15,7 @@
 		"Vitest-Watch": "vitest",
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
 		"Install-IntelliWake": "pnpm install",
+		"GenerateDocs": "pandoc Documentation/index.md -o gh-pages/index.html",
 		"Version-Minor-Advance": "pnpm version minor",
 		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
