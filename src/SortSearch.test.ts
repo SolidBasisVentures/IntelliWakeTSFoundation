@@ -93,7 +93,7 @@ test('SortCompare Empty ID Top', () => {
 	])
 })
 
-test('SortCompare Empty ID Top', () => {
+test('SortCompares', () => {
 	expect(
 		[
 			{id: 1, name: 'AAA', prioritized: false},
