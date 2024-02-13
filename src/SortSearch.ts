@@ -1,4 +1,4 @@
-import {CleanNumber, GreaterNumber} from './Functions'
+import {CleanNumber, GreaterNumber, ToArray} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -472,6 +472,39 @@ export const SortCompare = (
 	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
 ): number => {
 	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
+}
+
+export type TSortComparesItem = [beforeValue: any, afterValue: any, emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0']
+
+/**
+ * Sorts and compares values.
+ *
+ * @param {TSortComparesItem|TSortComparesItem[]} values - The values to be sorted and compared.
+ * @returns {number} - The result of the comparison.
+ *
+ * @example
+ * The following examples sorts first by name, then if those are the same, sorts by id
+ * [
+ * 		{id: 1, name: 'AAA', prioritized: false},
+ * 		{id: 2, name: 'ZZZ', prioritized: false},
+ * 		{id: 3, name: 'AAA', prioritized: true},
+ * 		{id: 4, name: 'BBB', prioritized: false}
+ * 	]
+ *  .sort((a, b) =>
+ *  		SortCompares([[a.name, b.name], [a.id, b.id]])) = [
+ * 		{ id: 1, name: 'AAA', prioritized: false },
+ * 		{ id: 3, name: 'AAA', prioritized: true },
+ * 		{ id: 4, name: 'BBB', prioritized: false },
+ * 		{ id: 2, name: 'ZZZ', prioritized: false }
+ * 	]
+ */
+export function SortCompares(values: TSortComparesItem | TSortComparesItem[]) {
+	for (const value of ToArray(values)) {
+		const result = CleanNumber(SortCompareNull(value[0], value[1], value[2] ?? null))
+		if (result) return result
+	}
+
+	return 0
 }
 
 /**

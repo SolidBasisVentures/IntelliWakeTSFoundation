@@ -1,16 +1,17 @@
 import {
 	FindIsActive,
+	isNullUndefined,
 	ObjectContainsSearchTerms,
 	SearchRow,
 	SearchRows,
 	SortCompare,
 	SortCompareNull,
-	SortSplitItems,
+	SortCompares,
 	SortIndex,
 	SortPerArray,
-	isNullUndefined
+	SortSplitItems
 } from './SortSearch'
-import {test, expect, describe} from 'vitest'
+import {describe, expect, test} from 'vitest'
 
 test('SortCompare', () => {
 	expect(
@@ -89,6 +90,27 @@ test('SortCompare Empty ID Top', () => {
 		{id: null, name: 'ZZZ'},
 		{id: 1, name: 'AAA'},
 		{id: 4, name: 'BBB'}
+	])
+})
+
+test('SortCompare Empty ID Top', () => {
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: 'AAA', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) =>
+			SortCompares([
+				[a.name, b.name],
+				[a.id, b.id]
+			])
+		)
+	).toEqual([
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 3, name: 'AAA', prioritized: true},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false}
 	])
 })
 
