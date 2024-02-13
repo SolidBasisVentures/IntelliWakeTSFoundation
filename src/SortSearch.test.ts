@@ -131,6 +131,44 @@ test('SortCompares', () => {
 		{id: 2, name: 'ZZZ', prioritized: false}
 	])
 
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: '', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) =>
+			SortCompares([
+				[a.name, b.name, 'Bottom'],
+				[a.id, b.id]
+			])
+		)
+	).toEqual([
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 3, name: '', prioritized: true}
+	])
+
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: '', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) =>
+			SortCompares([
+				[a.name, b.name, 'Top'],
+				[a.id, b.id]
+			])
+		)
+	).toEqual([
+		{id: 3, name: '', prioritized: true},
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 2, name: 'ZZZ', prioritized: false}
+	])
+
 	expect([0, 3, 1, 2].sort((a, b) => SortCompares([a, b])))
 		.toEqual([0, 1, 2, 3])
 
@@ -142,6 +180,9 @@ test('SortCompares', () => {
 
 	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom'])))
 		.toEqual([0, 1, 2, 3, null])
+
+	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0'])))
+		.toEqual([1, 2, 3, 0, null])
 })
 
 test('Sort Array', () => {
