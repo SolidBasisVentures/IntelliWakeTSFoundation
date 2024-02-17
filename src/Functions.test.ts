@@ -40,6 +40,9 @@ import {describe, expect, test} from 'vitest'
 
 test('IsOn', () => {
 	expect(IsOn(1)).toBe(true)
+	expect(IsOn('$1,000')).toBe(true)
+	expect(IsOn('$-1,000')).toBe(false)
+	expect(IsOn('-$1,000')).toBe(false)
 	expect(IsOn(0)).toBe(false)
 	expect(IsOn(null)).toBe(false)
 	expect(IsOn('active')).toBe(true)
