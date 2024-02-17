@@ -275,13 +275,14 @@ export type TDateAny = Date | number | 'now' | 'today' | string | null | undefin
  * @constructor
  */
 export const ManualParse = (date: string): number | null => {
-	const regexps = [
+
+	let d = [
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
-	]
-
-	let d = regexps.reduce<RegExpMatchArray | null>((result, regexp) => {
+	].reduce<RegExpMatchArray | null>((result, regexp) => {
 		const nextMatch = (date.length === 16 ? date + ':00' : date).match(new RegExp(regexp))
+
+		if ((nextMatch?.at(4)) === undefined) return result
 
 		if (!result) return nextMatch
 
@@ -292,80 +293,78 @@ export const ManualParse = (date: string): number | null => {
 		return result
 	}, null as RegExpMatchArray | null)
 
-	if (d === null) {
-		return null
-	}
+	if (!!d) {
+		let dateObj = new Date(CleanNumber(d[1]), 0, 1)
 
-	// console.log(d)
-
-	let dateObj = new Date(CleanNumber(d[1]), 0, 1)
-
-	if (d[1]) {
-		dateObj.setUTCFullYear(CleanNumber(d[1]))
-	}
-
-	if (d[3]) {
-		dateObj.setUTCMonth(CleanNumber(d[3]) - 1)
-	}
-
-	if (d[5]) {
-		dateObj.setUTCDate(CleanNumber(d[5]))
-	}
-
-	// if (d[7]) {
-	dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
-	// }
-
-	// if (d[8]) {
-	dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
-	// }
-
-	// if (d[10]) {
-	dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
-	// }
-
-	// if (d[12]) {
-	dateObj.setUTCMilliseconds(CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substring(0, 3)))
-	// }
-
-	let offsetHours = 0
-
-	if (d[14]) {
-		offsetHours = CleanNumber(d[16]) + parseInt(d[17], 10)
-
-		offsetHours *= d[15] === '-' ? 1 : -1
-		// console.log('o off', dateObj.getTime(), offset)
-		// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
-		// offset -= CleanNumber(date.substr(-3))
-		// console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
-		// } else if (date.includes('Z') && date.includes('T')) {
-		// console.log('Here')
-		// offset -= (dateObj.getTimezoneOffset() / 60)
-		// console.log('t off', dateObj.getTimezoneOffset(), offset)
-		// } else {
-		// offset -= (dateObj.getTimezoneOffset() / 60)
-		// console.log('e off', dateObj.getTime(), offset)
-	} else if (date.length > 12) {
-		const last3 = date.substring(date.length - 3)
-		if (last3.startsWith('-') || last3.endsWith('+')) {
-			offsetHours -= CleanNumber(last3)
-			// console.log('Offset', dateObj, offset)
+		if (d[1]) {
+			dateObj.setUTCFullYear(CleanNumber(d[1]))
 		}
+
+		if (d[3]) {
+			dateObj.setUTCMonth(CleanNumber(d[3]) - 1)
+		}
+
+		if (d[5]) {
+			dateObj.setUTCDate(CleanNumber(d[5]))
+		}
+
+		// if (d[7]) {
+		dateObj.setUTCHours(CleanNumber(d[7] ?? 0))
+		// }
+
+		// if (d[8]) {
+		dateObj.setUTCMinutes(CleanNumber(d[8] ?? 0))
+		// }
+
+		// if (d[10]) {
+		dateObj.setUTCSeconds(CleanNumber(d[10] ?? 0))
+		// }
+
+		// if (d[12]) {
+		dateObj.setUTCMilliseconds(CleanNumber((d[12] ?? 0).toString().padEnd(3, '0').substring(0, 3)))
+		// }
+
+		let offsetHours = 0
+
+		if (d[14]) {
+			offsetHours = CleanNumber(d[16]) + parseInt(d[17], 10)
+
+			offsetHours *= d[15] === '-' ? 1 : -1
+			// console.log('o off', dateObj.getTime(), offset)
+			// } else if (!date.includes('Z') && !date.includes('T') && (date.substr(-3, 1) === '-' || date.substr(-3, 1) === '+')) {
+			// offset -= CleanNumber(date.substr(-3))
+			// console.log('ei off', dateObj.getTime(), offset, date.substr(-3))
+			// } else if (date.includes('Z') && date.includes('T')) {
+			// console.log('Here')
+			// offset -= (dateObj.getTimezoneOffset() / 60)
+			// console.log('t off', dateObj.getTimezoneOffset(), offset)
+			// } else {
+			// offset -= (dateObj.getTimezoneOffset() / 60)
+			// console.log('e off', dateObj.getTime(), offset)
+		} else if (date.length > 12) {
+			const last3 = date.substring(date.length - 3)
+			if (last3.startsWith('-') || last3.endsWith('+')) {
+				offsetHours -= CleanNumber(last3)
+				// console.log('Offset', dateObj, offset)
+			}
+		}
+
+		// console.log(date, d, dateObj, offset)
+
+		// console.log('offset', dateObj, offset, dateObj.getTime())
+
+		// console.log('Trying...', dateObj, offsetHours)
+
+		const time = dateObj.valueOf() + offsetHours * 3600000
+
+		let newDateObj = new Date(time)
+
+		if (!newDateObj) return null
+
+		return newDateObj.valueOf()
 	}
 
-	// console.log(date, d, dateObj, offset)
-
-	// console.log('offset', dateObj, offset, dateObj.getTime())
-
-	// console.log('Trying...', dateObj, offsetHours)
-
-	const time = dateObj.valueOf() + offsetHours * 3600000
-
-	let newDateObj = new Date(time)
-
-	if (!newDateObj) return null
-
-	return newDateObj.valueOf()
+	return null
 }
 
 const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA?: boolean): number | null => {
@@ -384,13 +383,8 @@ const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA
 		if (result === null || isNaN(result)) {
 			result = Date.parse(date.toString())
 
-			if (isNaN(result)) {
-				const check = new Date(date)
-
-				if (isNaN(check.valueOf())) {
-					return null
-					// result = ManualParse(date) ?? 0
-				}
+			if (!isNaN(result)) {
+				return result
 			}
 		}
 
@@ -1662,8 +1656,10 @@ export const DateDiffComponents = (
 		millisecond: 0
 	}
 
-	const dateFromTS = DateParseTSInternal(dateFrom) ?? 0
-	let checkTo = DateParseTSInternal(dateTo) ?? 0
+	const dateFromTS = DateParseTS(dateFrom) ?? 0
+	let checkTo = DateParseTS(dateTo) ?? 0
+
+	console.log(dateFromTS - checkTo)
 
 	returnComponents.year = DateDiff(dateFromTS, checkTo, 'year') ?? 0
 	if (returnComponents.year) checkTo = DateParseTS(checkTo, {year: returnComponents.year * -1}) ?? 0

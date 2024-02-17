@@ -474,6 +474,47 @@ export const SortCompare = (
 	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
 }
 
+export type TSortComparesItem = [
+	beforeValue: any,
+	afterValue: any,
+	emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0'
+]
+
+/**
+ * Sorts and compares values.
+ *
+ * @param {TSortComparesItem|TSortComparesItem[]} values - The values to be sorted and compared.
+ * @returns {number} - The result of the comparison.
+ *
+ * @example
+ * The following examples sorts first by name, then if those are the same, sorts by id
+ * [
+ * 		{id: 1, name: 'AAA', prioritized: false},
+ * 		{id: 2, name: 'ZZZ', prioritized: false},
+ * 		{id: 3, name: 'AAA', prioritized: true},
+ * 		{id: 4, name: 'BBB', prioritized: false}
+ * 	]
+ *  .sort((a, b) =>
+ *  		SortCompares([[a.name, b.name], [a.id, b.id]])) = [
+ * 		{ id: 1, name: 'AAA', prioritized: false },
+ * 		{ id: 3, name: 'AAA', prioritized: true },
+ * 		{ id: 4, name: 'BBB', prioritized: false },
+ * 		{ id: 2, name: 'ZZZ', prioritized: false }
+ * 	]
+ */
+export function SortCompares(values: TSortComparesItem | TSortComparesItem[]) {
+	if (Array.isArray(values.at(0))) {
+		for (const value of values) {
+			const result = SortCompare(value[0], value[1], value[2])
+			if (result) return result
+		}
+
+		return 0
+	} else {
+		return SortCompare(values[0], values[1], values[2] as any)
+	}
+}
+
 /**
  * Returns a case-insensitive sort number of the .sort(a, b) function, or null if values are equal specifically for strings that likely contain version that need to be sorted as [1.1, 1.2, 1.10] instead of [1.1, 1.10, 1.2]
  *
