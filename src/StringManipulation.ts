@@ -229,12 +229,10 @@ export const CleanScripts = function (subject: string | number | undefined | nul
 }
 
 /**
- * Removes any given HTML tag and retains what's inside of the tag.
+ * Converts the given text to HTML format.
  *
- * @example
- * // returns "john doe"
- * TextToHTML('<p>john doe</p>')
- *
+ * @param {string | number | undefined | null} subject - The text to convert.
+ * @returns {string} - The converted HTML string.
  */
 export const TextToHTML = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
@@ -573,10 +571,10 @@ export const ToDigitsDashMax = function (value: any, decimals: number = 9) {
 }
 
 /**
+ * Converts a value to its corresponding ordinal number representation.
  *
- * @param value
- * @constructor
- *
+ * @param {any} value - The value to convert.
+ * @returns {string | null} - The ordinal number representation of the value or null if the conversion fails.
  */
 export const DigitsNth = (value: any): string | null => {
 	let result = ToDigits(value)
