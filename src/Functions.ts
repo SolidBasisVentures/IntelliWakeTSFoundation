@@ -846,11 +846,11 @@ export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T,
 	keys.every((key) => key in data && !!data[key])
 
 /**
- * OmitProperty method removes specified properties from an object.
+ * OmitProperty is a function that creates a new object by omitting the specified keys from the input object.
  *
- * @param {Object} obj - The object from which to remove properties.
- * @param {...string} keys - The properties to be removed from the object.
- * @returns {Object} - The object with specified properties removed.
+ * @param {Record<any, any>} obj - The input object from which the keys will be omitted.
+ * @param {any[]} keys - The keys to be omitted from the input object.
+ * @return {Record<any, any>} - A new object that does not contain the specified keys.
  */
 export function OmitProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(
 	obj: T,
@@ -918,11 +918,11 @@ export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 }
 
 /**
- * Copies specified properties from an object to a new object.
+ * Picks specified properties from an object and returns a new object with just those properties.
  *
- * @param {object} obj - The source object from which to pick properties.
- * @param {...string} keys - The keys of the properties to pick from the source object.
- * @return {object} A new object with the picked properties.
+ * @param {Record<any, any>} obj - The object from which properties will be picked.
+ * @param {...any} keys - The keys of the properties to be picked.
+ * @returns {Object} - A new object containing only the specified properties.
  */
 export function PickProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(obj: T, ...keys: K[]): Pick<T, K> {
 	let ret: any = {}
