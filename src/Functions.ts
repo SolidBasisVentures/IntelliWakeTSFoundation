@@ -846,23 +846,22 @@ export const PropertiesNotFalsey = <T extends object, K extends Extract<keyof T,
 	keys.every((key) => key in data && !!data[key])
 
 /**
+ * OmitProperty method removes specified properties from an object.
  *
- * @param obj
- * @param keys
- * @constructor
+ * @param {Object} obj - The object from which to remove properties.
+ * @param {...string} keys - The properties to be removed from the object.
+ * @returns {Object} - The object with specified properties removed.
  */
-export function OmitProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Omit<T, K> {
-	let ret: any = {}
-	const excludeSet: Set<string> = new Set(keys)
-	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
+export function OmitProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(
+	obj: T,
+	...keys: K[]
+): Omit<T, K> {
+	let ret: any = {...obj}
 
-	for (let key in obj) {
-		// noinspection JSUnfilteredForInLoop
-		if (!excludeSet.has(key)) {
-			// noinspection JSUnfilteredForInLoop
-			ret[key] = obj[key]
-		}
+	for (let key of keys) {
+		delete ret[key]
 	}
+
 	return ret
 }
 
@@ -906,23 +905,21 @@ export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 }
 
 /**
+ * Copies specified properties from an object to a new object.
  *
- * @param obj
- * @param keys
- * @constructor
+ * @param {object} obj - The source object from which to pick properties.
+ * @param {...string} keys - The keys of the properties to pick from the source object.
+ * @return {object} A new object with the picked properties.
  */
-export function PickProperty<T extends object, K extends Extract<keyof T, string>>(obj: T, ...keys: K[]): Pick<T, K> {
+export function PickProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(obj: T, ...keys: K[]): Pick<T, K> {
 	let ret: any = {}
-	const includeSet: Set<string> = new Set(keys)
-	// TS-NOTE: Set<K> makes the obj[key] type check fail. So, loosing typing here.
 
-	for (let key in obj) {
-		// noinspection JSUnfilteredForInLoop
-		if (includeSet.has(key)) {
-			// noinspection JSUnfilteredForInLoop
+	for (let key of keys) {
+		if (key in obj) {
 			ret[key] = obj[key]
 		}
 	}
+
 	return ret
 }
 

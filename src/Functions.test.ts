@@ -9,13 +9,16 @@ import {
 	CleanNumbers,
 	CleanSubtractNumbers,
 	CoalesceFalsey,
-	ConsoleAsyncTime, CountDecimalDigits,
-	DistributeEvenly, EqualNumber,
+	ConsoleAsyncTime,
+	CountDecimalDigits,
+	DistributeEvenly,
+	EqualNumber,
 	ExtractPrefixedKeys,
 	ExtractWholeDecimal,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
-	GreaterNumberNull, IsNumber,
+	GreaterNumberNull,
+	IsNumber,
 	IsOn,
 	JSONParse,
 	JSONStringToObject,
@@ -107,6 +110,17 @@ test('Omits', () => {
 			'is_active'
 		)
 	).toEqual({name: 'My Name'})
+	expect(
+		OmitProperty(
+			{
+				1: 1,
+				2: 2,
+				3: 3
+			},
+			1,
+			3
+		)
+	).toEqual({2: 2})
 })
 
 test('Picks', () => {
@@ -120,6 +134,17 @@ test('Picks', () => {
 			'name'
 		)
 	).toEqual({name: 'My Name'})
+	expect(
+		PickProperty(
+			{
+				1: 1,
+				2: 2,
+				3: 3
+			},
+			1,
+			3
+		)
+	).toEqual({1: 1, 3: 3})
 	expect(
 		OmitUndefined({
 			id: 1,
@@ -389,32 +414,32 @@ describe('DistributeEvenly function', () => {
 	})
 
 	test('Count Decimal Digits', () => {
-		expect(CountDecimalDigits("1")).toEqual(0)
-		expect(CountDecimalDigits("1.12304")).toEqual(5)
+		expect(CountDecimalDigits('1')).toEqual(0)
+		expect(CountDecimalDigits('1.12304')).toEqual(5)
 		expect(CountDecimalDigits(1.12304)).toEqual(5)
-		expect(CountDecimalDigits("1.1230")).toEqual(3)
-		expect(CountDecimalDigits(1.1230)).toEqual(3)
+		expect(CountDecimalDigits('1.1230')).toEqual(3)
+		expect(CountDecimalDigits(1.123)).toEqual(3)
 	})
 
 	test('Is Number', () => {
-		expect(IsNumber("1")).toEqual(true)
+		expect(IsNumber('1')).toEqual(true)
 		expect(IsNumber(1)).toEqual(true)
-		expect(IsNumber("0")).toEqual(true)
+		expect(IsNumber('0')).toEqual(true)
 		expect(IsNumber(0)).toEqual(true)
-		expect(IsNumber("-1")).toEqual(true)
+		expect(IsNumber('-1')).toEqual(true)
 		expect(IsNumber(-1)).toEqual(true)
-		expect(IsNumber("$1,000.22")).toEqual(true)
-		expect(IsNumber("55%")).toEqual(true)
-		expect(IsNumber("Test1")).toEqual(false)
-		expect(IsNumber("Test")).toEqual(false)
+		expect(IsNumber('$1,000.22')).toEqual(true)
+		expect(IsNumber('55%')).toEqual(true)
+		expect(IsNumber('Test1')).toEqual(false)
+		expect(IsNumber('Test')).toEqual(false)
 	})
 
 	test('Equal Number', () => {
-		expect(EqualNumber("1", 1)).toEqual(true)
-		expect(EqualNumber("1.1", 1.1)).toEqual(true)
-		expect(EqualNumber("1.1234", 1.1235)).toEqual(true)
-		expect(EqualNumber("1.12", 1.13)).toEqual(false)
-		expect(EqualNumber("Test", 1.13)).toEqual(false)
-		expect(EqualNumber("Test", "Test 2")).toEqual(false)
+		expect(EqualNumber('1', 1)).toEqual(true)
+		expect(EqualNumber('1.1', 1.1)).toEqual(true)
+		expect(EqualNumber('1.1234', 1.1235)).toEqual(true)
+		expect(EqualNumber('1.12', 1.13)).toEqual(false)
+		expect(EqualNumber('Test', 1.13)).toEqual(false)
+		expect(EqualNumber('Test', 'Test 2')).toEqual(false)
 	})
 })
