@@ -1,7 +1,7 @@
 import {
 	FindIsActive,
 	isNullUndefined,
-	ObjectContainsSearchTerms,
+	ObjectContainsSearchTerms, PagesForRange,
 	SearchRow,
 	SearchRows,
 	SortCompare,
@@ -299,5 +299,15 @@ describe('isNullUndefined', () => {
 		expect(isNullUndefined('')).toBe(false)
 		expect(isNullUndefined([])).toBe(false)
 		expect(isNullUndefined({})).toBe(false)
+	})
+})
+
+describe('PagesForRange', () => {
+	test('Check spread of pages to display', () => {
+		expect(PagesForRange(1, 10)).toEqual([1, 2, 3, null, 10])
+		expect(PagesForRange(9, 10)).toEqual([1, null, 7, 8, 9, 10])
+		expect(PagesForRange(1, 10, 3)).toEqual([1, 2, 3, 4, null, 10])
+		expect(PagesForRange(50, 100)).toEqual([1, null, 49, 50, 51, null, 100])
+		expect(PagesForRange(50, 100, 3)).toEqual([1, null, 48, 49, 50, 51, 52, null, 100])
 	})
 })

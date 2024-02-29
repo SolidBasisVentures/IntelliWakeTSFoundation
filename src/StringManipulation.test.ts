@@ -11,13 +11,15 @@ import {
 	FormatExternalURL,
 	FormatPhoneNumber,
 	FormatPhoneNumberDashes,
-	FormatPhoneNumberDots, FormatPhoneNumberE164US,
+	FormatPhoneNumberDots,
+	FormatPhoneNumberE164US,
 	FormatTaxID,
 	FormatZip,
 	HasAlpha,
 	HasDigits,
 	HTMLToText,
-	IncludesHTML, ObjectToFixedFields,
+	IncludesHTML,
+	ObjectToFixedFields,
 	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
@@ -41,8 +43,9 @@ import {
 	ToPercentDash,
 	ToSnakeCase,
 	ToStringArray,
-	ToWords, TPropertyFixedFields,
-	UCWords
+	ToUpperCaseWords,
+	ToWords,
+	TPropertyFixedFields
 } from './StringManipulation'
 import {IsJSON} from './DataConstructs'
 import {describe, expect, test} from 'vitest'
@@ -272,7 +275,7 @@ test('String Functions', () => {
 			'pr'
 		)
 	).toBe('Doe, John Smith, Jr.')
-	expect(UCWords('This is awesome')).toBe('This Is Awesome')
+	expect(ToUpperCaseWords('This_is_awesome')).toBe('This Is Awesome')
 	expect(RandomString(5)).toHaveLength(5)
 	expect(RandomString(5, '1')).toContain('1')
 	expect(IsJSON('{"id": 1}')).toEqual(true)
@@ -460,24 +463,23 @@ describe('StringCompares', () => {
 		])
 	})
 
-
-	test("ObjectToFixedFields should format without transformations", () => {
-		const obj = { name: "John Doe", age: 26 }
+	test('ObjectToFixedFields should format without transformations', () => {
+		const obj = {name: 'John Doe', age: 26}
 		const settings: TPropertyFixedFields<any>[] = [
-			{ property: "name", length: 10, rightJustify: false, padCharacter: '_'},
-			{ property: "age", length: 3, rightJustify: true }
+			{property: 'name', length: 10, rightJustify: false, padCharacter: '_'},
+			{property: 'age', length: 3, rightJustify: true}
 		]
 		const result = ObjectToFixedFields(obj, settings)
-		expect(result).toBe("John Doe__ 26")
+		expect(result).toBe('John Doe__ 26')
 	})
 
 	test('ObjectToFixedFields should format with transformations', () => {
-		const obj = { name: "John Doe", age: 26 }
+		const obj = {name: 'John Doe', age: 26}
 		const settings: TPropertyFixedFields<any>[] = [
-			{ property: "name", length: 10, rightJustify: false, padCharacter: '_', transform: v => v.toUpperCase() },
-			{ property: "age", length: 3, rightJustify: true, transform: v => v + 1 }
+			{property: 'name', length: 10, rightJustify: false, padCharacter: '_', transform: (v) => v.toUpperCase()},
+			{property: 'age', length: 3, rightJustify: true, transform: (v) => v + 1}
 		]
 		const result = ObjectToFixedFields(obj, settings)
-		expect(result).toBe("JOHN DOE__ 27")
+		expect(result).toBe('JOHN DOE__ 27')
 	})
 })

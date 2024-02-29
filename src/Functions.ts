@@ -469,8 +469,8 @@ export const IsOn = (value: any, options?: TIsOnOptions): boolean => {
 		return value
 	}
 
-	const floatValue = parseFloat(value)
-	if (!isNaN(floatValue)) {
+	const floatValue = CleanNumberNull(value)
+	if (floatValue !== null) {
 		return floatValue > 0
 	}
 
@@ -866,10 +866,11 @@ export function OmitProperty<T extends Record<any, any>, K extends Extract<keyof
 }
 
 /**
+ * Remove properties with falsy values from an object, excluding specified keys.
  *
- * @param obj
- * @param keys
- * @constructor
+ * @param {object} obj - The object to omit falsey properties from.
+ * @param {...string} keys - The keys to exclude from removal.
+ * @returns {object} - A new object with falsey properties omitted, excluding the specified keys.
  */
 export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>(
 	obj: T,
@@ -888,9 +889,21 @@ export function OmitFalsey<T extends object, K extends Extract<keyof T, string>>
 }
 
 /**
+ * OmitUndefined function eliminates the properties from an object that have undefined values.
  *
- * @param obj
- * @constructor
+ * @param {object} obj - The object from which to omit undefined properties.
+ * @returns {object} - A new object without the undefined properties.
+ *
+ * @example
+ *
+ * const obj = {
+ *   name: 'John',
+ *   age: 30,
+ *   gender: undefined
+ * };
+ *
+ * const result = OmitUndefined(obj);
+ * // result is { name: 'John', age: 30 }
  */
 export function OmitUndefined<T extends object>(obj: T): Partial<T> {
 	let ret: Partial<T> = {...obj}
@@ -966,11 +979,12 @@ export function GetPropertyValueCaseInsensitive(
 }
 
 /**
+ * Removes the starting substring(s) from a given value.
  *
- * @param remove
- * @param value
- * @param recursive
- * @constructor
+ * @param {string|string[]|null|undefined} remove - The substring(s) to remove from the beginning of the value.
+ * @param {string|null|undefined} value - The value from which to remove the starting substring(s).
+ * @param {boolean} [recursive=false] - Indicates whether to recursively remove all possible starting substrings.
+ * @return {string} The updated value with the starting substring(s) removed.
  */
 export function RemoveStarting(
 	remove: string | string[] | null | undefined,
@@ -995,11 +1009,12 @@ export function RemoveStarting(
 }
 
 /**
+ * Removes specified endings from a given value.
  *
- * @param remove
- * @param value
- * @param recursive
- * @constructor
+ * @param {string|string[]|null|undefined} remove - The ending(s) to be removed. Accepts a single ending as a string, multiple endings as an array, or null/undefined for no removal.
+ * @param {string|null|undefined} value - The value from which the endings should be removed.
+ * @param {boolean} [recursive=false] - Specifies whether to remove endings recursively.
+ * @returns {string} - The resulting value after removing the specified endings.
  */
 export function RemoveEnding(
 	remove: string | string[] | null | undefined,
@@ -1024,10 +1039,14 @@ export function RemoveEnding(
 }
 
 /**
+ * CoalesceFalsey function coalesces the value provided with the other values,
+ * returning the first non-falsey value encountered.
+ * If checkVal is true, checkVal is returned immediately without checking otherVals.
  *
- * @param checkVal
- * @param otherVals
- * @constructor
+ * @template T
+ * @param {T} checkVal - The value to be checked.
+ * @param {...T[]} otherVals - Additional values to be checked.
+ * @returns {T} - The first non-falsey value encountered, or the last element of otherVals if all are falsey.
  */
 export function CoalesceFalsey<T>(checkVal: T, ...otherVals: T[]): T {
 	if (!!checkVal || otherVals.length === 0) return checkVal
@@ -1117,9 +1136,10 @@ export function InvertColorHex(hex: string, bw = false) {
 }
 
 /**
+ * Sleep function that pauses the execution for a given number of milliseconds.
  *
- * @param ms
- * @constructor
+ * @param {number} ms - The number of milliseconds to sleep.
+ * @returns {Promise<void>} A promise that resolves after the specified duration.
  */
 export function Sleep(ms = 200) {
 	return new Promise((resolve) => setTimeout(resolve, ms))
