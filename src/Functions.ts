@@ -67,6 +67,34 @@ export function IsNumber(value: any): boolean {
 }
 
 /**
+ * Constrain a number based on an increment value and round to a given number of decimal places.
+ *
+ * @param {number} num - The input number to be constrained.
+ * @param {number} increment - The value by which the input number should be constrained.
+ * @param {number} [round=2] - The number of decimal places to round the constrained number to. Defaults to 2.
+ * @returns {number | null} - The constrained number or null.
+ */
+export function NumberConstrainToIncrementNull(num: any, increment: number, round = 2) {
+	return CleanNumberNull(num) === null
+		? null
+		: increment == 0
+		? CleanNumber(num, 0)
+		: CleanNumber(Math.round(CleanNumber(num) / CleanNumber(increment)) * CleanNumber(increment), round)
+}
+
+/**
+ * Constrain a number based on an increment value and round to a given number of decimal places.
+ *
+ * @param {number} num - The input number to be constrained.
+ * @param {number} increment - The value by which the input number should be constrained.
+ * @param {number} [round=2] - The number of decimal places to round the constrained number to. Defaults to 2.
+ * @returns {number} - The constrained number.
+ */
+export function NumberConstrainToIncrement(num: any, increment: number, round = 2) {
+	return NumberConstrainToIncrementNull(num, increment, round) ?? 0
+}
+
+/**
  * Cleans a number with a symbol like '$', ',' or '%'.
  *
  * @example
@@ -924,7 +952,10 @@ export function OmitUndefined<T extends object>(obj: T): Partial<T> {
  * @param {...any} keys - The keys of the properties to be picked.
  * @returns {Object} - A new object containing only the specified properties.
  */
-export function PickProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(obj: T, ...keys: K[]): Pick<T, K> {
+export function PickProperty<T extends Record<any, any>, K extends Extract<keyof T, any>>(
+	obj: T,
+	...keys: K[]
+): Pick<T, K> {
 	let ret: any = {}
 
 	for (let key of keys) {

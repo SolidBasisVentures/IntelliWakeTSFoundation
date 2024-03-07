@@ -23,7 +23,7 @@ import {
 	JSONParse,
 	JSONStringToObject,
 	LeastNumber,
-	LeastNumberNull,
+	LeastNumberNull, NumberConstrainToIncrement,
 	ObjectToJSONString,
 	OmitFalsey,
 	OmitProperty,
@@ -444,5 +444,19 @@ describe('DistributeEvenly function', () => {
 		expect(EqualNumber('1.12', 1.13)).toEqual(false)
 		expect(EqualNumber('Test', 1.13)).toEqual(false)
 		expect(EqualNumber('Test', 'Test 2')).toEqual(false)
+	})
+
+	test('Constrain Number to Increment', () => {
+		expect(NumberConstrainToIncrement('1', 0.25)).toEqual(1)
+		expect(NumberConstrainToIncrement('1.26', 0.25)).toEqual(1.25)
+		expect(NumberConstrainToIncrement('1.24', 0.25)).toEqual(1.25)
+		expect(NumberConstrainToIncrement('1.94', 0.25)).toEqual(2)
+		expect(NumberConstrainToIncrement('1.84', 0.25)).toEqual(1.75)
+		expect(NumberConstrainToIncrement('0.12', 0.25)).toEqual(0)
+		expect(NumberConstrainToIncrement('0.13', 0.25)).toEqual(0.25)
+		expect(NumberConstrainToIncrement(10.13, 0.25)).toEqual(10.25)
+		expect(NumberConstrainToIncrement('1.24', 0)).toEqual(1)
+		expect(NumberConstrainToIncrement('1.24', 1)).toEqual(1)
+		expect(NumberConstrainToIncrement('1.24', 2)).toEqual(2)
 	})
 })
