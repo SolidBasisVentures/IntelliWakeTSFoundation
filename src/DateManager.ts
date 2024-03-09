@@ -3014,12 +3014,12 @@ export const TimeZoneOlsonsAmericaCommon = (): string[] =>
  * @param {string|null|undefined} iana - The IANA timezone identifier. If not provided, the local timezone will be used.
  * @returns {string} The abbreviation of the timezone for the given date and IANA timezone identifier.
  */
-export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
+export function IANAZoneAbbrNull(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	// const short = today.toLocaleDateString(undefined)
 	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	return full.split(',').map(item => item.trim()).at(1) ?? full
+	return full.split(',').map(item => item.trim()).at(1) ?? null
 
 	// Trying to remove date from the string in a locale-agnostic way
 	// const shortIndex = full.indexOf(short)
@@ -3033,6 +3033,29 @@ export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	// 	// in some magic case when short representation of date is not present in the long one, just return the long one as a fallback, since it should contain the timezone's name
 	// 	return full
 	// }
+}
+
+export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
+	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
+	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
+
+	return full.split(',').map(item => item.trim()).at(1) ?? full
+}
+
+export function IANADescription(iana: string | null | undefined, options?: {
+	removePrefix?: boolean
+	hideIANA?: boolean
+	forDate?: TDateAny
+}) {
+	if (!iana) return null
+
+	const abbr = IANAZoneAbbrNull(options?.forDate ?? '2020-01-01', iana)
+
+	if (options?.hideIANA && abbr) return abbr
+
+	const showIana = ReplaceAll('_', ' ', options?.removePrefix ? iana.split('/').at(1) ?? '' : iana)
+
+	return `${showIana}${!abbr ? '' : ` (${abbr})`}`
 }
 
 /**

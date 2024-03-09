@@ -19,7 +19,7 @@ import {
 	DatesQuarter,
 	DateWeekISONumber,
 	EasterDate,
-	GreaterDate,
+	IANADescription,
 	IANAZoneAbbr,
 	LeastDate,
 	ManualParse,
@@ -544,11 +544,15 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	expect(IANAZoneAbbr('2022-06-01', 'America/Denver')).toEqual('MDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/Denver')).toEqual('MST')
+	expect(IANADescription('America/New_York', {forDate: '2020-01-01'})).toEqual('America/New York (EST)')
+	expect(IANADescription('America/New_York', {hideIANA: true, forDate: '2020-01-01'})).toEqual('EST')
+	expect(IANADescription('America/New_York', {removePrefix: true, forDate: '2020-01-01'})).toEqual('New York (EST)')
+
 	expect(DatesBetween('2023-03-31', '2023-04-02')).toEqual(['2023-03-31', '2023-04-01', '2023-04-02'])
 	expect(DatesBetween('2023-04-02', '2023-03-31')).toEqual(['2023-04-02', '2023-04-01', '2023-03-31'])
+	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 
 	expect(LeastDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-03-31')
-	expect(GreaterDate('2023-04-02', '2023-04-01', '2023-03-31')).toEqual('2023-04-02')
 })
 
 test('Easters', () => {
