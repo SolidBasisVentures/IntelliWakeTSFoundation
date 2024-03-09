@@ -539,6 +539,7 @@ test('Date Managers', () => {
 	expect(DateIsWeekend('2022-09-11')).toEqual(true)
 	expect(DateIsWeekend('2022-09-10')).toEqual(true)
 	expect(DateIsWeekend('2022-09-09')).toEqual(false)
+	expect(IANAZoneAbbr('2000-01-01', 'America/Puerto_Rico')).toEqual('AST')
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	expect(IANAZoneAbbr('2022-06-01', 'America/Denver')).toEqual('MDT')

@@ -3016,21 +3016,23 @@ export const TimeZoneOlsonsAmericaCommon = (): string[] =>
  */
 export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
-	const short = today.toLocaleDateString(undefined)
+	// const short = today.toLocaleDateString(undefined)
 	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	// Trying to remove date from the string in a locale-agnostic way
-	const shortIndex = full.indexOf(short)
-	if (shortIndex >= 0) {
-		const trimmed = full.substring(0, shortIndex) + full.substring(shortIndex + short.length)
+	return full.split(',').map(item => item.trim()).at(1) ?? full
 
-		// by this time `trimmed` should be the timezone's name with some punctuation -
-		// trim it from both sides
-		return trimmed.replace(/^[\s,.\-:;]+|[\s,.\-:;]+$/g, '')
-	} else {
-		// in some magic case when short representation of date is not present in the long one, just return the long one as a fallback, since it should contain the timezone's name
-		return full
-	}
+	// Trying to remove date from the string in a locale-agnostic way
+	// const shortIndex = full.indexOf(short)
+	// if (shortIndex >= 0) {
+	// 	const trimmed = full.substring(0, shortIndex) + full.substring(shortIndex + short.length)
+	//
+	// 	// by this time `trimmed` should be the timezone's name with some punctuation -
+	// 	// trim it from both sides
+	// 	return trimmed.replace(/^[\s,.\-:;]+|[\s,.\-:;]+$/g, '')
+	// } else {
+	// 	// in some magic case when short representation of date is not present in the long one, just return the long one as a fallback, since it should contain the timezone's name
+	// 	return full
+	// }
 }
 
 /**
