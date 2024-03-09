@@ -2992,6 +2992,14 @@ export const TimeZoneOlsonsAmerica = (): string[] =>
 	(TimeZoneOlsonsAll.find((TZOA) => TZOA.group === 'America')?.zones ?? []).map((zone) => zone.value)
 
 /**
+ * Returns an array of strings representing all the Olson time zones.
+ *
+ * @returns {string[]} Array of Olson time zones.
+ */
+export const TimeZoneOlsons = (): string[] =>
+	TimeZoneOlsonsAll.reduce((results, olson) => [...results, ...olson.zones.map(zone => zone.value)], [])
+
+/**
  * Returns an array of Olson timezone strings for common timezones in America.
  *
  * @returns {string[]} An array of Olson timezone strings.
