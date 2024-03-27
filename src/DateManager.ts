@@ -2398,8 +2398,8 @@ export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', 
  * @param date
  * @constructor
  */
-export const DateDoWSundayZero = (date: TDateAny = 'now'): number | null =>
-	CleanNumberNull(DateFormatAny('d', DateOnly(date)))
+export const DateDoWSundayZero = (date: TDateAny = 'now'): TDoW | null =>
+	CleanNumberNull(DateFormatAny('d', DateOnly(date))) as TDoW
 
 /**
  *
