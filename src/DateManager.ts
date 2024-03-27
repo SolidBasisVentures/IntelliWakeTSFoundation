@@ -2119,17 +2119,46 @@ export const DateMonth = (date: TDateAny): IMonth | null => {
 }
 
 /**
- * 0 = Sunday
+ * Represents the type for Days of the Week. (Note: 0 = Sunday)
  *
- * @param date
- * @constructor
+ * @typedef {0 | 1 | 2 | 3 | 4 | 5 | 6} TDoW
  */
-export const DateDayOfWeek = (date: TDateAny): number | null => {
+export type TDoW = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+/**
+ * Represents an array of days of the week (DoW).
+ * Each element in the array represents a day of the week, where:
+ * - 0 represents Sunday
+ * - 1 represents Monday
+ * - 2 represents Tuesday
+ * - 3 represents Wednesday
+ * - 4 represents Thursday
+ * - 5 represents Friday
+ * - 6 represents Saturday
+ *
+ * @type {number[]}
+ * @typedef {number} TDoW
+ *
+ * @example
+ *
+ * // Initialize the array of days of the week
+ *
+ * const DoWs: TDoW[] = [0, 1, 2, 3, 4, 5, 6];
+ */
+export const DoWs: TDoW[] = [0, 1, 2, 3, 4, 5, 6]
+
+/**
+ * Gets the day of the week for a given date. (Note: 0 = Sunday)
+ *
+ * @param {TDateAny} date - The date to get the day of the week for.
+ * @returns {TDoW|null} The day of the week, or null if the date is invalid.
+ */
+export const DateDayOfWeek = (date: TDateAny): TDoW | null => {
 	const dateObj = DateObject(date)
 
 	if (!dateObj) return null
 
-	return dateObj.getUTCDay()
+	return dateObj.getUTCDay() as TDoW
 }
 
 /**
