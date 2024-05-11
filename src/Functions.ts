@@ -117,6 +117,8 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)
+	str = ReplaceAll('"', '', str)
+	str = ReplaceAll("'", '', str)
 	str = ReplaceAll(',', '', str)
 	str = ReplaceAll('%', '', str)
 	if (str.trim().length === 0 || isNaN(str)) return !!allowNaN ? NaN : 0
