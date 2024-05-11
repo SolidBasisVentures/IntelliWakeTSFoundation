@@ -1,4 +1,4 @@
-import {ConstrainObject, ObjectFromFormData} from './ObjectConstraint'
+import {ConstrainObject, FormDataFromObject, ObjectFromFormData} from './ObjectConstraint'
 import {ObjectConstraintTest, TestFormData} from './TestDatum'
 import {expect, test} from 'vitest'
 import {OmitProperty} from './Functions'
@@ -263,4 +263,12 @@ test('FormData', () => {
 		features: ['One', 'Two', 'Three'],
 		is_active: false
 	})
+
+	{
+		const formData = FormDataFromObject({test: '1'})
+		const testData = formData.get('test')
+		expect(
+			testData
+		).toEqual('1')
+	}
 })
