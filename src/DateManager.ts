@@ -252,9 +252,21 @@ export const StringIsIANA = (value: string | null | undefined): boolean =>
 	!!value?.includes('/') && /^[a-zA-Z_\/]*$/.test(value)
 
 /**
+ * Check if a string includes an IANA code.
  *
- * @param value
- * @constructor
+ * @param {string | null | undefined} value - The string value to check.
+ * @returns {boolean} - True if the string includes an IANA code, false otherwise.
+ */
+export const StringIncludesIANA = (value: string | null | undefined): boolean => {
+	const ianaPattern = /([a-zA-Z_\/]+)/
+	return !!value && ianaPattern.test(value)
+}
+
+/**
+ * Check if the given value is a valid date string.
+ *
+ * @param {any} value - The value to be checked.
+ * @returns {boolean} - Returns true if the value is a valid date string, false otherwise.
  */
 export const IsDateString = (value: any): boolean => {
 	if (!value || typeof value !== 'string') return false
@@ -265,24 +277,53 @@ export const IsDateString = (value: any): boolean => {
 }
 
 /**
+ * Represents a flexible date type that can be either a Date object, a number representing milliseconds, a string representing a specific date, or special keywords 'now' or 'today'.
+ * This type can also be null or undefined.
  *
+ * @typedef {(Date | number | 'now' | 'today' | string | null | undefined)} TDateAny
  */
 export type TDateAny = Date | number | 'now' | 'today' | string | null | undefined
 
 /**
+ * Function to add seconds to a given date and time string.
  *
- * @param date
- * @constructor
+ * @param {string} value - The date and time string.
+ * @returns {string} The updated date and time string.
  */
-export const ManualParse = (date: string): number | null => {
+export const AddSecondsToDateTimeString = (value: string): string => {
+	let parts = value.split(' ')
+	if (parts.length === 1) return value
+
+	let timeParts = parts[1].split(':')
+	if (timeParts.length === 1) return value
+
+	// Add seconds
+	if (timeParts.length === 2) {
+		timeParts.push('00')
+		parts[1] = timeParts.join(':')
+	}
+
+	return parts.join(' ')
+}
+
+/**
+ * Parses a date string and returns the corresponding timestamp in milliseconds.
+ *
+ * @param {string} dateString - The date string to parse.
+ *
+ * @returns {number | null} - The parsed timestamp in milliseconds, or null if parsing fails.
+ */
+export const ManualParse = (dateString: string): number | null => {
+	const useDate = AddSecondsToDateTimeString(dateString)
 
 	let d = [
 		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
-		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
+		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})( ([0-9]{2}):([0-9]{2})(:([0-9]{2})(\\.([0-9]+))?)?(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?',
+		'([0-9]{4})(-([0-9]{2})(-([0-9]{2})(T([0-9]{2}):([0-9]{2})(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?'
 	].reduce<RegExpMatchArray | null>((result, regexp) => {
-		const nextMatch = (date.length === 16 ? date + ':00' : date).match(new RegExp(regexp))
+		const nextMatch = (useDate.length === 16 ? useDate + ':00' : useDate).match(new RegExp(regexp))
 
-		if ((nextMatch?.at(4)) === undefined) return result
+		if (nextMatch?.at(4) === undefined) return result
 
 		if (!result) return nextMatch
 
@@ -292,6 +333,8 @@ export const ManualParse = (date: string): number | null => {
 
 		return result
 	}, null as RegExpMatchArray | null)
+
+	// if (date === '2021-01-01 10:30:00 America/New_York' || date === '2021-01-01 10:30') console.log(date, StringIncludesIANA(date), d)
 
 	if (!!d) {
 		let dateObj = new Date(CleanNumber(d[1]), 0, 1)
@@ -341,8 +384,8 @@ export const ManualParse = (date: string): number | null => {
 			// } else {
 			// offset -= (dateObj.getTimezoneOffset() / 60)
 			// console.log('e off', dateObj.getTime(), offset)
-		} else if (date.length > 12) {
-			const last3 = date.substring(date.length - 3)
+		} else if (useDate.length > 12) {
+			const last3 = useDate.substring(useDate.length - 3)
 			if (last3.startsWith('-') || last3.endsWith('+')) {
 				offsetHours -= CleanNumber(last3)
 				// console.log('Offset', dateObj, offset)
@@ -1659,7 +1702,7 @@ export const DateDiffComponents = (
 	const dateFromTS = DateParseTS(dateFrom) ?? 0
 	let checkTo = DateParseTS(dateTo) ?? 0
 
-	console.log(dateFromTS - checkTo)
+	// console.log(dateFromTS - checkTo)
 
 	returnComponents.year = DateDiff(dateFromTS, checkTo, 'year') ?? 0
 	if (returnComponents.year) checkTo = DateParseTS(checkTo, {year: returnComponents.year * -1}) ?? 0
@@ -3026,7 +3069,7 @@ export const TimeZoneOlsonsAmerica = (): string[] =>
  * @returns {string[]} Array of Olson time zones.
  */
 export const TimeZoneOlsons = (): string[] =>
-	TimeZoneOlsonsAll.reduce((results, olson) => [...results, ...olson.zones.map(zone => zone.value)], [])
+	TimeZoneOlsonsAll.reduce((results, olson) => [...results, ...olson.zones.map((zone) => zone.value)], [])
 
 /**
  * Returns an array of Olson timezone strings for common timezones in America.
@@ -3048,7 +3091,12 @@ export function IANAZoneAbbrNull(date: TDateAny, iana: string | null | undefined
 	// const short = today.toLocaleDateString(undefined)
 	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	return full.split(',').map(item => item.trim()).at(1) ?? null
+	return (
+		full
+			.split(',')
+			.map((item) => item.trim())
+			.at(1) ?? null
+	)
 
 	// Trying to remove date from the string in a locale-agnostic way
 	// const shortIndex = full.indexOf(short)
@@ -3068,14 +3116,22 @@ export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	return full.split(',').map(item => item.trim()).at(1) ?? full
+	return (
+		full
+			.split(',')
+			.map((item) => item.trim())
+			.at(1) ?? full
+	)
 }
 
-export function IANADescription(iana: string | null | undefined, options?: {
-	removePrefix?: boolean
-	hideIANA?: boolean
-	forDate?: TDateAny
-}) {
+export function IANADescription(
+	iana: string | null | undefined,
+	options?: {
+		removePrefix?: boolean
+		hideIANA?: boolean
+		forDate?: TDateAny
+	}
+) {
 	if (!iana) return null
 
 	const abbr = IANAZoneAbbrNull(options?.forDate ?? '2020-01-01', iana)

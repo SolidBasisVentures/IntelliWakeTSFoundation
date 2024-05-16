@@ -310,6 +310,7 @@ test('Other', async () => {
 	expect(CleanNumberNull("'123.45'")).toEqual(123.45)
 	expect(CleanNumberNull("'   123.45'")).toEqual(123.45)
 	expect(CleanNumberNull('"   123.45"')).toEqual(123.45)
+	expect(CleanNumberNull('"    4.4"')).toEqual(4.4)
 	expect(CleanNumberNull(0, 2)).toEqual(0)
 	expect(CleanDivideNull(1, 2)).toEqual(0.5)
 	expect(CleanDivideNull(1, 0)).toEqual(null)
