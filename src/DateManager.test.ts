@@ -238,6 +238,15 @@ test('Date Managers', () => {
 	expect(
 		DateFormat(
 			'LocalDateTime',
+			DateISO('2021-11-12 01:00', {
+				timezoneSource: 'America/New_York'
+			}),
+			'America/New_York'
+		)
+	).toEqual('11/12/2021 1:00 am')
+	expect(
+		DateFormat(
+			'LocalDateTime',
 			DateISO('2021-11-12 11:00:00.00', {
 				timezoneSource: 'America/New_York'
 			}),
