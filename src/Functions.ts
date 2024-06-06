@@ -258,6 +258,25 @@ export const AverageNumber = (decimals: number, ...values: (any | any[])[]): num
 	AverageNumberNull(decimals, ...values) ?? 0
 
 /**
+ * Calculates the median number from an array of values.
+ *
+ * @param values - The values to calculate the median from.
+ *
+ * @returns The median number if the array is not empty, otherwise null.
+ */
+export function MedianNumber(...values: (any | any[])[]): number | null {
+	const validNumbers = ValidNumbers(values)
+
+	if (validNumbers.length === 0) {
+		return null;
+	} else {
+		const sorted = validNumbers.sort((a, b) => a - b);
+		const middle = Math.floor(sorted.length / 2);
+		return CleanNumber(sorted[middle])
+	}
+}
+
+/**
  * Performs division operation and returns the quotient. Takes care of `null` and `0` denominator cases.
  *
  * @param numerator - The top number in a division.

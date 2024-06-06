@@ -23,7 +23,7 @@ import {
 	JSONParse,
 	JSONStringToObject,
 	LeastNumber,
-	LeastNumberNull, NumberConstrainToIncrement,
+	LeastNumberNull, MedianNumber, NumberConstrainToIncrement,
 	ObjectToJSONString,
 	OmitFalsey,
 	OmitProperty,
@@ -348,6 +348,10 @@ test('Other', async () => {
 	expect(AverageNumber(1, [1, '2', 4, null])).toEqual(2.3)
 	expect(AverageNumber(1, 5, ['6', null])).toEqual(5.5)
 	expect(AverageNumber(1, null)).toEqual(0)
+	expect(MedianNumber([1, 2, '3', null])).toEqual(2)
+	expect(MedianNumber([1, '2', '3', null, null, null, null, null])).toEqual(2)
+	expect(MedianNumber([1, '2'])).toEqual(2)
+	expect(MedianNumber([1])).toEqual(1)
 	expect(ArrayRange(10)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 	expect(ArrayRange(10, 2)).toEqual([0, 2, 4, 6, 8])
 	expect(ArrayRange(10, 1, 1)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9])
