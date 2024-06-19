@@ -31,9 +31,15 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 			}
 		}
 
-		results = [...results, ...strItem.replace(/([A-Z]+|[A-Z]?[a-z]+)(?=[A-Z]|\b)/g, '!$&').split('!')].filter(
-			(strText) => !!strText
-		)
+		results = [
+			...results,
+			...strItem
+				.replace(/([a-zA-Z])([0-9])/g, '$1 $2') // Insert space before numbers preceded by letters
+				.replace(/([0-9])([a-zA-Z])/g, '$1 $2') // Insert space after numbers followed by letters
+				.replace(/([a-z0-9])([A-Z])/g, '$1 $2') // Insert space before capital letters preceded by lowercase or numbers
+				.replace(/([A-Z]+)([A-Z][a-z0-9])/g, '$1 $2') // Insert space between consecutive capital letters followed by lowercase or numbers
+				.split(' ')
+		].filter((strText) => !!strText)
 	}
 
 	return results.filter((strText) => !!strText)
@@ -129,7 +135,6 @@ export const ToCamelCase = (str: string | string[] | undefined | null): string =
 	ToWords(str)
 		.map((st, idx) => (!idx ? st.toLowerCase() : st === st.toUpperCase() ? st : ToFirstLetterUpperSmart(st)))
 		.join('')
-
 /**
  * To Upper Case Words
  * @param str
