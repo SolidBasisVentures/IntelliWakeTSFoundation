@@ -62,6 +62,11 @@ test('String Functions', () => {
 	expect(ToSnakeCase('userToken456Example')).toBe('user_token_456_example');
 	expect(ToSnakeCase('user-token789Example')).toBe('user_token_789_example');
 	expect(ToSnakeCase('user_token123Example')).toBe('user_token_123_example');
+	expect(ToSnakeCase('user_token123:#Example')).toBe('user_token_123_:#_example');
+	expect(ToSnakeCase('user:token')).toBe('user_:_token')
+	expect(ToSnakeCase('user;token')).toBe('user_;_token')
+	expect(ToSnakeCase('user@token')).toBe('user_@_token')
+	expect(ToSnakeCase('user##token')).toBe('user_##_token');
 	expect(ToSnakeCase('userID1Example')).toBe('user_id_1_example');
 	expect(ToSnakeCase('ID1Example')).toBe('id_1_example');
 	expect(ToKebabCase('UserToken')).toBe('user-token')
@@ -74,7 +79,12 @@ test('String Functions', () => {
 	expect(ToKebabCase('user-token789Example')).toBe('user-token-789-example');
 	expect(ToKebabCase('user_token123Example')).toBe('user-token-123-example');
 	expect(ToKebabCase('userID1Example')).toBe('user-id-1-example');
-	expect(ToKebabCase('ID1Example')).toBe('id-1-example');
+	expect(ToKebabCase('ID1Example')).toBe('id-1-example')
+	expect(ToKebabCase('user:token')).toBe('user-:-token')
+	expect(ToKebabCase('user;token')).toBe('user-;-token')
+	expect(ToKebabCase('user@token')).toBe('user-@-token')
+	expect(ToKebabCase('user##token')).toBe('user-##-token');
+	expect(ToKebabCase('user_token123:#Example')).toBe('user-token-123-:#-example');
 	expect(ToCamelCase('user_token')).toBe('userToken')
 	expect(ToCamelCase('userToken')).toBe('userToken')
 	expect(ToCamelCase('UserToken')).toBe('userToken')
@@ -87,7 +97,8 @@ test('String Functions', () => {
 	expect(ToCamelCase('user:token')).toBe('user:Token')
 	expect(ToCamelCase('user;token')).toBe('user;Token')
 	expect(ToCamelCase('user@token')).toBe('user@Token')
-	expect(ToCamelCase('user#token')).toBe('user#Token')
+	expect(ToCamelCase('user##token')).toBe('user##Token')
+	expect(ToCamelCase('user_token123:#Example')).toBe('userToken123:#Example');
 	expect(ToPascalCase('user_token')).toBe('UserToken')
 	expect(ToPascalCase('userToken')).toBe('UserToken')
 	expect(ToPascalCase('user-token')).toBe('UserToken')
@@ -101,7 +112,8 @@ test('String Functions', () => {
 	expect(ToPascalCase('user:token')).toBe('User:Token')
 	expect(ToPascalCase('user;token')).toBe('User;Token')
 	expect(ToPascalCase('user@token')).toBe('User@Token')
-	expect(ToPascalCase('user#token')).toBe('User#Token')
+	expect(ToPascalCase('user##token')).toBe('User##Token')
+	expect(ToPascalCase('user_token123:#Example')).toBe('UserToken123:#Example');
 	expect(ToWords('Peters')).toStrictEqual(['Peters'])
 	expect(ToWords('Peters, Dennis J')).toStrictEqual(['Peters', 'Dennis', 'J'])
 	expect(ToWords('PEters, dennis-j')).toStrictEqual(['P', 'Eters', 'dennis', 'j'])
