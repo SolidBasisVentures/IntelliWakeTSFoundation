@@ -38,6 +38,8 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 				.replace(/([0-9])([a-zA-Z])/g, '$1 $2') // Insert space after numbers followed by letters
 				.replace(/([a-z0-9])([A-Z])/g, '$1 $2') // Insert space before capital letters preceded by lowercase or numbers
 				.replace(/([A-Z]+)([A-Z][a-z0-9])/g, '$1 $2') // Insert space between consecutive capital letters followed by lowercase or numbers
+				.replace(/([a-zA-Z0-9])([:;@#])/g, '$1 $2') // Insert space before special characters
+				.replace(/([:;@#])([a-zA-Z0-9])/g, '$1 $2') // Insert space after special characters
 				.split(' ')
 		].filter((strText) => !!strText)
 	}

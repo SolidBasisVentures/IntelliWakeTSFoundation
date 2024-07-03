@@ -80,29 +80,37 @@ test('String Functions', () => {
 	expect(ToCamelCase('UserToken')).toBe('userToken')
 	expect(ToCamelCase('user_id')).toBe('userID')
 	expect(ToCamelCase('id')).toBe('id')
-	expect(ToCamelCase('user_token123_example')).toBe('userToken123Example');
-	expect(ToCamelCase('userToken456_example')).toBe('userToken456Example');
-	expect(ToCamelCase('UserToken789_example')).toBe('userToken789Example');
-	expect(ToCamelCase('user_id1_example')).toBe('userID1Example');
+	expect(ToCamelCase('user_token123_example')).toBe('userToken123Example')
+	expect(ToCamelCase('userToken456_example')).toBe('userToken456Example')
+	expect(ToCamelCase('UserToken789_example')).toBe('userToken789Example')
+	expect(ToCamelCase('user_id1_example')).toBe('userID1Example')
+	expect(ToCamelCase('user:token')).toBe('user:Token')
+	expect(ToCamelCase('user;token')).toBe('user;Token')
+	expect(ToCamelCase('user@token')).toBe('user@Token')
+	expect(ToCamelCase('user#token')).toBe('user#Token')
 	expect(ToPascalCase('user_token')).toBe('UserToken')
 	expect(ToPascalCase('userToken')).toBe('UserToken')
 	expect(ToPascalCase('user-token')).toBe('UserToken')
 	expect(ToPascalCase('user_id')).toBe('UserID')
 	expect(ToPascalCase('id')).toBe('ID')
-	expect(ToPascalCase('user_token123_example')).toBe('UserToken123Example');
-	expect(ToPascalCase('userToken456_example')).toBe('UserToken456Example');
-	expect(ToPascalCase('UserToken789_example')).toBe('UserToken789Example');
-	expect(ToPascalCase('user_id1_example')).toBe('UserID1Example');
-	expect(ToPascalCase('id1_example')).toBe('ID1Example');
+	expect(ToPascalCase('user_token123_example')).toBe('UserToken123Example')
+	expect(ToPascalCase('userToken456_example')).toBe('UserToken456Example')
+	expect(ToPascalCase('UserToken789_example')).toBe('UserToken789Example')
+	expect(ToPascalCase('user_id1_example')).toBe('UserID1Example')
+	expect(ToPascalCase('id1_example')).toBe('ID1Example')
+	expect(ToPascalCase('user:token')).toBe('User:Token')
+	expect(ToPascalCase('user;token')).toBe('User;Token')
+	expect(ToPascalCase('user@token')).toBe('User@Token')
+	expect(ToPascalCase('user#token')).toBe('User#Token')
 	expect(ToWords('Peters')).toStrictEqual(['Peters'])
 	expect(ToWords('Peters, Dennis J')).toStrictEqual(['Peters', 'Dennis', 'J'])
 	expect(ToWords('PEters, dennis-j')).toStrictEqual(['P', 'Eters', 'dennis', 'j'])
-	expect(ToWords('UserToken123Example')).toStrictEqual(['User', 'Token', '123', 'Example']);
-	expect(ToWords('userToken456Example')).toStrictEqual(['user', 'Token', '456', 'Example']);
-	expect(ToWords('user-token789Example')).toStrictEqual(['user', 'token', '789', 'Example']);
-	expect(ToWords('user_token123Example')).toStrictEqual(['user', 'token', '123', 'Example']);
-	expect(ToWords('userID1Example')).toStrictEqual(['user', 'ID', '1', 'Example']);
-	expect(ToWords('ID1Example')).toStrictEqual(['ID', '1', 'Example']);
+	expect(ToWords('UserToken123Example')).toStrictEqual(['User', 'Token', '123', 'Example'])
+	expect(ToWords('userToken456Example')).toStrictEqual(['user', 'Token', '456', 'Example'])
+	expect(ToWords('user-token789Example')).toStrictEqual(['user', 'token', '789', 'Example'])
+	expect(ToWords('user_token123Example')).toStrictEqual(['user', 'token', '123', 'Example'])
+	expect(ToWords('userID1Example')).toStrictEqual(['user', 'ID', '1', 'Example'])
+	expect(ToWords('ID1Example')).toStrictEqual(['ID', '1', 'Example'])
 	expect(SplitNonWhiteSpace('PEters, dennis-j')).toStrictEqual(['PEters', 'dennis', 'j'])
 	expect(ToInitials('id')).toBe('I')
 	expect(ToInitials('dennis peters')).toBe('DP')
