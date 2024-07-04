@@ -1,11 +1,12 @@
-import {ESTTodayDateTimeLabel, IANADescription, IANAZoneAbbr, TimeZoneOlsonsAmericaCommon} from '../src/DateManager'
-import {SortCompares} from '../src/SortSearch'
+import {ESTTodayDateTimeLabel, NowISOString} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.log('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-console.log(TimeZoneOlsonsAmericaCommon().map(olson => `${olson} : ${IANADescription(olson, {removePrefix: true})}`))
+console.log(NowISOString())
+console.log(NowISOString({day: 'StartOf'}))
+console.log(NowISOString({day: 'StartOf', timezoneSource: 'America/New_York'}))
 
 console.timeEnd('Consoles')

@@ -124,7 +124,7 @@ export type TAdjustment =
  * Current time in ISO string format
  * @returns {string} String of the date/time in ISO format.
  */
-export const NowISOString = (adjustment?: TAdjustment): string =>
+export const NowISOString = (adjustment?: TDateParseOptions): string =>
 	!adjustment ? new Date().toISOString() : DateISO('now', adjustment) ?? new Date().toISOString()
 
 /**
@@ -1167,7 +1167,7 @@ const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
  * @param adjustments
  * @constructor
  */
-export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number | null => {
+export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): number | null => {
 	let dateTS = DateParseTSInternal(date)
 
 	for (const key of Object.keys(adjustments)) {
@@ -1331,7 +1331,8 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TAdjustment): number |
 									const dateObj = DateObject(dateTS) ?? new Date()
 									dateTS =
 										DateAdjustTS(dateTS, {
-											hour: dateObj.getUTCHours() * -1,
+											// Added to support moving to the beginning of a day, but in a selected timezone
+											hour: (dateObj.getUTCHours() * -1) + (!adjustments.timezoneSource ? 0 : ((IANAOffset(adjustments.timezoneSource) ?? 0) / 60)),
 											hours: 'StartOf'
 										}) ?? 0
 								}
