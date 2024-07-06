@@ -1510,3 +1510,59 @@ export function ObjectsToFixedFields<T extends Record<string, any>>(
 ) {
 	return objs.map((obj) => ObjectToFixedFields(obj, settings, separator)).join(newLine)
 }
+
+/**
+ * Finds the common string patterns among an array of strings.
+ *
+ * @param strings - The array of strings to find common patterns from.
+ * @returns An array of common string patterns.
+ */
+export function FindCommonStringPatterns(strings: string[]): string[] {
+	if (strings.length === 0) return []
+	if (strings.length === 1) return [strings[0]]
+
+	const generateSubstrings = (str: string): Set<string> => {
+		const substrings = new Set<string>()
+		for (let i = 0; i < str.length; i++) {
+			for (let j = i + 1; j <= str.length; j++) {
+				substrings.add(str.substring(i, j))
+			}
+		}
+		return substrings
+	}
+
+	const firstStringSubstrings = generateSubstrings(strings[0])
+	const commonSubstrings = new Set<string>()
+
+	for (const substring of firstStringSubstrings) {
+		if (strings.every((str) => str.includes(substring))) {
+			commonSubstrings.add(substring)
+		}
+	}
+
+	// Filter out substrings that are part of longer substrings
+	return Array.from(commonSubstrings).filter(
+		(substring) => !Array.from(commonSubstrings).some((other) => other !== substring && other.includes(substring))
+	)
+}
+
+/**
+ * Finds the differences between given strings based on common patterns.
+ *
+ * @param {string[]} commonPatterns - An array of common patterns to match in the strings.
+ * @param {string[]} strings - An array of strings to compare.
+ * @returns {string[][]} - A 2D array containing the differences found in the strings.
+ */
+export function FindDifferencesFromStringPatterns(commonPatterns: string[], strings: string[]): string[][] {
+	if (!commonPatterns.length) return strings.map(str => [str])
+
+	const differences: string[][] = []
+
+	for (const str of strings) {
+		const patternRegex = new RegExp(commonPatterns.map((pattern) => `(${pattern})`).join('|'), 'g')
+		const parts = str.split(patternRegex).filter((part) => part && !commonPatterns.includes(part))
+		differences.push(parts)
+	}
+
+	return differences
+}
