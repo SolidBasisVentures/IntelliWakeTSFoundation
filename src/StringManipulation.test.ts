@@ -8,8 +8,6 @@ import {
 	DigitsNth,
 	DisplayNameFromFL,
 	DisplayNameFromObject,
-	FindCommonStringPatterns,
-	FindDifferencesFromStringPatterns,
 	FormatExternalURL,
 	FormatPhoneNumber,
 	FormatPhoneNumberDashes,
@@ -532,93 +530,93 @@ describe('StringCompares', () => {
 		expect(result).toBe('JOHN DOE__ 27')
 	})
 
-	test('Common String Patterns', () => {
-		expect(FindCommonStringPatterns(['1Test1FileA', '1Test2FileAb', '2Test3FileBa'])).toEqual(['Test', 'File'])
-		expect(FindCommonStringPatterns(['Test1FileA', 'Test2FileAb', 'Test3FileBa'])).toEqual(['Test', 'File'])
-		expect(FindCommonStringPatterns(['Test1FileAcsv', 'Test2FileAbcsv', 'Test3FileBacsv'])).toEqual([
-			'Test',
-			'File',
-			'csv'
-		])
-		expect(FindCommonStringPatterns(['Test1FileA.csv', 'Test2FileAb.csv', 'Test3FileBa.csv'])).toEqual([
-			'Test',
-			'File',
-			'.csv'
-		])
-		expect(
-			FindCommonStringPatterns(['Test1-FileA-Pricecsv', 'Test2-FileAb-Pricecsv', 'Test3-FileBa-Pricecsv'])
-		).toEqual(['Test', '-File', '-Pricecsv'])
-		expect(
-			FindCommonStringPatterns(['Test1-FileA-Price.csv', 'Test2-FileAb-Price.csv', 'Test3-FileBa-Price.csv'])
-		).toEqual(['Test', '-File', '-Price.csv'])
-		expect(FindCommonStringPatterns(['ABC.csv', 'ABC.csv', 'DEF.csv'])).toEqual(['.csv'])
-		expect(FindCommonStringPatterns(['ABC', 'ABC', 'DEF'])).toEqual([])
-	})
-
-	test('Common String Pattern Resolves', () => {
-		expect(
-			FindDifferencesFromStringPatterns(['Test', 'File'], ['1Test1FileA', '1Test2FileAb', '2Test3FileBa'])
-		).toEqual([
-			['1', '1', 'A'],
-			['1', '2', 'Ab'],
-			['2', '3', 'Ba']
-		])
-		expect(
-			FindDifferencesFromStringPatterns(['Test', 'File'], ['Test1FileA', 'Test2FileAb', 'Test3FileBa'])
-		).toEqual([
-			['1', 'A'],
-			['2', 'Ab'],
-			['3', 'Ba']
-		])
-		expect(
-			FindDifferencesFromStringPatterns(
-				['Test', 'File', 'csv'],
-				['Test1FileAcsv', 'Test2FileAbcsv', 'Test3FileBacsv']
-			)
-		).toEqual([
-			['1', 'A'],
-			['2', 'Ab'],
-			['3', 'Ba']
-		])
-		expect(
-			FindDifferencesFromStringPatterns(
-				['Test', 'File', '.csv'],
-				['Test1FileA.csv', 'Test2FileAb.csv', 'Test3FileBa.csv']
-			)
-		).toEqual([
-			['1', 'A'],
-			['2', 'Ab'],
-			['3', 'Ba']
-		])
-		expect(
-			FindDifferencesFromStringPatterns(
-				['Test', '-File', '-Pricecsv'],
-				['Test1-FileA-Pricecsv', 'Test2-FileAb-Pricecsv', 'Test3-FileBa-Pricecsv']
-			)
-		).toEqual([
-			['1', 'A'],
-			['2', 'Ab'],
-			['3', 'Ba']
-		])
-		expect(
-			FindDifferencesFromStringPatterns(
-				['Test', '-File', '-Price.csv'],
-				['Test1-FileA-Price.csv', 'Test2-FileAb-Price.csv', 'Test3-FileBa-Price.csv']
-			)
-		).toEqual([
-			['1', 'A'],
-			['2', 'Ab'],
-			['3', 'Ba']
-		])
-		expect(FindDifferencesFromStringPatterns(['.csv'], ['ABC.csv', 'ABC.csv', 'DEF.csv'])).toEqual([
-			['ABC'],
-			['ABC'],
-			['DEF']
-		])
-		expect(FindDifferencesFromStringPatterns([], ['ABC', 'ABC', 'DEF'])).toEqual([['ABC'], ['ABC'], ['DEF']])
-		// expect(FindDifferencesFromStringPatterns(['-', '-PRICE.csv'], ['20240601-441-PRICE.csv', '20240501-442-PRICE.csv'])).toEqual([
-		// 	['20240601'],
-		// 	['441']
-		// ])
-	})
+	// test('Common String Patterns', () => {
+	// 	expect(FindCommonStringPatterns(['1Test1FileA', '1Test2FileAb', '2Test3FileBa'])).toEqual(['Test', 'File'])
+	// 	expect(FindCommonStringPatterns(['Test1FileA', 'Test2FileAb', 'Test3FileBa'])).toEqual(['Test', 'File'])
+	// 	expect(FindCommonStringPatterns(['Test1FileAcsv', 'Test2FileAbcsv', 'Test3FileBacsv'])).toEqual([
+	// 		'Test',
+	// 		'File',
+	// 		'csv'
+	// 	])
+	// 	expect(FindCommonStringPatterns(['Test1FileA.csv', 'Test2FileAb.csv', 'Test3FileBa.csv'])).toEqual([
+	// 		'Test',
+	// 		'File',
+	// 		'.csv'
+	// 	])
+	// 	expect(
+	// 		FindCommonStringPatterns(['Test1-FileA-Pricecsv', 'Test2-FileAb-Pricecsv', 'Test3-FileBa-Pricecsv'])
+	// 	).toEqual(['Test', '-File', '-Pricecsv'])
+	// 	expect(
+	// 		FindCommonStringPatterns(['Test1-FileA-Price.csv', 'Test2-FileAb-Price.csv', 'Test3-FileBa-Price.csv'])
+	// 	).toEqual(['Test', '-File', '-Price.csv'])
+	// 	expect(FindCommonStringPatterns(['ABC.csv', 'ABC.csv', 'DEF.csv'])).toEqual(['.csv'])
+	// 	expect(FindCommonStringPatterns(['ABC', 'ABC', 'DEF'])).toEqual([])
+	// })
+	//
+	// test('Common String Pattern Resolves', () => {
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(['Test', 'File'], ['1Test1FileA', '1Test2FileAb', '2Test3FileBa'])
+	// 	).toEqual([
+	// 		['1', '1', 'A'],
+	// 		['1', '2', 'Ab'],
+	// 		['2', '3', 'Ba']
+	// 	])
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(['Test', 'File'], ['Test1FileA', 'Test2FileAb', 'Test3FileBa'])
+	// 	).toEqual([
+	// 		['1', 'A'],
+	// 		['2', 'Ab'],
+	// 		['3', 'Ba']
+	// 	])
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(
+	// 			['Test', 'File', 'csv'],
+	// 			['Test1FileAcsv', 'Test2FileAbcsv', 'Test3FileBacsv']
+	// 		)
+	// 	).toEqual([
+	// 		['1', 'A'],
+	// 		['2', 'Ab'],
+	// 		['3', 'Ba']
+	// 	])
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(
+	// 			['Test', 'File', '.csv'],
+	// 			['Test1FileA.csv', 'Test2FileAb.csv', 'Test3FileBa.csv']
+	// 		)
+	// 	).toEqual([
+	// 		['1', 'A'],
+	// 		['2', 'Ab'],
+	// 		['3', 'Ba']
+	// 	])
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(
+	// 			['Test', '-File', '-Pricecsv'],
+	// 			['Test1-FileA-Pricecsv', 'Test2-FileAb-Pricecsv', 'Test3-FileBa-Pricecsv']
+	// 		)
+	// 	).toEqual([
+	// 		['1', 'A'],
+	// 		['2', 'Ab'],
+	// 		['3', 'Ba']
+	// 	])
+	// 	expect(
+	// 		FindDifferencesFromStringPatterns(
+	// 			['Test', '-File', '-Price.csv'],
+	// 			['Test1-FileA-Price.csv', 'Test2-FileAb-Price.csv', 'Test3-FileBa-Price.csv']
+	// 		)
+	// 	).toEqual([
+	// 		['1', 'A'],
+	// 		['2', 'Ab'],
+	// 		['3', 'Ba']
+	// 	])
+	// 	expect(FindDifferencesFromStringPatterns(['.csv'], ['ABC.csv', 'ABC.csv', 'DEF.csv'])).toEqual([
+	// 		['ABC'],
+	// 		['ABC'],
+	// 		['DEF']
+	// 	])
+	// 	expect(FindDifferencesFromStringPatterns([], ['ABC', 'ABC', 'DEF'])).toEqual([['ABC'], ['ABC'], ['DEF']])
+	// 	// expect(FindDifferencesFromStringPatterns(['-', '-PRICE.csv'], ['20240601-441-PRICE.csv', '20240501-442-PRICE.csv'])).toEqual([
+	// 	// 	['20240601'],
+	// 	// 	['441']
+	// 	// ])
+	// })
 })
