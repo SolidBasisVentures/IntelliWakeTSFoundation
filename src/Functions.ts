@@ -1331,3 +1331,12 @@ export function DistributeEvenly(amount: number, values: number[], toDecimals = 
 
 	return distribution
 }
+
+/**
+ * Represents a generic type that ensures all properties of the given type are non-nullable.
+ *
+ * @template T - The type of the object whose properties need to be made non-nullable.
+ */
+export type NonNullableProperties<T> = {
+	[K in keyof T]: NonNullable<T[K]>;
+};
