@@ -160,6 +160,14 @@ export class TimeTracker {
 	}
 }
 
+/**
+ * Tracks the time taken by a promise function to resolve and logs a warning if it exceeds the specified time limit.
+ *
+ * @param {string} label - The label to identify the time tracking operation.
+ * @param {number | null | undefined} offendingMS - The time limit (in milliseconds) that triggers a warning if the promise function takes longer to resolve.
+ * @param {Promise<T>} promiseFunction - The promise function to track the resolution time.
+ * @returns {Promise<T>} - A promise that resolves with the same value as the input promise function.
+ */
 export function TimeTrackResolved<T>(
 	label: string,
 	offendingMS: any | null | undefined,
