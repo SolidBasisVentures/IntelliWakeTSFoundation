@@ -132,7 +132,9 @@ const ConstrainOthers = (value: any, fieldConstraint: TObjectFieldConstraint): a
  * @constructor
  */
 export const ConstrainObject = <T extends Record<string, any | null>>(obj: T, constraint: TObjectConstraint<T>): T => {
-	const newObj = obj as any
+	if (!obj) return obj
+
+	const newObj = {...obj as any}
 
 	for (const key of Object.keys(obj) as (keyof T)[]) {
 		const fieldConstraint = constraint[key] as TObjectFieldConstraint
