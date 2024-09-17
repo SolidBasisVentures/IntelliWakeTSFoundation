@@ -113,6 +113,13 @@ export function NumberConstrainToIncrement(num: any, increment: number, round = 
  * CleanNumber('100.12', 1)
  */
 export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean): number => {
+	if (typeof value === 'number') {
+		if (roundClean !== undefined) {
+			return RoundTo(value, roundClean)
+		}
+		return value
+	}
+
 	if (!value) return 0
 
 	let str = value.toString()
