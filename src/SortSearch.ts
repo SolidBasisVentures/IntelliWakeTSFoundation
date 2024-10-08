@@ -714,12 +714,13 @@ const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyT
  * // returns ['john', 'doe', 'johndoe@mail.com']
  * SearchTerms('john doe johndoe@mail.com')
  */
-export const SearchTerms = (search: string | null | undefined, toLowerCase = true): string[] =>
+export const SearchTerms = (search: string | null | undefined, toLowerCase = true, limit: number | null = 8): string[] =>
 	(search ?? '')
 		.trim()
 		.split(/(\s+)/)
 		.map((term) => (toLowerCase ? term.trim().toLowerCase() : term.trim()))
 		.filter((term) => !!term)
+		.filter((_, idx) => !limit || idx < limit)
 
 /**
  * Converts multiple elements into a single string
