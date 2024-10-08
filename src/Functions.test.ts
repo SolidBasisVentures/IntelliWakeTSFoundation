@@ -19,7 +19,7 @@ import {
 	GreaterNumber,
 	GreaterNumberNull,
 	IsNumber,
-	IsOn,
+	IsOn, IsWholeNumber,
 	JSONParse,
 	JSONStringToObject,
 	LeastNumber,
@@ -444,6 +444,30 @@ describe('DistributeEvenly function', () => {
 		expect(IsNumber('55%')).toEqual(true)
 		expect(IsNumber('Test1')).toEqual(false)
 		expect(IsNumber('Test')).toEqual(false)
+	})
+
+	test('Is Whole Number', () => {
+		expect(IsWholeNumber('1')).toEqual(true)
+		expect(IsWholeNumber('1.0000')).toEqual(true)
+		expect(IsWholeNumber('1.0001')).toEqual(false)
+		expect(IsWholeNumber(1)).toEqual(true)
+		expect(IsWholeNumber(1.0000)).toEqual(true)
+		expect(IsWholeNumber(1.0001)).toEqual(false)
+		expect(IsWholeNumber('0')).toEqual(true)
+		expect(IsWholeNumber('0.0000')).toEqual(true)
+		expect(IsWholeNumber('0.0001')).toEqual(false)
+		expect(IsWholeNumber(0)).toEqual(true)
+		expect(IsWholeNumber(0.0000)).toEqual(true)
+		expect(IsWholeNumber(0.0001)).toEqual(false)
+		expect(IsWholeNumber('-1')).toEqual(true)
+		expect(IsWholeNumber('-1.0000')).toEqual(true)
+		expect(IsWholeNumber('-1.0001')).toEqual(false)
+		expect(IsWholeNumber(-1)).toEqual(true)
+		expect(IsWholeNumber('$1,000')).toEqual(true)
+		expect(IsWholeNumber('$1,000.22')).toEqual(false)
+		expect(IsWholeNumber('55%')).toEqual(true)
+		expect(IsWholeNumber('Test1')).toEqual(false)
+		expect(IsWholeNumber('Test')).toEqual(false)
 	})
 
 	test('Equal Number', () => {
