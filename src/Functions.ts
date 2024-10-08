@@ -113,6 +113,13 @@ export function NumberConstrainToIncrement(num: any, increment: number, round = 
  * CleanNumber('100.12', 1)
  */
 export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean): number => {
+	if (typeof value === 'number') {
+		if (roundClean !== undefined) {
+			return RoundTo(value, roundClean)
+		}
+		return value
+	}
+
 	if (!value) return 0
 
 	let str = value.toString()
@@ -1331,3 +1338,12 @@ export function DistributeEvenly(amount: number, values: number[], toDecimals = 
 
 	return distribution
 }
+
+/**
+ * Represents a generic type that ensures all properties of the given type are non-nullable.
+ *
+ * @template T - The type of the object whose properties need to be made non-nullable.
+ */
+export type NonNullableProperties<T> = {
+	[K in keyof T]: NonNullable<T[K]>;
+};

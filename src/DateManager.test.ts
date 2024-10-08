@@ -207,6 +207,8 @@ test('Date Managers', () => {
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
 	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
+	expect(DateISO('2024-07-04 10:00:00', {day: 'StartOf'})).toEqual('2024-07-04T00:00:00.000Z')
+	expect(DateISO('2024-07-04 10:00:00', {day: 'StartOf', timezoneSource: 'America/New_York'})).toEqual('2024-07-04T04:00:00.000Z')
 	expect(
 		DateISO('2021-11-12 14:08:54.71', {
 			timezoneSource: 'America/New_York'

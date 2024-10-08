@@ -1,7 +1,7 @@
 import {ConstrainObject, FormDataFromObject, ObjectFromFormData} from './ObjectConstraint'
 import {ObjectConstraintTest, TestFormData} from './TestDatum'
 import {expect, test} from 'vitest'
-import {OmitProperty} from './Functions'
+import {JSONParse, OmitProperty} from './Functions'
 
 test('ObjectConstraint', () => {
 	expect(
@@ -229,6 +229,105 @@ test('ObjectConstraint', () => {
 	).toEqual({
 		id: 1,
 		denorm_avg_cost: 1.157777777777778
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				obj: null
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				obj: {
+					type: 'object',
+					nullable: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		obj: null
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				obj: {val: 1}
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				obj: {
+					type: 'object',
+					nullable: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		obj: {val: 1}
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				obj: '{"val": 1}'
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				obj: {
+					type: 'object',
+					nullable: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		obj: {val: 1}
+	})
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				obj: [{val: 1}]
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				obj: {
+					type: 'object',
+					nullable: true,
+					isArray: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		obj: [{val: 1}]
+	})
+
+	console.log('-----', JSONParse('[{"val": 1}]'))
+
+	expect(
+		ConstrainObject(
+			{
+				id: '1',
+				obj: '[{"val": 1}]'
+			},
+			{
+				id: {type: 'number', length: 32, nullable: false},
+				obj: {
+					type: 'object',
+					nullable: true,
+					isArray: true
+				}
+			}
+		)
+	).toEqual({
+		id: 1,
+		obj: [{val: 1}]
 	})
 })
 
