@@ -1,7 +1,7 @@
 import {ConstrainObject, FormDataFromObject, ObjectFromFormData} from './ObjectConstraint'
 import {ObjectConstraintTest, TestFormData} from './TestDatum'
 import {expect, test} from 'vitest'
-import {JSONParse, OmitProperty} from './Functions'
+import {OmitProperty} from './Functions'
 
 test('ObjectConstraint', () => {
 	expect(
@@ -308,8 +308,6 @@ test('ObjectConstraint', () => {
 		obj: [{val: 1}]
 	})
 
-	console.log('-----', JSONParse('[{"val": 1}]'))
-
 	expect(
 		ConstrainObject(
 			{
@@ -366,8 +364,6 @@ test('FormData', () => {
 	{
 		const formData = FormDataFromObject({test: '1'})
 		const testData = formData.get('test')
-		expect(
-			testData
-		).toEqual('1')
+		expect(testData).toEqual('1')
 	}
 })
