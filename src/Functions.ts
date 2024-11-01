@@ -132,6 +132,11 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 
 	if (!value) return 0
 
+	if (roundClean === undefined) {
+		const useValue = +value
+		if (!Number.isNaN(useValue)) return useValue
+	}
+
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)
 	str = ReplaceAll('"', '', str)
