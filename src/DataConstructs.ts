@@ -609,13 +609,47 @@ export const ReduceObjectToOtherKeys = (main: any, reduceTo: any, excludeKeys: s
 }
 
 /**
+ * A type utility that transforms all properties of a given type `T` to allow `null` values.
  *
+ * This utility type maps each property of the given type `T` to a union type
+ * with `null`. It is useful when you need to represent objects where some
+ * properties can explicitly have a null value, alongside their original types.
+ *
+ * @template T - The type to transform by allowing its properties to be `null`.
  */
 export type Nullable<T> = {[K in keyof T]: T[K] | null}
 
 /**
+ * A utility type `DeepNullable` that transforms all properties of a given type `T`
+ * and its nested objects into types that are nullable.
  *
+ * This type recursively makes every property of `T` optionally null, allowing
+ * for deeply nested structures to account for the possibility of `null` values
+ * at any level.
+ *
+ * Example:
+ * For a type `T`, applying `DeepNullable<T>` will transform it such that:
+ * - All direct properties of `T` can be `null`
+ * - If a property of `T` is an object, its properties can also be `null`,
+ *   and this behavior continues recursively.
+ *
+ * Type Parameters:
+ * @template T The type whose properties and sub-properties will be made nullable.
  */
 export type DeepNullable<T> = {
 	[K in keyof T]: DeepNullable<T[K]> | null
 }
+
+/**
+ * A utility type that transforms all the properties of a given type `T` into non-nullable properties.
+ * This means that each property of `T` that could potentially be `null` or `undefined` is transformed
+ * to exclude these possibilities, thus ensuring that no property in the resulting type can be `null`
+ * or `undefined`.
+ *
+ * @template T The object type whose properties are to be made non-nullable.
+ * @typedef {Object} NonNullableProperties
+ * @property {T} K Represents the keys of the input type `T`.
+ */
+export type NonNullableProperties<T> = {
+	[K in keyof T]: NonNullable<T[K]>;
+};
