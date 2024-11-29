@@ -67,6 +67,16 @@ export function IsNumber(value: any): boolean {
 }
 
 /**
+ * Determines whether a given value is a whole number.
+ *
+ * @param {any} value - The value to check.
+ * @returns {boolean} - Returns true if the value is a number; otherwise, returns false.
+ */
+export function IsWholeNumber(value: any): boolean {
+	return IsNumber(value) && CleanNumber(value, 0) === CleanNumber(value, 8)
+}
+
+/**
  * Constrain a number based on an increment value and round to a given number of decimal places.
  *
  * @param {number} num - The input number to be constrained.
@@ -121,6 +131,11 @@ export const CleanNumber = (value: any, roundClean?: number, allowNaN?: boolean)
 	}
 
 	if (!value) return 0
+
+	if (roundClean === undefined) {
+		const useValue = +value
+		if (!Number.isNaN(useValue)) return useValue
+	}
 
 	let str = value.toString()
 	str = ReplaceAll('$', '', str)

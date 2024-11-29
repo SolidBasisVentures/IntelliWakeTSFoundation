@@ -19,7 +19,7 @@ import {
 	GreaterNumber,
 	GreaterNumberNull,
 	IsNumber,
-	IsOn,
+	IsOn, IsWholeNumber,
 	JSONParse,
 	JSONStringToObject,
 	LeastNumber,
@@ -86,6 +86,10 @@ test('CleanNumber', () => {
 	expect(CleanNumber('$', undefined, true)).toBe(NaN)
 	expect(CleanNumber('$100')).toBe(100)
 	expect(CleanNumber('1,000')).toBe(1000)
+	expect(CleanNumber('1,000,000,000,000,000,000')).toBe(1000000000000000000)
+	expect(CleanNumber('1,000,000,000,000,000,000,000,000,000')).toBe(1000000000000000000000000000)
+	expect(CleanNumber('1,000,000,000,000,000,000,000,000,000.1')).toBe(1000000000000000000000000000.1)
+	expect(CleanNumber('1.23456789')).toBe(1.23456789)
 	expect(CleanNumber('50%')).toBe(50)
 	expect(CleanNumber(1.234)).toBe(1.234)
 	expect(CleanNumber(1.234, 0)).toBe(1)
@@ -444,6 +448,30 @@ describe('DistributeEvenly function', () => {
 		expect(IsNumber('55%')).toEqual(true)
 		expect(IsNumber('Test1')).toEqual(false)
 		expect(IsNumber('Test')).toEqual(false)
+	})
+
+	test('Is Whole Number', () => {
+		expect(IsWholeNumber('1')).toEqual(true)
+		expect(IsWholeNumber('1.0000')).toEqual(true)
+		expect(IsWholeNumber('1.0001')).toEqual(false)
+		expect(IsWholeNumber(1)).toEqual(true)
+		expect(IsWholeNumber(1.0000)).toEqual(true)
+		expect(IsWholeNumber(1.0001)).toEqual(false)
+		expect(IsWholeNumber('0')).toEqual(true)
+		expect(IsWholeNumber('0.0000')).toEqual(true)
+		expect(IsWholeNumber('0.0001')).toEqual(false)
+		expect(IsWholeNumber(0)).toEqual(true)
+		expect(IsWholeNumber(0.0000)).toEqual(true)
+		expect(IsWholeNumber(0.0001)).toEqual(false)
+		expect(IsWholeNumber('-1')).toEqual(true)
+		expect(IsWholeNumber('-1.0000')).toEqual(true)
+		expect(IsWholeNumber('-1.0001')).toEqual(false)
+		expect(IsWholeNumber(-1)).toEqual(true)
+		expect(IsWholeNumber('$1,000')).toEqual(true)
+		expect(IsWholeNumber('$1,000.22')).toEqual(false)
+		expect(IsWholeNumber('55%')).toEqual(true)
+		expect(IsWholeNumber('Test1')).toEqual(false)
+		expect(IsWholeNumber('Test')).toEqual(false)
 	})
 
 	test('Equal Number', () => {
