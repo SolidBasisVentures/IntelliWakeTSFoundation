@@ -1332,7 +1332,11 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 									dateTS =
 										DateAdjustTS(dateTS, {
 											// Added to support moving to the beginning of a day, but in a selected timezone
-											hour: (dateObj.getUTCHours() * -1) + (!adjustments.timezoneSource ? 0 : ((IANAOffset(adjustments.timezoneSource) ?? 0) / 60)),
+											hour:
+												dateObj.getUTCHours() * -1 +
+												(!adjustments.timezoneSource
+													? 0
+													: (IANAOffset(adjustments.timezoneSource) ?? 0) / 60),
 											hours: 'StartOf'
 										}) ?? 0
 								}
@@ -2198,7 +2202,11 @@ export const DoWs: TDoW[] = [0, 1, 2, 3, 4, 5, 6]
  * @returns {TDoW|null} The day of the week, or null if the date is invalid.
  */
 export const DateDayOfWeek = (date: TDateAny): TDoW | null => {
-	const dateObj = DateObject(date)
+	const dateOnly = DateOnlyNull(date)
+
+	if (!dateOnly) return null
+
+	const dateObj = DateObject(dateOnly)
 
 	if (!dateObj) return null
 

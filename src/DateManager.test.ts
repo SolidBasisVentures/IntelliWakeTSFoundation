@@ -1,6 +1,7 @@
 import {
 	DateAdjustTS,
 	DateCompare,
+	DateDayOfWeek,
 	DateDiff,
 	DateDiffComponents,
 	DateFormat,
@@ -586,6 +587,41 @@ test('Easters', () => {
 	expect(EasterDate(2032)).toEqual('2032-03-28')
 	expect(EasterDate(2033)).toEqual('2033-04-17')
 	expect(EasterDate(2034)).toEqual('2034-04-09')
+})
+
+test('DoWs', () => {
+	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
+	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
+	expect(DateDayOfWeek('2025-03-07 12:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 12:00:00')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
+
+	const otz = process.env.TZ
+	process.env.TZ = 'America/New_York'
+	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
+	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
+	expect(DateDayOfWeek('2025-03-07 12:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 12:00:00')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
+
+	process.env.TZ = 'UTC'
+	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
+	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
+	expect(DateDayOfWeek('2025-03-07 12:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00-05')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 12:00:00')).toEqual(5)
+	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
+
+	if (!!otz) {
+		process.env.TZ = otz
+	} else {
+		delete process.env.TZ
+	}
 })
 
 // test('Pesachs (Passovers)', () => {
