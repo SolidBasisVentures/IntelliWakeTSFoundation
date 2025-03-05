@@ -1,6 +1,6 @@
 import {
 	AddChange,
-	AddIDChange, ArrayToCSVString,
+	AddIDChange, ArrayToCSVString, ArrayToTSVString,
 	ArrayWithIDChanges,
 	ChangeArrayByIDOrUUID,
 	CombineArrayWithIDOrUUIDChanges,
@@ -157,4 +157,13 @@ test('Data Constructs', () => {
 		{id: '1', name: 'Bob'},
 		{id: '2', name: 'John'}
 	])).toBe('"id","name"\n"1","Bob"\n"2","John"')
+
+	expect(ArrayToTSVString([
+		{id: 1, name: 'Bob'},
+		{id: 2, name: 'John'}
+	])).toBe('"id"\t"name"\n1\t"Bob"\n2\t"John"')
+	expect(ArrayToTSVString([
+		{id: '1', name: 'Bob'},
+		{id: '2', name: 'John'}
+	])).toBe('"id"\t"name"\n"1"\t"Bob"\n"2"\t"John"')
 })

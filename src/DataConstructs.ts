@@ -261,6 +261,35 @@ export const ArrayToCSVString = function (csvData: object[], blankZeros = true):
 }
 
 /**
+ * Converts Array to TSV.
+ */
+export const ArrayToTSVString = function (csvData: object[], blankZeros = true): string {
+	if (!csvData.length) return ''
+
+	const keys = Object.keys(csvData[0])
+
+	return (
+		'"' +
+		keys.join('"\t"') +
+		'"\n' +
+		csvData
+			.map((row: object) =>
+				keys
+					.map((key) => {
+						const item = row[key]
+						return blankZeros && ((typeof item === 'number' && !item) || item === '0')
+							? ''
+							: typeof item === 'string'
+							? '"' + ReplaceAll('"', '""', item) + '"'
+							: (item ?? '').toString()
+					})
+					.join('\t')
+			)
+			.join('\n')
+	)
+}
+
+/**
  * Converts Data to CSV.
  */
 export const DataToCSVString = function (csvData: any[][], blankZeros = true): string {
