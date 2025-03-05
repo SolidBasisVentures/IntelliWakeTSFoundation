@@ -232,11 +232,10 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
 	items.map((item) => ({...item, ...idChanges[item.id]}))
 
 /**
- * Converts Data to CSV. Creates a download link and triggers
- * click event on it to download the file.
+ * Converts Data to CSV.
  */
-export const DataToCSVExport = function (filename: string, csvData: any, blankZeros = true) {
-	const csvString = csvData
+export function DataToCSVString(csvData: any, blankZeros = true) {
+	return csvData
 		.map((row: any) =>
 			row
 				.map((item: any) =>
@@ -249,6 +248,14 @@ export const DataToCSVExport = function (filename: string, csvData: any, blankZe
 				.join(',')
 		)
 		.join('\n')
+}
+
+/**
+ * Converts Data to CSV. Creates a download link and triggers
+ * click event on it to download the file.
+ */
+export const DataToCSVExport = function (filename: string, csvData: any, blankZeros = true) {
+	const csvString = DataToCSVString(csvData, blankZeros)
 
 	let pom = document.createElement('a')
 	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
