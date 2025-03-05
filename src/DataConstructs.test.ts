@@ -1,6 +1,6 @@
 import {
 	AddChange,
-	AddIDChange,
+	AddIDChange, ArrayToCSVString,
 	ArrayWithIDChanges,
 	ChangeArrayByIDOrUUID,
 	CombineArrayWithIDOrUUIDChanges,
@@ -148,4 +148,13 @@ test('Data Constructs', () => {
 	expect(RemoveDupProperties({is_item: false}, {is_item: false})).toEqual({})
 	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: false}, {is_item: null})).toEqual({is_item: false})
 	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: null}, {is_item: false})).toEqual({is_item: null})
+
+	expect(ArrayToCSVString([
+		{id: 1, name: 'Bob'},
+		{id: 2, name: 'John'}
+	])).toBe('"id","name"\n1,"Bob"\n2,"John"')
+	expect(ArrayToCSVString([
+		{id: '1', name: 'Bob'},
+		{id: '2', name: 'John'}
+	])).toBe('"id","name"\n"1","Bob"\n"2","John"')
 })
