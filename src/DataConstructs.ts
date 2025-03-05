@@ -234,7 +234,7 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
 /**
  * Converts Data to CSV.
  */
-export function DataToCSVString(csvData: any, blankZeros = true) {
+export function DataToCSVString(csvData: any, blankZeros = true): string {
 	return csvData
 		.map((row: any) =>
 			row
@@ -658,5 +658,5 @@ export type DeepNullable<T> = {
  * @property {T} K Represents the keys of the input type `T`.
  */
 export type NonNullableProperties<T> = {
-	[K in keyof T]: NonNullable<T[K]>;
-};
+	[K in keyof T]: NonNullable<T[K]>
+}
