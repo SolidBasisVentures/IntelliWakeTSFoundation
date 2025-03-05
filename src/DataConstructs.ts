@@ -234,7 +234,7 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
 /**
  * Converts Data to CSV.
  */
-export const DataToCSVString = function (csvData: any, blankZeros = true): string {
+export const DataToCSVString = function (csvData: any[], blankZeros = true): string {
 	return csvData
 		.map((row: any) =>
 			row
@@ -254,7 +254,7 @@ export const DataToCSVString = function (csvData: any, blankZeros = true): strin
  * Converts Data to CSV. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExport = function (filename: string, csvData: any, blankZeros = true) {
+export const DataToCSVExport = function (filename: string, csvData: any[], blankZeros = true) {
 	const csvString = DataToCSVString(csvData, blankZeros)
 
 	let pom = document.createElement('a')
@@ -268,7 +268,7 @@ export const DataToCSVExport = function (filename: string, csvData: any, blankZe
  * Converts Data to CSV without quotes. Creates a download link and triggers
  * click event on it to download the file.
  */
-export const DataToCSVExportNoQuotes = function (filename: string, csvData: any) {
+export const DataToCSVExportNoQuotes = function (filename: string, csvData: any[]) {
 	const csvString = csvData
 		.map((row: any) =>
 			row.map((item: any) => (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item ?? '')).join(',')
