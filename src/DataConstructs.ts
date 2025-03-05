@@ -234,7 +234,7 @@ export const ArrayWithIDChanges = <T extends IIDObject>(items: T[], idChanges: I
 /**
  * Converts Data to CSV.
  */
-export function DataToCSVString(csvData: any, blankZeros = true): string {
+export const DataToCSVString = function (csvData: any, blankZeros = true): string {
 	return csvData
 		.map((row: any) =>
 			row
