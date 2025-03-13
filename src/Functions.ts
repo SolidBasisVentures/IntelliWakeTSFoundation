@@ -477,19 +477,21 @@ export const GoogleMapsAddressLink = (address: object | null | undefined, prefix
 /**
  * Generates a Google Maps directions link between two addresses.
  *
- * @param {object|null|undefined} address1 - The first address object, representing the starting point. Can be null or undefined.
- * @param {object|null|undefined} address2 - The second address object, representing the destination. Can be null or undefined.
- * @param {string} [prefix=''] - A prefix for the object keys (default is an empty string).
- * @return {string} A URL string linking to Google Maps directions between the two addresses. Returns an empty string if either address is missing or invalid.
+ * @param {object | null | undefined} address1 - The first address (origin) object which contains address details such as address1, city, state, and zip.
+ * @param {object | null | undefined} address2 - The second address (destination) object which contains address details such as address1, city, state, and zip.
+ * @param {string} [prefix1=''] - The prefix to prepend to the property keys of the first address object (e.g., if keys are prefixed like "home_address1").
+ * @param {string} [prefix2=''] - The prefix to prepend to the property keys of the second address object (e.g., if keys are prefixed like "work_address1").
+ * @return {string} A URL string for Google Maps directions, or an empty string if any required parameters or address components are missing.
  */
 export function GoogleMapsDirectionsLink(
 	address1: object | null | undefined,
 	address2: object | null | undefined,
-	prefix: string = ''
+	prefix1: string = '',
+	prefix2: string = ''
 ): string {
 	if (!address1 || !address2) return ''
 
-	const formatAddress = (address: object): string => {
+	const formatAddress = (address: object, prefix: string): string => {
 		if (!address || !(address[prefix + 'address1'] ?? address[prefix + 'address_1']) || !address[prefix + 'zip'])
 			return ''
 		return `${address[prefix + 'address1'] ?? address[prefix + 'address_1']}, ${address[prefix + 'city']}, ${
@@ -497,11 +499,11 @@ export function GoogleMapsDirectionsLink(
 		} ${address[prefix + 'zip']}`
 	}
 
-	const originAddress = formatAddress(address1)
+	const originAddress = formatAddress(address1, prefix1)
 	if (!originAddress) return ''
 	const origin = encodeURIComponent(originAddress)
 
-	const destinationAddress = formatAddress(address2)
+	const destinationAddress = formatAddress(address2, prefix2)
 	if (!destinationAddress) return ''
 	const destination = encodeURIComponent(destinationAddress)
 
