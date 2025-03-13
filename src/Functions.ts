@@ -465,7 +465,7 @@ export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string =
  *	})
  */
 export const GoogleMapsAddressLink = (dataArray: object | null | undefined, prefix: string = ''): string => {
-	if (!dataArray || !dataArray[prefix + 'address1'] || !dataArray[prefix + 'zip']) return ''
+	if (!dataArray || !(dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1']) || !dataArray[prefix + 'zip']) return ''
 	let address = (dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1'] ?? '') + ' '
 	if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
 		address += (dataArray[prefix + 'address2'] ?? dataArray[prefix + 'address_2']) + ' '
