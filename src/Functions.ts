@@ -452,28 +452,60 @@ export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string =
 }
 
 /**
- * Returns a google maps link with the given address
+ * Generates a Google Maps search link for a given address object.
+ * Constructs the address string using the provided prefix and address fields.
+ * Returns an empty string if required fields are missing.
  *
- * @example
- * // returns https://www.google.com/maps/search/?api=1&query=Blk%201,%20Lot%202,%20Some%20Street...
- *	GoogleMapsAddressLink({
- *		address1: 'Blk 1, Lot 2, Some Street',
- *		address2: 'Blk 2, Lot 3, Some Street',
- *		city: 'Burr Ridge',
- *		state: 'IL',
- *		zip: '61257',
- *	})
+ * @param {object|null|undefined} address - The address object containing components such as address1, address2, city, state, and zip.
+ * @param {string} [prefix=''] - An optional prefix used to access address fields in the object (e.g., 'billing_' for 'billing_address1').
+ * @returns {string} A URL string for the Google Maps search query corresponding to the provided address.
  */
-export const GoogleMapsAddressLink = (dataArray: object | null | undefined, prefix: string = ''): string => {
-	if (!dataArray || !(dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1']) || !dataArray[prefix + 'zip']) return ''
-	let address = (dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1'] ?? '') + ' '
-	if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
-		address += (dataArray[prefix + 'address2'] ?? dataArray[prefix + 'address_2']) + ' '
+export const GoogleMapsAddressLink = (address: object | null | undefined, prefix: string = ''): string => {
+	if (!address || !(address[prefix + 'address1'] ?? address[prefix + 'address_1']) || !address[prefix + 'zip'])
+		return ''
+
+	let addressStruct = (address[prefix + 'address1'] ?? address[prefix + 'address_1'] ?? '') + ' '
+	if (!!address[prefix + 'address2'] || !!address[prefix + 'address_2']) {
+		addressStruct += (address[prefix + 'address2'] ?? address[prefix + 'address_2']) + ' '
 	}
-	address += (dataArray[prefix + 'city'] ?? '') + ', '
-	address += (dataArray[prefix + 'state'] ?? '') + ' '
-	address += dataArray[prefix + 'zip'] ?? ''
-	return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(address)
+	addressStruct += (address[prefix + 'city'] ?? '') + ', '
+	addressStruct += (address[prefix + 'state'] ?? '') + ' '
+	addressStruct += address[prefix + 'zip'] ?? ''
+	return 'https://www.google.com/maps/search/?api=1&query=' + encodeURI(addressStruct)
+}
+
+/**
+ * Generates a Google Maps directions link between two addresses.
+ *
+ * @param {object|null|undefined} address1 - The first address object, representing the starting point. Can be null or undefined.
+ * @param {object|null|undefined} address2 - The second address object, representing the destination. Can be null or undefined.
+ * @param {string} [prefix=''] - A prefix for the object keys (default is an empty string).
+ * @return {string} A URL string linking to Google Maps directions between the two addresses. Returns an empty string if either address is missing or invalid.
+ */
+export function GoogleMapsDirectionsLink(
+	address1: object | null | undefined,
+	address2: object | null | undefined,
+	prefix: string = ''
+): string {
+	if (!address1 || !address2) return ''
+
+	const formatAddress = (address: object): string => {
+		if (!address || !(address[prefix + 'address1'] ?? address[prefix + 'address_1']) || !address[prefix + 'zip'])
+			return ''
+		return `${address[prefix + 'address1'] ?? address[prefix + 'address_1']}, ${address[prefix + 'city']}, ${
+			address[prefix + 'state']
+		} ${address[prefix + 'zip']}`
+	}
+
+	const originAddress = formatAddress(address1)
+	if (!originAddress) return ''
+	const origin = encodeURIComponent(originAddress)
+
+	const destinationAddress = formatAddress(address2)
+	if (!destinationAddress) return ''
+	const destination = encodeURIComponent(destinationAddress)
+
+	return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`
 }
 
 /**
