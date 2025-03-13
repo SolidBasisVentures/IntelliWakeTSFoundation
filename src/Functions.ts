@@ -290,10 +290,10 @@ export function MedianNumber(...values: (any | any[])[]): number | null {
 	const validNumbers = ValidNumbers(values)
 
 	if (validNumbers.length === 0) {
-		return null;
+		return null
 	} else {
-		const sorted = validNumbers.sort((a, b) => a - b);
-		const middle = Math.floor(sorted.length / 2);
+		const sorted = validNumbers.sort((a, b) => a - b)
+		const middle = Math.floor(sorted.length / 2)
 		return CleanNumber(sorted[middle])
 	}
 }
@@ -464,7 +464,8 @@ export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string =
  *		zip: '61257',
  *	})
  */
-export const GoogleMapsAddressLink = (dataArray: any, prefix: string = ''): string => {
+export const GoogleMapsAddressLink = (dataArray: object | null | undefined, prefix: string = ''): string => {
+	if (!dataArray || !dataArray[prefix + 'address1'] || !dataArray[prefix + 'zip']) return ''
 	let address = (dataArray[prefix + 'address1'] ?? dataArray[prefix + 'address_1'] ?? '') + ' '
 	if (!!dataArray[prefix + 'address2'] || !!dataArray[prefix + 'address_2']) {
 		address += (dataArray[prefix + 'address2'] ?? dataArray[prefix + 'address_2']) + ' '
