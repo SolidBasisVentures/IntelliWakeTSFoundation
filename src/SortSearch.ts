@@ -714,7 +714,11 @@ const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyT
  * // returns ['john', 'doe', 'johndoe@mail.com']
  * SearchTerms('john doe johndoe@mail.com')
  */
-export const SearchTerms = (search: string | null | undefined, toLowerCase = true, limit: number | null = 8): string[] =>
+export const SearchTerms = (
+	search: string | null | undefined,
+	toLowerCase = true,
+	limit: number | null = 8
+): string[] =>
 	(search ?? '')
 		.trim()
 		.split(/(\s+)/)
@@ -796,6 +800,7 @@ export interface ISearchOptions {
 	matchFromTerm?: number
 	matchUntilTerm?: number
 	limit?: number
+	page?: number
 }
 
 /**
@@ -902,16 +907,18 @@ export const ObjectContainsSearch = (
 export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearchOptions): T[] => {
 	const searchTerms = SearchTerms(search)
 
-	const limit = CleanNumber(options?.limit)
+	let limit = CleanNumber(options?.limit)
 
 	if (searchTerms.length === 0 && !limit) {
 		return arrayTable
 	}
 
+	let start = !options?.page ? 0 : CleanNumber(options.page - 1) * (limit ?? 0)
+
 	return !limit
 		? (arrayTable ?? []).filter((arrayRow: any) => ObjectContainsSearchTerms(arrayRow, searchTerms, options))
-		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any) => {
-				if (results.length >= limit) return results
+		: (arrayTable ?? []).reduce<T[]>((results, arrayRow: any, idx) => {
+				if (idx < start || results.length >= limit) return results
 				if (!searchTerms.length || ObjectContainsSearchTerms(arrayRow, searchTerms, options)) {
 					return [...results, arrayRow]
 				} else {

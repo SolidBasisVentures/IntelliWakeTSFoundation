@@ -1,7 +1,8 @@
 import {
 	FindIsActive,
 	isNullUndefined,
-	ObjectContainsSearchTerms, PagesForRange,
+	ObjectContainsSearchTerms,
+	PagesForRange,
 	SearchRow,
 	SearchRows,
 	SortCompare,
@@ -100,11 +101,7 @@ test('SortCompares', () => {
 			{id: 2, name: 'ZZZ', prioritized: false},
 			{id: 3, name: 'ccc', prioritized: true},
 			{id: 4, name: 'BBB', prioritized: false}
-		].sort((a, b) =>
-			SortCompares([
-				[a.name, b.name]
-			])
-		)
+		].sort((a, b) => SortCompares([[a.name, b.name]]))
 	).toEqual([
 		{id: 1, name: 'AAA', prioritized: false},
 		{id: 4, name: 'BBB', prioritized: false},
@@ -169,20 +166,15 @@ test('SortCompares', () => {
 		{id: 2, name: 'ZZZ', prioritized: false}
 	])
 
-	expect([0, 3, 1, 2].sort((a, b) => SortCompares([a, b])))
-		.toEqual([0, 1, 2, 3])
+	expect([0, 3, 1, 2].sort((a, b) => SortCompares([a, b]))).toEqual([0, 1, 2, 3])
 
-	expect([0, 3, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0'])))
-		.toEqual([1, 2, 3, 0])
+	expect([0, 3, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0']))).toEqual([1, 2, 3, 0])
 
-	expect([0, 3, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom'])))
-		.toEqual([0, 1, 2, 3])
+	expect([0, 3, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom']))).toEqual([0, 1, 2, 3])
 
-	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom'])))
-		.toEqual([0, 1, 2, 3, null])
+	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom']))).toEqual([0, 1, 2, 3, null])
 
-	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0'])))
-		.toEqual([1, 2, 3, 0, null])
+	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0']))).toEqual([1, 2, 3, 0, null])
 })
 
 test('Sort Array', () => {
@@ -264,6 +256,70 @@ test('Search', () => {
 		{user: 'john doe', age: 1},
 		{user: 'john doe', age: 2}
 	])
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1},
+				{user: 'john doe', age: 2},
+				{user: 'john doe', age: 3},
+				{user: 'john doe', age: 4},
+				{user: 'john doe', age: 5}
+			],
+			'john',
+			{limit: 2,
+				page: 1}
+		)
+	).toEqual([
+		{user: 'john doe', age: 1},
+		{user: 'john doe', age: 2}
+	])
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1},
+				{user: 'john doe', age: 2},
+				{user: 'john doe', age: 3},
+				{user: 'john doe', age: 4},
+				{user: 'john doe', age: 5}
+			],
+			'john',
+			{limit: 2,
+				page: 2}
+		)
+	).toEqual([
+		{user: 'john doe', age: 3},
+		{user: 'john doe', age: 4}
+	])
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1},
+				{user: 'john doe', age: 2},
+				{user: 'john doe', age: 3},
+				{user: 'john doe', age: 4},
+				{user: 'john doe', age: 5}
+			],
+			'john',
+			{limit: 2,
+				page: 3}
+		)
+	).toEqual([
+		{user: 'john doe', age: 5}
+	])
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1},
+				{user: 'john doe', age: 2},
+				{user: 'john doe', age: 3},
+				{user: 'john doe', age: 4},
+				{user: 'john doe', age: 5}
+			],
+			'john',
+			{limit: 2,
+				page: 4}
+		)
+	).toEqual([])
 	const activeList = [
 		{id: 1, is_active: true},
 		{id: 2, is_active: false}
