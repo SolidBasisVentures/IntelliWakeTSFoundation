@@ -935,6 +935,27 @@ export const ArrayRange = (end: number, increment = 1, start = 0): number[] => {
 }
 
 /**
+ * Converts a given string into an array of substrings, splitting based on whitespace by default
+ * or using specified separators to ignore.
+ *
+ * @param {string} str - The input string to be split into an array.
+ * @param {string} [ignoreSeparators=''] - Optional parameter representing characters that should not
+ *                                         be treated as separators during the split operation.
+ * @returns {string[]} Array of substrings derived from the input string, split based on specified rules.
+ */
+export const ArrayFromStringWS = (str: string, ignoreSeparators = ''): string[] => {
+	const useSeparators = ',; :.\'"`|*\t\r\n'
+		.split('') // Split the string into an array of characters
+		.filter((char) => !ignoreSeparators.includes(char)) // Exclude any character present in `exclude`
+		.join('') // Join the remaining characters back into a string
+
+	console.log(useSeparators)
+
+	const regex = new RegExp(`[${useSeparators}]`, 'g')
+	return str.split(regex).filter((substring) => substring.trim().length > 0)
+}
+
+/**
  *
  * @param data
  * @param keys

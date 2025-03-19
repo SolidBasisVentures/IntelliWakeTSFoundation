@@ -1,4 +1,5 @@
 import {
+	ArrayFromStringWS,
 	ArrayRange,
 	AverageNumber,
 	AverageNumberNull,
@@ -182,6 +183,11 @@ test('ToArray', () => {
 	expect(ToArray([1])).toEqual([1])
 	expect(ToArray([1, 2, 3])).toEqual([1, 2, 3])
 	expect(ToArray([0, 1, 2, 3])).toEqual([0, 1, 2, 3])
+})
+
+test('ArrayFromStringWS', () => {
+	expect(ArrayFromStringWS('32771, 32751')).toEqual(['32771', '32751'])
+	expect(ArrayFromStringWS('Orlando, FL;Sanford, FL', ' ,')).toEqual(['Orlando, FL', 'Sanford, FL'])
 })
 
 test('RemoveStartEnd', () => {
