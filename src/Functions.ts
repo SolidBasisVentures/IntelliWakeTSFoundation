@@ -949,8 +949,6 @@ export const ArrayFromStringWS = (str: string, ignoreSeparators = ''): string[] 
 		.filter((char) => !ignoreSeparators.includes(char)) // Exclude any character present in `exclude`
 		.join('') // Join the remaining characters back into a string
 
-	console.log(useSeparators)
-
 	const regex = new RegExp(`[${useSeparators}]`, 'g')
 	return str.split(regex).filter((substring) => substring.trim().length > 0)
 }
