@@ -1451,11 +1451,58 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 }
 
 /**
+ * Calculates the difference in days between two dates, excluding weekends (Saturdays and Sundays).
  *
- * @param dateFrom
- * @param dateTo
- * @param duration
- * @constructor
+ * @param {TDateAny} dateFrom - The starting date of the calculation. Can be provided in any supported date format.
+ * @param {TDateAny} dateTo - The ending date of the calculation. Can be provided in any supported date format.
+ * @returns {number} - The number of non-weekend days (Monday to Friday) between `dateFrom` and `dateTo`.
+ *                     Returns 0 if the dates are invalid, the same, or if there are no non-weekend days between them.
+ */
+export const DayDiffNoWeekend = (dateFrom: TDateAny, dateTo: TDateAny): number => {
+	let processDate = DateOnly(dateFrom)
+	const compareDate = DateOnly(dateTo)
+
+	if (!processDate || !compareDate || processDate === compareDate) return 0
+
+	let days = 0
+
+	while (DateCompare(processDate, 'IsBefore', compareDate, 'day')) {
+		const dow = DateDayOfWeek(processDate)
+		if (dow !== 0 && dow !== 6) days++
+
+		processDate = DateOnly(processDate, {days: 1})
+	}
+
+	while (DateCompare(processDate, 'IsAfter', compareDate, 'day')) {
+		processDate = DateOnly(processDate, {days: -1})
+
+		const dow = DateDayOfWeek(processDate)
+		if (dow !== 0 && dow !== 6) days--
+	}
+
+	return days
+}
+
+/**
+ * Calculates the difference between two given dates (`dateFrom` and `dateTo`) based on the specified duration unit.
+ *
+ * @param {TDateAny} dateFrom - The starting date for the calculation, which can be in various supported date formats.
+ * @param {TDateAny} dateTo - The ending date for the calculation, which can also be in various supported date formats.
+ * @param {TDuration} duration - The unit of time to calculate the difference, such as 'year', 'month', 'day', 'hour', etc.
+ * Supported values include:
+ * - 'year', 'years'
+ * - 'month', 'months'
+ * - 'week', 'weeks'
+ * - 'day', 'days'
+ * - 'hour', 'hours'
+ * - 'minute', 'minutes'
+ * - 'second', 'seconds'
+ * - 'millisecond', 'milliseconds'
+ *
+ * @returns {number | null} The difference between the two dates based on the specified duration. Returns:
+ * - A positive or negative number indicating the difference in the specified unit.
+ * - Zero if the dates are the same.
+ * - Null if one or both dates are invalid.
  */
 export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
 	// const isDayRanged = ['year'
@@ -2279,10 +2326,14 @@ export const DateOnlyNull = (
 }
 
 /**
+ * Converts a given date input into a formatted date string, based on optional adjustments.
  *
- * @param date
- * @param adjustments
- * @constructor
+ * @param {TDateAny} date - The date input to be processed. Supported formats may include date objects, strings, or other date-compatible types.
+ * @param {TDateOnlyAdjustment & { formatLocale?: boolean, timezoneDisplay?: string, fromFormat?: string }} [adjustments] - Optional adjustments to modify the formatting or parsing behavior.
+ * @param {boolean} [adjustments.formatLocale] - Indicates whether to format the date based on the local timezone.
+ * @param {string} [adjustments.timezoneDisplay] - Specifies the timezone to use for the date formatting (e.g., 'UTC', 'GMT+10').
+ * @param {string} [adjustments.fromFormat] - Defines the expected input format for parsing the date.
+ * @returns {string} Returns the formatted date string, or the default ISO date format (YYYY-MM-DD) if no adjustments are applied.
  */
 export const DateOnly = (
 	date: TDateAny,

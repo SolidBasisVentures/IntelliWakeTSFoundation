@@ -18,7 +18,7 @@ import {
 	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
-	DateWeekISONumber,
+	DateWeekISONumber, DayDiffNoWeekend,
 	EasterDate,
 	IANADescription,
 	IANAZoneAbbr,
@@ -137,7 +137,15 @@ test('Date Managers', () => {
 		second: -1,
 		millisecond: 0
 	})
-	// expect(DateWeekNumber('2021-01-01')).toEqual({year: 2021, week: 1})
+	expect(DayDiffNoWeekend('2025-03-03', '2025-03-03')).toEqual(0)
+	expect(DayDiffNoWeekend('2025-03-03', '2025-03-04')).toEqual(1)
+	expect(DayDiffNoWeekend('2025-03-01', '2025-03-04')).toEqual(1)
+	expect(DayDiffNoWeekend('2025-03-01', '2025-03-31')).toEqual(20)
+	expect(DayDiffNoWeekend('2025-03-04', '2025-03-03')).toEqual(-1)
+	expect(DayDiffNoWeekend('2025-03-04', '2025-03-01')).toEqual(-1)
+	expect(DayDiffNoWeekend('2025-03-31', '2025-03-01')).toEqual(-20)
+	expect(DayDiffNoWeekend(isoLongDateString, '2021-01-02T00:00:00.000Z')).toEqual(1)
+	expect(DayDiffNoWeekend(isoLongDateString, '2020-12-31T00:00:00.000Z')).toEqual(-1)
 	// expect(DateWeekNumber('2021-01-02')).toEqual({year: 2021, week: 1})
 	// expect(DateWeekNumber('2021-01-03')).toEqual({year: 2021, week: 2})
 	// expect(DateWeekNumber('2021-01-09')).toEqual({year: 2021, week: 2})
