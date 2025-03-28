@@ -3149,14 +3149,19 @@ export const TimeZoneOlsonsAmericaCommon = (): string[] =>
 export function IANAZoneAbbrNull(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	// const short = today.toLocaleDateString(undefined)
-	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
+	try {
+		const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	return (
-		full
-			.split(',')
-			.map((item) => item.trim())
-			.at(1) ?? null
-	)
+		return (
+			full
+				.split(',')
+				.map((item) => item.trim())
+				.at(1) ?? null
+		)
+	} catch (e) {
+		console.warn('Invalid timezone identifier (IANAZoneAbbrNull): ' + (iana ?? '(NONE)'))
+		return null
+	}
 
 	// Trying to remove date from the string in a locale-agnostic way
 	// const shortIndex = full.indexOf(short)
@@ -3174,14 +3179,19 @@ export function IANAZoneAbbrNull(date: TDateAny, iana: string | null | undefined
 
 export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
-	const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
+	try {
+		const full = today.toLocaleDateString(undefined, {timeZoneName: 'short', timeZone: iana ?? undefined})
 
-	return (
-		full
-			.split(',')
-			.map((item) => item.trim())
-			.at(1) ?? full
-	)
+		return (
+			full
+				.split(',')
+				.map((item) => item.trim())
+				.at(1) ?? full
+		)
+	} catch (e) {
+		console.warn('Invalid timezone identifier (IANAZoneAbbr): ' + (iana ?? '(NONE)'))
+		return null
+	}
 }
 
 export function IANADescription(
