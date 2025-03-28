@@ -2548,7 +2548,15 @@ export const DatesBetween = (
 }
 
 /**
+ * Represents the structure of a timezone in an Olson database format.
  *
+ * This type defines a group of timezones and their corresponding metadata.
+ *
+ * @typedef {Object} TTimeZoneOlsonStructure
+ * @property {string} group - The name of the group or category to which the timezones belong.
+ * @property {Object[]} zones - An array of zone objects, where each object provides details about a specific timezone.
+ * @property {string} zones.value - The canonical value or identifier for the timezone.
+ * @property {string} zones.name - A descriptive name for the timezone.
  */
 export type TTimeZoneOlsonStructure = {
 	group: string
@@ -2559,7 +2567,19 @@ export type TTimeZoneOlsonStructure = {
 }
 
 /**
+ * Represents a collection of time zone information grouped categorically.
+ * Each group contains an array of zones, where each zone specifies a time zone value and its descriptive name.
  *
+ * @typedef {Object} TTimeZoneOlsonStructure
+ * @property {string} group - The category or label that groups specific time zones (e.g., "US (Common)", "America").
+ * @property {Array.<Object>} zones - The list of time zones associated with a specific group.
+ * @property {string} zones[].value - The unique identifier (Olson time zone) of a time zone (e.g., "America/New_York").
+ * @property {string} zones[].name - The descriptive name of the time zone (e.g., "New York (Eastern)").
+ *
+ * @name TimeZoneOlsonsAll
+ * @type {TTimeZoneOlsonStructure[]}
+ * @description Maintains a comprehensive list of time zones organized by groups, enabling easy access
+ * and categorization of time zones for applications dealing with date and time functionality.
  */
 export const TimeZoneOlsonsAll: TTimeZoneOlsonStructure[] = [
 	{
@@ -3177,6 +3197,13 @@ export function IANAZoneAbbrNull(date: TDateAny, iana: string | null | undefined
 	// }
 }
 
+/**
+ * Returns the short IANA timezone abbreviation for the provided date and timezone.
+ *
+ * @param {TDateAny} date - The date object or value to be used for determining the timezone abbreviation.
+ * @param {string | null | undefined} iana - The IANA timezone identifier. Can be null or undefined.
+ * @return {string} The short timezone abbreviation, or an empty string if the timezone is invalid or an error occurs.
+ */
 export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 	const today = DateObject(date, {timezoneSource: iana ?? undefined}) ?? new Date()
 	try {
@@ -3190,10 +3217,20 @@ export function IANAZoneAbbr(date: TDateAny, iana: string | null | undefined) {
 		)
 	} catch (e) {
 		console.warn('Invalid timezone identifier (IANAZoneAbbr): ' + (iana ?? '(NONE)'))
-		return null
+		return ''
 	}
 }
 
+/**
+ * Generates a formatted description for a given IANA time zone identifier.
+ *
+ * @param {string | null | undefined} iana - The IANA time zone string. Provide `null` or `undefined` for empty results.
+ * @param {Object} [options] - Optional configuration for formatting the output.
+ * @param {boolean} [options.removePrefix] - If true, removes the prefix (e.g., continent/region) from the IANA string.
+ * @param {boolean} [options.hideIANA] - If true, the abbreviation will be returned instead of the formatted IANA string.
+ * @param {TDateAny} [options.forDate] - The date to use for determining the time zone abbreviation.
+ * @return {string | null} A formatted string representing the IANA time zone, optionally including time zone abbreviation, or null if the input is invalid.
+ */
 export function IANADescription(
 	iana: string | null | undefined,
 	options?: {
