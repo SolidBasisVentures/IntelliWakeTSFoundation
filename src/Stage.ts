@@ -11,6 +11,7 @@ export enum Stages {
 	Test = 'test',
 	QA = 'qa',
 	Demo = 'demo',
+	Training = 'training',
 	ProdSupport = 'prodsupport',
 	Prod = 'prod'
 }
@@ -79,7 +80,7 @@ export const IsStageDevFocused = (): boolean => {
  *
  */
 export const IsStageTestFocused = (): boolean => {
-	return IsStage([Stages.QA, Stages.Test])
+	return IsStage([Stages.QA, Stages.Test, Stages.Training])
 }
 
 /**
