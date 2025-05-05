@@ -626,6 +626,11 @@ test('DoWs', () => {
 	expect(DateDayOfWeek('2025-03-07 12:00:00')).toEqual(5)
 	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
 
+	const startOfMonth =
+		DateOnly('2025-05-04', { month: 'StartOf', timezoneDisplay: 'America/New_York' }) ?? 0
+	const startDOW = DateDayOfWeek(startOfMonth, 'America/New_York') ?? 0
+	expect(startDOW).toEqual(4)
+
 	if (!!otz) {
 		process.env.TZ = otz
 	} else {
