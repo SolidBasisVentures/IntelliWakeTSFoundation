@@ -2254,7 +2254,7 @@ export const DateDayOfWeek = (date: TDateAny, timezoneDisplay?: string): TDoW | 
 
 	if (!dateOnly) return null
 
-	const dateObj = DateObject(dateOnly, {timezoneDisplay})
+	const dateObj = DateObject(dateOnly, {timezoneSource: timezoneDisplay})
 
 	if (!dateObj) return null
 
