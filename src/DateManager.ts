@@ -2249,7 +2249,7 @@ export const DoWs: TDoW[] = [0, 1, 2, 3, 4, 5, 6]
  * @param {string|null} [timezoneDisplay] - Optional parameter specifying the timezone display format. If not provided, defaults to null.
  * @returns {TDoW|null} The day of the week as a numeric value (TDoW) where Sunday is 0, Monday is 1, and so on, or null if the date is invalid.
  */
-export const DateDayOfWeek = (date: TDateAny, timezoneDisplay?: string | null): TDoW | null => {
+export const DateDayOfWeek = (date: TDateAny, timezoneDisplay?: string): TDoW | null => {
 	const dateOnly = DateOnlyNull(date, {timezoneDisplay})
 
 	if (!dateOnly) return null
