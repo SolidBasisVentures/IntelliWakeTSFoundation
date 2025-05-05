@@ -2243,17 +2243,18 @@ export type TDoW = 0 | 1 | 2 | 3 | 4 | 5 | 6
 export const DoWs: TDoW[] = [0, 1, 2, 3, 4, 5, 6]
 
 /**
- * Gets the day of the week for a given date. (Note: 0 = Sunday)
+ * Extracts the day of the week (as a numeric value) from a given date input in UTC.
  *
- * @param {TDateAny} date - The date to get the day of the week for.
- * @returns {TDoW|null} The day of the week, or null if the date is invalid.
+ * @param {TDateAny} date - The input date from which the day of the week is to be derived. Can be in various accepted date formats.
+ * @param {string|null} [timezoneDisplay] - Optional parameter specifying the timezone display format. If not provided, defaults to null.
+ * @returns {TDoW|null} The day of the week as a numeric value (TDoW) where Sunday is 0, Monday is 1, and so on, or null if the date is invalid.
  */
-export const DateDayOfWeek = (date: TDateAny): TDoW | null => {
-	const dateOnly = DateOnlyNull(date)
+export const DateDayOfWeek = (date: TDateAny, timezoneDisplay?: string | null): TDoW | null => {
+	const dateOnly = DateOnlyNull(date, {timezoneDisplay})
 
 	if (!dateOnly) return null
 
-	const dateObj = DateObject(dateOnly)
+	const dateObj = DateObject(dateOnly, {timezoneDisplay})
 
 	if (!dateObj) return null
 

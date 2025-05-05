@@ -48,7 +48,7 @@ const times = [
 
 test('Date Managers', () => {
 	expect(DateParseTS('2000-01-01 08:00')).toEqual(DateParseTS('2000-01-01 08:00:00'))
-	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString)).toEqual('Thursday, December 31, 2020, 7:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/New_York')).toEqual('Thursday, December 31, 2020, 7:00 pm')
 	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual(
 		'Thursday, December 31, 2020, 4:00 pm'
 	)
@@ -77,9 +77,10 @@ test('Date Managers', () => {
 			milliseconds: 1
 		})
 	).toEqual(1609459200000 + 7 * 24 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000 + 60 * 60 * 1000 + 60 * 1000 + 1000 + 1)
-	expect(DateISO('2021-01-01 10:00:00')).toEqual('2021-01-01T15:00:00.000Z')
-	expect(DateISO('2021-01-01 10:30:00')).toEqual('2021-01-01T15:30:00.000Z')
-	expect(DateISO('2021-01-01 10:30')).toEqual('2021-01-01T15:30:00.000Z')
+	const timezoneSource = 'America/New_York'
+	expect(DateISO('2021-01-01 10:00:00', {timezoneSource})).toEqual('2021-01-01T15:00:00.000Z')
+	expect(DateISO('2021-01-01 10:30:00', {timezoneSource})).toEqual('2021-01-01T15:30:00.000Z')
+	expect(DateISO('2021-01-01 10:30', {timezoneSource})).toEqual('2021-01-01T15:30:00.000Z')
 	expect(DateISO('2021-01-01 10:30:00 America/New_York')).toEqual('2021-01-01T15:30:00.000Z')
 	expect(DateISO('2021-01-01 10:30 America/New_York')).toEqual('2021-01-01T15:30:00.000Z')
 	expect(DateISO('2021-01-01 10:30 America/Chicago')).toEqual('2021-01-01T16:30:00.000Z')
@@ -322,7 +323,7 @@ test('Date Managers', () => {
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:00:00')).toEqual(0)
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00')).toEqual(-1)
 	expect(SortCompareDate('2021-01-01 08:00:00', '2021-01-01 08:01:00', 'day')).toEqual(0)
-	expect(DateFormat('DisplayTime', '2021-12-22 14:41:24.404782-05')).toEqual('2:41 pm')
+	expect(DateFormat('DisplayTime', '2021-12-22 14:41:24.404782-05', timezoneSource)).toEqual('2:41 pm')
 	expect(DateISO(dt, {year: 'StartOf'})).toEqual('2021-01-01T00:00:00.000Z')
 	expect(DateISO(dt, {year: 'EndOf'})).toEqual('2021-12-31T23:59:59.999Z')
 	expect(DateISO(dt, {quarter: 'StartOf'})).toEqual('2021-10-01T00:00:00.000Z')
@@ -472,10 +473,10 @@ test('Date Managers', () => {
 	expect(DateFormat('DisplayDateDoWTime', '2022-01-06 17:07:47.315-05', 'America/New_York')).toEqual(
 		'Th, Jan 6, 2022, 5:07 pm'
 	)
-	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00')).toEqual('2/1/2022 3:18 pm')
-	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true})).toEqual('3:18 pm')
-	expect(DateFormat('LocalDateTime', '1970-01-01T00:00:00-05:00')).toEqual('1/1/1970 12:00 am')
-	expect(DateFormat('LocalDateTime', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970 8:00 am')
+	expect(DateFormat('LocalDateTime', '2022-02-01T15:18:37.633-05:00', timezoneSource)).toEqual('2/1/2022 3:18 pm')
+	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource})).toEqual('3:18 pm')
+	expect(DateFormat('LocalDateTime', '1970-01-01T00:00:00-05:00', timezoneSource)).toEqual('1/1/1970 12:00 am')
+	expect(DateFormat('LocalDateTime', '1970-01-01T08:00:00-05:00', timezoneSource)).toEqual('1/1/1970 8:00 am')
 	expect(DateFormat('Local', '1970-01-01T08:00:00-05:00')).toEqual('1/1/1970')
 	expect(DateFormat('Local', '1970-01-01')).toEqual('1/1/1970')
 	expect(DateFormat('Local', '2022-01-06')).toEqual('1/6/2022')
@@ -510,7 +511,7 @@ test('Date Managers', () => {
 	expect(IANAZoneAbbr('2022-06-01', 'America/New_York')).toEqual('EDT')
 	expect(IANAZoneAbbr('2022-12-01', 'America/New_York')).toEqual('EST')
 	process.env.TZ = 'America/Los_Angeles'
-	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true})).toEqual('3:18 pm')
+	expect(TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource})).toEqual('3:18 pm')
 	expect(
 		TimeOnly('2022-02-01T15:18:37.633-05:00', {formatLocale: true, timezoneSource: 'America/Los_Angeles'})
 	).toEqual('12:18 pm')
