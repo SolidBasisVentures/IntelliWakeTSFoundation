@@ -175,6 +175,44 @@ test('SortCompares', () => {
 	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom']))).toEqual([0, 1, 2, 3, null])
 
 	expect([0, 3, null, 2, 1].sort((a, b) => SortCompares([a, b, 'Bottom0']))).toEqual([1, 2, 3, 0, null])
+
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: '', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) =>
+			SortCompares([
+				[a.name, b.name, ['ZZZ', 'AAA', 'BBB']],
+				[a.id, b.id]
+			])
+		)
+	).toEqual([
+		{id: 3, name: '', prioritized: true},
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 4, name: 'BBB', prioritized: false}
+	])
+
+	expect(
+		[
+			{id: 1, name: 'AAA', prioritized: false},
+			{id: 2, name: 'ZZZ', prioritized: false},
+			{id: 3, name: '', prioritized: true},
+			{id: 4, name: 'BBB', prioritized: false}
+		].sort((a, b) =>
+			SortCompares([
+				[a.name, b.name, 'Bottom', ['ZZZ', 'AAA', 'BBB']],
+				[a.id, b.id]
+			])
+		)
+	).toEqual([
+		{id: 2, name: 'ZZZ', prioritized: false},
+		{id: 1, name: 'AAA', prioritized: false},
+		{id: 4, name: 'BBB', prioritized: false},
+		{id: 3, name: '', prioritized: true}
+	])
 })
 
 test('Sort Array', () => {

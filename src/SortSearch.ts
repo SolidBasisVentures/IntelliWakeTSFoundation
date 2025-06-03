@@ -383,7 +383,8 @@ export const SortIndex = <T>(
 export const SortCompareNull = (
 	beforeValue: any,
 	afterValue: any,
-	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+	emptyToOrArray: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' | any[] = null,
+	arrayOrder: null | any[] = null
 ): number | null => {
 	const verboseConsole = false //!!emptyTo
 
@@ -392,32 +393,36 @@ export const SortCompareNull = (
 		return null
 	}
 
-	if (!!emptyTo) {
-		if (emptyTo.endsWith('0')) {
+	if (!!emptyToOrArray) {
+		if (Array.isArray(emptyToOrArray)) {
+			return SortPerArray(beforeValue, afterValue, emptyToOrArray)
+		} else if (Array.isArray(arrayOrder)) {
+			return SortPerArray(beforeValue, afterValue, arrayOrder, emptyToOrArray)
+		} else if (emptyToOrArray.endsWith('0')) {
 			if (!beforeValue && !!afterValue) {
 				if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
 
-				if (typeof afterValue === 'boolean') return emptyTo === 'Top0' ? 1 : -1
-				return emptyTo === 'Top0' ? -1 : 1
+				if (typeof afterValue === 'boolean') return emptyToOrArray === 'Top0' ? 1 : -1
+				return emptyToOrArray === 'Top0' ? -1 : 1
 			}
 			if (!afterValue && !!beforeValue) {
 				if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
 
-				if (typeof beforeValue === 'boolean') return emptyTo === 'Top0' ? -1 : 1
-				return emptyTo === 'Top0' ? 1 : -1
+				if (typeof beforeValue === 'boolean') return emptyToOrArray === 'Top0' ? -1 : 1
+				return emptyToOrArray === 'Top0' ? 1 : -1
 			}
 		} else {
 			if (isEmpty(beforeValue) && !isEmpty(afterValue)) {
 				if (verboseConsole) console.log('Before Empty', beforeValue, afterValue)
 
-				if (typeof afterValue === 'boolean') return emptyTo === 'Top' ? 1 : -1
-				return emptyTo === 'Top' ? -1 : 1
+				if (typeof afterValue === 'boolean') return emptyToOrArray === 'Top' ? 1 : -1
+				return emptyToOrArray === 'Top' ? -1 : 1
 			}
 			if (isEmpty(afterValue) && !isEmpty(beforeValue)) {
 				if (verboseConsole) console.log('After Empty', beforeValue, afterValue)
 
-				if (typeof beforeValue === 'boolean') return emptyTo === 'Top' ? -1 : 1
-				return emptyTo === 'Top' ? 1 : -1
+				if (typeof beforeValue === 'boolean') return emptyToOrArray === 'Top' ? -1 : 1
+				return emptyToOrArray === 'Top' ? 1 : -1
 			}
 		}
 	}
@@ -469,15 +474,16 @@ export const SortCompareNull = (
 export const SortCompare = (
 	beforeValue: any,
 	afterValue: any,
-	emptyTo: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = null
+	emptyToOrArray: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' | any[] = null,
+	arrayOrder: null | any[] = null
 ): number => {
-	return SortCompareNull(beforeValue, afterValue, emptyTo) ?? 0
+	return SortCompareNull(beforeValue, afterValue, emptyToOrArray, arrayOrder) ?? 0
 }
 
 export type TSortComparesItem = [
 	beforeValue: any,
 	afterValue: any,
-	emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0'
+	emptyTo?: null | 'Top' | 'Bottom' | 'Top0' | 'Bottom0' | any[]
 ]
 
 /**
@@ -505,13 +511,13 @@ export type TSortComparesItem = [
 export function SortCompares(values: TSortComparesItem | TSortComparesItem[]) {
 	if (Array.isArray(values.at(0))) {
 		for (const value of values) {
-			const result = SortCompare(value[0], value[1], value[2])
+			const result = SortCompare(value[0], value[1], value[2], value[3])
 			if (result) return result
 		}
 
 		return 0
 	} else {
-		return SortCompare(values[0], values[1], values[2] as any)
+		return SortCompare(values[0], values[1], values[2] as any, values[3])
 	}
 }
 
@@ -629,7 +635,7 @@ export const SortPerArrayNull = <T>(
 	beforeValue: T,
 	afterValue: T,
 	order: T[],
-	emptyTo: 'Top' | 'Bottom' = 'Top'
+	emptyTo: 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = 'Top'
 ): number | null => {
 	if (beforeValue == afterValue) return null
 
@@ -682,7 +688,7 @@ export const SortPerArrayNull = <T>(
  		{id: 1, name: 'One'}
 ]
  */
-export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' = 'Top'): number =>
+export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = 'Top'): number =>
 	SortPerArrayNull(beforeValue, afterValue, order, emptyTo) ?? 0
 
 const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyToBottom: TSortColumnToBottom): number =>
