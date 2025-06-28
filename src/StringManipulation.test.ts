@@ -602,6 +602,12 @@ describe('StringCompares', () => {
 		expect(ToNumberString(0.1234, {percent: true, nullDash: true})).toBe('12%')
 		expect(ToNumberString(0, {percent: true, nullDash: true})).toBe('0%')
 		expect(ToNumberString('ABC', {percent: true, nullDash: true})).toBe('-')
+
+		expect(ToNumberString(1234.5678, {prefix: 'N: '})).toBe('N: 1,234.5678')
+		expect(ToNumberString(1234.5678, {suffix: ' days'})).toBe('1,234.5678 days')
+		expect(ToNumberString(1234.5678, {prefix: 'N: ', suffix: ' days'})).toBe('N: 1,234.5678 days')
+		expect(ToNumberString('ABC', {prefix: 'N: ', suffix: ' days'})).toBe('N: 0 days')
+		expect(ToNumberString('ABC', {prefix: 'N: ', suffix: ' days', zeroBlank: true})).toBe('')
 	})
 
 	// test('Common String Patterns', () => {

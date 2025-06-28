@@ -482,6 +482,10 @@ export type TNumberStringOptions = {
 	nullBlank?: string | boolean
 	/** Dash if null */
 	nullDash?: string | boolean
+	/** Prefix text when valid number */
+	prefix?: string
+	/** Suffix text when valid number */
+	suffix?: string
 }
 
 /**
@@ -521,12 +525,15 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 
 	const validNumber = (numberNull ?? 0) * (options?.percent ? 100 : 1)
 
+	const prefix = options?.prefix ?? (!!options?.currency ? '$' : '')
+	const suffix = options?.suffix ?? (!!options?.percent ? '%' : '')
+
 	// console.log('>>>>>>>>>>', value, validNumber, options, minimumFractionDigits, maximumFractionDigits)
 
-	return `${!!options?.currency ? '$' : ''}${validNumber.toLocaleString(undefined, {
+	return `${prefix}${validNumber.toLocaleString(undefined, {
 		maximumFractionDigits,
 		minimumFractionDigits
-	})}${!!options?.percent ? '%' : ''}`
+	})}${suffix}`
 }
 
 /**
