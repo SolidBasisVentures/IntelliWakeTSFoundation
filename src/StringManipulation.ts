@@ -316,11 +316,12 @@ export const ToCurrency = (value: any, decimals: number = 2): string => {
  * ToCurrency(100)
  *
  */
-export const ToCurrencyMax = (value: any, decimals: number = 9): string => {
+export const ToCurrencyMax = (value: any, decimals: number = 9, min: number = 2): string => {
 	return (
 		'$' +
 		CleanNumber(value).toLocaleString(undefined, {
-			maximumFractionDigits: decimals
+			maximumFractionDigits: decimals,
+			minimumFractionDigits: min
 		})
 	)
 }
@@ -350,10 +351,11 @@ export const ToPercent = (value: any, decimals: number = 0): string => {
  * ToPercent(0.5)
  *
  */
-export const ToPercentMax = (value: any, decimals: number = 9): string => {
+export const ToPercentMax = (value: any, decimals: number = 9, min: number = 0): string => {
 	return (
 		(CleanNumber(value) * 100).toLocaleString(undefined, {
-			maximumFractionDigits: decimals
+			maximumFractionDigits: decimals,
+			minimumFractionDigits: min
 		}) + '%'
 	)
 }
@@ -481,9 +483,10 @@ export const ToDigits = function (value: any, decimals: number = 0, minDecimals:
  * ToDigits(10)
  *
  */
-export const ToDigitsMax = function (value: any, decimals: number = 9): string {
+export const ToDigitsMax = function (value: any, decimals: number = 9, min: number = 0): string {
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
-		maximumFractionDigits: decimals
+		maximumFractionDigits: decimals,
+		minimumFractionDigits: min
 	})
 }
 
@@ -522,13 +525,14 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsBlankMax = function (value: any, decimals: number = 9) {
+export const ToDigitsBlankMax = function (value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
 
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
-		maximumFractionDigits: decimals
+		maximumFractionDigits: decimals,
+		minimumFractionDigits: min
 	})
 }
 
@@ -567,13 +571,14 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsDashMax = function (value: any, decimals: number = 9) {
+export const ToDigitsDashMax = function (value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
 
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
-		maximumFractionDigits: decimals
+		maximumFractionDigits: decimals,
+		minimumFractionDigits: min
 	})
 }
 

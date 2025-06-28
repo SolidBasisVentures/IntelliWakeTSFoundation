@@ -34,13 +34,13 @@ import {
 	ToCurrencyMax,
 	ToDigits,
 	ToDigitsBlank,
-	ToDigitsDash,
+	ToDigitsDash, ToDigitsMax,
 	ToInitials,
 	ToKebabCase,
 	ToPascalCase,
 	ToPercent,
 	ToPercentBlank,
-	ToPercentDash,
+	ToPercentDash, ToPercentMax,
 	ToSnakeCase,
 	ToStringArray,
 	ToUpperCaseWords,
@@ -238,8 +238,8 @@ test('String Functions', () => {
 			expect(symbolFunction.method(symbolFunction.value, 1)).toBe(symbolFunction.decimal)
 		}
 	}
-	expect(ToCurrencyMax(1234)).toBe('$1,234')
-	expect(ToCurrencyMax(1234.5)).toBe('$1,234.5')
+	expect(ToCurrencyMax(1234)).toBe('$1,234.00')
+	expect(ToCurrencyMax(1234.5)).toBe('$1,234.50')
 	expect(ToCurrencyMax(1234.56)).toBe('$1,234.56')
 	expect(ToCurrencyMax(1234.567, 2)).toBe('$1,234.57')
 	expect(ToStringArray('john doe')).toStrictEqual(['john doe'])
@@ -528,6 +528,31 @@ describe('StringCompares', () => {
 		]
 		const result = ObjectToFixedFields(obj, settings)
 		expect(result).toBe('JOHN DOE__ 27')
+	})
+
+	test('Digits Min Max', () => {
+		expect(ToDigitsMax(1.234, 2)).toBe('1.23')
+		expect(ToDigitsMax(1.2, 2)).toBe('1.2')
+		expect(ToDigitsMax(1, 2)).toBe('1')
+		expect(ToDigitsMax(1, 7, 2)).toBe('1.00')
+		expect(ToDigitsMax(1.2, 7, 2)).toBe('1.20')
+		expect(ToDigitsMax(1.234, 7, 2)).toBe('1.234')
+
+		expect(ToCurrencyMax(1.234)).toBe('$1.234')
+		expect(ToCurrencyMax(1.2)).toBe('$1.20')
+		expect(ToCurrencyMax(1)).toBe('$1.00')
+		expect(ToCurrencyMax(1, 7, 2)).toBe('$1.00')
+		expect(ToCurrencyMax(1.2, 7, 2)).toBe('$1.20')
+		expect(ToCurrencyMax(1.234, 7, 2)).toBe('$1.234')
+
+		expect(ToPercentMax(1.234, 2)).toBe('123.4%')
+		expect(ToPercentMax(1.23456, 2)).toBe('123.46%')
+		expect(ToPercentMax(1.2, 2)).toBe('120%')
+		expect(ToPercentMax(1, 2)).toBe('100%')
+		expect(ToPercentMax(1, 7, 2)).toBe('100.00%')
+		expect(ToPercentMax(1.2, 7, 2)).toBe('120.00%')
+		expect(ToPercentMax(1.234, 7, 2)).toBe('123.40%')
+		expect(ToPercentMax(1.23456, 7, 2)).toBe('123.456%')
 	})
 
 	// test('Common String Patterns', () => {
