@@ -5,7 +5,7 @@
  * ToSnakeCase('UserToken')  // returns "user_token"
  *
  */
-import {CleanNumber, CleanNumberNull, ReplaceAll, RoundTo, ToArray} from './Functions'
+import {CleanNumber, CleanNumberNull, GreaterNumber, ReplaceAll, RoundTo, ToArray} from './Functions'
 import {isNullUndefined} from './SortSearch'
 
 /**
@@ -513,10 +513,10 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	}
 
 	let maximumFractionDigits = options?.fixedDecimals ?? options?.maxDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : 9)
-	let minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : undefined)
+	const minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : undefined)
 
 	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
-		maximumFractionDigits = 9
+		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
 	}
 
 	const validNumber = (numberNull ?? 0) * (options?.percent ? 100 : 1)
