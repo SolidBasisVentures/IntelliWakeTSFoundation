@@ -21,7 +21,7 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 
 	let results: string[] = []
 
-	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+	const separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
 
 	loop_array: for (const strItem of strArray) {
 		for (const separator of separators) {
@@ -60,7 +60,7 @@ export const SplitNonWhiteSpace = (str: string | string[] | undefined | null): s
 
 	let results: string[] = []
 
-	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+	const separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
 
 	loop_array: for (const strItem of strArray) {
 		for (const separator of separators) {
@@ -205,7 +205,7 @@ export const IncludesHTML = (str: string | undefined | null): boolean => {
  * ReplaceLinks('https://www.google.com', 'testClass')
  *
  */
-export const ReplaceLinks = function (subject: string | undefined | null, classes?: string | null): string {
+export const ReplaceLinks = function(subject: string | undefined | null, classes?: string | null): string {
 	if (!subject) return ''
 
 	if (subject.includes('<img ')) return subject
@@ -214,7 +214,7 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
 	const target = !classes
-		? "<a href='$1' target='_blank'>$1</a>"
+		? '<a href=\'$1\' target=\'_blank\'>$1</a>'
 		: `<a href="$1" target="_blank" class="${classes}">$1</a>`
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
@@ -228,7 +228,7 @@ export const ReplaceLinks = function (subject: string | undefined | null, classe
  * CleanScripts('<script>console.log(1)</script>blank')
  *
  */
-export const CleanScripts = function (subject: string | number | undefined | null): string {
+export const CleanScripts = function(subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	return subject.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -241,7 +241,7 @@ export const CleanScripts = function (subject: string | number | undefined | nul
  * @param {string | number | undefined | null} subject - The text to convert.
  * @returns {string} - The converted HTML string.
  */
-export const TextToHTML = function (subject: string | number | undefined | null): string {
+export const TextToHTML = function(subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	let str = CleanScripts(subject) //.replace(/(<([^>]+)>)/gi, '')
@@ -461,6 +461,75 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
 }
 
 /**
+ * Represents configuration options for formatting numbers as strings with ToNumberString(value, options)
+ */
+export type TNumberStringOptions = {
+	/** Forced number of digits to show (Overrides minDecimals and maxDecimals) */
+	fixedDecimals?: number | null
+	/** Lowest range of decimals to show, but could go higher, does not apply if fixedDecimals exists */
+	minDecimals?: number | null
+	/** Highest range of decimals to show, but could go lower, does not apply if fixedDecimals exists */
+	maxDecimals?: number | null
+	/** Formats as currency */
+	currency?: boolean
+	/** Formats as a percent (multiplies times 100) */
+	percent?: boolean
+	/** Blank if null or 0 */
+	zeroBlank?: boolean
+	/** Dash if null or 0 */
+	zeroDash?: boolean
+	/** Blank if null */
+	nullBlank?: string | boolean
+	/** Dash if null */
+	nullDash?: string | boolean
+}
+
+/**
+ * Converts a given value to a formatted number string based on the provided options.
+ *
+ * @param {any} value - The value to be converted to a number string. It can be of any type.
+ * @param {TNumberStringOptions} [options] - Optional formatting options for the number string.
+ * @param {boolean} [options.nullBlank] - If true, returns an empty string when the number is null.
+ * @param {boolean} [options.nullDash] - If true, returns a dash ("-") when the number is null.
+ * @param {boolean} [options.zeroBlank] - If true, returns an empty string when the number is zero.
+ * @param {boolean} [options.zeroDash] - If true, returns a dash ("-") when the number is zero.
+ * @param {boolean} [options.currency] - If true, formats the number as currency (default symbol is "$").
+ * @param {boolean} [options.percent] - If true, formats the number as a percentage by multiplying it by 100.
+ * @param {number} [options.fixedDecimals] - Specifies the exact number of fractional digits to display.
+ * @param {number} [options.maxDecimals] - Specifies the maximum number of fractional digits to display.
+ * @param {number} [options.minDecimals] - Specifies the minimum number of fractional digits to display.
+ *
+ * @return {string} - The formatted number as a string, optionally including a currency symbol or percentage sign.
+ */
+export function ToNumberString(value: any, options?: TNumberStringOptions): string {
+	const numberNull = CleanNumberNull(value)
+	if (numberNull === null) {
+		if (options?.nullBlank) return ''
+		if (options?.nullDash) return '-'
+	}
+	if (!numberNull) {
+		if (options?.zeroBlank) return ''
+		if (options?.zeroDash) return '-'
+	}
+
+	let maximumFractionDigits = options?.fixedDecimals ?? options?.maxDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : 9)
+	let minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : undefined)
+
+	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
+		maximumFractionDigits = 9
+	}
+
+	const validNumber = (numberNull ?? 0) * (options?.percent ? 100 : 1)
+
+	// console.log('>>>>>>>>>>', value, validNumber, options, minimumFractionDigits, maximumFractionDigits)
+
+	return `${!!options?.currency ? '$' : ''}${validNumber.toLocaleString(undefined, {
+		maximumFractionDigits,
+		minimumFractionDigits
+	})}${!!options?.percent ? '%' : ''}`
+}
+
+/**
  * Returns the given number with decimal places.
  *
  * @example
@@ -468,7 +537,7 @@ export const ToPercentDash = (value: any, decimals: number = 2): string => {
  * ToDigits(10)
  *
  */
-export const ToDigits = function (value: any, decimals: number = 0, minDecimals: number | null = null): string {
+export const ToDigits = function(value: any, decimals: number = 0, minDecimals: number | null = null): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: minDecimals ?? decimals
@@ -483,7 +552,7 @@ export const ToDigits = function (value: any, decimals: number = 0, minDecimals:
  * ToDigits(10)
  *
  */
-export const ToDigitsMax = function (value: any, decimals: number = 9, min: number = 0): string {
+export const ToDigitsMax = function(value: any, decimals: number = 9, min: number = 0): string {
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: min
@@ -502,7 +571,7 @@ export const ToDigitsMax = function (value: any, decimals: number = 9, min: numb
  * ToDigits('')
  *
  */
-export const ToDigitsBlank = function (value: any, decimals: number = 0) {
+export const ToDigitsBlank = function(value: any, decimals: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
@@ -525,7 +594,7 @@ export const ToDigitsBlank = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsBlankMax = function (value: any, decimals: number = 9, min: number = 0) {
+export const ToDigitsBlankMax = function(value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
@@ -548,7 +617,7 @@ export const ToDigitsBlankMax = function (value: any, decimals: number = 9, min:
  * ToDigits('')
  *
  */
-export const ToDigitsDash = function (value: any, decimals: number = 0) {
+export const ToDigitsDash = function(value: any, decimals: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
@@ -571,7 +640,7 @@ export const ToDigitsDash = function (value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsDashMax = function (value: any, decimals: number = 9, min: number = 0) {
+export const ToDigitsDashMax = function(value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
@@ -1149,12 +1218,12 @@ export function AddS(
 			addValue = !text
 				? 's'
 				: checkText.endsWith('s') ||
-				  checkText.endsWith('z') ||
-				  checkText.endsWith('ch') ||
-				  checkText.endsWith('sh') ||
-				  checkText.endsWith('x')
-				? 'es'
-				: 's'
+				checkText.endsWith('z') ||
+				checkText.endsWith('ch') ||
+				checkText.endsWith('sh') ||
+				checkText.endsWith('x')
+					? 'es'
+					: 's'
 		}
 	}
 	return `${showNumber ? numericText : ''} ${useText}${addValue}`.trim()

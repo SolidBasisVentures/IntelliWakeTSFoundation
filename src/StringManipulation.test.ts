@@ -34,13 +34,16 @@ import {
 	ToCurrencyMax,
 	ToDigits,
 	ToDigitsBlank,
-	ToDigitsDash, ToDigitsMax,
+	ToDigitsDash,
+	ToDigitsMax,
 	ToInitials,
 	ToKebabCase,
+	ToNumberString,
 	ToPascalCase,
 	ToPercent,
 	ToPercentBlank,
-	ToPercentDash, ToPercentMax,
+	ToPercentDash,
+	ToPercentMax,
 	ToSnakeCase,
 	ToStringArray,
 	ToUpperCaseWords,
@@ -553,6 +556,52 @@ describe('StringCompares', () => {
 		expect(ToPercentMax(1.2, 7, 2)).toBe('120.00%')
 		expect(ToPercentMax(1.234, 7, 2)).toBe('123.40%')
 		expect(ToPercentMax(1.23456, 7, 2)).toBe('123.456%')
+
+		expect(ToNumberString(1234.5678)).toBe('1,234.5678')
+		expect(ToNumberString(1234.5678, {fixedDecimals: 2})).toBe('1,234.57')
+		expect(ToNumberString(1234.5678, {maxDecimals: 2})).toBe('1,234.57')
+		expect(ToNumberString(1234.5678, {minDecimals: 2})).toBe('1,234.5678')
+		expect(ToNumberString(1234, {minDecimals: 2})).toBe('1,234.00')
+		expect(ToNumberString(1234.5678, {minDecimals: 2, maxDecimals: 3})).toBe('1,234.568')
+		expect(ToNumberString(1234.5, {minDecimals: 2, maxDecimals: 3})).toBe('1,234.50')
+
+		expect(ToNumberString(1234.5678, {nullBlank: true})).toBe('1,234.5678')
+		expect(ToNumberString(0, {nullBlank: true})).toBe('0')
+		expect(ToNumberString('ABC', {nullBlank: true})).toBe('')
+		expect(ToNumberString(1234.5678, {nullDash: true})).toBe('1,234.5678')
+		expect(ToNumberString(0, {nullDash: true})).toBe('0')
+		expect(ToNumberString('ABC', {nullDash: true})).toBe('-')
+		expect(ToNumberString(null, {nullDash: true})).toBe('-')
+
+		expect(ToNumberString(1234.5678, {zeroBlank: true})).toBe('1,234.5678')
+		expect(ToNumberString(0, {zeroBlank: true})).toBe('')
+		expect(ToNumberString('ABC', {zeroBlank: true})).toBe('')
+		expect(ToNumberString(1234.5678, {zeroDash: true})).toBe('1,234.5678')
+		expect(ToNumberString(0, {zeroDash: true})).toBe('-')
+		expect(ToNumberString('ABC', {zeroDash: true})).toBe('-')
+		expect(ToNumberString(null, {zeroDash: true})).toBe('-')
+
+		expect(ToNumberString(1234.5678, {currency: true})).toBe('$1,234.57')
+		expect(ToNumberString(1234.5678, {currency: true, fixedDecimals: 0})).toBe('$1,235')
+		expect(ToNumberString(1234.5678, {currency: true, fixedDecimals: 3})).toBe('$1,234.568')
+		expect(ToNumberString(1234.56, {currency: true, fixedDecimals: 3})).toBe('$1,234.560')
+		expect(ToNumberString(1234.5678, {currency: true, minDecimals: 3})).toBe('$1,234.5678')
+		expect(ToNumberString(1234.5678, {currency: true, maxDecimals: 3})).toBe('$1,234.568')
+		expect(ToNumberString('ABC', {currency: true})).toBe('$0.00')
+		expect(ToNumberString(1234.5678, {currency: true, zeroDash: true})).toBe('$1,234.57')
+		expect(ToNumberString(null, {currency: true, zeroDash: true})).toBe('-')
+		expect(ToNumberString('ABC', {currency: true, zeroDash: true})).toBe('-')
+
+		expect(ToNumberString(0.1234, {percent: true})).toBe('12%')
+		expect(ToNumberString(1.234, {percent: true})).toBe('123%')
+		expect(ToNumberString(12.34, {percent: true})).toBe('1,234%')
+		expect(ToNumberString(0.12345, {percent: true, fixedDecimals: 2})).toBe('12.35%')
+		expect(ToNumberString(0.0012345, {percent: true, fixedDecimals: 3})).toBe('0.123%')
+		expect(ToNumberString(0.0012345, {percent: true, maxDecimals: 3})).toBe('0.123%')
+		expect(ToNumberString(0.001, {percent: true, minDecimals: 3})).toBe('0.100%')
+		expect(ToNumberString(0.1234, {percent: true, nullDash: true})).toBe('12%')
+		expect(ToNumberString(0, {percent: true, nullDash: true})).toBe('0%')
+		expect(ToNumberString('ABC', {percent: true, nullDash: true})).toBe('-')
 	})
 
 	// test('Common String Patterns', () => {
