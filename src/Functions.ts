@@ -313,7 +313,7 @@ export function MedianNumber(...values: (any | any[])[]): number | null {
  * CleanDivideNull(null, 2); // Returns null
  */
 export const CleanDivideNull = (numerator: any, denominator: any, decimals?: number): number | null => {
-	const useNumerator = CleanNumberNull(numerator)
+	const useNumerator = CleanNumberNull(numerator )
 	if (useNumerator === null) return null
 
 	const useDenominator = CleanNumber(denominator)
@@ -321,8 +321,8 @@ export const CleanDivideNull = (numerator: any, denominator: any, decimals?: num
 	if (useDenominator === 0) return null
 
 	return decimals !== undefined
-		? CleanNumber(CleanNumber(useNumerator) / useDenominator, decimals + 2)
-		: CleanNumber(useNumerator) / useDenominator
+		? CleanNumber(useNumerator / useDenominator, decimals)
+		: useNumerator / useDenominator
 }
 
 /**
