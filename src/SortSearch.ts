@@ -275,7 +275,7 @@ export const SortColumnUpdate = <T = Record<string, any>>(
  * SortColumns(data, sortColumn)
  */
 export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn: ISortColumn<T>): T[] => {
-	return arrayTable.sort((a: any, b: any) =>
+	return [...arrayTable.sort((a: any, b: any) =>
 		!sortColumn.primarySort
 			? 0
 			: SortColumnResult(
@@ -292,7 +292,7 @@ export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn
 							sortColumn.secondaryAscending,
 							sortColumn.secondaryEmptyToBottom
 					  ))
-	)
+	)]
 }
 
 /**
