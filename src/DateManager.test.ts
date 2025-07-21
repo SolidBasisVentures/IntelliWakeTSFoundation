@@ -611,6 +611,7 @@ test('DoWs', () => {
 	const otz = process.env.TZ
 	process.env.TZ = 'America/New_York'
 	expect(DateCompare('2025-07-20', 'IsSame', '2025-07-20', 'day')).toEqual(true)
+	expect(DateCompare(DateOnly('now'), 'IsSame', 'now', 'day')).toEqual(true)
 	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
 	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
 	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
