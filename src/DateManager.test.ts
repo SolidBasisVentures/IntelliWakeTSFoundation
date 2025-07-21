@@ -18,7 +18,8 @@ import {
 	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
-	DateWeekISONumber, DayDiffNoWeekend,
+	DateWeekISONumber,
+	DayDiffNoWeekend,
 	EasterDate,
 	IANADescription,
 	IANAZoneAbbr,
@@ -48,7 +49,9 @@ const times = [
 
 test('Date Managers', () => {
 	expect(DateParseTS('2000-01-01 08:00')).toEqual(DateParseTS('2000-01-01 08:00:00'))
-	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/New_York')).toEqual('Thursday, December 31, 2020, 7:00 pm')
+	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/New_York')).toEqual(
+		'Thursday, December 31, 2020, 7:00 pm'
+	)
 	expect(DateFormat('DisplayDateDoWTimeLong', isoLongDateString, 'America/Los_Angeles')).toEqual(
 		'Thursday, December 31, 2020, 4:00 pm'
 	)
@@ -220,6 +223,7 @@ test('Date Managers', () => {
 	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
 	expect(DateISO('2024-07-04 10:00:00', {day: 'StartOf'})).toEqual('2024-07-04T00:00:00.000Z')
 	// expect(DateISO('2024-07-04 10:00:00', {day: 'StartOf', timezoneSource: 'America/New_York'})).toEqual('2024-07-04T04:00:00.000Z')
+
 	expect(
 		DateISO('2021-11-12 14:08:54.71', {
 			timezoneSource: 'America/New_York'
@@ -630,8 +634,7 @@ test('DoWs', () => {
 	expect(DateDayOfWeek('2025-03-07 12:00:00')).toEqual(5)
 	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
 
-	const startOfMonth =
-		DateOnly('2025-05-04', { month: 'StartOf', timezoneDisplay: 'America/New_York' }) ?? 0
+	const startOfMonth = DateOnly('2025-05-04', {month: 'StartOf', timezoneDisplay: 'America/New_York'}) ?? 0
 	const startDOW = DateDayOfWeek(startOfMonth, 'America/New_York') ?? 0
 	expect(startDOW).toEqual(4)
 

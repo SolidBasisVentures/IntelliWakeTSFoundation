@@ -1931,6 +1931,7 @@ const checkType = (
 	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 }
 
+
 /**
  * Compares two dates based on the specified evaluation type and optional minimum interval.
  *
@@ -3307,8 +3308,5 @@ export function EasterDate(year: number) {
 		n = Math.floor((h + l - 7 * m + 114) / 31),
 		p = (h + l - 7 * m + 114) % 31
 
-	const month = n,
-		day = p + 1
-
-	return DateOnlyNull(`${year}-${month}-${day}`)
+	return DateOnlyNull(`${year}-${n}-${p+1}`)
 }
