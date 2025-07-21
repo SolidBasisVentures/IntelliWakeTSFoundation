@@ -483,9 +483,9 @@ export type TNumberStringOptions = {
 	/** Dash if null */
 	nullDash?: string | boolean
 	/** Prefix text when valid number */
-	prefix?: string
+	prefix?: string | null
 	/** Suffix text when valid number */
-	suffix?: string
+	suffix?: string | null
 }
 
 /**
