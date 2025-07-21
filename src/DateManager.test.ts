@@ -215,6 +215,7 @@ test('Date Managers', () => {
 	expect(DateCompare('2021-01-01T00:00:00Z', 'IsBefore', '2021-01-01T00:01:00Z', 'day')).toEqual(false)
 	expect(DateCompare('2999-11-18', 'IsBefore', 'now', 'day')).toEqual(false)
 	expect(DateCompare('2999-11-18', 'IsAfter', 'now', 'day')).toEqual(true)
+	expect(DateCompare('2025-07-20', 'IsSame', '2025-07-20', 'day')).toEqual(true)
 	expect(DateParseTS('Not a date')).toEqual(null)
 	expect(ManualParse('2021-11-12 14:08:54.71-05')).toEqual(1636744134710)
 	expect(DateISO('2024-07-04 10:00:00', {day: 'StartOf'})).toEqual('2024-07-04T00:00:00.000Z')
@@ -609,6 +610,7 @@ test('DoWs', () => {
 
 	const otz = process.env.TZ
 	process.env.TZ = 'America/New_York'
+	expect(DateCompare('2025-07-20', 'IsSame', '2025-07-20', 'day')).toEqual(true)
 	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
 	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
 	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
@@ -618,6 +620,7 @@ test('DoWs', () => {
 	expect(DateDayOfWeek('2025-03-07 20:00:00')).toEqual(5)
 
 	process.env.TZ = 'UTC'
+	expect(DateCompare('2025-07-20', 'IsSame', '2025-07-20', 'day')).toEqual(true)
 	expect(DateDayOfWeek('2025-03-05')).toEqual(3)
 	expect(DateDayOfWeek('2025-03-07')).toEqual(5)
 	expect(DateDayOfWeek('2025-03-08')).toEqual(6)
