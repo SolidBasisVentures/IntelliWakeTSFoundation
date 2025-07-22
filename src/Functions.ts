@@ -313,16 +313,14 @@ export function MedianNumber(...values: (any | any[])[]): number | null {
  * CleanDivideNull(null, 2); // Returns null
  */
 export const CleanDivideNull = (numerator: any, denominator: any, decimals?: number): number | null => {
-	const useNumerator = CleanNumberNull(numerator )
+	const useNumerator = CleanNumberNull(numerator)
 	if (useNumerator === null) return null
 
 	const useDenominator = CleanNumber(denominator)
 
 	if (useDenominator === 0) return null
 
-	return decimals !== undefined
-		? CleanNumber(useNumerator / useDenominator, decimals)
-		: useNumerator / useDenominator
+	return decimals !== undefined ? CleanNumber(useNumerator / useDenominator, decimals) : useNumerator / useDenominator
 }
 
 /**
@@ -1406,4 +1404,14 @@ export function DistributeEvenly(amount: number, values: number[], toDecimals = 
 	})
 
 	return distribution
+}
+
+/**
+ * Retrieves the keys of the given object as an array.
+ *
+ * @param {T} obj - The object whose enumerable property keys are to be returned.
+ * @return {Array<keyof T>} An array of the keys from the object.
+ */
+export function ObjectKeys<T extends object>(obj: T): Array<keyof T> {
+	return Object.keys(obj) as Array<keyof T>
 }
