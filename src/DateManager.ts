@@ -2037,7 +2037,7 @@ export const DateCompare = (
 
 		const secondDiff = date1Object.getUTCSeconds() - date2Object.getUTCSeconds()
 
-		if (['second', 'second'].includes(minInterval)) {
+		if (['second', 'seconds'].includes(minInterval)) {
 			if (hourDiff !== 0) return checkType(evalType, hourDiff)
 			if (minuteDiff !== 0) return checkType(evalType, minuteDiff)
 			return checkType(evalType, secondDiff)
