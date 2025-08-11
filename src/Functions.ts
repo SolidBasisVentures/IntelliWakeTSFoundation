@@ -1063,6 +1063,20 @@ export function PickProperty<T extends Record<any, any>, K extends Extract<keyof
 }
 
 /**
+ * Creates an object where the values are mirror copies of the keys.  This is to support Enum replacement.
+ *
+ * @param {T extends Record<string, unknown>} obj - An object containing the keys to be mirrored. The values of the object are ignored.
+ * @return {Readonly<Record<keyof T & string, string>>} A frozen object where each key has the same string value as its key name.
+ */
+export function KeyMirror<T extends Record<string, unknown>>(obj: T) {
+	return Object.freeze(
+		Object.fromEntries(Object.keys(obj).map((k) => [k, k])) as {
+			readonly [K in keyof T & string]: K
+		}
+	)
+}
+
+/**
  * Retrieves the value of the property or properties from a given object, comparing keys in a case-insensitive manner.
  * Works with a single property or an array of properties. The function returns the value of the first matching property found.
  * It can process null, undefined, or actual values for both input object and properties.
