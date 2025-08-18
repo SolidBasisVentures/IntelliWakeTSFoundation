@@ -608,6 +608,18 @@ describe('StringCompares', () => {
 		expect(ToNumberString(1234.5678, {prefix: 'N: ', suffix: ' days'})).toBe('N: 1,234.5678 days')
 		expect(ToNumberString('ABC', {prefix: 'N: ', suffix: ' days'})).toBe('N: 0 days')
 		expect(ToNumberString('ABC', {prefix: 'N: ', suffix: ' days', zeroBlank: true})).toBe('')
+
+		expect(ToNumberString(1.234, {short: true})).toBe('1.2')
+		expect(ToNumberString(1.25, {short: true})).toBe('1.3')
+		expect(ToNumberString(1234, {short: true})).toBe('1.2k')
+		expect(ToNumberString(1234567, {short: true})).toBe('1.2M')
+		expect(ToNumberString(1234567, {short: true, currency: true})).toBe('$1.2M')
+		expect(ToNumberString(1234567, {short: true, currency: true, fixedDecimals: 0})).toBe('$1M')
+		expect(ToNumberString(1234567, {short: true, currency: true, fixedDecimals: 2})).toBe('$1.23M')
+		expect(ToNumberString(123.45, {short: true, currency: true})).toBe('$123.5')
+		expect(ToNumberString(1234.5, {short: true, currency: true})).toBe('$1.2k')
+		expect(ToNumberString(1, {short: true, percent: true})).toBe('100.0%')
+		expect(ToNumberString(10, {short: true, percent: true})).toBe('1.0k%')
 	})
 
 	// test('Common String Patterns', () => {

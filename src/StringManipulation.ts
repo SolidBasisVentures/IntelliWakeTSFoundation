@@ -474,6 +474,8 @@ export type TNumberStringOptions = {
 	currency?: boolean
 	/** Formats as a percent (multiplies times 100) */
 	percent?: boolean
+	/** Shows number in a shortened format */
+	short?: boolean
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
@@ -516,14 +518,20 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		if (options?.zeroDash) return '-'
 	}
 
-	let maximumFractionDigits = options?.fixedDecimals ?? options?.maxDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : 9)
-	const minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.currency ? 2 : options?.percent ? 0 : undefined)
+	let maximumFractionDigits = options?.fixedDecimals ?? options?.maxDecimals ?? (options?.short ? 1 : options?.currency ? 2 : options?.percent ? 0 : 9)
+	const minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.short ? 1 : options?.currency ? 2 : options?.percent ? 0 : undefined)
 
 	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
 		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
 	}
 
-	const validNumber = (numberNull ?? 0) * (options?.percent ? 100 : 1)
+	const shortComponents = !options?.short ? null : ShortNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1))
+
+	const validNumber = ((numberNull ?? 0) * (options?.percent ? 100 : 1)) / (!shortComponents?.divisor ? 1 : shortComponents.divisor)
+
+	if (options?.percent && options?.short) {
+		console.log('ZZZ', value, numberNull, shortComponents, validNumber)
+	}
 
 	const prefix = options?.prefix ?? (!!options?.currency ? '$' : '')
 	const suffix = options?.suffix ?? (!!options?.percent ? '%' : '')
@@ -533,7 +541,7 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	return `${prefix}${validNumber.toLocaleString(undefined, {
 		maximumFractionDigits,
 		minimumFractionDigits
-	})}${suffix}`
+	})}${shortComponents?.extension ?? ''}${suffix}`
 }
 
 /**
@@ -1281,6 +1289,46 @@ export function AddSBlank(
 	minDecimals: number | null = null
 ): string {
 	return AddSNull(text, count, showNumber, maxDecimals, minDecimals) ?? ''
+}
+
+/**
+ * Calculates and returns the divisor and the corresponding extension (suffix)
+ * for a given numeric value to represent it in short format (e.g., thousands, millions, billions).
+ *
+ * @param {any} value - The value to be processed and shortened. If the value is not a valid number or null, defaults to returning {divisor: 0, extension: ''}.
+ * @return {{divisor: number, extension: string}} - An object containing the divisor and its corresponding extension (e.g., 'k' for thousands, 'M' for millions).
+ */
+export function ShortNumberComponents(value: any): {divisor: number, extension: string} {
+	let divisor = 1
+
+	let calcValue = CleanNumberNull(value)
+
+	if (!calcValue || calcValue < 999) return {divisor, extension: ''}
+
+	calcValue /= 1000
+	divisor *= 1000
+	if (calcValue < 999) return {divisor, extension: 'k'}
+
+	calcValue /= 1000
+	divisor *= 1000
+	if (calcValue < 999) return {divisor, extension: 'M'}
+
+	calcValue /= 1000
+	divisor *= 1000
+	if (calcValue < 999) return {divisor, extension: 'B'}
+
+	calcValue /= 1000
+	divisor *= 1000
+	if (calcValue < 999) return {divisor, extension: 'T'}
+
+	let extension = 'T'
+	do {
+		extension += '.'
+		calcValue /= 1000
+		divisor *= 1000
+	} while (calcValue > 999)
+
+	return {divisor, extension}
 }
 
 /**
