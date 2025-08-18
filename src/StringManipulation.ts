@@ -529,10 +529,6 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 
 	const validNumber = ((numberNull ?? 0) * (options?.percent ? 100 : 1)) / (!shortComponents?.divisor ? 1 : shortComponents.divisor)
 
-	if (options?.percent && options?.short) {
-		console.log('ZZZ', value, numberNull, shortComponents, validNumber)
-	}
-
 	const prefix = options?.prefix ?? (!!options?.currency ? '$' : '')
 	const suffix = options?.suffix ?? (!!options?.percent ? '%' : '')
 
