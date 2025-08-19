@@ -1303,26 +1303,26 @@ export function ShortNumberComponents(value: any): {divisor: number, extension: 
 
 	calcValue /= 1000
 	divisor *= 1000
-	if (calcValue < 999) return {divisor, extension: 'k'}
+	if (calcValue < 99) return {divisor, extension: 'k'}
 
 	calcValue /= 1000
 	divisor *= 1000
-	if (calcValue < 999) return {divisor, extension: 'M'}
+	if (calcValue < 99) return {divisor, extension: 'M'}
 
 	calcValue /= 1000
 	divisor *= 1000
-	if (calcValue < 999) return {divisor, extension: 'B'}
+	if (calcValue < 99) return {divisor, extension: 'B'}
 
 	calcValue /= 1000
 	divisor *= 1000
-	if (calcValue < 999) return {divisor, extension: 'T'}
+	if (calcValue < 99) return {divisor, extension: 'T'}
 
 	let extension = 'T'
 	do {
 		extension += '.'
 		calcValue /= 1000
 		divisor *= 1000
-	} while (calcValue > 999)
+	} while (calcValue > 99)
 
 	return {divisor, extension}
 }

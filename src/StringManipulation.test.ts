@@ -611,8 +611,12 @@ describe('StringCompares', () => {
 
 		expect(ToNumberString(1.234, {short: true})).toBe('1.2')
 		expect(ToNumberString(1.25, {short: true})).toBe('1.3')
+		expect(ToNumberString(123, {short: true})).toBe('123.0')
 		expect(ToNumberString(1234, {short: true})).toBe('1.2k')
+		expect(ToNumberString(123456, {short: true})).toBe('0.1M')
 		expect(ToNumberString(1234567, {short: true})).toBe('1.2M')
+		expect(ToNumberString(12345678, {short: true})).toBe('12.3M')
+		expect(ToNumberString(123456789, {short: true})).toBe('0.1B')
 		expect(ToNumberString(1234567, {short: true, currency: true})).toBe('$1.2M')
 		expect(ToNumberString(1254567, {short: true, currency: true})).toBe('$1.3M')
 		expect(ToNumberString(1234567, {short: true, currency: true, fixedDecimals: 0})).toBe('$1M')
