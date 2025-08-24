@@ -8,6 +8,7 @@ import {
 	CleanNumber,
 	CleanNumberNull,
 	CleanNumbers,
+	CleanPercentCompleteNull,
 	CleanSubtractNumbers,
 	CoalesceFalsey,
 	ConsoleAsyncTime,
@@ -20,11 +21,14 @@ import {
 	GreaterNumber,
 	GreaterNumberNull,
 	IsNumber,
-	IsOn, IsWholeNumber,
+	IsOn,
+	IsWholeNumber,
 	JSONParse,
 	JSONStringToObject,
 	LeastNumber,
-	LeastNumberNull, MedianNumber, NumberConstrainToIncrement,
+	LeastNumberNull,
+	MedianNumber,
+	NumberConstrainToIncrement,
 	ObjectToJSONString,
 	OmitFalsey,
 	OmitProperty,
@@ -69,6 +73,14 @@ test('RoundTo', () => {
 	expect(RoundTo(10.14, 1)).toBe(10.1)
 	expect(RoundTo(10.15, 0)).toBe(10)
 	expect(RoundTo(10.5, 0)).toBe(11)
+	expect(RoundTo(0, 2, 'down')).toBe(0)
+	expect(RoundTo(0, 2, 'up')).toBe(0)
+	expect(RoundTo(1.445, 2, 'down')).toBe(1.44)
+	expect(RoundTo(1.445, 2, 'round')).toBe(1.45)
+	expect(RoundTo(1.444, 2, 'up')).toBe(1.45)
+	expect(RoundTo(1.999, 2, 'down')).toBe(1.99)
+	expect(RoundTo(1.989, 2, 'up')).toBe(1.99)
+	expect(RoundTo(0, 2, 'up')).toBe(0)
 	expect(CleanNumbers(2, '$1,000', 12.236)).toBe(1012.24)
 	expect(CleanNumbers(2, '$100', 12.234)).toBe(112.23)
 	expect(CleanNumbers(0, '$1,000', 12.236)).toBe(1012)
@@ -347,6 +359,19 @@ test('Other', async () => {
 	expect(CleanDivide(34, 5305, 2)).toEqual(0.01) // 34 / 5305 = 0.006409
 	expect(CleanDivide(34, 5305, 3)).toEqual(0.006) // 34 / 5305 = 0.006409
 	expect(CleanDivide(34, 5305, 4)).toEqual(0.0064) // 34 / 5305 = 0.006409
+	expect(CleanPercentCompleteNull(null, 1, 2)).toEqual(null)
+	expect(CleanPercentCompleteNull(1, 2, 2)).toEqual(.5)
+	expect(CleanPercentCompleteNull(1, 3, 2)).toEqual(.33)
+	expect(CleanPercentCompleteNull(2, 3, 2)).toEqual(.67)
+	expect(CleanDivideNull(999, 1000, 2)).toEqual(1)
+	expect(CleanPercentCompleteNull(999, 1000, 2)).toEqual(0.99)
+	expect(CleanPercentCompleteNull(999.9999999, 1000, 2)).toEqual(0.99)
+	expect(CleanPercentCompleteNull(1000, 1000, 2)).toEqual(1)
+	expect(CleanPercentCompleteNull(1500, 1000, 2)).toEqual(1.5)
+	expect(CleanPercentCompleteNull(0, 1000, 2)).toEqual(0)
+	expect(CleanDivideNull(1, 1000, 2)).toEqual(0)
+	expect(CleanPercentCompleteNull(1, 1000, 2)).toEqual(0.01)
+	expect(CleanPercentCompleteNull(0, 1000, 2)).toEqual(0)
 	expect(CleanNumbers(0, [1, 2, 3, null])).toEqual(6)
 	expect(CleanNumbers(0, 1, [1, 2, 3, null])).toEqual(7)
 	expect(CleanNumbers(0, null)).toEqual(0)

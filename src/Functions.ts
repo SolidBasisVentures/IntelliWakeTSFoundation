@@ -340,6 +340,85 @@ export const CleanDivide = (numerator: any, denominator: any, decimals?: number)
 	CleanDivideNull(numerator, denominator, decimals) ?? 0
 
 /**
+ * Calculates the percentage complete based on the provided numerator and denominator, rounded to the specified number of decimals.
+ * Returns a non-1 if the numerator is less than the denominator (even if it would have been rounded to 1).
+ * Returns a non-0 if the numerator is greater than zero (even if it would have been rounded to 0).
+ * Returns null if the result cannot be calculated.
+ * Optionally logs detailed calculation information if verbose mode is enabled.
+ *
+ * @param {any} numerator The numerator value used in the percentage calculation.
+ * @param {any} denominator The denominator value used in the percentage calculation.
+ * @param {number} decimals The number of decimal places to which the result should be rounded.
+ * @param {boolean} [verbose] Optional flag to enable detailed console logging for debugging purposes.
+ * @return {number | null} The calculated percentage complete, truncated or rounded based on calculations, or null if the computation is invalid or results in an undefined value.
+ */
+export function CleanPercentCompleteNull(
+	numerator: any,
+	denominator: any,
+	decimals: number,
+	verbose?: boolean
+): number | null {
+	const result = CleanDivideNull(numerator, denominator, decimals)
+	if (result === null) return null
+
+	if (verbose) console.info('CleanPercentCompleteNull', numerator, denominator, decimals, result)
+	if (verbose)
+		console.info(
+			'CleanPercentCompleteNull - Big Test',
+			result >= 1,
+			numerator,
+			RoundTo(numerator, decimals + 6, 'down'),
+			CleanNumber(denominator, decimals + 1),
+			RoundTo(numerator, decimals + 6, 'down') < CleanNumber(denominator, decimals + 1),
+			result >= 1 && RoundTo(numerator, decimals + 6, 'down') < CleanNumber(denominator, decimals + 1)
+		)
+
+	if (result >= 1 && RoundTo(numerator, decimals + 6, 'down') < CleanNumber(denominator, decimals + 1)) {
+		// return .99999999 truncated to the number of "decimals"
+		const scale = 10 ** Math.max(0, decimals)
+		const almostOne = (scale - 1) / scale
+		if (verbose) console.info('almostOne', almostOne)
+
+		return CleanNumber(almostOne, decimals)
+	}
+
+	if (verbose)
+		console.info(
+			'CleanPercentCompleteNull - Small Test',
+			result <= 0,
+			RoundTo(numerator, decimals, 'up'),
+			result <= 0 && RoundTo(numerator, decimals + 2, 'up') > 0
+		)
+
+	if (result <= 0 && RoundTo(numerator, decimals + 6, 'up') > 0) {
+		// return .01, with the 1 being at the level of the decimals, like in this case would be 2 decimals
+		const scale = 10 ** Math.max(0, decimals)
+		const smallestPositive = 1 / scale
+		if (verbose) console.info('smallestPositive', smallestPositive)
+
+		return CleanNumber(smallestPositive, decimals)
+	}
+
+	return result
+}
+
+/**
+ * Calculates the percentage complete based on the provided numerator and denominator, rounded to the specified number of decimals.
+ * Returns a non-1 if the numerator is less than the denominator (even if it would have been rounded to 1).
+ * Returns a non-0 if the numerator is greater than zero (even if it would have been rounded to 0).
+ * Returns zero if the result cannot be calculated.
+ * Optionally logs detailed calculation information if verbose mode is enabled. *
+ * @param {any} numerator - The numerator used to calculate the percentage.
+ * @param {any} denominator - The denominator used to calculate the percentage.
+ * @param {number} decimals - The number of decimal places to round the percentage to.
+ * @param {boolean} [verbose] - Optional flag to enable verbose output.
+ * @return {number} The rounded percentage completed or 0 if the calculation fails.
+ */
+export function CleanPercentComplete(numerator: any, denominator: any, decimals: number, verbose?: boolean): number {
+	return CleanPercentCompleteNull(numerator, denominator, decimals, verbose) ?? 0
+}
+
+/**
  * Cleans a multiple numbers, adding and rounds them
  *
  * @example
@@ -768,18 +847,51 @@ export const StringToByteArray = (str: string): any => {
 export const FormUrlEncoded = (x: any) => Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
 
 /**
+ * Rounds a number to the nearest integer if it is within a specified tolerance; otherwise,
+ * rounds the number up to the nearest integer.
  *
- * @param num
- * @param decimalPlaces
- * @param roundDir
- * @constructor
+ * @param {number} n - The number to be rounded.
+ * @param {number} [tol=1e-9] - The tolerance value within which the number is considered
+ * close enough to the nearest integer. Defaults to 1e-9.
+ * @return {number} The nearest integer if the difference from the input number
+ * is less than or equal to the tolerance; otherwise, the ceiling value of the number.
  */
-export const RoundTo = (num: any, decimalPlaces: number = 0, roundDir: 'round' | 'up' | 'down' = 'round') =>
-	roundDir === 'round'
-		? +Math.round((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
-		: roundDir === 'down'
-		? +Math.floor((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
-		: +Math.ceil((CleanNumber(num) + Number.EPSILON) * 10 ** decimalPlaces) / 10 ** decimalPlaces
+export function CeilWithTolerance(n: any, tol = 1e-9) {
+	const nearest = Math.round(n)
+	return Math.abs(n - nearest) <= tol ? nearest : Math.ceil(n)
+}
+
+/**
+ * Rounds a given number to a specified number of decimal places, using a specified rounding direction.
+ *
+ * @param {any} num - The number to be rounded. This will be converted to a numeric format if possible.
+ * @param {number} [decimalPlaces=0] - The number of decimal places to round to. Defaults to 0 if not specified.
+ * @param {'round' | 'up' | 'down'} [roundDir='round'] - The rounding direction to use: 'round' for standard rounding, 'up' for rounding up, and 'down' for rounding down. Defaults to 'round'.
+ * @param {boolean} [verbose=false] - If true, logs verbose information about the rounding process to the console. Defaults to false.
+ * @return {number} The rounded number.
+ */
+export function RoundTo(
+	num: any,
+	decimalPlaces: number = 0,
+	roundDir: 'round' | 'up' | 'down' = 'round',
+	verbose = false
+) {
+	const n = CleanNumber(num)
+	if (verbose) console.info('RoundTo', num, decimalPlaces, roundDir, n)
+	const factor = 10 ** decimalPlaces
+	const scaled = n * factor
+
+	if (roundDir === 'round') {
+		// Use EPSILON only for standard rounding to avoid floating point tie issues.
+		return Math.round(scaled + Number.EPSILON) / factor
+	} else if (roundDir === 'down') {
+		if (verbose) console.info('RoundTo', roundDir, scaled, factor, Math.floor(scaled) / factor)
+		return Math.floor(scaled) / factor
+	} else {
+		if (verbose) console.info('RoundTo', roundDir, scaled, factor, CeilWithTolerance(scaled) / factor)
+		return CeilWithTolerance(scaled) / factor
+	}
+}
 
 /**
  *
