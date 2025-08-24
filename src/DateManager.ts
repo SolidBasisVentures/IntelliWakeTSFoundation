@@ -2174,8 +2174,16 @@ export interface IQuarter {
 }
 
 /**
+ * Represents a function to calculate the current quarter and year.
  *
- * @constructor
+ * The function `InitialDateQuarter` determines the current year and
+ * the current quarter based on the system's date. It calculates the quarter
+ * by dividing the current month's zero-based index by 3, flooring the result,
+ * and adding 1 to obtain a 1-based quarter value.
+ *
+ * @returns {IQuarter} An object containing:
+ * - `year`: The current year retrieved from the system date.
+ * - `quarter`: The calculated quarter (1, 2, 3, or 4) based on the current month.
  */
 export const InitialDateQuarter = (): IQuarter => ({
 	year: new Date().getFullYear(),
@@ -2183,9 +2191,15 @@ export const InitialDateQuarter = (): IQuarter => ({
 })
 
 /**
+ * Calculates the quarter and year of a given date.
  *
- * @param date
- * @constructor
+ * The function accepts a date input and determines which quarter (1st, 2nd, 3rd, or 4th)
+ * of the year the date belongs to, along with the corresponding year.
+ * If the input date cannot be parsed or is invalid, the function returns null.
+ *
+ * @param {TDateAny} date - The input date which can be any type that is accepted by DateObject.
+ * @returns {IQuarter | null} An object containing the year and quarter information,
+ * or null if the date is invalid.
  */
 export const DateQuarter = (date: TDateAny): IQuarter | null => {
 	const dateObj = DateObject(date)
@@ -2197,6 +2211,56 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
 		quarter: Math.floor(dateObj.getUTCMonth() / 3) + 1
 	}
 }
+
+/**
+ * Determines the quarter of the given date. If the quarter cannot be determined, returns the current quarter.
+ *
+ * @param {TDateAny} date - The date value to calculate the quarter for.
+ * @return {IQuarter} The quarter corresponding to the given date, or the current quarter if the calculation fails.
+ */
+export function DateQuarterOrCurrent(date:TDateAny): IQuarter {
+	return DateQuarter(date) ?? InitialDateQuarter()
+}
+
+/**
+ * Creates an array of Quarters from the start to the end quarter inclusive.
+ */
+export function DateQuarterArray(start: IQuarter | string, end: IQuarter | string): IQuarter[] {
+	// Helper to normalize input into an IQuarter
+	const toQuarter = (value: IQuarter | string): IQuarter => {
+		if (typeof value === 'string') {
+			return DateQuarterOrCurrent(value)
+		}
+		return value
+	}
+
+	const s = toQuarter(start)
+	const e = toQuarter(end)
+
+	// Ensure we iterate from earliest to latest
+	const isAfter = (a: IQuarter, b: IQuarter): boolean =>
+		a.year > b.year || (a.year === b.year && a.quarter > b.quarter)
+
+	const from = isAfter(s, e) ? e : s
+	const to = isAfter(s, e) ? s : e
+
+	const result: IQuarter[] = []
+	let cur: IQuarter = {year: from.year, quarter: from.quarter}
+
+	while (true) {
+		result.push({year: cur.year, quarter: cur.quarter})
+		if (cur.year === to.year && cur.quarter === to.quarter) break
+
+		if (cur.quarter < 4) {
+			cur = {year: cur.year, quarter: (cur.quarter + 1) as EQuarter}
+		} else {
+			cur = {year: cur.year + 1, quarter: EQuarter.Q1}
+		}
+	}
+
+	return result
+}
+
 
 /**
  *
