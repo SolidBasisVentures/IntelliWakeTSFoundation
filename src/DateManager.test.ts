@@ -15,6 +15,7 @@ import {
 	DateOnlyNull,
 	DateParseTS,
 	DateQuarter,
+	DateQuarterArray,
 	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
@@ -355,6 +356,42 @@ test('Date Managers', () => {
 	expect(DateQuarter('2021-07-01')).toEqual({year: 2021, quarter: 3})
 	expect(DateQuarter('2021-10-01')).toEqual({year: 2021, quarter: 4})
 	expect(DateQuarter('2021-12-31')).toEqual({year: 2021, quarter: 4})
+	expect(DateQuarterArray('2021-12-31', '2021-12-31')).toEqual([{year: 2021, quarter: 4}])
+	expect(DateQuarterArray('2021-12-31', '2022-01-01')).toEqual([
+		{year: 2021, quarter: 4},
+		{year: 2022, quarter: 1}
+	])
+	expect(DateQuarterArray('2022-01-01', '2021-12-31')).toEqual([
+		{year: 2021, quarter: 4},
+		{year: 2022, quarter: 1}
+	])
+	expect(DateQuarterArray('2021-12-31', '2023-01-01')).toEqual([
+		{year: 2021, quarter: 4},
+		{year: 2022, quarter: 1},
+		{year: 2022, quarter: 2},
+		{year: 2022, quarter: 3},
+		{year: 2022, quarter: 4},
+		{year: 2023, quarter: 1}
+	])
+	expect(DateQuarterArray({year: 2021, quarter: 4}, {year: 2021, quarter: 4})).toEqual([
+		{year: 2021, quarter: 4}
+	])
+	expect(DateQuarterArray({year: 2021, quarter: 4}, {year: 2023, quarter: 1})).toEqual([
+		{year: 2021, quarter: 4},
+		{year: 2022, quarter: 1},
+		{year: 2022, quarter: 2},
+		{year: 2022, quarter: 3},
+		{year: 2022, quarter: 4},
+		{year: 2023, quarter: 1}
+	])
+	expect(DateQuarterArray({year: 2023, quarter: 1}, {year: 2021, quarter: 4})).toEqual([
+		{year: 2021, quarter: 4},
+		{year: 2022, quarter: 1},
+		{year: 2022, quarter: 2},
+		{year: 2022, quarter: 3},
+		{year: 2022, quarter: 4},
+		{year: 2023, quarter: 1}
+	])
 	expect(DateMonth('2021-01-01')).toEqual({year: 2021, monthOneBased: 1})
 	expect(DateMonth('2021-12-31')).toEqual({year: 2021, monthOneBased: 12})
 	expect(DateCompare(new Date(), 'IsSame', new Date(), 'day')).toEqual(true)
