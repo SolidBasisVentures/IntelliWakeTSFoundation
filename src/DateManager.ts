@@ -1931,7 +1931,6 @@ const checkType = (
 	return ['IsBefore', 'IsSameOrBefore'].includes(evalCheck)
 }
 
-
 /**
  * Compares two dates based on the specified evaluation type and optional minimum interval.
  *
@@ -2218,12 +2217,16 @@ export const DateQuarter = (date: TDateAny): IQuarter | null => {
  * @param {TDateAny} date - The date value to calculate the quarter for.
  * @return {IQuarter} The quarter corresponding to the given date, or the current quarter if the calculation fails.
  */
-export function DateQuarterOrCurrent(date:TDateAny): IQuarter {
+export function DateQuarterOrCurrent(date: TDateAny): IQuarter {
 	return DateQuarter(date) ?? InitialDateQuarter()
 }
 
 /**
- * Creates an array of Quarters from the start to the end quarter inclusive.
+ * Generates an array of IQuarter objects representing the quarters from the start quarter to the end quarter.
+ *
+ * @param {IQuarter|string} start - The starting quarter, which can be an IQuarter object or a string.
+ * @param {IQuarter|string} end - The ending quarter, which can be an IQuarter object or a string.
+ * @return {IQuarter[]} An array of IQuarter objects representing all the quarters between the start and end, inclusive.
  */
 export function DateQuarterArray(start: IQuarter | string, end: IQuarter | string): IQuarter[] {
 	// Helper to normalize input into an IQuarter
@@ -2261,12 +2264,25 @@ export function DateQuarterArray(start: IQuarter | string, end: IQuarter | strin
 	return result
 }
 
+/**
+ * Generate months in an IQuarter
+ */
+export function DateQuarterMonths(quarter: IQuarter): IMonth[] {
+	const firstMonth: IMonth = {
+		year: quarter.year,
+		monthOneBased: quarter.quarter * 3 - 2
+	}
+
+	return [firstMonth, DateMonth(firstMonth, 1) ?? firstMonth, DateMonth(firstMonth, 2) ?? firstMonth]
+}
 
 /**
+ * Generates an object containing the start and end dates of a specified month.
  *
- * @param year
- * @param monthOneBased
- * @constructor
+ * @param {number} year - The year of the desired month.
+ * @param {number} monthOneBased - The 1-based index of the month (1 for January, 12 for December).
+ * @returns {IDates | null} An object containing the start and end dates of the specified month in 'YYYY-MM-DD' format,
+ * or `null` if the input is invalid.
  */
 export const DatesMonth = (year: number, monthOneBased: number): IDates | null => {
 	const baseDate = DateParseTSInternal(`${year}-${monthOneBased.toString().padStart(2, '0')}-01`, 'UTC')
@@ -2297,19 +2313,56 @@ export const InitialDateMonth = (): IMonth => ({
 })
 
 /**
+ * Determines the month and year of a given date, with an optional adjustment.
  *
- * @param date
- * @constructor
+ * @function
+ * @param {TDateAny} date - The date input to process, which can be of any accepted date format.
+ * @param {number} [adjustment=0] - An optional adjustment value to modify the resulting month.
+ * @param {boolean} verbose - Displays a console log to show processing
+ * @returns {IMonth | null} - Returns an object containing the year and a one-based month (1-12) if the input is valid, otherwise null.
  */
-export const DateMonth = (date: TDateAny): IMonth | null => {
+export const DateMonth = (date: TDateAny | IMonth, adjustment = 0, verbose = false): IMonth | null => {
+	let result: IMonth
+
+	if (typeof date === 'object' && !!date && 'monthOneBased' in date) {
+		result = {...date} as IMonth
+	} else {
 	const dateObj = DateObject(date)
 
 	if (!dateObj) return null
 
-	return {
+	result = {
 		year: dateObj.getUTCFullYear(),
 		monthOneBased: Math.floor(dateObj.getUTCMonth()) + 1
 	}
+	}
+
+	let valAdjustment = adjustment
+
+	while (valAdjustment > 0) {
+		if (result.monthOneBased >= 12) {
+			result.year++
+			result.monthOneBased = 1
+		} else {
+			result.monthOneBased++
+		}
+
+		valAdjustment--
+	}
+
+	while (Math.floor(valAdjustment) < 0) {
+		if (verbose) console.log(adjustment, valAdjustment, result)
+		if (result.monthOneBased <= 1) {
+			result.year--
+			result.monthOneBased = 12
+		} else {
+			result.monthOneBased--
+		}
+
+		valAdjustment++
+	}
+
+	return result
 }
 
 /**
@@ -3372,5 +3425,5 @@ export function EasterDate(year: number) {
 		n = Math.floor((h + l - 7 * m + 114) / 31),
 		p = (h + l - 7 * m + 114) % 31
 
-	return DateOnlyNull(`${year}-${n}-${p+1}`)
+	return DateOnlyNull(`${year}-${n}-${p + 1}`)
 }

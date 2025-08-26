@@ -16,6 +16,7 @@ import {
 	DateParseTS,
 	DateQuarter,
 	DateQuarterArray,
+	DateQuarterMonths,
 	DatesBetween,
 	DatesFromWeekNumber,
 	DatesQuarter,
@@ -394,6 +395,12 @@ test('Date Managers', () => {
 	])
 	expect(DateMonth('2021-01-01')).toEqual({year: 2021, monthOneBased: 1})
 	expect(DateMonth('2021-12-31')).toEqual({year: 2021, monthOneBased: 12})
+	expect(DateMonth({year: 2021, monthOneBased: 8}, 1)).toEqual({year: 2021, monthOneBased: 9})
+	expect(DateMonth({year: 2021, monthOneBased: 12}, 1)).toEqual({year: 2022, monthOneBased: 1})
+	expect(DateMonth({year: 2021, monthOneBased: 8}, -1)).toEqual({year: 2021, monthOneBased: 7})
+	expect(DateMonth({year: 2021, monthOneBased: 1}, -1)).toEqual({year: 2020, monthOneBased: 12})
+	expect(DateQuarterMonths({year: 2025, quarter: 1})).toEqual([{year: 2025, monthOneBased: 1},{year: 2025, monthOneBased: 2},{year: 2025, monthOneBased: 3}])
+	expect(DateQuarterMonths({year: 2025, quarter: 4})).toEqual([{year: 2025, monthOneBased: 10},{year: 2025, monthOneBased: 11},{year: 2025, monthOneBased: 12}])
 	expect(DateCompare(new Date(), 'IsSame', new Date(), 'day')).toEqual(true)
 	expect(DateCompare(new Date(), 'IsBefore', new Date(), 'day')).toEqual(false)
 	expect(DateCompare(new Date(), 'IsSame', {seconds: -2}, 'day')).toEqual(true)
