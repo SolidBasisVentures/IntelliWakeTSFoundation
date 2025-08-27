@@ -1,15 +1,28 @@
-import {ESTTodayDateTimeLabel} from '../src/DateManager'
-import {RoundTo} from '../src/Functions'
+import {DateOnly, ESTTodayDateTimeLabel} from '../src/DateManager'
 
 require('source-map-support').install()
 
 console.info('Starting', ESTTodayDateTimeLabel())
 console.time('Consoles')
 
-const val = 1.49999
-const decimals = 1
-const dir = 'round'
-console.info('RoundTo Result', val, decimals, dir,
-	RoundTo(val, decimals, dir, true))
+const loop = 10000
+
+console.time('New Date')
+for (const i of Array(loop)) {
+	new Date().valueOf()
+}
+console.timeEnd('New Date')
+
+console.time('DateOnly Now')
+for (const i of Array(loop)) {
+	DateOnly('now')
+}
+console.timeEnd('DateOnly Now')
+
+console.time('DateOnly Date')
+for (const i of Array(loop)) {
+	DateOnly('2025-01-01')
+}
+console.timeEnd('DateOnly Date')
 
 console.timeEnd('Consoles')

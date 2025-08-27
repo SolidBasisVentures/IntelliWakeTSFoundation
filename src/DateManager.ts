@@ -2429,6 +2429,14 @@ export const DateOnlyNull = (
 ): string | null => {
 	if (!date) return null
 
+	if ((date === 'now' || date === 'today') && !adjustments) {
+		const now = new Date(); // uses current timezone
+		const y = now.getFullYear();
+		const m = String(now.getMonth() + 1).padStart(2, '0');
+		const d = String(now.getDate()).padStart(2, '0');
+		return `${y}-${m}-${d}`
+	}
+
 	try {
 		const useDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date :
 			!date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
@@ -2460,6 +2468,8 @@ export const DateOnlyNull = (
 
 			return null
 		}
+
+		if (useDate.length === 10 && !adjustments) return useDate
 
 		let dateObj = new Date(useDate)
 
