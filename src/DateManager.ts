@@ -2414,10 +2414,13 @@ export const DateDayOfWeek = (date: TDateAny, timezoneDisplay?: string): TDoW | 
 }
 
 /**
+ * Processes a given date input and adjusts it according to the provided adjustments, returning a formatted date string or null.
  *
- * @param date
- * @param adjustments
- * @constructor
+ * @param {TDateAny} date - The input date, which can be a string, number, object, or predefined keywords ('now' or 'today').
+ * @param {TDateOnlyAdjustment & {formatLocale?: boolean, timezoneDisplay?: string, fromFormat?: string}} [adjustments] -
+ * Optional settings to adjust the input date. Includes options for formatting, timezone, and parsing specific date formats.
+ *
+ * @returns {string|null} - Returns a string in the YYYY-MM-DD format after processing and adjustments, or null if the input is invalid or cannot be processed.
  */
 export const DateOnlyNull = (
 	date: TDateAny,
