@@ -2628,23 +2628,35 @@ export const TimeFloorMinute = (time: TDateAny, minuteIncrement: number = 1): st
 }
 
 /**
+ * A function that returns the current date and time formatted as a localized string
+ * in the 'en-US' locale for the 'America/New_York' timezone.
  *
- * @constructor
+ * The value represents the current date and time in Eastern Standard Time (EST),
+ * taking into account daylight saving time adjustments if applicable.
+ *
+ * @returns {string} The current date and time formatted as a string, adjusted for EST.
  */
 export const ESTTodayDateTimeLabel = () => new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})
 
 /**
+ * Represents the current date in Eastern Standard Time (EST) formatted as a date-only string.
  *
- * @constructor
+ * This function calculates the current date based on the Eastern Time Zone (America/New_York).
+ * It uses a specific date formatter and falls back to a date-only representation
+ * if the primary formatting fails or is unavailable.
+ *
+ * @returns {string} The current date in EST, formatted as a date-only string.
  */
 export const ESTTodayDate = () => DateFormat('Date', 'now', 'America/New_York') ?? DateOnly('now')
 
 /**
+ * Calculates the number of weeks from a given date to another date ('now' by default)
+ * and returns a string labeling the relationship in terms of weeks.
  *
- * @param date
- * @param startOf
- * @param compareDate
- * @constructor
+ * @param {string} date - The target date in a string format to calculate the difference from.
+ * @param {'StartOf' | 'StartOfMon'} startOf - Specifies the start of the week comparison, either starting on Sunday ('StartOf') or Monday ('StartOfMon').
+ * @param {string} [compareDate='now'] - The reference date in a string format to compare against. Defaults to the current date ('now').
+ * @returns {string} A string describing the number of weeks difference (e.g., "This Week", "Last Week", "Next Week", or a specific number of weeks ago/from now).
  */
 export const WeeksFromLabel = (date: string, startOf: 'StartOf' | 'StartOfMon', compareDate = 'now'): string => {
 	if (!date) return ''
