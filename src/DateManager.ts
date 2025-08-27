@@ -2327,14 +2327,14 @@ export const DateMonth = (date: TDateAny | IMonth, adjustment = 0, verbose = fal
 	if (typeof date === 'object' && !!date && 'monthOneBased' in date) {
 		result = {...date} as IMonth
 	} else {
-	const dateObj = DateObject(date)
+		const dateObj = DateObject(date)
 
-	if (!dateObj) return null
+		if (!dateObj) return null
 
-	result = {
-		year: dateObj.getUTCFullYear(),
-		monthOneBased: Math.floor(dateObj.getUTCMonth()) + 1
-	}
+		result = {
+			year: dateObj.getUTCFullYear(),
+			monthOneBased: Math.floor(dateObj.getUTCMonth()) + 1
+		}
 	}
 
 	let valAdjustment = adjustment
@@ -2428,8 +2428,9 @@ export const DateOnlyNull = (
 	}
 ): string | null => {
 	if (!date) return null
+
 	try {
-		const useDate =
+		const useDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date :
 			!date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
 				? DateFormat('Date', date, adjustments?.timezoneDisplay ?? CurrentTimeZone()) ?? ''
 				: (date ?? '').substring(0, 10)
