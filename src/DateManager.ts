@@ -1109,9 +1109,11 @@ export const DaysInMonth = (date: TDateAny): number | null => {
 }
 
 const DateAdjustMonthTS = (date: TDateAny, months: number): number | null => {
-	let dateTS = DateParseTSInternal(date)
+	let dateTS = typeof date === 'number' ? date : DateParseTSInternal(date)
 
-	if (!dateTS) return null
+	if (dateTS === null) {
+		return null
+	}
 
 	const isNegative = months < 0
 
@@ -1508,12 +1510,13 @@ export const DayDiffNoWeekend = (dateFrom: TDateAny, dateTo: TDateAny): number =
  * - 'second', 'seconds'
  * - 'millisecond', 'milliseconds'
  *
+ * @param verbose
  * @returns {number | null} The difference between the two dates based on the specified duration. Returns:
  * - A positive or negative number indicating the difference in the specified unit.
  * - Zero if the dates are the same.
  * - Null if one or both dates are invalid.
  */
-export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration): number | null => {
+export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDuration, verbose = false): number | null => {
 	// const isDayRanged = ['year'
 	// 										 , 'years'
 	// 										 , 'quarter'
@@ -1537,15 +1540,27 @@ export const DateDiff = (dateFrom: TDateAny, dateTo: TDateAny, duration: TDurati
 		case 'years':
 		case 'month':
 		case 'months':
+			if (verbose) console.log('DateDiff:', duration, dateFrom, dateTo, date1, date2)
 			const isNegative = date1 < date2
 			const increment = (['year', 'years'].includes(duration) ? 12 : 1) * (isNegative ? -1 : 1)
 			let count = 0
 			let newTS = DateAdjustMonthTS(date2, increment) ?? 0
 			let blockCount = 0
 
+			if (verbose) console.log('DateManager isNegative', isNegative, 'increment', increment)
+
 			while (isNegative ? date1 <= newTS : date1 >= newTS) {
 				blockCount++
-				if (blockCount > 1000) {
+				if (blockCount > 99999) {
+					if (verbose)
+						console.log(
+							'DateDiff: Loop detected',
+							date1,
+							newTS,
+							blockCount,
+							count,
+							DateAdjustMonthTS(newTS, increment)
+						)
 					throw new Error('DateDiff: Loop detected')
 				}
 				count -= isNegative ? -1 : 1
@@ -2433,16 +2448,18 @@ export const DateOnlyNull = (
 	if (!date) return null
 
 	if ((date === 'now' || date === 'today') && !adjustments) {
-		const now = new Date(); // uses current timezone
-		const y = now.getFullYear();
-		const m = String(now.getMonth() + 1).padStart(2, '0');
-		const d = String(now.getDate()).padStart(2, '0');
+		const now = new Date() // uses current timezone
+		const y = now.getFullYear()
+		const m = String(now.getMonth() + 1).padStart(2, '0')
+		const d = String(now.getDate()).padStart(2, '0')
 		return `${y}-${m}-${d}`
 	}
 
 	try {
-		const useDate = (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date :
-			!date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
+		const useDate =
+			typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)
+				? date
+				: !date || typeof date === 'object' || typeof date === 'number' || ['now', 'today'].includes(date)
 				? DateFormat('Date', date, adjustments?.timezoneDisplay ?? CurrentTimeZone()) ?? ''
 				: (date ?? '').substring(0, 10)
 
