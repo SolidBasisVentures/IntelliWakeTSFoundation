@@ -116,6 +116,14 @@ test('Date Managers', () => {
 	expect(DateDiff('2020-12-31T23:59:59.000Z', isoLongDateString, 'second')).toEqual(1)
 	expect(DateDiff(isoLongDateString, '2020-12-31T23:59:59.000Z', 'second')).toEqual(-1)
 	expect(DateDiff(isoLongDateString, '2020-12-31T00:00:00.000Z', 'day')).toEqual(-1)
+	expect(DateDiff(isoLongDateString, '9999-12-31T00:00:00.000Z', 'year')).toEqual(7978)
+	expect(DateDiff(isoLongDateString, '0001-12-31T00:00:00.000Z', 'year')).toEqual(-2019)
+	expect(DateDiff('9999-12-31T00:00:00.000Z', isoLongDateString, 'year')).toEqual(-7978)
+	expect(DateDiff('0001-12-31T00:00:00.000Z', isoLongDateString, 'year')).toEqual(2019)
+	expect(DateDiff(isoLongDateString, '9999-12-31T00:00:00.000Z', 'month')).toEqual(95747)
+	expect(DateDiff(isoLongDateString, '0001-12-31T00:00:00.000Z', 'month')).toEqual(-24228)
+	expect(DateDiff('9999-12-31T00:00:00.000Z', isoLongDateString, 'month')).toEqual(-95747)
+	expect(DateDiff('0001-12-31T00:00:00.000Z', isoLongDateString, 'month')).toEqual(24228)
 	expect(DateDiffComponents(isoLongDateString, '2022-02-02T01:01:01.000Z')).toEqual({
 		year: 1,
 		month: 1,
@@ -374,9 +382,7 @@ test('Date Managers', () => {
 		{year: 2022, quarter: 4},
 		{year: 2023, quarter: 1}
 	])
-	expect(DateQuarterArray({year: 2021, quarter: 4}, {year: 2021, quarter: 4})).toEqual([
-		{year: 2021, quarter: 4}
-	])
+	expect(DateQuarterArray({year: 2021, quarter: 4}, {year: 2021, quarter: 4})).toEqual([{year: 2021, quarter: 4}])
 	expect(DateQuarterArray({year: 2021, quarter: 4}, {year: 2023, quarter: 1})).toEqual([
 		{year: 2021, quarter: 4},
 		{year: 2022, quarter: 1},
@@ -399,8 +405,16 @@ test('Date Managers', () => {
 	expect(DateMonth({year: 2021, monthOneBased: 12}, 1)).toEqual({year: 2022, monthOneBased: 1})
 	expect(DateMonth({year: 2021, monthOneBased: 8}, -1)).toEqual({year: 2021, monthOneBased: 7})
 	expect(DateMonth({year: 2021, monthOneBased: 1}, -1)).toEqual({year: 2020, monthOneBased: 12})
-	expect(DateQuarterMonths({year: 2025, quarter: 1})).toEqual([{year: 2025, monthOneBased: 1},{year: 2025, monthOneBased: 2},{year: 2025, monthOneBased: 3}])
-	expect(DateQuarterMonths({year: 2025, quarter: 4})).toEqual([{year: 2025, monthOneBased: 10},{year: 2025, monthOneBased: 11},{year: 2025, monthOneBased: 12}])
+	expect(DateQuarterMonths({year: 2025, quarter: 1})).toEqual([
+		{year: 2025, monthOneBased: 1},
+		{year: 2025, monthOneBased: 2},
+		{year: 2025, monthOneBased: 3}
+	])
+	expect(DateQuarterMonths({year: 2025, quarter: 4})).toEqual([
+		{year: 2025, monthOneBased: 10},
+		{year: 2025, monthOneBased: 11},
+		{year: 2025, monthOneBased: 12}
+	])
 	expect(DateCompare(new Date(), 'IsSame', new Date(), 'day')).toEqual(true)
 	expect(DateCompare(new Date(), 'IsBefore', new Date(), 'day')).toEqual(false)
 	expect(DateCompare(new Date(), 'IsSame', {seconds: -2}, 'day')).toEqual(true)
