@@ -195,6 +195,18 @@ test('ToArray', () => {
 	expect(ToArray([1])).toEqual([1])
 	expect(ToArray([1, 2, 3])).toEqual([1, 2, 3])
 	expect(ToArray([0, 1, 2, 3])).toEqual([0, 1, 2, 3])
+	expect(ToArray([0, 1, 2, 3], {removeFalsy: true})).toEqual([1, 2, 3])
+	expect(ToArray(['0', '1', '2', '3'], {removeFalsy: true})).toEqual(['0', '1', '2', '3'])
+	expect(ToArray(['', '1', '2', '3'], {removeFalsy: true})).toEqual(['1', '2', '3'])
+	expect(ToArray(['', '1', '2', '3'], {removeNullUndefined: true})).toEqual(['', '1', '2', '3'])
+	expect(ToArray([null, '', '1', '2', '3'], {removeNullUndefined: true})).toEqual(['', '1', '2', '3'])
+	expect(ToArray([undefined, '', '1', '2', '3'], {removeNullUndefined: true})).toEqual(['', '1', '2', '3'])
+	expect(ToArray([undefined, '', '1', '2', '3'], {removeFalsy: true})).toEqual(['1', '2', '3'])
+	expect(ToArray([null, undefined, '', '1', '2', '3'], {distinct: true})).toEqual([null, undefined, '', '1', '2', '3'])
+	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true})).toEqual([null, undefined, '', '1', '2', '3'])
+	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true, removeFalsy: true})).toEqual(['1', '2', '3'])
+	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1], {distinct: true, removeFalsy: true})).toEqual(['1', '2', '3', 1, 2])
+	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1, 0], {distinct: true, removeNullUndefined: true})).toEqual(['', '1', '2', '3', 1, 2, 0])
 })
 
 test('ArrayFromStringWS', () => {

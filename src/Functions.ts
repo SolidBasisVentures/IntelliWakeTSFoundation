@@ -1,5 +1,6 @@
 import {DateDiffLongDescription} from './DateManager'
 import {FormatZip} from './StringManipulation'
+import {isNullUndefined} from './SortSearch'
 
 /**
  * Replace all occurrences of a string.
@@ -1002,17 +1003,43 @@ export const filterAsync = async <T>(array: T[], predicate: (t: T) => Promise<bo
 }
 
 /**
- * Converts a single value or array of values to an array of values
+ * TToArrayOptions is a type describing optional configuration properties
+ * for converting a collection or similar data structure into an array.
+ * Each property affects how the resulting array is processed.
  *
- * @example
- * ToArray([1, 2, 3]) = [1, 2, 3]
- * ToArray(1) = [1]
- *
- * @param value
- * @constructor
+ * @property {boolean} [distinct] - When true, ensures the resulting array contains unique values only.
+ * @property {boolean} [removeFalsy] - When true, removes all falsy values (e.g., false, 0, '', null, undefined, NaN) from the resulting array.
+ * @property {boolean} [removeNullUndefined] - When true, removes all null and undefined values from the resulting array.
  */
-export const ToArray = <T>(value: T | T[]): T[] =>
-	value === null || value === undefined ? [] : Array.isArray(value) ? value : [value]
+export type TToArrayOptions = {
+	distinct?: boolean
+	removeFalsy?: boolean
+	removeNullUndefined?: boolean
+}
+
+/**
+ * Converts a value or an array of values into an array with optional transformations
+ * based on the provided options.
+ *
+ * @param {T: any | T: any[]} value - The value or array of values to be converted into an array.
+ * @param {TToArrayOptions} [options] - Optional configuration object for modifying the returned array.
+ *                                      - `removeFalsy` (boolean): Removes falsy values (e.g., 0, '', false) from the array if true.
+ *                                      - `removeNullUndefined` (boolean): Removes null and undefined values if true.
+ *                                      - `distinct` (boolean): Ensures only unique values are included if true.
+ * @return {T: any[]} A processed array derived from the input value and options.
+ */
+export function ToArray<T>(value: T | T[], options?: TToArrayOptions): T[] {
+	let returnValue = value === null || value === undefined ? [] : Array.isArray(value) ? value : [value]
+
+	if (!returnValue.length || !options) return returnValue
+
+	return returnValue.reduce<T[]>((results, val) => {
+		if (options.removeFalsy && !val) return results
+		if (options.removeNullUndefined && isNullUndefined(val)) return results
+		if (options.distinct && results.some((result) => result === val)) return results
+		return [...results, val]
+	}, [])
+}
 
 /**
  * Generates a range of numbers
@@ -1178,7 +1205,7 @@ export function PickProperty<T extends Record<any, any>, K extends Extract<keyof
  * Creates an object where the values are mirror copies of the keys.  This is to support Enum replacement.
  *
  * @param {T extends Record<string, unknown>} obj - An object containing the keys to be mirrored. The values of the object are ignored.
- * @return {Readonly<Record<keyof T & string, string>>} A frozen object where each key has the same string value as its key name.
+ * @return {Readonly<Record<keyof T: any & string, string>>} A frozen object where each key has the same string value as its key name.
  */
 export function KeyMirror<T extends Record<string, unknown>>(obj: T) {
 	return Object.freeze(
@@ -1535,8 +1562,8 @@ export function DistributeEvenly(amount: number, values: number[], toDecimals = 
 /**
  * Retrieves the keys of the given object as an array.
  *
- * @param {T} obj - The object whose enumerable property keys are to be returned.
- * @return {Array<keyof T>} An array of the keys from the object.
+ * @param {T: object} obj - The object whose enumerable property keys are to be returned.
+ * @return {Array<keyof T: object>} An array of the keys from the object.
  */
 export function ObjectKeys<T extends object>(obj: T): Array<keyof T> {
 	return Object.keys(obj) as Array<keyof T>
