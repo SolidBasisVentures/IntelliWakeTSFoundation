@@ -1028,8 +1028,8 @@ export type TToArrayOptions = {
  *                                      - `distinct` (boolean): Ensures only unique values are included if true.
  * @return {T: any[]} A processed array derived from the input value and options.
  */
-export function ToArray<T>(value: T | T[], options?: TToArrayOptions): T[] {
-	let returnValue = value === null || value === undefined ? [] : Array.isArray(value) ? value : [value]
+export function ToArray<T>(value: T | readonly T[], options?: TToArrayOptions): T[] {
+	let returnValue = (value === null || value === undefined ? [] : Array.isArray(value) ? value : [value]) as T[]
 
 	if (!returnValue.length || !options) return returnValue
 
