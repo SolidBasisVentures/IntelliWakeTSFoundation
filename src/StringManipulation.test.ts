@@ -23,7 +23,9 @@ import {
 	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
+	ShortenNumberComponents,
 	ShortNumber,
+	ShortNumberComponents,
 	SplitNonWhiteSpace,
 	StringCompares,
 	TextToHTML,
@@ -533,6 +535,35 @@ describe('StringCompares', () => {
 		expect(result).toBe('JOHN DOE__ 27')
 	})
 
+	test('Short Number Components', () => {
+		expect(ShortNumberComponents(1)).toEqual({divisor: 1, extension: ''})
+		expect(ShortNumberComponents(10)).toEqual({divisor: 1, extension: ''})
+		expect(ShortNumberComponents(100)).toEqual({divisor: 1, extension: ''})
+		expect(ShortNumberComponents(1000)).toEqual({divisor: 1000, extension: 'k'})
+		expect(ShortNumberComponents(10000)).toEqual({divisor: 1000, extension: 'k'})
+		expect(ShortNumberComponents(100000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortNumberComponents(1000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortNumberComponents(1000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortNumberComponents(10000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortNumberComponents(100000000)).toEqual({divisor: 1000000000, extension: 'B'})
+		expect(ShortNumberComponents(1000000000)).toEqual({divisor: 1000000000, extension: 'B'})
+	})
+
+	test('Short Number Components', () => {
+		expect(ShortenNumberComponents(1)).toEqual({divisor: 1, extension: ''})
+		expect(ShortenNumberComponents(10)).toEqual({divisor: 1, extension: ''})
+		expect(ShortenNumberComponents(100)).toEqual({divisor: 1, extension: ''})
+		expect(ShortenNumberComponents(1000)).toEqual({divisor: 1, extension: ''})
+		expect(ShortenNumberComponents(10000)).toEqual({divisor: 1, extension: ''})
+		expect(ShortenNumberComponents(100000)).toEqual({divisor: 1000, extension: 'k'})
+		expect(ShortenNumberComponents(1000000)).toEqual({divisor: 1000, extension: 'k'})
+		expect(ShortenNumberComponents(1000000)).toEqual({divisor: 1000, extension: 'k'})
+		expect(ShortenNumberComponents(10000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortenNumberComponents(100000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortenNumberComponents(1000000000)).toEqual({divisor: 1000000, extension: 'M'})
+		expect(ShortenNumberComponents(10000000000)).toEqual({divisor: 1000000000, extension: 'B'})
+	})
+
 	test('Digits Min Max', () => {
 		expect(ToDigitsMax(1.234, 2)).toBe('1.23')
 		expect(ToDigitsMax(1.2, 2)).toBe('1.2')
@@ -626,6 +657,23 @@ describe('StringCompares', () => {
 		expect(ToNumberString(1234.5, {short: true, currency: true})).toBe('$1.2k')
 		expect(ToNumberString(1, {short: true, percent: true})).toBe('100.0%')
 		expect(ToNumberString(10, {short: true, percent: true})).toBe('1.0k%')
+
+		expect(ToNumberString(1.234, {shorten: true})).toBe('1')
+		expect(ToNumberString(1.25, {shorten: true})).toBe('1')
+		expect(ToNumberString(123, {shorten: true})).toBe('123')
+		expect(ToNumberString(1234, {shorten: true})).toBe('1,234')
+		expect(ToNumberString(123456, {shorten: true})).toBe('123k')
+		expect(ToNumberString(1234567, {shorten: true})).toBe('1,235k')
+		expect(ToNumberString(12345678, {shorten: true})).toBe('12M')
+		expect(ToNumberString(123456789, {shorten: true})).toBe('123M')
+		expect(ToNumberString(1234567, {shorten: true, currency: true})).toBe('$1,235k')
+		expect(ToNumberString(1254567, {shorten: true, currency: true})).toBe('$1,255k')
+		expect(ToNumberString(1234567, {shorten: true, currency: true, fixedDecimals: 0})).toBe('$1,235k')
+		expect(ToNumberString(1534567, {shorten: true, currency: true, fixedDecimals: 0})).toBe('$1,535k')
+		expect(ToNumberString(1234567, {shorten: true, currency: true, fixedDecimals: 2})).toBe('$1,234.57k')
+		expect(ToNumberString(12345678, {shorten: true, currency: true})).toBe('$12M')
+		expect(ToNumberString(123.45, {shorten: true, currency: true})).toBe('$123')
+		expect(ToNumberString(1234.5, {shorten: true, currency: true})).toBe('$1,235')
 	})
 
 	// test('Common String Patterns', () => {
