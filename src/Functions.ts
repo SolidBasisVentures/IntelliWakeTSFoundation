@@ -538,7 +538,7 @@ export const GoogleMapsGPSLink = (dataArray: any, prefix: string = ''): string =
  * @param {string} [prefix=''] - An optional prefix used to access address fields in the object (e.g., 'billing_' for 'billing_address1').
  * @returns {string} A URL string for the Google Maps search query corresponding to the provided address.
  */
-export const GoogleMapsAddressLink = (address: object | null | undefined, prefix: string = ''): string => {
+export const GoogleMapsAddressLink = (address: Record<string, any> | null | undefined, prefix: string = ''): string => {
 	if (!address || !(address[prefix + 'address1'] ?? address[prefix + 'address_1']) || !address[prefix + 'zip'])
 		return ''
 
@@ -569,7 +569,7 @@ export function GoogleMapsDirectionsLink(
 ): string {
 	if (!address1 || !address2) return ''
 
-	const formatAddress = (address: object, prefix: string): string => {
+	const formatAddress = (address: Record<string, any>, prefix: string): string => {
 		if (!address || !(address[prefix + 'address1'] ?? address[prefix + 'address_1']) || !address[prefix + 'zip'])
 			return ''
 		return `${address[prefix + 'address1'] ?? address[prefix + 'address_1']}, ${address[prefix + 'city']}, ${

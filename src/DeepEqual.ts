@@ -322,8 +322,8 @@ export const SubsetFormEqual = (subset: any, superset: any): boolean => {
 /**
  * Deep clone function for both primitive and reference data types including objects and arrays.
  *
- * @param {T} obj - The object to be cloned
- * @returns {T} - The cloned object.
+ * @param {T: any} obj - The object to be cloned
+ * @returns {T: any} - The cloned object.
  */
 export function DeepClone<T>(obj: T): T {
 	if (!obj) return obj
@@ -344,7 +344,7 @@ export function DeepClone<T>(obj: T): T {
 	if (obj instanceof Object) {
 		const copy = {}
 		for (let attr in obj) {
-			if (Object.prototype.hasOwnProperty.call(obj, attr)) copy[attr as any] = DeepClone(obj[attr])
+			if (Object.prototype.hasOwnProperty.call(obj, attr)) (copy as any)[attr as any] = DeepClone(obj[attr])
 		}
 		return copy as T
 	}

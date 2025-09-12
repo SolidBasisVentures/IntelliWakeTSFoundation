@@ -247,7 +247,7 @@ export const ArrayToCSVString = function (csvData: object[], blankZeros = true):
 			.map((row: object) =>
 				keys
 					.map((key) => {
-						const item = row[key]
+						const item = (row as any)[key]
 						return blankZeros && ((typeof item === 'number' && !item) || item === '0')
 							? ''
 							: typeof item === 'string'
@@ -276,7 +276,7 @@ export const ArrayToTSVString = function (csvData: object[], blankZeros = true):
 			.map((row: object) =>
 				keys
 					.map((key) => {
-						const item = row[key]
+						const item = (row as any)[key]
 						return blankZeros && ((typeof item === 'number' && !item) || item === '0')
 							? ''
 							: typeof item === 'string'
@@ -713,7 +713,7 @@ export type DeepNullable<T> = {
  *
  * @template T The object type whose properties are to be made non-nullable.
  * @typedef {Object} NonNullableProperties
- * @property {T} K Represents the keys of the input type `T`.
+ * @property {T} K: any Represents the keys of the input type `T`.
  */
 export type NonNullableProperties<T> = {
 	[K in keyof T]: NonNullable<T[K]>

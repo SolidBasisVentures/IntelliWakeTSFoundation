@@ -1178,7 +1178,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 		switch (key) {
 			case 'year':
 			case 'years':
-				switch (adjustments[key]) {
+				switch ((adjustments as any)[key]) {
 					case 'StartOf':
 						{
 							const dateObj = DateObject(dateTS) ?? new Date()
@@ -1200,13 +1200,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 						}
 						break
 					default:
-						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 12)
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber((adjustments as any)[key]) * 12)
 						break
 				}
 				break
 			case 'month':
 			case 'months':
-				switch (adjustments[key]) {
+				switch ((adjustments as any)[key]) {
 					case 'StartOf':
 						{
 							const dateObj = DateObject(dateTS) ?? new Date()
@@ -1230,13 +1230,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 						}
 						break
 					default:
-						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]))
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber((adjustments as any)[key]))
 						break
 				}
 				break
 			case 'quarter':
 			case 'quarters':
-				switch (adjustments[key]) {
+				switch ((adjustments as any)[key]) {
 					case 'StartOf':
 						{
 							const dateObj = DateObject(dateTS) ?? new Date()
@@ -1258,7 +1258,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 						}
 						break
 					default:
-						dateTS = DateAdjustMonthTS(dateTS, CleanNumber(adjustments[key]) * 3)
+						dateTS = DateAdjustMonthTS(dateTS, CleanNumber((adjustments as any)[key]) * 3)
 						break
 				}
 				break
@@ -1269,7 +1269,7 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 				switch (key) {
 					case 'week':
 					case 'weeks':
-						switch (adjustments[key]) {
+						switch ((adjustments as any)[key]) {
 							case 'StartOf':
 								{
 									const dateObj = DateObject(dateTS) ?? new Date()
@@ -1321,13 +1321,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 								}
 								break
 							default:
-								dateTS += CleanNumber(adjustments[key]) * 7 * 24 * 60 * 60 * 1000
+								dateTS += CleanNumber((adjustments as any)[key]) * 7 * 24 * 60 * 60 * 1000
 								break
 						}
 						break
 					case 'day':
 					case 'days':
-						switch (adjustments[key]) {
+						switch ((adjustments as any)[key]) {
 							case 'StartOf':
 								{
 									const dateObj = DateObject(dateTS) ?? new Date()
@@ -1354,13 +1354,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 								}
 								break
 							default:
-								dateTS += CleanNumber(adjustments[key]) * 24 * 60 * 60 * 1000
+								dateTS += CleanNumber((adjustments as any)[key]) * 24 * 60 * 60 * 1000
 								break
 						}
 						break
 					case 'hour':
 					case 'hours':
-						switch (adjustments[key]) {
+						switch ((adjustments as any)[key]) {
 							case 'StartOf':
 								{
 									const dateObj = DateObject(dateTS) ?? new Date()
@@ -1382,13 +1382,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 								}
 								break
 							default:
-								dateTS += CleanNumber(adjustments[key]) * 60 * 60 * 1000
+								dateTS += CleanNumber((adjustments as any)[key]) * 60 * 60 * 1000
 								break
 						}
 						break
 					case 'minute':
 					case 'minutes':
-						switch (adjustments[key]) {
+						switch ((adjustments as any)[key]) {
 							case 'StartOf':
 								{
 									const dateObj = DateObject(dateTS) ?? new Date()
@@ -1410,13 +1410,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 								}
 								break
 							default:
-								dateTS += CleanNumber(adjustments[key]) * 60 * 1000
+								dateTS += CleanNumber((adjustments as any)[key]) * 60 * 1000
 								break
 						}
 						break
 					case 'second':
 					case 'seconds':
-						switch (adjustments[key]) {
+						switch ((adjustments as any)[key]) {
 							case 'StartOf':
 								{
 									const dateObj = DateObject(dateTS) ?? new Date()
@@ -1436,13 +1436,13 @@ export const DateAdjustTS = (date: TDateAny, adjustments: TDateParseOptions): nu
 								}
 								break
 							default:
-								dateTS += CleanNumber(adjustments[key]) * 1000
+								dateTS += CleanNumber((adjustments as any)[key]) * 1000
 								break
 						}
 						break
 					case 'millisecond':
 					case 'milliseconds':
-						dateTS += CleanNumber(adjustments[key])
+						dateTS += CleanNumber((adjustments as any)[key])
 						break
 				}
 				break
