@@ -45,5 +45,5 @@ export const TestFormData = (): FormData => {
 	formData.append('features', 'Three')
 	formData.append('is_active', 'false')
 
-	return formData as FormData
+	return formData as unknown as FormData
 }
