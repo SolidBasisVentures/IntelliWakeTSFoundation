@@ -11,13 +11,13 @@ export type TImporterDefinition<HEADERS extends readonly string[]> = {
 
 export class Importer<HEADERS extends readonly string[]> {
 	private readonly definition: TImporterDefinition<HEADERS>
-	private readonly csv: string
+	private readonly rows: string[][]
 
 	constructor(
-		definition: TImporterDefinition<HEADERS>, csv: string
+		definition: TImporterDefinition<HEADERS>, rpws: string[][]
 	) {
 		this.definition = definition
-		this.csv = csv
+		this.rows = rows
 	}
 
 	public RowHeaderIncludes(headerRow: readonly string[], headerName: string | readonly string[]) {
