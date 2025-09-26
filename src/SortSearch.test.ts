@@ -10,7 +10,8 @@ import {
 	SortCompares,
 	SortIndex,
 	SortPerArray,
-	SortSplitItems
+	SortSplitItems,
+	SearchTerms
 } from './SortSearch'
 import {describe, expect, test} from 'vitest'
 
@@ -249,6 +250,14 @@ test('Sort Index String', () => {
 	).toEqual(['One', 'One', 'Two', 'Three', 'Four'])
 })
 
+test('SearchTerms', () => {
+	expect(SearchTerms('John Doe',)).toEqual(['john', 'doe'])
+	expect(SearchTerms('John.Doe',)).toEqual(['john.doe'])
+	expect(SearchTerms('1000.50',)).toEqual(['1000.50'])
+
+})
+
+
 test('Search', () => {
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24'])).toEqual(true)
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['John'])).toEqual(true)
@@ -358,6 +367,18 @@ test('Search', () => {
 				page: 4}
 		)
 	).toEqual([])
+	expect(
+		SearchRows(
+			[
+				{user: 'john doe', age: 1.1},
+				{user: 'john doe', age: 2.2},
+				{user: 'john doe', age: 3.3},
+				{user: 'john doe', age: 2.21},
+				{user: 'john doe 2.2', age: 5}
+			],
+			'2.2'
+		)
+	).toEqual([{user: 'john doe', age: 2.2}, {user: 'john doe', age: 2.21}, {user: 'john doe 2.2', age: 5}])
 	const activeList = [
 		{id: 1, is_active: true},
 		{id: 2, is_active: false}
