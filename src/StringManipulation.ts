@@ -1045,7 +1045,7 @@ export function ParseInternationalNumber(input: string): IPhoneComponents {
 			foundIdx = input.indexOf(exchangeNumber, searchStart)
 			if (foundIdx >= 0) {
 				searchStart = foundIdx + exchangeNumber.length
-				π
+
 				// Finally search for subscriber number after exchange
 				foundIdx = input.indexOf(subscriberNumber, searchStart)
 				if (foundIdx >= 0) {
