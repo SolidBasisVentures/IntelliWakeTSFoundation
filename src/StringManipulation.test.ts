@@ -20,6 +20,7 @@ import {
 	HTMLToText,
 	IncludesHTML,
 	ObjectToFixedFields,
+	ParseInternationalNumber,
 	PhoneComponents,
 	RandomString,
 	ReplaceLinks,
@@ -255,6 +256,11 @@ test('String Functions', () => {
 	expect(FormatPhoneNumber('15555551234')).toStrictEqual('(555) 555-1234')
 	expect(FormatPhoneNumber('123-123-1234')).toStrictEqual('(123) 123-1234')
 	expect(FormatPhoneNumber('321-321-4321')).toStrictEqual('(321) 321-4321')
+	expect(FormatPhoneNumber('321.321.4321')).toStrictEqual('(321) 321-4321')
+	expect(FormatPhoneNumber('321.321.4321 - Moms House')).toStrictEqual('(321) 321-4321 - Moms House')
+	expect(FormatPhoneNumber('(321) 321-4321')).toStrictEqual('(321) 321-4321')
+	expect(FormatPhoneNumber('321 321 4321')).toStrictEqual('(321) 321-4321')
+	expect(FormatPhoneNumber('3213214321')).toStrictEqual('(321) 321-4321')
 	expect(FormatPhoneNumber('+15555551234')).toStrictEqual('(555) 555-1234')
 	expect(PhoneComponents('0015555551234 x321')).toEqual({
 		countryCode: '001',
@@ -283,6 +289,55 @@ test('String Functions', () => {
 		exchangeNumber: '555',
 		subscriberNumber: '1234',
 		extension: 'x321'
+	})
+	expect(PhoneComponents('555.555.1234 x321')).toEqual({
+		countryCode: '',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: 'x321'
+	})
+	expect(PhoneComponents('555.555.1234 - Moms House')).toEqual({
+		countryCode: '',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: '- Moms House'
+	})
+	expect(PhoneComponents('+1 555.555.1234 - Moms House')).toEqual({
+		countryCode: '1',
+		areaCode: '555',
+		exchangeNumber: '555',
+		subscriberNumber: '1234',
+		extension: '- Moms House'
+	})
+	expect(ParseInternationalNumber('+52 55 1234 5678')).toEqual({
+		countryCode: '52',
+		areaCode: '55',
+		exchangeNumber: '1234',
+		subscriberNumber: '5678',
+		extension: ''
+	})
+	expect(PhoneComponents('+52 55 1234 5678')).toEqual({
+		countryCode: '52',
+		areaCode: '55',
+		exchangeNumber: '1234',
+		subscriberNumber: '5678',
+		extension: ''
+	})
+	expect(ParseInternationalNumber('+52 55 1234 5678 Beach House')).toEqual({
+		countryCode: '52',
+		areaCode: '55',
+		exchangeNumber: '1234',
+		subscriberNumber: '5678',
+		extension: 'Beach House'
+	})
+	expect(PhoneComponents('+52 55 1234 5678 Beach House')).toEqual({
+		countryCode: '52',
+		areaCode: '55',
+		exchangeNumber: '1234',
+		subscriberNumber: '5678',
+		extension: 'Beach House'
 	})
 	expect(FormatPhoneNumberDots('5555551234')).toStrictEqual('555.555.1234')
 	expect(FormatPhoneNumberDots('555555123')).toStrictEqual('555.555.123')

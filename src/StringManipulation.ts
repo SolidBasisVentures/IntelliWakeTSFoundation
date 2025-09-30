@@ -21,7 +21,7 @@ export const ToWords = (str: string | string[] | undefined | null): string[] => 
 
 	let results: string[] = []
 
-	const separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
 
 	loop_array: for (const strItem of strArray) {
 		for (const separator of separators) {
@@ -60,7 +60,7 @@ export const SplitNonWhiteSpace = (str: string | string[] | undefined | null): s
 
 	let results: string[] = []
 
-	const separators = [' ', '_', ',', '-', '/', '\\', '\'', '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
+	const separators = [' ', '_', ',', '-', '/', '\\', "'", '"', '=', '+', '~', '.', ',', '(', ')', '<', '>', '{', '}']
 
 	loop_array: for (const strItem of strArray) {
 		for (const separator of separators) {
@@ -205,7 +205,7 @@ export const IncludesHTML = (str: string | undefined | null): boolean => {
  * ReplaceLinks('https://www.google.com', 'testClass')
  *
  */
-export const ReplaceLinks = function(subject: string | undefined | null, classes?: string | null): string {
+export const ReplaceLinks = function (subject: string | undefined | null, classes?: string | null): string {
 	if (!subject) return ''
 
 	if (subject.includes('<img ')) return subject
@@ -214,7 +214,7 @@ export const ReplaceLinks = function(subject: string | undefined | null, classes
 	let str = subject.replace(/(?:\r\n|\r|\n)/g, '<br />')
 	// noinspection HtmlUnknownTarget
 	const target = !classes
-		? '<a href=\'$1\' target=\'_blank\'>$1</a>'
+		? "<a href='$1' target='_blank'>$1</a>"
 		: `<a href="$1" target="_blank" class="${classes}">$1</a>`
 	// noinspection RegExpRedundantEscape
 	return str.replace(/(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/gi, target)
@@ -228,7 +228,7 @@ export const ReplaceLinks = function(subject: string | undefined | null, classes
  * CleanScripts('<script>console.log(1)</script>blank')
  *
  */
-export const CleanScripts = function(subject: string | number | undefined | null): string {
+export const CleanScripts = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	return subject.toString().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -241,7 +241,7 @@ export const CleanScripts = function(subject: string | number | undefined | null
  * @param {string | number | undefined | null} subject - The text to convert.
  * @returns {string} - The converted HTML string.
  */
-export const TextToHTML = function(subject: string | number | undefined | null): string {
+export const TextToHTML = function (subject: string | number | undefined | null): string {
 	if (!subject) return ''
 
 	let str = CleanScripts(subject) //.replace(/(<([^>]+)>)/gi, '')
@@ -520,20 +520,27 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		if (options?.zeroDash) return '-'
 	}
 
-	let maximumFractionDigits = options?.fixedDecimals ?? options?.maxDecimals ?? (options?.short ? 1 :options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : 9)
-	const minimumFractionDigits = options?.fixedDecimals ?? options?.minDecimals ?? (options?.short ? 1 :options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : undefined)
+	let maximumFractionDigits =
+		options?.fixedDecimals ??
+		options?.maxDecimals ??
+		(options?.short ? 1 : options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : 9)
+	const minimumFractionDigits =
+		options?.fixedDecimals ??
+		options?.minDecimals ??
+		(options?.short ? 1 : options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : undefined)
 
 	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
 		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
 	}
 
-	const shortComponents = !!options?.short ?
-		ShortNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1)) :
-		!!options?.shorten ?
-			ShortenNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1)) :
-			null
+	const shortComponents = !!options?.short
+		? ShortNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1))
+		: !!options?.shorten
+		? ShortenNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1))
+		: null
 
-	const validNumber = ((numberNull ?? 0) * (options?.percent ? 100 : 1)) / (!shortComponents?.divisor ? 1 : shortComponents.divisor)
+	const validNumber =
+		((numberNull ?? 0) * (options?.percent ? 100 : 1)) / (!shortComponents?.divisor ? 1 : shortComponents.divisor)
 
 	const prefix = options?.prefix ?? (!!options?.currency ? '$' : '')
 	const suffix = options?.suffix ?? (!!options?.percent ? '%' : '')
@@ -554,7 +561,7 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
  * ToDigits(10)
  *
  */
-export const ToDigits = function(value: any, decimals: number = 0, minDecimals: number | null = null): string {
+export const ToDigits = function (value: any, decimals: number = 0, minDecimals: number | null = null): string {
 	return CleanNumber(value).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: minDecimals ?? decimals
@@ -569,7 +576,7 @@ export const ToDigits = function(value: any, decimals: number = 0, minDecimals: 
  * ToDigits(10)
  *
  */
-export const ToDigitsMax = function(value: any, decimals: number = 9, min: number = 0): string {
+export const ToDigitsMax = function (value: any, decimals: number = 9, min: number = 0): string {
 	return CleanNumber(value, decimals).toLocaleString(undefined, {
 		maximumFractionDigits: decimals,
 		minimumFractionDigits: min
@@ -588,7 +595,7 @@ export const ToDigitsMax = function(value: any, decimals: number = 9, min: numbe
  * ToDigits('')
  *
  */
-export const ToDigitsBlank = function(value: any, decimals: number = 0) {
+export const ToDigitsBlank = function (value: any, decimals: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return ''
 	}
@@ -611,7 +618,7 @@ export const ToDigitsBlank = function(value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsBlankMax = function(value: any, decimals: number = 9, min: number = 0) {
+export const ToDigitsBlankMax = function (value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return ''
 	}
@@ -634,7 +641,7 @@ export const ToDigitsBlankMax = function(value: any, decimals: number = 9, min: 
  * ToDigits('')
  *
  */
-export const ToDigitsDash = function(value: any, decimals: number = 0) {
+export const ToDigitsDash = function (value: any, decimals: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value) === 0) {
 		return '-'
 	}
@@ -657,7 +664,7 @@ export const ToDigitsDash = function(value: any, decimals: number = 0) {
  * ToDigits('')
  *
  */
-export const ToDigitsDashMax = function(value: any, decimals: number = 9, min: number = 0) {
+export const ToDigitsDashMax = function (value: any, decimals: number = 9, min: number = 0) {
 	if (isNullUndefined(value) || CleanNumber(value, decimals) === 0) {
 		return '-'
 	}
@@ -768,7 +775,7 @@ export interface IPhoneComponents {
 }
 
 /**
- * Extracts and returns the components of a phone number.
+ * Extracts and returns the components of a phone number, supporting both US and international formats.
  *
  * @param phone - The input phone number as a string, which can be `null` or `undefined`.
  * @param bestGuess - An optional boolean flag (default is `true`) that determines
@@ -780,40 +787,45 @@ export interface IPhoneComponents {
  *
  * @remarks
  * The function takes a phone number string and extracts its components:
- * - countryCode
+ * - countryCode (e.g., "1" for US, "52" for Mexico)
  * - areaCode
  * - exchangeNumber
  * - subscriberNumber
  * - extension
  *
- * The `bestGuess` flag allows choosing between returning an object with potential
- * partially correct components (if set to `true`) or refusing to return anything
- * (`null`) if the format is incorrect.
+ * Supports international formats like:
+ * - US: +1 (555) 123-4567 -> countryCode: "1", areaCode: "555", exchangeNumber: "123", subscriberNumber: "4567"
+ * - Mexico: +52 55 1234 5678 -> countryCode: "52", areaCode: "55", exchangeNumber: "1234", subscriberNumber: "5678"
+ * - Other formats with explicit country codes starting with "+"
  *
  * Example usage:
  *
- * const phoneComponents = PhoneComponents("(123) 456-7890", false);
- * console.log(phoneComponents);
+ * const phoneComponents = PhoneComponents("+52 55 1234 5678");
  * // Output: {
- * //   countryCode: "",
- * //   areaCode: "123",
- * //   exchangeNumber: "456",
- * //   subscriberNumber: "7890",
+ * //   countryCode: "52",
+ * //   areaCode: "55",
+ * //   exchangeNumber: "1234",
+ * //   subscriberNumber: "5678",
  * //   extension: ""
  * // }
  */
 export const PhoneComponents = (phone: string | null | undefined, bestGuess = true): IPhoneComponents | null => {
 	if (!phone) return null
 
-	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+'], '', phone)
+	let cleanNumber = ReplaceAll(['(', ')', '-', ' ', '+', '.', '_'], '', phone)
 
 	let countryCode = ''
+	// Handle international numbers with explicit country code
+	if (phone.trim().startsWith('+') && !phone.trim().startsWith('+1')) {
+		return ParseInternationalNumber(phone)
+	}
 
 	while ((cleanNumber.startsWith('0') || cleanNumber.startsWith('1')) && cleanNumber.length !== 10) {
 		countryCode += cleanNumber[0]
 		cleanNumber = cleanNumber.substring(1)
 	}
 
+	// Parse as US format: (XXX) XXX-XXXX
 	let phoneComponents: IPhoneComponents = {
 		countryCode: countryCode,
 		areaCode: cleanNumber.substring(0, 3),
@@ -831,6 +843,7 @@ export const PhoneComponents = (phone: string | null | undefined, bestGuess = tr
 		return null
 	}
 
+	// Extract extension from original phone string
 	if (!!phoneComponents.areaCode && !!phoneComponents.exchangeNumber && !!phoneComponents.subscriberNumber) {
 		let originalPhone = phone ?? ''
 		let extensionIdx = originalPhone.indexOf(phoneComponents.areaCode)
@@ -854,6 +867,207 @@ export const PhoneComponents = (phone: string | null | undefined, bestGuess = tr
 	}
 
 	return phoneComponents
+}
+
+/**
+ * Parses an international phone number input string into its components.
+ *
+ * @param {string} input - The raw phone number string in international format.
+ *                         It may include characters such as country code, area code, and optional extension.
+ * @return {IPhoneComponents} An object containing the parsed components of the phone number,
+ *                            including countryCode, areaCode, exchangeNumber, subscriberNumber, and extension.
+ */
+export function ParseInternationalNumber(input: string): IPhoneComponents {
+	// Normalize - keep digits, +, and extension markers separate
+	let raw = input.replace(/[^\d+]/gi, '').trim()
+
+	// Extract extension from ORIGINAL input (before normalization removes 'ext' or 'x')
+	const extMatch = input.match(/(ext|x)[\s.:-]*(\d+)$/i)
+	if (extMatch) {
+		// Remove extension from raw number
+		const extLength = extMatch[0].replace(/\D/g, '').length
+		raw = raw.slice(0, -extLength)
+	}
+
+	// Extract country code - order matters! Check longer codes first
+	const countryPatterns: {code: string; pattern: RegExp}[] = [
+		{code: '44', pattern: /^\+?44/},
+		{code: '52', pattern: /^\+?52/},
+		{code: '49', pattern: /^\+?49/},
+		{code: '33', pattern: /^\+?33/},
+		{code: '27', pattern: /^\+?27/},
+		{code: '86', pattern: /^\+?86/},
+		{code: '91', pattern: /^\+?91/},
+		{code: '81', pattern: /^\+?81/},
+		{code: '61', pattern: /^\+?61/},
+		{code: '1', pattern: /^\+?1/},
+		{code: '7', pattern: /^\+?7/}
+	]
+
+	let countryCode = ''
+	for (const {code, pattern} of countryPatterns) {
+		if (pattern.test(raw)) {
+			countryCode = code
+			raw = raw.replace(pattern, '')
+			break
+		}
+	}
+
+	// Default fallback if no match
+	if (!countryCode && raw.startsWith('+')) {
+		// Try to extract 1-3 digit country code
+		const codeMatch = raw.match(/^\+(\d{1,3})/)
+		if (codeMatch) {
+			countryCode = codeMatch[1]
+			raw = raw.slice(codeMatch[0].length)
+		}
+	}
+
+	// Remove any leading 0s after country code (common in some countries)
+	raw = raw.replace(/^0+/, '')
+
+	// Parsing logic depending on country
+	let areaCode = ''
+	let exchangeNumber = ''
+	let subscriberNumber = ''
+
+	if (countryCode === '1') {
+		// NANP (US/Canada): NPA NXX XXXX (3-3-4)
+		areaCode = raw.slice(0, 3)
+		exchangeNumber = raw.slice(3, 6)
+		subscriberNumber = raw.slice(6, 10)
+	} else if (countryCode === '52') {
+		// Mexico: 2 digit area + 4 + 4
+		areaCode = raw.slice(0, 2)
+		exchangeNumber = raw.slice(2, 6)
+		subscriberNumber = raw.slice(6, 10)
+	} else if (countryCode === '44') {
+		// UK: variable area codes (2-5 digits), typically 4 + 3 + 4
+		if (raw.length === 10) {
+			areaCode = raw.slice(0, 3)
+			exchangeNumber = raw.slice(3, 6)
+			subscriberNumber = raw.slice(6, 10)
+		} else {
+			areaCode = raw.slice(0, 4)
+			exchangeNumber = raw.slice(4, 7)
+			subscriberNumber = raw.slice(7)
+		}
+	} else if (countryCode === '49') {
+		// Germany: variable area codes (2-5 digits)
+		areaCode = raw.slice(0, 3)
+		exchangeNumber = raw.slice(3, 6)
+		subscriberNumber = raw.slice(6)
+	} else if (countryCode === '33') {
+		// France: 1 digit area + 8 digits (formatted as 2-2-2-2-2)
+		areaCode = raw.slice(0, 1)
+		exchangeNumber = raw.slice(1, 5)
+		subscriberNumber = raw.slice(5, 9)
+	} else if (countryCode === '86') {
+		// China: variable area codes (2-4 digits)
+		if (raw.length === 11) {
+			areaCode = raw.slice(0, 3)
+			exchangeNumber = raw.slice(3, 7)
+			subscriberNumber = raw.slice(7, 11)
+		} else {
+			areaCode = raw.slice(0, 2)
+			exchangeNumber = raw.slice(2, 6)
+			subscriberNumber = raw.slice(6)
+		}
+	} else if (countryCode === '91') {
+		// India: 2-4 digit area + 6-8 digits
+		if (raw.length === 10) {
+			areaCode = raw.slice(0, 2)
+			exchangeNumber = raw.slice(2, 6)
+			subscriberNumber = raw.slice(6, 10)
+		} else {
+			areaCode = raw.slice(0, 3)
+			exchangeNumber = raw.slice(3, 6)
+			subscriberNumber = raw.slice(6)
+		}
+	} else if (countryCode === '61') {
+		// Australia: 1 digit area + 8 digits
+		areaCode = raw.slice(0, 1)
+		exchangeNumber = raw.slice(1, 5)
+		subscriberNumber = raw.slice(5, 9)
+	} else if (countryCode === '81') {
+		// Japan: 1-5 digit area + remaining
+		if (raw.length === 10) {
+			areaCode = raw.slice(0, 2)
+			exchangeNumber = raw.slice(2, 6)
+			subscriberNumber = raw.slice(6, 10)
+		} else {
+			areaCode = raw.slice(0, 3)
+			exchangeNumber = raw.slice(3, 6)
+			subscriberNumber = raw.slice(6)
+		}
+	} else if (countryCode === '7') {
+		// Russia: 3 digit area + 7 digits
+		areaCode = raw.slice(0, 3)
+		exchangeNumber = raw.slice(3, 6)
+		subscriberNumber = raw.slice(6, 10)
+	} else if (countryCode === '27') {
+		// South Africa: 2 digit area + 7 digits
+		areaCode = raw.slice(0, 2)
+		exchangeNumber = raw.slice(2, 5)
+		subscriberNumber = raw.slice(5, 9)
+	} else {
+		// Generic fallback based on total length
+		if (raw.length >= 10) {
+			// Assume 2-4-4 or 3-3-4 format
+			if (raw.length === 10) {
+				areaCode = raw.slice(0, 2)
+				exchangeNumber = raw.slice(2, 6)
+				subscriberNumber = raw.slice(6, 10)
+			} else {
+				areaCode = raw.slice(0, 3)
+				exchangeNumber = raw.slice(3, 6)
+				subscriberNumber = raw.slice(6)
+			}
+		} else {
+			// Short number, split as evenly as possible
+			areaCode = raw.slice(0, 3)
+			exchangeNumber = raw.slice(3, 6)
+			subscriberNumber = raw.slice(6)
+		}
+	}
+
+	let extension = "";
+	if (areaCode && exchangeNumber && subscriberNumber) {
+		// Find the last occurrence of the subscriber number's last digit, then get everything after
+		let searchStart = 0;
+
+		// Search for area code first
+		let foundIdx = input.indexOf(areaCode, searchStart);
+		if (foundIdx >= 0) {
+			searchStart = foundIdx + areaCode.length;
+
+			// Then search for exchange number after area code
+			foundIdx = input.indexOf(exchangeNumber, searchStart);
+			if (foundIdx >= 0) {
+				searchStart = foundIdx + exchangeNumber.length;
+
+				// Finally search for subscriber number after exchange
+				foundIdx = input.indexOf(subscriberNumber, searchStart);
+				if (foundIdx >= 0) {
+					// Get everything after the subscriber number
+					const afterSubscriber = input.substring(foundIdx + subscriberNumber.length);
+					// Extract only the extension part (remove leading non-alphanumeric, keep the rest)
+					const extMatch = afterSubscriber.match(/[^\d\s]*\s*(.+)$/);
+					if (extMatch && extMatch[1]) {
+						extension = extMatch[1].trim();
+					}
+				}
+			}
+		}
+	}
+
+	return {
+		countryCode,
+		areaCode,
+		exchangeNumber,
+		subscriberNumber,
+		extension
+	}
 }
 
 /**
@@ -1235,12 +1449,12 @@ export function AddS(
 			addValue = !text
 				? 's'
 				: checkText.endsWith('s') ||
-				checkText.endsWith('z') ||
-				checkText.endsWith('ch') ||
-				checkText.endsWith('sh') ||
-				checkText.endsWith('x')
-					? 'es'
-					: 's'
+				  checkText.endsWith('z') ||
+				  checkText.endsWith('ch') ||
+				  checkText.endsWith('sh') ||
+				  checkText.endsWith('x')
+				? 'es'
+				: 's'
 		}
 	}
 	return `${showNumber ? numericText : ''} ${useText}${addValue}`.trim()
@@ -1300,7 +1514,7 @@ export function AddSBlank(
  * @param {any} value - The value to be processed and shortened. If the value is not a valid number or null, defaults to returning {divisor: 0, extension: ''}.
  * @return {{divisor: number, extension: string}} - An object containing the divisor and its corresponding extension (e.g., 'k' for thousands, 'M' for millions).
  */
-export function ShortNumberComponents(value: any): {divisor: number, extension: string} {
+export function ShortNumberComponents(value: any): {divisor: number; extension: string} {
 	let divisor = 1
 
 	let calcValue = CleanNumberNull(value)
@@ -1340,7 +1554,7 @@ export function ShortNumberComponents(value: any): {divisor: number, extension: 
  * @param {any} value - The value to be processed and shortened. If the value is not a valid number or null, defaults to returning {divisor: 0, extension: ''}.
  * @return {{divisor: number, extension: string}} - An object containing the divisor and its corresponding extension (e.g., 'k' for thousands, 'M' for millions).
  */
-export function ShortenNumberComponents(value: any): {divisor: number, extension: string} {
+export function ShortenNumberComponents(value: any): {divisor: number; extension: string} {
 	let divisor = 1
 
 	let calcValue = CleanNumberNull(value)
