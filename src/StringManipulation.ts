@@ -1031,30 +1031,30 @@ export function ParseInternationalNumber(input: string): IPhoneComponents {
 		}
 	}
 
-	let extension = "";
+	let extension = ''
 	if (areaCode && exchangeNumber && subscriberNumber) {
 		// Find the last occurrence of the subscriber number's last digit, then get everything after
-		let searchStart = 0;
+		let searchStart = 0
 
 		// Search for area code first
-		let foundIdx = input.indexOf(areaCode, searchStart);
+		let foundIdx = input.indexOf(areaCode, searchStart)
 		if (foundIdx >= 0) {
-			searchStart = foundIdx + areaCode.length;
+			searchStart = foundIdx + areaCode.length
 
 			// Then search for exchange number after area code
-			foundIdx = input.indexOf(exchangeNumber, searchStart);
+			foundIdx = input.indexOf(exchangeNumber, searchStart)
 			if (foundIdx >= 0) {
-				searchStart = foundIdx + exchangeNumber.length;
-
+				searchStart = foundIdx + exchangeNumber.length
+				π
 				// Finally search for subscriber number after exchange
-				foundIdx = input.indexOf(subscriberNumber, searchStart);
+				foundIdx = input.indexOf(subscriberNumber, searchStart)
 				if (foundIdx >= 0) {
 					// Get everything after the subscriber number
-					const afterSubscriber = input.substring(foundIdx + subscriberNumber.length);
+					const afterSubscriber = input.substring(foundIdx + subscriberNumber.length)
 					// Extract only the extension part (remove leading non-alphanumeric, keep the rest)
-					const extMatch = afterSubscriber.match(/[^\d\s]*\s*(.+)$/);
+					const extMatch = afterSubscriber.match(/[^\d\s]*\s*(.+)$/)
 					if (extMatch && extMatch[1]) {
-						extension = extMatch[1].trim();
+						extension = extMatch[1].trim()
 					}
 				}
 			}
