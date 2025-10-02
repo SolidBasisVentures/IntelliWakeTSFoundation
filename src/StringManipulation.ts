@@ -1953,3 +1953,92 @@ export function ObjectsToFixedFields<T extends Record<string, any>>(
 //
 // 	return differences
 // }
+
+/**
+ * Converts a Unicode string to an ASCII representation while applying transliterations,
+ * removing combining marks, and optionally restricting to a conservative ASCII whitelist.
+ *
+ * @param {string} input - The input Unicode string to be converted to ASCII.
+ * @param {Object} [opts] - Optional settings for the conversion process.
+ * @param {boolean} [opts.strictAscii=true] - If true, restricts the output to a conservative ASCII whitelist.
+ *                                            Disallowed characters are replaced and whitespace normalized.
+ *                                            If false, removes all non-ASCII characters without further restriction.
+ * @return {string} - The ASCII representation of the input string after applying transformations.
+ */
+export function UnicodeToAscii(
+	input: string,
+	opts: {
+		strictAscii?: boolean // if true, strip to a conservative ASCII whitelist for X12
+	} = {}
+) {
+	const {strictAscii = true} = opts
+
+	// 1) Decompose (compatibility form handles more cases than NFD)
+	let s = input.normalize('NFKD')
+
+	// 2) Remove combining marks
+	s = s.replace(/[\u0300-\u036f]/g, '')
+
+	// 3) Transliterations for characters that don't decompose cleanly
+	//    (extend this map as needed for your data)
+	const map: Record<string, string> = {
+		// German / Nordic / Slavic odds & ends
+		ß: 'SS',
+		æ: 'AE',
+		Æ: 'AE',
+		œ: 'OE',
+		Œ: 'OE',
+		ø: 'O',
+		Ø: 'O',
+		å: 'A',
+		Å: 'A',
+		ð: 'D',
+		Ð: 'D',
+		þ: 'TH',
+		Þ: 'TH',
+		ł: 'L',
+		Ł: 'L',
+		đ: 'D',
+		Đ: 'D',
+		// Misc letters that sometimes appear in names
+		ñ: 'n',
+		Ñ: 'N', // often handled by NFKD+strip, but safe
+		ç: 'c',
+		Ç: 'C',
+		// Smart quotes & dashes (normalize punctuation)
+		'“': '"',
+		'”': '"',
+		'„': '"',
+		'‟': '"',
+		'‘': "'",
+		'’': "'",
+		'‚': "'",
+		'‛': "'",
+		'–': '-',
+		'—': '-',
+		'−': '-',
+		'­': '-', // includes soft hyphen
+		'…': '...'
+	}
+
+	// Fast replace using a single regex
+	s = s.replace(/[ßÆæŒœØøÅåÐðÞþŁłĐđñÑçÇ“”„‟‘’‚‛–—−­…]/g, (ch) => map[ch] ?? ch)
+
+	// 4) Remove remaining control characters (except tab/newline if you want them)
+	s = s.replace(/[\u0000-\u001F\u007F]/g, ' ')
+
+	// 5) Optionally restrict to a conservative ASCII whitelist for X12 Basic Set
+	//    (letters, digits, space, and safe punctuation often seen in 837P)
+	if (strictAscii) {
+		// Replace any disallowed char with a space, then collapse spaces
+		s = s
+			.replace(/[^A-Za-z0-9 \-\/\.\,\(\)&'":;#+\?]/g, ' ')
+			.replace(/\s{2,}/g, ' ')
+			.trim()
+	} else {
+		// Or just drop anything non-ASCII
+		s = s.replace(/[^\x00-\x7F]/g, '')
+	}
+
+	return s
+}
