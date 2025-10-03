@@ -4,14 +4,15 @@
 		"module": "ESNext",
 		"target": "ES2022",
 		"lib": [
-			"ES2022"
+			"ES2022",
+			"DOM"
 		],
 		"downlevelIteration": true,
 		"strict":  true,
 		"sourceMap": true,
 		"allowJs": false,
 		"declaration": true,
-		"moduleResolution": "Node",
+		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
@@ -20,7 +21,9 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"allowSyntheticDefaultImports": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true
 	},
 	"include": [
 		"src",
