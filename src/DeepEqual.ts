@@ -344,7 +344,8 @@ export function DeepClone<T>(obj: T): T {
 	if (obj instanceof Object) {
 		const copy = {}
 		for (let attr in obj) {
-			if (Object.prototype.hasOwnProperty.call(obj, attr)) (copy as any)[attr as any] = DeepClone(obj[attr])
+			if (Object.prototype.hasOwnProperty.call(obj, attr))
+				(copy as any)[attr as any] = DeepClone((obj as any)[attr])
 		}
 		return copy as T
 	}

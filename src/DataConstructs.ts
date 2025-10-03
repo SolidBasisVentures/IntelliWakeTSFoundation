@@ -309,38 +309,6 @@ export const DataToCSVString = function (csvData: any[][], blankZeros = true): s
 }
 
 /**
- * Converts Data to CSV. Creates a download link and triggers
- * click event on it to download the file.
- */
-export const DataToCSVExport = function (filename: string, csvData: any[][], blankZeros = true) {
-	const csvString = DataToCSVString(csvData, blankZeros)
-
-	let pom = document.createElement('a')
-	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
-	pom.href = URL.createObjectURL(blob)
-	pom.setAttribute('download', filename)
-	pom.click()
-}
-
-/**
- * Converts Data to CSV without quotes. Creates a download link and triggers
- * click event on it to download the file.
- */
-export const DataToCSVExportNoQuotes = function (filename: string, csvData: any[][]) {
-	const csvString = csvData
-		.map((row: any) =>
-			row.map((item: any) => (!!item && !isNaN(item) ? Math.round(item * 100) / 100 : item ?? '')).join(',')
-		)
-		.join('\n')
-
-	let pom = document.createElement('a')
-	const blob = new Blob([csvString], {type: 'text/csv;charset=utf-8;'})
-	pom.href = URL.createObjectURL(blob)
-	pom.setAttribute('download', filename)
-	pom.click()
-}
-
-/**
  * Converts an array of records into a tab-delimited string, usable by Excel
  *
  * @param datasets

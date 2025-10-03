@@ -3345,7 +3345,7 @@ export const TimeZoneOlsonsAmerica = (): string[] =>
  * @returns {string[]} Array of Olson time zones.
  */
 export const TimeZoneOlsons = (): string[] =>
-	TimeZoneOlsonsAll.reduce((results, olson) => [...results, ...olson.zones.map((zone) => zone.value)], [])
+	TimeZoneOlsonsAll.reduce<string[]>((results, olson) => [...results, ...olson.zones.map((zone) => zone.value)], [])
 
 /**
  * Returns an array of Olson timezone strings for common timezones in America.

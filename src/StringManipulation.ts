@@ -1970,7 +1970,7 @@ export function UnicodeToAscii(
 	opts: {
 		strictAscii?: boolean // if true, strip to a conservative ASCII whitelist for X12
 	} = {}
-) {
+): string {
 	const {strictAscii = true} = opts
 
 	// 1) Decompose (compatibility form handles more cases than NFD)
