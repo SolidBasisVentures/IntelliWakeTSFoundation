@@ -739,5 +739,6 @@ describe('StringCompares', () => {
 		expect(UnicodeToAscii('München – Großstraße')).toBe('Munchen - GroSSstraSSe')
 		expect(UnicodeToAscii('Ægir & Œuvres d’art')).toBe("AEgir & OEuvres d'art")
 		expect(UnicodeToAscii('Straße Nº 5')).toBe('StraSSe No 5')
+		expect(UnicodeToAscii('Test_-!@#$%&()[]/?,.<>;:"')).toBe('Test_-!@#$%&()[]/?,.<>;:"')
 	})
 })
