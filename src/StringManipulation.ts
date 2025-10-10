@@ -2032,7 +2032,7 @@ export function UnicodeToAscii(
 	if (strictAscii) {
 		// Replace any disallowed char with a space, then collapse spaces
 		s = s
-			.replace(/[^A-Za-z0-9 \-\/\.\,\(\)&'":;#+\?_!@$%\[\]<>]/g, ' ')
+			.replace(/[^\x20-\x7E]/g, ' ') // Keep all printable ASCII characters (space through ~)
 			.replace(/\s{2,}/g, ' ')
 			.trim()
 	} else {
