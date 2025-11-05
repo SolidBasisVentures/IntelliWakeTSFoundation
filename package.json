@@ -38,7 +38,7 @@
 		"ts-node": "^10.9.1",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "^5.9.3",
-		"vite": "^5.4.20",
+		"vite": "^5.4.21",
 		"vite-plugin-dts": "^1.7.2",
 		"vitest": "^3.2.4"
 	}
