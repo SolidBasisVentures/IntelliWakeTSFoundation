@@ -17,7 +17,8 @@
 		"Install-IntelliWake": "pnpm install",
 		"Version-Minor-Advance": "pnpm version minor",
 		"Build": "tsc && vite build",
-		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
+		"Publish": "pnpm version patch && tsc && vite build && npm publish && git push --follow-tags",
+		"PublishOld": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
 	"files": [
 		"dist"
