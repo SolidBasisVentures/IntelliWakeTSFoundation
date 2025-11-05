@@ -17,6 +17,7 @@ import {
 	EqualNumber,
 	ExtractPrefixedKeys,
 	ExtractWholeDecimal,
+	FirstNonZeroNull,
 	GetPropertyValueCaseInsensitive,
 	GreaterNumber,
 	GreaterNumberNull,
@@ -202,11 +203,37 @@ test('ToArray', () => {
 	expect(ToArray([null, '', '1', '2', '3'], {removeNullUndefined: true})).toEqual(['', '1', '2', '3'])
 	expect(ToArray([undefined, '', '1', '2', '3'], {removeNullUndefined: true})).toEqual(['', '1', '2', '3'])
 	expect(ToArray([undefined, '', '1', '2', '3'], {removeFalsy: true})).toEqual(['1', '2', '3'])
-	expect(ToArray([null, undefined, '', '1', '2', '3'], {distinct: true})).toEqual([null, undefined, '', '1', '2', '3'])
-	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true})).toEqual([null, undefined, '', '1', '2', '3'])
-	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true, removeFalsy: true})).toEqual(['1', '2', '3'])
-	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1], {distinct: true, removeFalsy: true})).toEqual(['1', '2', '3', 1, 2])
-	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1, 0], {distinct: true, removeNullUndefined: true})).toEqual(['', '1', '2', '3', 1, 2, 0])
+	expect(ToArray([null, undefined, '', '1', '2', '3'], {distinct: true})).toEqual([
+		null,
+		undefined,
+		'',
+		'1',
+		'2',
+		'3'
+	])
+	expect(ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true})).toEqual([
+		null,
+		undefined,
+		'',
+		'1',
+		'2',
+		'3'
+	])
+	expect(
+		ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2'], {distinct: true, removeFalsy: true})
+	).toEqual(['1', '2', '3'])
+	expect(
+		ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1], {
+			distinct: true,
+			removeFalsy: true
+		})
+	).toEqual(['1', '2', '3', 1, 2])
+	expect(
+		ToArray([null, undefined, null, undefined, '', '1', '2', '3', '2', 1, 2, 0, 1, 0], {
+			distinct: true,
+			removeNullUndefined: true
+		})
+	).toEqual(['', '1', '2', '3', 1, 2, 0])
 })
 
 test('ArrayFromStringWS', () => {
@@ -372,9 +399,9 @@ test('Other', async () => {
 	expect(CleanDivide(34, 5305, 3)).toEqual(0.006) // 34 / 5305 = 0.006409
 	expect(CleanDivide(34, 5305, 4)).toEqual(0.0064) // 34 / 5305 = 0.006409
 	expect(CleanPercentCompleteNull(null, 1, 2)).toEqual(null)
-	expect(CleanPercentCompleteNull(1, 2, 2)).toEqual(.5)
-	expect(CleanPercentCompleteNull(1, 3, 2)).toEqual(.33)
-	expect(CleanPercentCompleteNull(2, 3, 2)).toEqual(.67)
+	expect(CleanPercentCompleteNull(1, 2, 2)).toEqual(0.5)
+	expect(CleanPercentCompleteNull(1, 3, 2)).toEqual(0.33)
+	expect(CleanPercentCompleteNull(2, 3, 2)).toEqual(0.67)
 	expect(CleanDivideNull(999, 1000, 2)).toEqual(1)
 	expect(CleanPercentCompleteNull(999, 1000, 2)).toEqual(0.99)
 	expect(CleanPercentCompleteNull(999.9999999, 1000, 2)).toEqual(0.99)
@@ -418,6 +445,13 @@ test('Other', async () => {
 	}
 
 	expect(await ConsoleAsyncTime('Test Time', timesTwo(2))).toEqual(4)
+})
+
+test('First Non-Zero Null', () => {
+	expect(FirstNonZeroNull([])).toBe(0)
+	expect(FirstNonZeroNull([0, null, undefined])).toBe(0)
+	expect(FirstNonZeroNull([0, null, undefined, 1, 0.1, -0.1])).toBe(1)
+	expect(FirstNonZeroNull([0, null, undefined, -0.01, 1, 0.1])).toBe(-0.01)
 })
 
 test('Other', async () => {
@@ -501,13 +535,13 @@ describe('DistributeEvenly function', () => {
 		expect(IsWholeNumber('1.0000')).toEqual(true)
 		expect(IsWholeNumber('1.0001')).toEqual(false)
 		expect(IsWholeNumber(1)).toEqual(true)
-		expect(IsWholeNumber(1.0000)).toEqual(true)
+		expect(IsWholeNumber(1.0)).toEqual(true)
 		expect(IsWholeNumber(1.0001)).toEqual(false)
 		expect(IsWholeNumber('0')).toEqual(true)
 		expect(IsWholeNumber('0.0000')).toEqual(true)
 		expect(IsWholeNumber('0.0001')).toEqual(false)
 		expect(IsWholeNumber(0)).toEqual(true)
-		expect(IsWholeNumber(0.0000)).toEqual(true)
+		expect(IsWholeNumber(0.0)).toEqual(true)
 		expect(IsWholeNumber(0.0001)).toEqual(false)
 		expect(IsWholeNumber('-1')).toEqual(true)
 		expect(IsWholeNumber('-1.0000')).toEqual(true)

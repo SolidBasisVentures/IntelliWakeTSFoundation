@@ -199,6 +199,17 @@ export const GreaterNumberNull = (...values: (any | any[])[]): number | null =>
 export const GreaterNumber = (...values: (any | any[])[]): number => GreaterNumberNull(...values) ?? 0
 
 /**
+ * Finds and returns the first non-zero, non-null, and non-undefined value from the given list of values.
+ * If no such value exists, returns 0.
+ *
+ * @param {...(any | any[])[]} values - A list of values or arrays of values to search through.
+ * @return {number} The first valid (non-zero, non-null, non-undefined) number, or 0 if no such value exists.
+ */
+export function FirstNonZeroNull(...values: (any | any[])[]): number {
+	return ValidNumbers(values).find((value) => value !== 0 && value !== null && value !== undefined) ?? 0
+}
+
+/**
  *
  * @param values
  * @constructor
