@@ -36,6 +36,7 @@ import {
 	OmitUndefined,
 	PickProperty,
 	PrefixKeys,
+	PromiseAll,
 	RemoveEnding,
 	RemoveStarting,
 	ReplaceAll,
@@ -575,5 +576,21 @@ describe('DistributeEvenly function', () => {
 		expect(NumberConstrainToIncrement('1.24', 0)).toEqual(1)
 		expect(NumberConstrainToIncrement('1.24', 1)).toEqual(1)
 		expect(NumberConstrainToIncrement('1.24', 2)).toEqual(2)
+	})
+
+	test('PromiseAll', async () => {
+		expect(
+			await PromiseAll({
+				item1: Sleep(200).then(() => {
+					return 1
+				}),
+				item2: Sleep(200).then(() => {
+					return 2
+				})
+			})
+		).toEqual({
+			item1: 1,
+			item2: 2
+		})
 	})
 })

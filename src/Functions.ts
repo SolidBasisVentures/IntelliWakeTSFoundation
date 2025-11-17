@@ -1579,3 +1579,26 @@ export function DistributeEvenly(amount: number, values: number[], toDecimals = 
 export function ObjectKeys<T extends object>(obj: T): Array<keyof T> {
 	return Object.keys(obj) as Array<keyof T>
 }
+
+/**
+ * Resolves multiple promises represented as an object, where each property is a promise or a value,
+ * and returns a new object mapping the same keys to the resolved values of those promises.
+ *
+ * @param {Record<string, any>} items - An object whose values are either promises or non-promise values.
+ *                                      The keys in this object will be retained in the output.
+ * @return {Promise<{ [K in keyof T]: Awaited<T[K]> }>} A promise that resolves to an object where each key corresponds to the original object,
+ *                                                       and each value is the resolved value of the promise or the original non-promise value.
+ */
+export async function PromiseAll<T extends Record<string, any>>(items: T): Promise<{[K in keyof T]: Awaited<T[K]>}> {
+	const entries = Object.entries(items) as [keyof T, T[keyof T]][]
+
+	const results = await Promise.all(entries.map(([, value]) => Promise.resolve(value)))
+
+	const output = {} as {[K in keyof T]: Awaited<T[K]>}
+
+	entries.forEach(([key, _], index) => {
+		output[key] = results[index] as Awaited<T[typeof key]>
+	})
+
+	return output
+}
