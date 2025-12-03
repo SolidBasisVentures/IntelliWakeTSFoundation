@@ -28,7 +28,8 @@ const enumObject = <Enum extends Record<string, number | string>>(e: Enum) => {
 	return copy
 }
 
-EnumArray/**
+EnumArray
+/**
  * A utility function that takes an enumeration as input and returns a new array,
  * with the keys and values from the original enumeration.
  *
@@ -45,11 +46,11 @@ EnumArray/**
  *   const copy = enumArray(Gender)
  *   // copy = [{ key: 'Male', value: 'm'}, { key: 'Female', value: 'f' }]
  */
-export function EnumArray<Enum>(e: Enum): Array<{key: EnumKeys<Enum>, value: Enum[EnumKeys<Enum>]}> {
-	return Object.keys(e as any).map(key => ({
+export function EnumArray<Enum>(e: Enum): Array<{key: EnumKeys<Enum>; value: Enum[EnumKeys<Enum>]}> {
+	return Object.keys(e as any).map((key) => ({
 		key: key as EnumKeys<Enum>,
-		value: e[key as EnumKeys<Enum>],
-	}));
+		value: e[key as EnumKeys<Enum>]
+	}))
 }
 
 /**
@@ -69,11 +70,11 @@ export function EnumArray<Enum>(e: Enum): Array<{key: EnumKeys<Enum>, value: Enu
  *   const copy = EnumKeyNames(Gender)
  *   // copy = [{ key: 'm', name: 'Male'}, { key: 'f', name: 'Female' }]
  */
-export function EnumKeyNames<Enum>(e: Enum): Array<{key: Enum[EnumKeys<Enum>], name: EnumKeys<Enum>}> {
-	return Object.keys(e as any).map(key => ({
+export function EnumKeyNames<Enum>(e: Enum): Array<{key: Enum[EnumKeys<Enum>]; name: EnumKeys<Enum>}> {
+	return Object.keys(e as any).map((key) => ({
 		key: e[key as EnumKeys<Enum>],
-		name: key as EnumKeys<Enum>,
-	}));
+		name: key as EnumKeys<Enum>
+	}))
 }
 
 /**
@@ -203,11 +204,11 @@ export const EnumValueFromKey = <Enum extends Record<string, number | string>>(
  */
 export function EnumValidValue<Enum extends Record<string, number | string>>(
 	e: Enum,
-	value: Enum[EnumKeys<Enum>] | string | null | undefined,
+	value: Enum[EnumKeys<Enum>] | string | null | undefined | unknown,
 	options?: {
 		ignoreSpace?: boolean
 	}
-) {
+): boolean {
 	return (
 		!!value &&
 		EnumValues(e).some((val) =>
