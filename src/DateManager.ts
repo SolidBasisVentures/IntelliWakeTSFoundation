@@ -134,10 +134,32 @@ export const NowISOString = (adjustment?: TDateParseOptions): string =>
 export const CurrentTimeZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
 
 /**
+ * Calculates the difference in minutes between two IANA time zones.
  *
- * @param timeZone
- * @param sourceDate
- * @constructor
+ * @param {string} timeZone1 - The first IANA time zone identifier (e.g., 'America/New_York').
+ * @param {string} timeZone2 - The second IANA time zone identifier (e.g., 'America/Los_Angeles').
+ * @param {TDateAny} [sourceDate] - The source date to calculate the offset for. If not provided, the current date-time is used.
+ * @returns {number|null} The difference in minutes between the two time zones.
+ *                        Positive if timeZone1 is ahead of timeZone2, negative if behind.
+ *                        Returns null if the calculation cannot be performed.
+ */
+export const IANAOffsetDifference = (timeZone1: string, timeZone2: string, sourceDate?: TDateAny): number | null => {
+	const offset1 = IANAOffset(timeZone1, sourceDate)
+	const offset2 = IANAOffset(timeZone2, sourceDate)
+
+	if (offset1 === null || offset2 === null) return null
+
+	return offset1 - offset2
+}
+
+/**
+ * Calculates the timezone offset in minutes for a given IANA time zone and source date.
+ *
+ * @param {string|null} [timeZone] - The IANA time zone identifier (e.g., 'Europe/Amsterdam').
+ *                                    If not provided, the system's current time zone offset is returned.
+ * @param {TDateAny} [sourceDate] - The source date to calculate the offset for. If not provided, the current date-time is used.
+ * @returns {number|null} The offset in minutes between the specified time zone and UTC.
+ *                        Returns null if the calculation cannot be performed.
  */
 export const IANAOffset = (timeZone?: string | null, sourceDate?: TDateAny): number | null => {
 	if (!timeZone) return (DateObject(sourceDate ?? 'now', {ignoreIANA: true}) ?? new Date()).getTimezoneOffset()
@@ -413,48 +435,59 @@ export const ManualParse = (dateString: string): number | null => {
 const DateParseTSInternal = (date: TDateAny, timezoneSource?: string, ignoreIANA?: boolean): number | null => {
 	if (!date && date !== 0 && date !== '0') return null // new Date().valueOf() // Date.parse(new Date().toString())
 
-	if (typeof date === 'number') return date
+	let returnValue: number | null = null
 
-	if (typeof date === 'object') return date.valueOf()
+	if (typeof date === 'number') {
+		returnValue = date
+	} else if (typeof date === 'object') {
+		returnValue = date.valueOf()
+	} else if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today') {
+		returnValue = new Date().valueOf()
+	} else {
+		try {
+			let result = ManualParse(date)
 
-	if (date.toString().toLowerCase() === 'now' || date.toString().toLowerCase() === 'today')
-		return new Date().valueOf()
+			if (result === null || isNaN(result)) {
+				result = Date.parse(date.toString())
 
-	try {
-		let result = ManualParse(date)
-
-		if (result === null || isNaN(result)) {
-			result = Date.parse(date.toString())
-
-			if (!isNaN(result)) {
-				return result
-			}
-		}
-
-		if (isNaN(result)) return null
-
-		// console.log('hasTZ', StringHasTimeZoneData(date))
-
-		// Set a time string with no other timezone data to the current timezone
-		if (!ignoreIANA && !StringHasTimeZoneData(date)) {
-			let useTimezoneSource = timezoneSource
-
-			if (!useTimezoneSource) {
-				const dateComponents = date.split(' ')
-				const lastElement = dateComponents[dateComponents.length - 1]
-
-				if (StringIsIANA(lastElement)) {
-					useTimezoneSource = lastElement
+				if (!isNaN(result)) {
+					return result
 				}
 			}
 
-			result += (IANAOffset(useTimezoneSource, date) ?? 0) * 60000
-		}
+			if (isNaN(result)) return null
 
-		return result
-	} catch {
-		return null
+			// console.log('hasTZ', StringHasTimeZoneData(date))
+
+			// Set a time string with no other timezone data to the current timezone
+			if (!ignoreIANA && !StringHasTimeZoneData(date)) {
+				let useTimezoneSource = timezoneSource
+
+				if (!useTimezoneSource) {
+					const dateComponents = date.split(' ')
+					const lastElement = dateComponents[dateComponents.length - 1]
+
+					if (StringIsIANA(lastElement)) {
+						useTimezoneSource = lastElement
+					}
+				}
+
+				result += (IANAOffset(useTimezoneSource, date) ?? 0) * 60000
+			}
+
+			return result
+		} catch {
+			return null
+		}
 	}
+
+	if (returnValue) {
+		if (timezoneSource) {
+			return returnValue - (IANAOffsetDifference(timezoneSource, CurrentTimeZone()) ?? 0) * 1000 * 60
+		}
+	}
+
+	return returnValue
 }
 
 /**
@@ -933,12 +966,18 @@ export const YYYYMMDDHHmmss = (date: TDateAny): string => {
 }
 
 /**
+ * Formats a date object or value into a string representation with the format "YYYY_MM_DD_HH_mm_ss".
  *
- * @param date
- * @constructor
+ * The function returns a formatted string that includes the year, month, day, hour, minute, and second,
+ * separated by underscores (`_`) and dashes (`-`) as appropriate. If no date object or value is provided,
+ * the current date and time are used.
+ *
+ * @param {TDateAny} date - The date value or object to format. Can be of any type convertible to a valid date.
+ * @param {TDateParseOptions} [adjustment] - Optional adjustments to be applied when parsing the date value.
+ * @returns {string} A formatted date string in the "YYYY_MM_DD_HH_mm_ss" format.
  */
-export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny): string => {
-	const dateObject = DateObject(date) ?? new Date()
+export const YYYY_MM_DD_HH_mm_ss = (date: TDateAny, adjustment?: TDateParseOptions): string => {
+	const dateObject = DateObject(date, adjustment) ?? new Date()
 	return `${dateObject.getFullYear()}-${(dateObject.getMonth() + 1).toString().padStart(2, '0')}-${dateObject
 		.getDate()
 		.toString()

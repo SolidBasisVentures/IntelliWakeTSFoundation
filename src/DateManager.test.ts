@@ -23,6 +23,7 @@ import {
 	DateWeekISONumber,
 	DayDiffNoWeekend,
 	IANADescription,
+	IANAOffsetDifference,
 	IANAZoneAbbr,
 	LeastDate,
 	ManualParse,
@@ -705,6 +706,10 @@ test('DoWs', () => {
 	} else {
 		delete process.env.TZ
 	}
+})
+test('TZs', () => {
+	expect(IANAOffsetDifference('America/New_York', 'America/Chicago')).toBe(-60)
+	expect(IANAOffsetDifference('America/Chicago', 'America/New_York')).toBe(60)
 })
 
 // test('Pesachs (Passovers)', () => {
