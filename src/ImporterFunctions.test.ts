@@ -10,6 +10,12 @@ const definition = {
 		required: true,
 		sampleData: '1'
 	},
+	TEMP: {
+		description: 'Temp Action',
+		columnType: 'string',
+		alternateNames: ['temporary'],
+		sampleData: 'TempZ'
+	},
 	name: {
 		description: 'Name of the entity',
 		columnType: 'string',
@@ -48,11 +54,11 @@ it('ImporterFunctions', () => {
 		['Header', 'Today'],
 		[],
 		[''],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y'],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f'],
-		['', 'NEXT', 'Third', '', '', 'f'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
 		['', '', '', '', '', ''],
 		[]
 	]
@@ -83,7 +89,8 @@ it('ImporterFunctions', () => {
 			cost: 1111.11,
 			action_date: '2025-12-05',
 			other_date: null,
-			is_active: true
+			is_active: true,
+			TEMP: 'T1'
 		},
 		{
 			id: 2,
@@ -91,7 +98,8 @@ it('ImporterFunctions', () => {
 			cost: null,
 			action_date: null,
 			other_date: null,
-			is_active: false
+			is_active: false,
+			TEMP: 'T2'
 		}
 	])
 
@@ -104,21 +112,22 @@ it('ImporterFunctions', () => {
 
 it('Exporter Functions', () => {
 	expect(ArrayToImporterData(definition)).toEqual([
-		['id', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
+		['id', 'TEMP', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
 		[
 			'Unique identifier (Required)',
+			'Temp Action',
 			'Name of the entity',
 			'Cost of item',
 			'Date of the item',
 			'Date of the item',
 			'Indicates if the entity is active (Required)'
 		],
-		['1', 'Name', '', '', '', 'true']
+		['1', 'TempZ', 'Name', '', '', '', 'true']
 	])
 
 	expect(ArrayToImporterData(definition, [{id: 1}, {id: 2, title: 'Bob', zzz: 'Junk'}])).toEqual([
-		['id', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
-		['1', '', '', '', '', ''],
-		['2', 'Bob', '', '', '', '']
+		['id', 'TEMP', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
+		['1', '', '', '', '', '', ''],
+		['2', '', 'Bob', '', '', '', '']
 	])
 })
