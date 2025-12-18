@@ -686,3 +686,61 @@ export type DeepNullable<T> = {
 export type NonNullableProperties<T> = {
 	[K in keyof T]: NonNullable<T[K]>
 }
+
+/**
+ * Parses a CSV string into a 2D array of strings.
+ * Handles quoted fields and escaped double quotes.
+ */
+export function ParseCSV(csv: string): string[][] {
+	const result: string[][] = []
+	let row: string[] = []
+	let currentField = ''
+	let inQuotes = false
+
+	for (let i = 0; i < csv.length; i++) {
+		const char = csv[i]
+		const nextChar = csv[i + 1]
+
+		if (inQuotes) {
+			if (char === '"') {
+				if (nextChar === '"') {
+					// Handle escaped quotes: "" -> "
+					currentField += '"'
+					i++ // Skip the next quote
+				} else {
+					// End of quoted field
+					inQuotes = false
+				}
+			} else {
+				currentField += char
+			}
+		} else {
+			if (char === '"') {
+				inQuotes = true
+			} else if (char === ',') {
+				// Field separator
+				row.push(currentField)
+				currentField = ''
+			} else if (char === '\n' || char === '\r') {
+				// Line separator
+				row.push(currentField)
+				result.push(row)
+				row = []
+				currentField = ''
+
+				// If it's CRLF, skip the second character so we don't trigger a second empty row
+				if (char === '\r' && nextChar === '\n') i++
+			} else if (char !== '\r') {
+				currentField += char
+			}
+		}
+	}
+
+	// Add the last field and row if the file doesn't end with a newline
+	if (currentField !== '' || row.length > 0) {
+		row.push(currentField)
+		result.push(row)
+	}
+
+	return result
+}

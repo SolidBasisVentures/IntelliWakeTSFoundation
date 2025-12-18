@@ -1,11 +1,14 @@
 import {
 	AddChange,
-	AddIDChange, ArrayToCSVString, ArrayToTSVString,
+	AddIDChange,
+	ArrayToCSVString,
+	ArrayToTSVString,
 	ArrayWithIDChanges,
 	ChangeArrayByIDOrUUID,
 	CombineArrayWithIDOrUUIDChanges,
 	IsEqual,
 	ObjectWithChanges,
+	ParseCSV,
 	RemoveDupProperties,
 	RemoveDupPropertiesByIDArray
 } from './DataConstructs'
@@ -149,21 +152,38 @@ test('Data Constructs', () => {
 	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: false}, {is_item: null})).toEqual({is_item: false})
 	expect(RemoveDupProperties<{is_item: boolean | null}>({is_item: null}, {is_item: false})).toEqual({is_item: null})
 
-	expect(ArrayToCSVString([
-		{id: 1, name: 'Bob'},
-		{id: 2, name: 'John'}
-	])).toBe('"id","name"\n1,"Bob"\n2,"John"')
-	expect(ArrayToCSVString([
-		{id: '1', name: 'Bob'},
-		{id: '2', name: 'John'}
-	])).toBe('"id","name"\n"1","Bob"\n"2","John"')
+	expect(
+		ArrayToCSVString([
+			{id: 1, name: 'Bob'},
+			{id: 2, name: 'John'}
+		])
+	).toBe('"id","name"\n1,"Bob"\n2,"John"')
+	expect(
+		ArrayToCSVString([
+			{id: '1', name: 'Bob'},
+			{id: '2', name: 'John'}
+		])
+	).toBe('"id","name"\n"1","Bob"\n"2","John"')
 
-	expect(ArrayToTSVString([
-		{id: 1, name: 'Bob'},
-		{id: 2, name: 'John'}
-	])).toBe('"id"\t"name"\n1\t"Bob"\n2\t"John"')
-	expect(ArrayToTSVString([
-		{id: '1', name: 'Bob'},
-		{id: '2', name: 'John'}
-	])).toBe('"id"\t"name"\n"1"\t"Bob"\n"2"\t"John"')
+	expect(
+		ArrayToTSVString([
+			{id: 1, name: 'Bob'},
+			{id: 2, name: 'John'}
+		])
+	).toBe('"id"\t"name"\n1\t"Bob"\n2\t"John"')
+	expect(
+		ArrayToTSVString([
+			{id: '1', name: 'Bob'},
+			{id: '2', name: 'John'}
+		])
+	).toBe('"id"\t"name"\n"1"\t"Bob"\n"2"\t"John"')
+
+	expect(
+		ParseCSV(`id,Name,"Full, Description",date\n1,""Bob"","""Bobery""",12/25/2025\r\n,,,\r,"""Test""",,`)
+	).toEqual([
+		['id', 'Name', 'Full, Description', 'date'],
+		['1', 'Bob', '"Bobery"', '12/25/2025'],
+		['', '', '', ''],
+		['', `"Test"`, '', '']
+	])
 })
