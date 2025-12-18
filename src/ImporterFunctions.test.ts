@@ -1,46 +1,49 @@
 import {expect, it} from 'vitest'
-import {ImporterDataToArray, TImporterColumnDefinitions} from './ImporterFunctions'
+import {ArrayToImporterData, ImporterDataToArray, TImporterColumnDefinitions} from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
-it('ImporterFunctions', () => {
-	const definition = {
-		id: {
-			description: 'Unique identifier',
-			columnType: 'integer',
-			alternateNames: ['identifier'],
-			required: true
-		},
-		name: {
-			description: 'Name of the entity',
-			columnType: 'string',
-			alternateNames: ['title', 'label', 'description'],
-			length: 6,
-			warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null)
-		},
-		cost: {
-			description: 'Cost of item',
-			columnType: 'number',
-			decimals: 2,
-			alternateNames: ['amount', 'price', 'rate'],
-			errorMessage: (value) => (!value ? `Cost required` : null)
-		},
-		action_date: {
-			description: 'Date of the item',
-			columnType: 'date',
-			errorMessage: (value) => (!value ? `Action Date required` : null)
-		},
-		other_date: {
-			description: 'Date of the item',
-			columnType: 'date'
-		},
-		is_active: {
-			description: 'Indicates if the entity is active',
-			columnType: 'boolean',
-			alternateNames: ['active', 'status'],
-			required: true
-		}
-	} satisfies TImporterColumnDefinitions<any>
+const definition = {
+	id: {
+		description: 'Unique identifier',
+		columnType: 'integer',
+		alternateNames: ['identifier'],
+		required: true,
+		sampleData: '1'
+	},
+	name: {
+		description: 'Name of the entity',
+		columnType: 'string',
+		alternateNames: ['title', 'label', 'description'],
+		length: 6,
+		warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
+		sampleData: 'Name'
+	},
+	cost: {
+		description: 'Cost of item',
+		columnType: 'number',
+		decimals: 2,
+		alternateNames: ['amount', 'price', 'rate'],
+		errorMessage: (value) => (!value ? `Cost required` : null)
+	},
+	action_date: {
+		description: 'Date of the item',
+		columnType: 'date',
+		errorMessage: (value) => (!value ? `Action Date required` : null)
+	},
+	other_date: {
+		description: 'Date of the item',
+		columnType: 'date'
+	},
+	is_active: {
+		description: 'Indicates if the entity is active',
+		columnType: 'boolean',
+		alternateNames: ['active', 'status'],
+		required: true,
+		sampleData: 'true'
+	}
+} satisfies TImporterColumnDefinitions<any>
 
+it('ImporterFunctions', () => {
 	const datum: string[][] = [
 		['Header', 'Today'],
 		[],
@@ -97,4 +100,25 @@ it('ImporterFunctions', () => {
 	expect(warnings.length).toBe(1)
 
 	expect(errors.length).toBe(2)
+})
+
+it('Exporter Functions', () => {
+	expect(ArrayToImporterData(definition)).toEqual([
+		['id', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
+		[
+			'Unique identifier (Required)',
+			'Name of the entity',
+			'Cost of item',
+			'Date of the item',
+			'Date of the item',
+			'Indicates if the entity is active (Required)'
+		],
+		['1', 'Name', '', '', '', 'true']
+	])
+
+	expect(ArrayToImporterData(definition, [{id: 1}, {id: 2, title: 'Bob'}])).toEqual([
+		['id', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
+		['1', '', '', '', '', ''],
+		['2', 'Bob', '', '', '', '']
+	])
 })

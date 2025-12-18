@@ -290,3 +290,70 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 
 	return {results, warnings, errors, failedRequireds}
 }
+
+export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
+	definitions: T,
+	data?: Record<string, any>[]
+): string[][] {
+	const keys = Object.keys(definitions) as (keyof T)[]
+	const headerRow = keys.map((key) => key.toString())
+	const result: string[][] = [headerRow]
+
+	if (data && data.length > 0) {
+		// Process provided data
+		for (const record of data) {
+			const row: string[] = []
+
+			for (const key of keys) {
+				const def = definitions[key]
+				let value = record[key as string]
+
+				// If the primary key isn't in the record, check alternateNames
+				if (value === undefined && def.alternateNames) {
+					for (const alt of def.alternateNames) {
+						if (record[alt] !== undefined) {
+							value = record[alt]
+							break
+						}
+					}
+				}
+
+				// Convert value to string, handling null/undefined
+				if (value === null || value === undefined) {
+					row.push('')
+				} else if (typeof value === 'boolean') {
+					row.push(value ? 'Y' : 'N')
+				} else {
+					row.push(value.toString())
+				}
+			}
+			result.push(row)
+		}
+	} else {
+		// Row 2: Descriptions
+		const descriptionRow: string[] = []
+		for (const key of keys) {
+			const def = definitions[key]
+			let desc = def.description ?? ''
+			if (def.required) {
+				desc = desc ? `${desc} (Required)` : '(Required)'
+			}
+			descriptionRow.push(desc)
+		}
+		result.push(descriptionRow)
+
+		// Row 3: Sample data
+		const sampleRow: string[] = []
+		for (const key of keys) {
+			const sample = definitions[key].sampleData
+			if (Array.isArray(sample)) {
+				sampleRow.push(sample[0]?.toString() ?? '')
+			} else {
+				sampleRow.push(sample?.toString() ?? '')
+			}
+		}
+		result.push(sampleRow)
+	}
+
+	return result
+}
