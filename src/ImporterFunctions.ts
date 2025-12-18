@@ -25,6 +25,13 @@ export type TImporterColumnDefinition<T extends keyof TImporterTypescriptType = 
 	warningMessage?: (value: string, row: string[]) => string | null
 }
 
+/**
+ * Defines the structure of column definitions for an importer, where each field is mapped to its specific column definition.
+ *
+ * Usage: const definition = {
+ *   key: {columnType: 'string'}
+ * } satisfies TImporterColumnDefinitions<any>
+ */
 export type TImporterColumnDefinitions<FIELD extends string> = {
 	[K in FIELD]: TImporterColumnDefinition<keyof TImporterTypescriptType>
 }
