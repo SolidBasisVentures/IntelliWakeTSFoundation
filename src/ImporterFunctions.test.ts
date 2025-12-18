@@ -47,6 +47,7 @@ it('ImporterFunctions', () => {
 		[''],
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f'],
 		['', 'NEXT', 'Third', '', '', 'f'],
 		['', '', '', '', '', ''],

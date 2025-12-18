@@ -126,6 +126,15 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			return
 		}
 
+		// Skip rows that are a repeat of the header row
+		const headerRow = data[headerRowIndex]
+		if (
+			row.length === headerRow.length &&
+			row.every((cell, i) => cell.trim().toLowerCase() === headerRow[i].trim().toLowerCase())
+		) {
+			return
+		}
+
 		const record = {} as any
 		let rowHasMissingRequired = false
 		const rowFailedRequireds: TImportDataMessage<T>[] = []
