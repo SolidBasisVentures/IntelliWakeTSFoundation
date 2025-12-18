@@ -38,6 +38,7 @@ export type TImporterColumnDefinitions<FIELD extends string> = {
 
 export type TImportDataToArrayOptions = {
 	alternateNames?: Record<string, string[]>
+	includeRowsMissingRequireds?: boolean
 }
 
 export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
@@ -46,31 +47,6 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
-/**
- * Converts tabular data from a two-dimensional string array into a structured array of objects
- * based on the provided column definitions and options.
- *
- * @param {T extends TImporterColumnDefinitions<Extract<keyof T, string>>} definitions - An object defining column mappings,
- * types, and validation rules for the imported data.
- * @param {string[][]} data - A two-dimensional array of strings representing the input data. The first row is considered as headers,
- * while subsequent rows are treated as data rows.
- * @param {TImportDataToArrayOptions} [options] - Optional settings, including alternate names for columns and other configuration overrides.
- *
- * @return {{
- *   results: Array<{
- *     [K in keyof T]: T[K]['required'] extends true
- *       ? TImporterTypescriptType[T[K]['columnType']]
- *       : TImporterTypescriptType[T[K]['columnType']] | null
- *   }>,
- *   warnings: TImportDataMessage<T>[],
- *   errors: TImportDataMessage<T>[],
- *   failedRequireds: TImportDataMessage<T>[]
- * }} An object containing:
- * - `results`: The successfully parsed data records adhering to the column definitions.
- * - `warnings`: A list of warnings about data quality or potential anomalies.
- * - `errors`: A list of errors encountered while processing the data.
- * - `failedRequireds`: A list of required fields that were not populated.
- */
 export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
 	definitions: T,
 	data: string[][],
@@ -87,50 +63,74 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 } {
 	if (data.length < 2) return {results: [], warnings: [], errors: [], failedRequireds: []}
 
-	const headers = data[0]
-	const rows = data.slice(1)
 	const warnings: TImportDataMessage<T>[] = []
 	const errors: TImportDataMessage<T>[] = []
 	const failedRequireds: TImportDataMessage<T>[] = []
 
 	// Map column index to FIELD key
-	const colMap: {index: number; field: keyof T}[] = []
+	let colMap: {index: number; field: keyof T}[] = []
+	let headerRowIndex = -1
 
-	for (const [field, def] of Object.entries(definitions) as [keyof T, TImporterColumnDefinition][]) {
-		const index = headers.findIndex((h) => {
-			const header = h.trim().toLowerCase()
+	// Look for the header row
+	for (let i = 0; i < data.length; i++) {
+		const potentialHeaders = data[i]
+		const currentMap: {index: number; field: keyof T}[] = []
 
-			// Check options.alternateNames (Record<string, string[]>)
-			if (options?.alternateNames) {
-				for (const [altKey, altValues] of Object.entries(options.alternateNames)) {
-					const altKeyLower = altKey.trim().toLowerCase()
-					// Does the header match one of the values in the options record?
-					if (altValues.some((v) => v.trim().toLowerCase() === header)) {
-						// Does the key of that record match the field name or its alternate names?
-						if (
-							altKeyLower === (field as string).toLowerCase() ||
-							def.alternateNames?.some((alt) => alt.trim().toLowerCase() === altKeyLower)
-						) {
-							return true
+		for (const [field, def] of Object.entries(definitions) as [keyof T, TImporterColumnDefinition][]) {
+			const index = potentialHeaders.findIndex((h) => {
+				const header = h.trim().toLowerCase()
+
+				if (options?.alternateNames) {
+					for (const [altKey, altValues] of Object.entries(options.alternateNames)) {
+						const altKeyLower = altKey.trim().toLowerCase()
+						if (altValues.some((v) => v.trim().toLowerCase() === header)) {
+							if (
+								altKeyLower === (field as string).toLowerCase() ||
+								def.alternateNames?.some((alt) => alt.trim().toLowerCase() === altKeyLower)
+							) {
+								return true
+							}
 						}
 					}
 				}
-			}
 
-			return (
-				header === (field as string).toLowerCase() ||
-				def.alternateNames?.some((alt) => alt.trim().toLowerCase() === header)
-			)
-		})
-		if (index !== -1) {
-			colMap.push({index, field})
+				return (
+					header === (field as string).toLowerCase() ||
+					def.alternateNames?.some((alt) => alt.trim().toLowerCase() === header)
+				)
+			})
+
+			if (index !== -1) {
+				currentMap.push({index, field})
+			}
+		}
+
+		if (currentMap.length > 0) {
+			colMap = currentMap
+			headerRowIndex = i
+			break
 		}
 	}
 
-	const results = rows.map((row, idx) => {
+	if (headerRowIndex === -1) return {results: [], warnings: [], errors: [], failedRequireds: []}
+
+	const rows = data.slice(headerRowIndex + 1)
+
+	const results: any[] = []
+
+	rows.forEach((row, idx) => {
 		const reportRow = idx + 1
 
+		// Skip completely blank rows
+		if (!options?.includeRowsMissingRequireds && row.every((cell) => !cell || cell.trim() === '')) {
+			return
+		}
+
 		const record = {} as any
+		let rowHasMissingRequired = false
+		const rowFailedRequireds: TImportDataMessage<T>[] = []
+		const rowWarnings: TImportDataMessage<T>[] = []
+		const rowErrors: TImportDataMessage<T>[] = []
 
 		for (const [field, def] of Object.entries(definitions) as [keyof T, TImporterColumnDefinition][]) {
 			const colMatch = colMap.find((c) => c.field === field)
@@ -139,7 +139,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			if (def.warningMessage) {
 				const message = def.warningMessage(rawValue, row)
 				if (message) {
-					warnings.push({
+					rowWarnings.push({
 						row: reportRow,
 						column: field,
 						message
@@ -150,7 +150,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			if (def.errorMessage) {
 				const message = def.errorMessage(rawValue, row)
 				if (message) {
-					errors.push({
+					rowErrors.push({
 						row: reportRow,
 						column: field,
 						message
@@ -161,18 +161,21 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			if (def.customConvertor) {
 				record[field] = def.customConvertor(rawValue, row)
 
-				if (def.required && !record[field])
-					failedRequireds.push({
+				if (def.required && !record[field]) {
+					rowHasMissingRequired = true
+					rowFailedRequireds.push({
 						row: reportRow,
 						column: field,
 						message: `Required field ${field.toString()} is empty`
 					})
+				}
 			} else {
 				switch (def.columnType) {
 					case 'number':
 						record[field] = CleanNumberNull(rawValue, def.decimals ?? 2)
 						if (record[field] === null && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -183,7 +186,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 					case 'integer':
 						record[field] = CleanNumberNull(rawValue)
 						if (record[field] === null && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -193,7 +197,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 						break
 					case 'boolean':
 						if (!rawValue && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -206,7 +211,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 					case 'date':
 						record[field] = DateOnlyNull(rawValue)
 						if (record[field] === null && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -217,7 +223,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 					case 'time':
 						record[field] = TimeOnly(rawValue)
 						if (record[field] === null && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -228,7 +235,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 					case 'datetime':
 						record[field] = DateISO(rawValue)
 						if (record[field] === null && def.required) {
-							failedRequireds.push({
+							rowHasMissingRequired = true
+							rowFailedRequireds.push({
 								row: reportRow,
 								column: field,
 								message: `Required field ${field.toString()} is empty`
@@ -239,7 +247,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 					default:
 						if (!rawValue) {
 							if (def.required) {
-								failedRequireds.push({
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
 									row: reportRow,
 									column: field,
 									message: `Required field ${field.toString()} is empty`
@@ -260,7 +269,14 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			}
 		}
 
-		return record
+		if (rowHasMissingRequired && !options?.includeRowsMissingRequireds) {
+			return
+		}
+
+		warnings.push(...rowWarnings)
+		errors.push(...rowErrors)
+		failedRequireds.push(...rowFailedRequireds)
+		results.push(record)
 	})
 
 	return {results, warnings, errors, failedRequireds}

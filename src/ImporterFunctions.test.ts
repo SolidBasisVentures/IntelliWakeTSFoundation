@@ -1,7 +1,6 @@
 import {expect, it} from 'vitest'
 import {ImporterDataToArray, TImporterColumnDefinitions} from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
-import {DateOnly} from './DateManager'
 
 it('ImporterFunctions', () => {
 	const definition = {
@@ -32,8 +31,7 @@ it('ImporterFunctions', () => {
 		},
 		other_date: {
 			description: 'Date of the item',
-			columnType: 'date',
-			required: true
+			columnType: 'date'
 		},
 		is_active: {
 			description: 'Indicates if the entity is active',
@@ -44,9 +42,15 @@ it('ImporterFunctions', () => {
 	} satisfies TImporterColumnDefinitions<any>
 
 	const datum: string[][] = [
+		['Header', 'Today'],
+		[],
+		[''],
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f']
+		['2', 'NEXT', 'SecondZ', '', '', 'f'],
+		['', 'NEXT', 'Third', '', '', 'f'],
+		['', '', '', '', '', ''],
+		[]
 	]
 
 	const {results, warnings, errors, failedRequireds} = ImporterDataToArray(definition, datum, {
@@ -74,7 +78,7 @@ it('ImporterFunctions', () => {
 			name: 'First',
 			cost: 1111.11,
 			action_date: '2025-12-05',
-			other_date: DateOnly('now'),
+			other_date: null,
 			is_active: true
 		},
 		{
@@ -82,12 +86,12 @@ it('ImporterFunctions', () => {
 			name: 'Second',
 			cost: null,
 			action_date: null,
-			other_date: DateOnly('now'),
+			other_date: null,
 			is_active: false
 		}
 	])
 
-	expect(failedRequireds.length).toBe(2)
+	expect(failedRequireds.length).toBe(0)
 
 	expect(warnings.length).toBe(1)
 
