@@ -46,6 +46,31 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
+/**
+ * Converts tabular data from a two-dimensional string array into a structured array of objects
+ * based on the provided column definitions and options.
+ *
+ * @param {T extends TImporterColumnDefinitions<Extract<keyof T, string>>} definitions - An object defining column mappings,
+ * types, and validation rules for the imported data.
+ * @param {string[][]} data - A two-dimensional array of strings representing the input data. The first row is considered as headers,
+ * while subsequent rows are treated as data rows.
+ * @param {TImportDataToArrayOptions} [options] - Optional settings, including alternate names for columns and other configuration overrides.
+ *
+ * @return {{
+ *   results: Array<{
+ *     [K in keyof T]: T[K]['required'] extends true
+ *       ? TImporterTypescriptType[T[K]['columnType']]
+ *       : TImporterTypescriptType[T[K]['columnType']] | null
+ *   }>,
+ *   warnings: TImportDataMessage<T>[],
+ *   errors: TImportDataMessage<T>[],
+ *   failedRequireds: TImportDataMessage<T>[]
+ * }} An object containing:
+ * - `results`: The successfully parsed data records adhering to the column definitions.
+ * - `warnings`: A list of warnings about data quality or potential anomalies.
+ * - `errors`: A list of errors encountered while processing the data.
+ * - `failedRequireds`: A list of required fields that were not populated.
+ */
 export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
 	definitions: T,
 	data: string[][],
