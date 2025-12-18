@@ -1,6 +1,7 @@
-import { expect, it } from 'vitest'
-import { ImporterDataToArray, type TImporterColumnDefinitions } from '$lib/ImporterFunctions'
-import { DateOnly, DeepEqual } from '@solidbasisventures/intelliwaketsfoundation'
+import {expect, it} from 'vitest'
+import {ImporterDataToArray, TImporterColumnDefinitions} from './ImporterFunctions'
+import {DeepEqual} from './DeepEqual'
+import {DateOnly} from './DateManager'
 
 it('ImporterFunctions', () => {
 	const definition = {
@@ -48,7 +49,7 @@ it('ImporterFunctions', () => {
 		['2', 'NEXT', 'SecondZ', '', '', 'f']
 	]
 
-	const { results, warnings, errors, failedRequireds } = ImporterDataToArray(definition, datum, {
+	const {results, warnings, errors, failedRequireds} = ImporterDataToArray(definition, datum, {
 		alternateNames: {
 			status: ['activeZ']
 		}
@@ -62,7 +63,7 @@ it('ImporterFunctions', () => {
 			cost: number | null
 			action_date: string | null
 			is_active: boolean
-		} = { ...result }
+		} = {...result}
 
 		expect(DeepEqual(result, item)).toBeTruthy()
 	}

@@ -1,12 +1,5 @@
-import {
-	CleanNumberNull,
-	DateISO,
-	DateOnly,
-	DateOnlyNull,
-	IsOn,
-	NowISOString,
-	TimeOnly
-} from '@solidbasisventures/intelliwaketsfoundation'
+import {CleanNumberNull, IsOn} from './Functions'
+import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
 
 export type TImporterTypescriptType = {
 	string: string
@@ -19,9 +12,7 @@ export type TImporterTypescriptType = {
 	custom: string
 }
 
-export type TImporterColumnDefinition<
-	T extends keyof TImporterTypescriptType = keyof TImporterTypescriptType
-> = {
+export type TImporterColumnDefinition<T extends keyof TImporterTypescriptType = keyof TImporterTypescriptType> = {
 	columnType: T
 	description?: string
 	length?: number
@@ -62,7 +53,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	errors: TImportDataMessage<T>[]
 	failedRequireds: TImportDataMessage<T>[]
 } {
-	if (data.length < 2) return { results: [], warnings: [], errors: [], failedRequireds: [] }
+	if (data.length < 2) return {results: [], warnings: [], errors: [], failedRequireds: []}
 
 	const headers = data[0]
 	const rows = data.slice(1)
@@ -71,12 +62,9 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	const failedRequireds: TImportDataMessage<T>[] = []
 
 	// Map column index to FIELD key
-	const colMap: { index: number; field: keyof T }[] = []
+	const colMap: {index: number; field: keyof T}[] = []
 
-	for (const [field, def] of Object.entries(definitions) as [
-		keyof T,
-		TImporterColumnDefinition
-	][]) {
+	for (const [field, def] of Object.entries(definitions) as [keyof T, TImporterColumnDefinition][]) {
 		const index = headers.findIndex((h) => {
 			const header = h.trim().toLowerCase()
 
@@ -103,7 +91,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			)
 		})
 		if (index !== -1) {
-			colMap.push({ index, field })
+			colMap.push({index, field})
 		}
 	}
 
@@ -112,12 +100,9 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 
 		const record = {} as any
 
-		for (const [field, def] of Object.entries(definitions) as [
-			keyof T,
-			TImporterColumnDefinition
-		][]) {
+		for (const [field, def] of Object.entries(definitions) as [keyof T, TImporterColumnDefinition][]) {
 			const colMatch = colMap.find((c) => c.field === field)
-			const rawValue = colMatch !== undefined ? (row[colMatch.index] ?? '') : ''
+			const rawValue = colMatch !== undefined ? row[colMatch.index] ?? '' : ''
 
 			if (def.warningMessage) {
 				const message = def.warningMessage(rawValue, row)
@@ -246,5 +231,5 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		return record
 	})
 
-	return { results, warnings, errors, failedRequireds }
+	return {results, warnings, errors, failedRequireds}
 }
