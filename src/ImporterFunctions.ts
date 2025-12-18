@@ -47,11 +47,10 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
-export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
-	definitions: T,
-	data: string[][],
-	options?: TImportDataToArrayOptions
-): {
+/**
+ * Usage: let importState: TImporterResults<typeof myDefinition>
+ */
+export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
 	results: {
 		[K in keyof T]: T[K]['required'] extends true
 			? TImporterTypescriptType[T[K]['columnType']]
@@ -60,7 +59,13 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	warnings: TImportDataMessage<T>[]
 	errors: TImportDataMessage<T>[]
 	failedRequireds: TImportDataMessage<T>[]
-} {
+}
+
+export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
+	definitions: T,
+	data: string[][],
+	options?: TImportDataToArrayOptions
+): TImporterResults<T> {
 	if (data.length < 2) return {results: [], warnings: [], errors: [], failedRequireds: []}
 
 	const warnings: TImportDataMessage<T>[] = []
