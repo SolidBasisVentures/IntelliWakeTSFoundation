@@ -116,7 +116,7 @@ it('Exporter Functions', () => {
 		['1', 'Name', '', '', '', 'true']
 	])
 
-	expect(ArrayToImporterData(definition, [{id: 1}, {id: 2, title: 'Bob'}])).toEqual([
+	expect(ArrayToImporterData(definition, [{id: 1}, {id: 2, title: 'Bob', zzz: 'Junk'}])).toEqual([
 		['id', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
 		['1', '', '', '', '', ''],
 		['2', 'Bob', '', '', '', '']
