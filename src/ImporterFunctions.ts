@@ -176,7 +176,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		const reportRow = idx + 1
 
 		// Skip completely blank rows
-		if (!options?.includeRowsMissingRequireds && row.every((cell) => !cell || cell.trim() === '')) {
+		if (row.every((cell) => !cell || cell.trim() === '')) {
 			return
 		}
 
@@ -188,6 +188,9 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		) {
 			return
 		}
+
+		// We add to rawData as soon as we know it's a "real" data row (not blank, not a header repeat)
+		rawData.push(row)
 
 		const record = {} as any
 		let rowHasMissingRequired = false
@@ -377,7 +380,6 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		errors.push(...rowErrors)
 		failedRequireds.push(...rowFailedRequireds)
 		results.push(record)
-		rawData.push(row)
 	})
 
 	return {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds}

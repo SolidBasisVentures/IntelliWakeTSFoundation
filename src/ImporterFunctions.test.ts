@@ -109,7 +109,8 @@ it('ImporterFunctions', () => {
 	expect(rawData).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2']
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
@@ -201,7 +202,12 @@ it('ImporterFunctions Failing', () => {
 
 	expect(results).toEqual([])
 
-	expect(rawData).toEqual([['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp']])
+	expect(rawData).toEqual([
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3']
+	])
 
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
