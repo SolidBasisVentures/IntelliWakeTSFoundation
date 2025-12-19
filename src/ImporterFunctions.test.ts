@@ -56,12 +56,12 @@ it('ImporterFunctions', () => {
 		['Header', 'Today'],
 		[],
 		[''],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1', ''],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2', ''],
-		['', 'NEXT', 'Third', '', '', 'f', 'T3', ''],
-		['', '', '', '', '', '', ''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
+		['', '', '', '', '', ''],
 		[]
 	]
 
@@ -110,9 +110,9 @@ it('ImporterFunctions', () => {
 	])
 
 	expect(rawData).toEqual([
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1', ''],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2', '']
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2']
 	])
 
 	expect(columnMapping).toEqual([
@@ -123,7 +123,7 @@ it('ImporterFunctions', () => {
 		{providedColumn: 'action_date', targetColumn: 'action_date'},
 		{providedColumn: 'activeZ', targetColumn: 'is_active'},
 		{providedColumn: 'Temp', targetColumn: 'TEMP'},
-		{providedColumn: 'other_column', targetColumn: null}
+		{providedColumn: null, targetColumn: 'other_date'}
 	])
 
 	expect(failedRequireds.length).toBe(0)
