@@ -57,6 +57,7 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 			? TImporterTypescriptType[T[K]['columnType']]
 			: TImporterTypescriptType[T[K]['columnType']] | null
 	}[]
+	rawData: string[][]
 	warnings: TImportDataMessage<T>[]
 	errors: TImportDataMessage<T>[]
 	failedRequireds: TImportDataMessage<T>[]
@@ -67,7 +68,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	data: string[][],
 	options?: TImportDataToArrayOptions
 ): TImporterResults<T> {
-	if (data.length < 2) return {results: [], warnings: [], errors: [], failedRequireds: []}
+	if (data.length < 2) return {results: [], rawData: [], warnings: [], errors: [], failedRequireds: []}
 
 	const warnings: TImportDataMessage<T>[] = []
 	const errors: TImportDataMessage<T>[] = []
@@ -118,11 +119,12 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		}
 	}
 
-	if (headerRowIndex === -1) return {results: [], warnings: [], errors: [], failedRequireds: []}
+	if (headerRowIndex === -1) return {results: [], rawData: [], warnings: [], errors: [], failedRequireds: []}
 
 	const rows = data.slice(headerRowIndex + 1)
 
 	const results: any[] = []
+	const rawData: string[][] = [data[headerRowIndex]]
 
 	rows.forEach((row, idx) => {
 		const reportRow = idx + 1
@@ -329,9 +331,10 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		errors.push(...rowErrors)
 		failedRequireds.push(...rowFailedRequireds)
 		results.push(record)
+		rawData.push(row)
 	})
 
-	return {results, warnings, errors, failedRequireds}
+	return {results, rawData, warnings, errors, failedRequireds}
 }
 
 export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(

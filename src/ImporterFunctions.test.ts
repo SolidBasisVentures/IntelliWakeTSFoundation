@@ -65,7 +65,7 @@ it('ImporterFunctions', () => {
 		[]
 	]
 
-	const {results, warnings, errors, failedRequireds} = ImporterDataToArray(definition, datum, {
+	const {results, rawData, warnings, errors, failedRequireds} = ImporterDataToArray(definition, datum, {
 		alternateNames: {
 			status: ['activeZ']
 		}
@@ -103,6 +103,12 @@ it('ImporterFunctions', () => {
 			is_active: false,
 			TEMP: 'T2'
 		}
+	])
+
+	expect(rawData).toEqual([
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2']
 	])
 
 	expect(failedRequireds.length).toBe(0)
