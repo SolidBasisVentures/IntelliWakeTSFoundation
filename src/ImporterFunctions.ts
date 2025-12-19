@@ -58,6 +58,7 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 			: TImporterTypescriptType[T[K]['columnType']] | null
 	}[]
 	rawData: string[][]
+	rawDataValidColumnIndexes: number[]
 	columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
@@ -73,7 +74,15 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	options?: TImportDataToArrayOptions
 ): TImporterResults<T> {
 	if (data.length < 2)
-		return {results: [], rawData: [], columnMapping: [], warnings: [], errors: [], failedRequireds: []}
+		return {
+			results: [],
+			rawData: [],
+			rawDataValidColumnIndexes: [],
+			columnMapping: [],
+			warnings: [],
+			errors: [],
+			failedRequireds: []
+		}
 
 	const warnings: TImportDataMessage<T>[] = []
 	const errors: TImportDataMessage<T>[] = []
@@ -125,7 +134,17 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	}
 
 	if (headerRowIndex === -1)
-		return {results: [], rawData: [], columnMapping: [], warnings: [], errors: [], failedRequireds: []}
+		return {
+			results: [],
+			rawData: [],
+			rawDataValidColumnIndexes: [],
+			columnMapping: [],
+			warnings: [],
+			errors: [],
+			failedRequireds: []
+		}
+
+	const rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
 
 	const headerRow = data[headerRowIndex]
 	const columnMapping: {providedColumn: string | null; targetColumn: keyof T | null}[] = headerRow.map(
@@ -361,7 +380,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		rawData.push(row)
 	})
 
-	return {results, rawData, columnMapping, warnings, errors, failedRequireds}
+	return {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds}
 }
 
 export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(

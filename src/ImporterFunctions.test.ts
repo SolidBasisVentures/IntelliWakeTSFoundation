@@ -65,15 +65,12 @@ it('ImporterFunctions', () => {
 		[]
 	]
 
-	const {results, rawData, columnMapping, warnings, errors, failedRequireds} = ImporterDataToArray(
-		definition,
-		datum,
-		{
+	const {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds} =
+		ImporterDataToArray(definition, datum, {
 			alternateNames: {
 				status: ['activeZ']
 			}
-		}
-	)
+		})
 
 	const result = results[0]
 	if (result) {
@@ -115,6 +112,8 @@ it('ImporterFunctions', () => {
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2']
 	])
 
+	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
+
 	expect(columnMapping).toEqual([
 		{providedColumn: 'id', targetColumn: 'id'},
 		{providedColumn: 'alt', targetColumn: null},
@@ -153,4 +152,74 @@ it('Exporter Functions', () => {
 		['1', '', '', '', '', '', ''],
 		['2', '', 'Bob', '', '', '', '']
 	])
+})
+
+it('ImporterFunctions Failing', () => {
+	const datum: string[][] = [
+		['Header', 'Today'],
+		[],
+		[''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
+		['', '', '', '', '', ''],
+		[]
+	]
+
+	const {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds} =
+		ImporterDataToArray(
+			{
+				...definition,
+				other_need: {
+					description: 'Another needed column',
+					columnType: 'integer',
+					required: true
+				}
+			},
+			datum,
+			{
+				alternateNames: {
+					status: ['activeZ']
+				}
+			}
+		)
+
+	const result = results[0]
+	if (result) {
+		const item: {
+			id: number
+			name: string | null
+			cost: number | null
+			action_date: string | null
+			is_active: boolean
+		} = {...result}
+
+		expect(DeepEqual(result, item)).toBeTruthy()
+	}
+
+	expect(results).toEqual([])
+
+	expect(rawData).toEqual([['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp']])
+
+	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
+
+	expect(columnMapping).toEqual([
+		{providedColumn: 'id', targetColumn: 'id'},
+		{providedColumn: 'alt', targetColumn: null},
+		{providedColumn: 'title', targetColumn: 'name'},
+		{providedColumn: 'Rate', targetColumn: 'cost'},
+		{providedColumn: 'action_date', targetColumn: 'action_date'},
+		{providedColumn: 'activeZ', targetColumn: 'is_active'},
+		{providedColumn: 'Temp', targetColumn: 'TEMP'},
+		{providedColumn: null, targetColumn: 'other_date'},
+		{providedColumn: null, targetColumn: 'other_need'}
+	])
+
+	expect(failedRequireds.length).toBe(0)
+
+	expect(warnings.length).toBe(0)
+
+	expect(errors.length).toBe(0)
 })
