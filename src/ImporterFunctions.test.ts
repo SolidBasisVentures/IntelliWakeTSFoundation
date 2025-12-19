@@ -95,7 +95,7 @@ it('ImporterFunctions', () => {
 		[]
 	])
 
-	const result = importer.analysisRows[1]?.finalResult
+	const result = importer.analysisRows[1]?.rowResult
 	if (result) {
 		const item: {
 			id: number
@@ -130,7 +130,7 @@ it('ImporterFunctions', () => {
 		}
 	])
 
-	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
+	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '333', '12/1/2025' + '', 'f', 'T2']
@@ -168,7 +168,7 @@ it('ImporterFunctions', () => {
 
 	importer.populateFromArray(datum)
 
-	const result = importer.analysisRows[1]?.finalResult
+	const result = importer.analysisRows[1]?.rowResult
 	if (result) {
 		const item: {
 			id: number
@@ -203,7 +203,7 @@ it('ImporterFunctions', () => {
 		}
 	])
 
-	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
+	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
@@ -273,7 +273,7 @@ it('ImporterFunctions Failing', () => {
 
 	importer.populateFromArray(datum)
 
-	const result = importer.analysisRows[1]?.finalResult
+	const result = importer.analysisRows[1]?.rowResult
 	if (result) {
 		const item: {
 			id: number
@@ -288,7 +288,7 @@ it('ImporterFunctions Failing', () => {
 
 	expect(importer.validRows).toEqual([])
 
-	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
+	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],

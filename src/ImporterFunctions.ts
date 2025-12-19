@@ -50,6 +50,10 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 
 export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = Importer<T>
 
+/**
+ * Class representing a generic data importer capable of parsing CSV input and transforming it into structured data
+ * based on predefined column definitions.
+ */
 export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
 	public definition: T
 	public options: TImportDataToArrayOptions
@@ -60,8 +64,8 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 	}[] = []
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
-		rawData: string[]
-		finalResult:
+		rowRaw: string[]
+		rowResult:
 			| {
 					[K in keyof T]: T[K]['required'] extends true
 						? TImporterTypescriptType[T[K]['columnType']]
@@ -146,8 +150,8 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 		const headerRow = data[headerRowIndex]
 
 		this.analysisRows.push({
-			rawData: headerRow,
-			finalResult: null,
+			rowRaw: headerRow,
+			rowResult: null,
 			isValid: null,
 			warnings: [],
 			errors: [],
@@ -368,8 +372,8 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			const isValid = !rowHasMissingRequired || (this.options?.includeRowsMissingRequireds ?? false)
 
 			this.analysisRows.push({
-				rawData: row,
-				finalResult: record,
+				rowRaw: row,
+				rowResult: record,
 				isValid,
 				warnings: rowWarnings,
 				errors: rowErrors,
@@ -384,10 +388,14 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 				(
 					row
 				): row is typeof row & {
-					finalResult: NonNullable<(typeof row)['finalResult']>
-				} => !!(row.isValid && row.finalResult)
+					rowResult: NonNullable<(typeof row)['rowResult']>
+				} => !!(row.isValid && row.rowResult)
 			)
-			.map((row) => row.finalResult)
+			.map((row) => row.rowResult)
+	}
+
+	get rawRows() {
+		return this.analysisRows.map((row) => row.rowRaw)
 	}
 
 	get missingRequiredHeaders() {
