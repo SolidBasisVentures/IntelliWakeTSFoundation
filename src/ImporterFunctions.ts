@@ -402,6 +402,12 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			)
 			.map((row) => row.finalResult)
 	}
+
+	get missingRequiredHeaders() {
+		return this.columnMapping
+			.filter((mapping) => mapping.required && mapping.targetColumn && !mapping.providedColumn)
+			.map((mapping) => mapping.targetColumn as keyof T)
+	}
 }
 
 /**

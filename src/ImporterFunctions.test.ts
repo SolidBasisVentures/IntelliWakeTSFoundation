@@ -142,7 +142,7 @@ it('ImporterFunctions', () => {
 		{providedColumn: null, targetColumn: 'other_date', required: false}
 	])
 
-	// expect(importer.missingRequiredCells.length).toBe(0)
+	expect(importer.missingRequiredHeaders).toEqual([])
 
 	// expect(warnings.length).toBe(1)
 
@@ -228,7 +228,7 @@ it('ImporterFunctions Failing', () => {
 		{providedColumn: null, targetColumn: 'other_need', required: true}
 	])
 
-	// expect(importer.missingRequiredCells.length).toBe(0)
+	expect(importer.missingRequiredHeaders).toEqual(['other_need'])
 
 	// expect(importer.warnings.length).toBe(0)
 
