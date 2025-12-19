@@ -1,0 +1,17 @@
+# IntelliWakeTSFoundation Reference
+
+This library provides foundational TypeScript utilities for data manipulation, formatting, and validation.
+
+## Core Modules
+- DateManager: Comprehensive date/time parsing and formatting.
+- SortSearch: Type-safe multi-property sorting.
+- Importer: Tabular data analysis and validation (CSV/Excel workflows).
+- Formatters: Currency, numeric, and string masking.
+
+## Documentation
+- Full Wiki: https://github.com/SolidBasisVentures/IntelliWakeTSFoundation/wiki
+- Importer Workflow: See ImporterUsage.md for validation priorities.
+
+## Implementation Patterns
+- Always validate imports in this order: Structural (Missing Columns) -> Integrity (Errors) -> Quality (Warnings).
+- Use `DateManager` for all date manipulations to ensure cross-timezone consistency.

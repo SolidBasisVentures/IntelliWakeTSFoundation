@@ -1,4 +1,21 @@
-# IntelliWakeTSFoundation
+# IntelliWakeTSFoundation Reference
+
+This library provides foundational TypeScript utilities for data manipulation, formatting, and validation.
+
+## Core Modules
+- DateManager: Comprehensive date/time parsing and formatting.
+- SortSearch: Type-safe multi-property sorting.
+- Importer: Tabular data analysis and validation (CSV/Excel workflows).
+- Formatters: Currency, numeric, and string masking.
+
+## Documentation
+- Full Wiki: https://github.com/SolidBasisVentures/IntelliWakeTSFoundation/wiki
+- Importer Workflow: See ImporterUsage.md for validation priorities.
+
+## Implementation Patterns
+- Always validate imports in this order: Structural (Missing Columns) -> Integrity (Errors) -> Quality (Warnings).
+- Use `DateManager` for all date manipulations to ensure cross-timezone consistency.
+
 IntelliwakeTSFoundation, short for the IntelliWake TypeScript Foundation Library provides multiple helper functions that are not present in vanilla JavaScript.
 
 Documentation on how to use these features can be found on our [WIKI](https://github.com/SolidBasisVentures/IntelliWakeTSFoundation/wiki)
@@ -19,32 +36,3 @@ The idea behind this implementation is to handle sorts in a consistent way and v
 ## Generic Functions
 There are a few additional functions that provide other features, like checking additional values for a truthy condition, coalescing 0's and blank strings, and providing a promise based sleep function.
 
-## Library Management
-
-Use the following scripts found in the package.json to manage the repository:
-
-To run unit tests:
-```
-pnpm run Vitest-Watch
-```
-Note: please update test scripts for any changes.
-
-To run the `consoles.ts` file (with a watch for changes):
-```
-pnpm run TSNodeDev
-```
-
-To update the packages in the package.json:
-```
-pnpm run Intall-IntelliWake
-```
-
-After a significant change, update the minor version number with:
-```
-pnpm run Verision-Minor-Advance
-```
-
-To publish the repository to NPMJS:
-```
-pnpm run Publish
-```

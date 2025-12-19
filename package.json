@@ -22,8 +22,9 @@
 	},
 	"files": [
 		"dist",
+		"docs",
 		"README.md",
-		"ImporterUsage.md"
+		"llms.txt"
 	],
 	"author": "SolidBasisVentures",
 	"license": "MIT",
