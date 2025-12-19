@@ -695,28 +695,28 @@ export function ParseCSV(csv: string): string[][] {
 	const result: string[][] = []
 	let row: string[] = []
 	let currentField = ''
-	let inQuotes = false
+	let inQuotes: string | null = null
 
 	for (let i = 0; i < csv.length; i++) {
 		const char = csv[i]
 		const nextChar = csv[i + 1]
 
 		if (inQuotes) {
-			if (char === '"') {
-				if (nextChar === '"') {
-					// Handle escaped quotes: "" -> "
-					currentField += '"'
+			if (char === inQuotes) {
+				if (nextChar === inQuotes) {
+					// Handle escaped quotes: "" -> ", '' -> ', `` -> `
+					currentField += inQuotes
 					i++ // Skip the next quote
 				} else {
 					// End of quoted field
-					inQuotes = false
+					inQuotes = null
 				}
 			} else {
 				currentField += char
 			}
 		} else {
-			if (char === '"') {
-				inQuotes = true
+			if (char === '"' || char === "'" || char === '`') {
+				inQuotes = char
 			} else if (char === ',') {
 				// Field separator
 				row.push(currentField)

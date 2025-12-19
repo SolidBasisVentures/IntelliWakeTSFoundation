@@ -186,4 +186,13 @@ test('Data Constructs', () => {
 		['', '', '', ''],
 		['', `"Test"`, '', '']
 	])
+
+	expect(
+		ParseCSV(`id,Name,'Full, Description',date\n1,\`Bob,B\`,'''Bobery''',12/25/2025\r\n,,,\r,"""Test""",,`)
+	).toEqual([
+		['id', 'Name', 'Full, Description', 'date'],
+		['1', 'Bob,B', "'Bobery'", '12/25/2025'],
+		['', '', '', ''],
+		['', `"Test"`, '', '']
+	])
 })
