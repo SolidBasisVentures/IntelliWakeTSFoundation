@@ -5,7 +5,11 @@ on:
     branches:
       - main
     paths:
-      - 'docs/**' # Only run when files in docs/ change
+      - 'docs/**'
+  workflow_dispatch: # Added this so you can manually test it from the Actions tab
+
+permissions:
+  contents: write # This gives the action permission to push to the wiki
 
 jobs:
   publish-wiki:
