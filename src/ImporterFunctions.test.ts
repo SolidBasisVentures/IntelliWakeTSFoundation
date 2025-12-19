@@ -99,11 +99,7 @@ it('ImporterFunctions', () => {
 		expect(DeepEqual(result, item)).toBeTruthy()
 	}
 
-	expect(
-		importer.analysisRows
-			.filter((result) => result.isValid && result.finalResult)
-			.map((result) => result.finalResult)
-	).toEqual([
+	expect(importer.validRows).toEqual([
 		{
 			id: 1,
 			name: 'First',
@@ -207,11 +203,7 @@ it('ImporterFunctions Failing', () => {
 		expect(DeepEqual(result, item)).toBeTruthy()
 	}
 
-	expect(
-		importer.analysisRows
-			.filter((result) => result.isValid && result.finalResult)
-			.map((result) => result.finalResult)
-	).toEqual([])
+	expect(importer.validRows).toEqual([])
 
 	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],

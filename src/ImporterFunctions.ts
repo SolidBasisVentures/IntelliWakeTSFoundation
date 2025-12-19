@@ -390,6 +390,18 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			})
 		})
 	}
+
+	get validRows() {
+		return this.analysisRows
+			.filter(
+				(
+					row
+				): row is typeof row & {
+					finalResult: NonNullable<(typeof row)['finalResult']>
+				} => !!(row.isValid && row.finalResult)
+			)
+			.map((row) => row.finalResult)
+	}
 }
 
 /**
