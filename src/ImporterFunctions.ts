@@ -48,7 +48,7 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
-export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = Importer<T>
+export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = DataImportProcessor<T>
 
 export type TImporterResult<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
 	[K in keyof T]: T[K]['required'] extends true
@@ -60,7 +60,7 @@ export type TImporterResult<T extends TImporterColumnDefinitions<Extract<keyof T
  * Class representing a generic data importer capable of parsing CSV input and transforming it into structured data
  * based on predefined column definitions.
  */
-export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
+export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
 	public definition: T
 	public options: TImportDataToArrayOptions
 	public columnMapping: {

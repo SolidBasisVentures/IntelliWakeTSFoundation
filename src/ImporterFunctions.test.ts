@@ -1,7 +1,7 @@
 import {expect, it} from 'vitest'
 import {
 	ArrayToImporterData,
-	Importer,
+	DataImportProcessor,
 	TImportDataToArrayOptions,
 	TImporter,
 	TImporterColumnDefinitions,
@@ -58,7 +58,7 @@ const definition = {
 	}
 } satisfies TImporterColumnDefinitions<any>
 
-class ImporterTest extends Importer<typeof definition> {
+class ImporterTest extends DataImportProcessor<typeof definition> {
 	constructor(options?: TImportDataToArrayOptions) {
 		super(definition, options)
 	}
@@ -258,7 +258,7 @@ it('Exporter Functions', () => {
 })
 
 it('ImporterFunctions Failing', () => {
-	const importer = new Importer(
+	const importer = new DataImportProcessor(
 		{
 			...definition,
 			other_need: {
