@@ -48,26 +48,31 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
+// ... existing code ...
 /**
  * Usage: let importState: TImporterResults<typeof myDefinition>
  */
 export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
-	results: {
-		[K in keyof T]: T[K]['required'] extends true
-			? TImporterTypescriptType[T[K]['columnType']]
-			: TImporterTypescriptType[T[K]['columnType']] | null
-	}[]
 	columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
 		required: boolean | null
 	}[]
-	rawDataValidColumnIndexes: number[]
-	rawData: string[][]
 	missingRequiredCells: TImportDataMessage<T>[]
-	invalidRawDataIndexes: number[]
-	warnings: TImportDataMessage<T>[]
-	errors: TImportDataMessage<T>[]
+	rawDataValidColumnIndexes: number[]
+	results: {
+		rawData: string[]
+		finalResult:
+			| {
+					[K in keyof T]: T[K]['required'] extends true
+						? TImporterTypescriptType[T[K]['columnType']]
+						: TImporterTypescriptType[T[K]['columnType']] | null
+			  }
+			| null
+		isValid: boolean
+		warnings: TImportDataMessage<T>[]
+		errors: TImportDataMessage<T>[]
+	}[]
 }
 
 /**
@@ -86,19 +91,12 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	if (data.length < 2)
 		return {
 			results: [],
-			rawData: [],
-			invalidRawDataIndexes: [],
 			rawDataValidColumnIndexes: [],
 			columnMapping: [],
-			warnings: [],
-			errors: [],
 			missingRequiredCells: []
 		}
 
-	const warnings: TImportDataMessage<T>[] = []
-	const errors: TImportDataMessage<T>[] = []
 	const missingRequiredCells: TImportDataMessage<T>[] = []
-	const missingRequiredColumns: (keyof T)[] = []
 
 	// Map column index to FIELD key
 	let colMap: {index: number; field: keyof T}[] = []
@@ -148,18 +146,24 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	if (headerRowIndex === -1)
 		return {
 			results: [],
-			rawData: [],
-			invalidRawDataIndexes: [],
 			rawDataValidColumnIndexes: [],
 			columnMapping: [],
-			warnings: [],
-			errors: [],
 			missingRequiredCells: []
 		}
 
 	const rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
-
 	const headerRow = data[headerRowIndex]
+
+	const results: TImporterResults<T>['results'] = [
+		{
+			rawData: headerRow,
+			finalResult: null,
+			isValid: true,
+			warnings: [],
+			errors: []
+		}
+	]
+
 	const columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
@@ -182,18 +186,10 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 				targetColumn: field,
 				required: definitions[field].required ?? false
 			})
-
-			if (definitions[field].required) {
-				missingRequiredColumns.push(field)
-			}
 		}
 	}
 
 	const rows = data.slice(headerRowIndex + 1)
-
-	const results: any[] = []
-	const rawData: string[][] = [headerRow]
-	const invalidRawDataIndexes: number[] = []
 
 	rows.forEach((row, idx) => {
 		const reportRow = idx + 1
@@ -204,17 +200,12 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		}
 
 		// Skip rows that are a repeat of the header row
-		const headerRow = data[headerRowIndex]
 		if (
 			row.length === headerRow.length &&
 			row.every((cell, i) => cell.trim().toLowerCase() === headerRow[i].trim().toLowerCase())
 		) {
 			return
 		}
-
-		// We add to rawData as soon as we know it's a "real" data row (not blank, not a header repeat)
-		rawData.push(row)
-		const currentRawDataIndex = rawData.length - 1
 
 		const record = {} as any
 		let rowHasMissingRequired = false
@@ -300,7 +291,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 						break
 					case 'boolean':
 						if (!rawValue) {
-							if (def.default !== null) {
+							if (def.default !== null && def.default !== undefined) {
 								record[field] = IsOn(typeof def.default === 'function' ? def.default(row) : def.default)
 							} else if (def.required) {
 								rowHasMissingRequired = true
@@ -310,6 +301,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 									message: `Required field ${field.toString()} is empty`
 								})
 								record[field] = false
+							} else {
+								record[field] = null
 							}
 						} else {
 							record[field] = IsOn(rawValue)
@@ -396,25 +389,25 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			}
 		}
 
-		if (rowHasMissingRequired && !options?.includeRowsMissingRequireds) {
-			invalidRawDataIndexes.push(currentRawDataIndex)
-			return
+		const isValid = !rowHasMissingRequired || (options?.includeRowsMissingRequireds ?? false)
+
+		if (isValid) {
+			missingRequiredCells.push(...rowFailedRequireds)
 		}
 
-		warnings.push(...rowWarnings)
-		errors.push(...rowErrors)
-		missingRequiredCells.push(...rowFailedRequireds)
-		results.push(record)
+		results.push({
+			rawData: row,
+			finalResult: record,
+			isValid,
+			warnings: rowWarnings,
+			errors: rowErrors
+		})
 	})
 
 	return {
 		results,
-		rawData,
-		invalidRawDataIndexes,
 		rawDataValidColumnIndexes,
 		columnMapping,
-		warnings,
-		errors,
 		missingRequiredCells
 	}
 }
