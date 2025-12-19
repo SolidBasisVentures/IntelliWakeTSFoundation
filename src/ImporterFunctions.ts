@@ -70,6 +70,14 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 	missingRequiredCells: TImportDataMessage<T>[]
 }
 
+/**
+ * Converts imported data from a two-dimensional array into a structured object format based on column definitions.
+ *
+ * @param {T} definitions - Column definitions that map specific fields to their expected validation, types, and options.
+ * @param {string[][]} data - The raw data as a two-dimensional array where each row corresponds to a data entry and each column corresponds to a field.
+ * @param {TImportDataToArrayOptions} [options] - An optional configuration object for additional processing options, including alternate header names.
+ * @return {TImporterResults<T>} An object containing the processed structured data, raw data, error and warning messages, and metadata about the import process.
+ */
 export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
 	definitions: T,
 	data: string[][],
@@ -409,6 +417,17 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	}
 }
 
+/**
+ * Converts an array of records into a structured two-dimensional array based on the provided column definitions.
+ *
+ * @param {T} definitions - An object defining the structure, descriptions, and sample data for each column.
+ *                          The keys represent the column headers.
+ * @param {Record<string, any>[]} [data] - An optional array of records to be converted into a two-dimensional array.
+ *                                         Each record should match the structure expected by the column definitions.
+ * @return {string[][]} A two-dimensional array where the first row contains header names, followed by either:
+ *                      - Rows constructed from the provided data.
+ *                      - A default structure with descriptions and sample data when no records are provided.
+ */
 export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
 	definitions: T,
 	data?: Record<string, any>[]

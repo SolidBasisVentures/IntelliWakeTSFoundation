@@ -21,7 +21,9 @@
 		"PublishOld": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"README.md",
+		"ImporterUsage.md"
 	],
 	"author": "SolidBasisVentures",
 	"license": "MIT",

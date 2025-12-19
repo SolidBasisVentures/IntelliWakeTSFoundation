@@ -1,0 +1,21 @@
+name: Publish Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**' # Only run when files in docs/ change
+
+jobs:
+  publish-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Push to Wiki
+        uses: Andrew-Chen-Wang/github-wiki-action@v4
+        env:
+          WIKI_DIR: docs/
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
