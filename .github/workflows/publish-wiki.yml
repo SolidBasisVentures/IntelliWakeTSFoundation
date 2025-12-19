@@ -21,10 +21,6 @@ jobs:
       - name: Push to Wiki
         uses: Andrew-Chen-Wang/github-wiki-action@v4
         with:
-          # Explicitly pointing to the wiki repo helps resolve 128 errors
-          wiki_github_not_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}.wiki
           path: docs/
-        env:
-          # Keep this as a backup
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
