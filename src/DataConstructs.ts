@@ -692,6 +692,11 @@ export type NonNullableProperties<T> = {
  * Handles quoted fields and escaped double quotes.
  */
 export function ParseCSV(csv: string): string[][] {
+	// 1. Remove UTF-8 Byte Order Mark if present
+	if (csv.startsWith('\ufeff')) {
+		csv = csv.slice(1)
+	}
+
 	const result: string[][] = []
 	let row: string[] = []
 	let currentField = ''
@@ -704,11 +709,9 @@ export function ParseCSV(csv: string): string[][] {
 		if (inQuotes) {
 			if (char === inQuotes) {
 				if (nextChar === inQuotes) {
-					// Handle escaped quotes: "" -> ", '' -> ', `` -> `
 					currentField += inQuotes
-					i++ // Skip the next quote
+					i++
 				} else {
-					// End of quoted field
 					inQuotes = null
 				}
 			} else {
@@ -718,19 +721,22 @@ export function ParseCSV(csv: string): string[][] {
 			if (char === '"' || char === "'" || char === '`') {
 				inQuotes = char
 			} else if (char === ',') {
-				// Field separator
-				row.push(currentField)
+				// 2. Trim unquoted fields for better compatibility
+				row.push(currentField.trim())
 				currentField = ''
 			} else if (char === '\n' || char === '\r') {
-				// Line separator
-				row.push(currentField)
-				result.push(row)
+				row.push(currentField.trim())
+
+				// 3. Only push the row if it's not a completely empty trailing line
+				if (row.length > 1 || row[0] !== '') {
+					result.push(row)
+				}
+
 				row = []
 				currentField = ''
 
-				// If it's CRLF, skip the second character so we don't trigger a second empty row
 				if (char === '\r' && nextChar === '\n') i++
-			} else if (char !== '\r') {
+			} else {
 				currentField += char
 			}
 		}
@@ -738,8 +744,12 @@ export function ParseCSV(csv: string): string[][] {
 
 	// Add the last field and row if the file doesn't end with a newline
 	if (currentField !== '' || row.length > 0) {
-		row.push(currentField)
-		result.push(row)
+		const lastField = currentField.trim()
+		row.push(lastField)
+		// Check if the last row isn't just a single empty field (trailing newline artifact)
+		if (row.length > 1 || lastField !== '') {
+			result.push(row)
+		}
 	}
 
 	return result
