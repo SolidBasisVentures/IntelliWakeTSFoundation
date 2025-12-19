@@ -1,5 +1,5 @@
 import {expect, it} from 'vitest'
-import {ArrayToImporterData, ImporterDataToArray, TImporterColumnDefinitions} from './ImporterFunctions'
+import {ArrayToImporterData, Importer, TImporterColumnDefinitions} from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
 const definition = {
@@ -51,31 +51,29 @@ const definition = {
 	}
 } satisfies TImporterColumnDefinitions<any>
 
+const datum: string[][] = [
+	['Header', 'Today'],
+	[],
+	[''],
+	['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+	['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+	['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+	['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+	['', 'NEXT', 'Third', '', '', 'f', 'T3'],
+	['', '', '', '', '', ''],
+	[]
+]
+
 it('ImporterFunctions', () => {
-	const datum: string[][] = [
-		['Header', 'Today'],
-		[],
-		[''],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
-		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
-		['', '', '', '', '', ''],
-		[]
-	]
-
-	const {columnMapping, missingRequiredCells, rawDataValidColumnIndexes, results} = ImporterDataToArray(
-		definition,
-		datum,
-		{
-			alternateNames: {
-				status: ['activeZ']
-			}
+	const importer = new Importer(definition, {
+		alternateNames: {
+			status: ['activeZ']
 		}
-	)
+	})
 
-	const result = results[1]?.finalResult
+	importer.populate(datum)
+
+	const result = importer.results[1]?.finalResult
 	if (result) {
 		const item: {
 			id: number
@@ -90,7 +88,7 @@ it('ImporterFunctions', () => {
 	}
 
 	expect(
-		results.filter((result) => result.isValid && result.finalResult).map((result) => result.finalResult)
+		importer.results.filter((result) => result.isValid && result.finalResult).map((result) => result.finalResult)
 	).toEqual([
 		{
 			id: 1,
@@ -112,7 +110,7 @@ it('ImporterFunctions', () => {
 		}
 	])
 
-	expect(results.map((result) => result.rawData)).toEqual([
+	expect(importer.results.map((result) => result.rawData)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
@@ -121,9 +119,9 @@ it('ImporterFunctions', () => {
 
 	// expect(invalidRawDataIndexes).toEqual([3])
 
-	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
+	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
-	expect(columnMapping).toEqual([
+	expect(importer.columnMapping).toEqual([
 		{providedColumn: 'id', targetColumn: 'id', required: true},
 		{providedColumn: 'alt', targetColumn: null, required: null},
 		{providedColumn: 'title', targetColumn: 'name', required: false},
@@ -134,7 +132,7 @@ it('ImporterFunctions', () => {
 		{providedColumn: null, targetColumn: 'other_date', required: false}
 	])
 
-	expect(missingRequiredCells.length).toBe(0)
+	expect(importer.missingRequiredCells.length).toBe(0)
 
 	// expect(warnings.length).toBe(1)
 
@@ -163,87 +161,68 @@ it('Exporter Functions', () => {
 	])
 })
 
-// it('ImporterFunctions Failing', () => {
-// 	const datum: string[][] = [
-// 		['Header', 'Today'],
-// 		[],
-// 		[''],
-// 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-// 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-// 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-// 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
-// 		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
-// 		['', '', '', '', '', ''],
-// 		[]
-// 	]
-//
-// 	const {
-// 		results,
-// 		rawData,
-// 		rawDataValidColumnIndexes,
-// 		invalidRawDataIndexes,
-// 		columnMapping,
-// 		warnings,
-// 		errors,
-// 		missingRequiredCells
-// 	} = ImporterDataToArray(
-// 		{
-// 			...definition,
-// 			other_need: {
-// 				description: 'Another needed column',
-// 				columnType: 'integer',
-// 				required: true
-// 			}
-// 		},
-// 		datum,
-// 		{
-// 			alternateNames: {
-// 				status: ['activeZ']
-// 			}
-// 		}
-// 	)
-//
-// 	const result = results[0]
-// 	if (result) {
-// 		const item: {
-// 			id: number
-// 			name: string | null
-// 			cost: number | null
-// 			action_date: string | null
-// 			is_active: boolean
-// 		} = {...result}
-//
-// 		expect(DeepEqual(result, item)).toBeTruthy()
-// 	}
-//
-// 	expect(results).toEqual([])
-//
-// 	expect(rawData).toEqual([
-// 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-// 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-// 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
-// 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
-// 	])
-//
-// 	expect(invalidRawDataIndexes).toEqual([1, 2, 3])
-//
-// 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
-//
-// 	expect(columnMapping).toEqual([
-// 		{providedColumn: 'id', targetColumn: 'id', required: true},
-// 		{providedColumn: 'alt', targetColumn: null, required: null},
-// 		{providedColumn: 'title', targetColumn: 'name', required: false},
-// 		{providedColumn: 'Rate', targetColumn: 'cost', required: false},
-// 		{providedColumn: 'action_date', targetColumn: 'action_date', required: false},
-// 		{providedColumn: 'activeZ', targetColumn: 'is_active', required: true},
-// 		{providedColumn: 'Temp', targetColumn: 'TEMP', required: false},
-// 		{providedColumn: null, targetColumn: 'other_date', required: false},
-// 		{providedColumn: null, targetColumn: 'other_need', required: true}
-// 	])
-//
-// 	expect(missingRequiredCells.length).toBe(0)
-//
-// 	expect(warnings.length).toBe(0)
-//
-// 	expect(errors.length).toBe(0)
-// })
+it('ImporterFunctions Failing', () => {
+	const importer = new Importer(
+		{
+			...definition,
+			other_need: {
+				description: 'Another needed column',
+				columnType: 'integer',
+				required: true
+			}
+		},
+		{
+			alternateNames: {
+				status: ['activeZ']
+			}
+		}
+	)
+
+	importer.populate(datum)
+
+	const result = importer.results[1]?.finalResult
+	if (result) {
+		const item: {
+			id: number
+			name: string | null
+			cost: number | null
+			action_date: string | null
+			is_active: boolean
+		} = {...result}
+
+		expect(DeepEqual(result, item)).toBeTruthy()
+	}
+
+	expect(
+		importer.results.filter((result) => result.isValid && result.finalResult).map((result) => result.finalResult)
+	).toEqual([])
+
+	expect(importer.results.map((result) => result.rawData)).toEqual([
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3']
+	])
+
+	// expect(importer.invalidRawDataIndexes).toEqual([1, 2, 3])
+
+	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
+
+	expect(importer.columnMapping).toEqual([
+		{providedColumn: 'id', targetColumn: 'id', required: true},
+		{providedColumn: 'alt', targetColumn: null, required: null},
+		{providedColumn: 'title', targetColumn: 'name', required: false},
+		{providedColumn: 'Rate', targetColumn: 'cost', required: false},
+		{providedColumn: 'action_date', targetColumn: 'action_date', required: false},
+		{providedColumn: 'activeZ', targetColumn: 'is_active', required: true},
+		{providedColumn: 'Temp', targetColumn: 'TEMP', required: false},
+		{providedColumn: null, targetColumn: 'other_date', required: false},
+		{providedColumn: null, targetColumn: 'other_need', required: true}
+	])
+
+	expect(importer.missingRequiredCells.length).toBe(0)
+
+	// expect(importer.warnings.length).toBe(0)
+
+	// expect(importer.errors.length).toBe(0)
+})
