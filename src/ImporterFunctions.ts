@@ -49,19 +49,18 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 	message: string
 }
 
-// ... existing code ...
-/**
- * Usage: let importState: TImporterResults<typeof myDefinition>
- */
-export interface TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
-	definition: T
-	columnMapping: {
+export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = Importer<T>
+
+export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
+	public definition: T
+	public options: TImportDataToArrayOptions
+	public columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
 		required: boolean | null
-	}[]
-	rawDataValidColumnIndexes: number[]
-	analysisRows: {
+	}[] = []
+	public rawDataValidColumnIndexes: number[] = []
+	public analysisRows: {
 		rawData: string[]
 		finalResult:
 			| {
@@ -74,15 +73,7 @@ export interface TImporterResults<T extends TImporterColumnDefinitions<Extract<k
 		missingRequiredCells: TImportDataMessage<T>[]
 		warnings: TImportDataMessage<T>[]
 		errors: TImportDataMessage<T>[]
-	}[]
-}
-
-export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> implements TImporterResults<T> {
-	public definition: T
-	public options: TImportDataToArrayOptions
-	public columnMapping: TImporterResults<T>['columnMapping'] = []
-	public rawDataValidColumnIndexes: number[] = []
-	public analysisRows: TImporterResults<T>['analysisRows'] = []
+	}[] = []
 
 	constructor(definition: T, options?: TImportDataToArrayOptions) {
 		this.definition = definition

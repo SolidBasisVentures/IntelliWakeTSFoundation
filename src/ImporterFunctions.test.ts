@@ -1,5 +1,11 @@
 import {expect, it} from 'vitest'
-import {ArrayToImporterData, Importer, TImportDataToArrayOptions, TImporterColumnDefinitions} from './ImporterFunctions'
+import {
+	ArrayToImporterData,
+	Importer,
+	TImportDataToArrayOptions,
+	TImporter,
+	TImporterColumnDefinitions
+} from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
 const definition = {
@@ -71,7 +77,7 @@ const datum: string[][] = [
 ]
 
 it('ImporterFunctions', () => {
-	const importer = new ImporterTest({
+	const importer: TImporter<typeof definition> = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
 		}
