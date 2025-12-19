@@ -47,7 +47,8 @@ export type TDataImportProcessorDataToArrayOptions = {
 
 export type TDataImportProcessorDataMessage<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> =
 	{
-		column: keyof T
+		providedColumn: string | null
+		targetColumn: keyof T | null
 		message: string
 	}
 
@@ -214,12 +215,14 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			][]) {
 				const colMatch = colMap.find((c) => c.field === field)
 				const rawValue = colMatch !== undefined ? row[colMatch.index] ?? '' : ''
+				const providedColumnName = colMatch !== undefined ? headerRow[colMatch.index] : null
 
 				if (def.warningMessage) {
 					const message = def.warningMessage(rawValue, row)
 					if (message) {
 						rowWarnings.push({
-							column: field,
+							providedColumn: providedColumnName,
+							targetColumn: field,
 							message
 						})
 					}
@@ -229,7 +232,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					const message = def.errorMessage(rawValue, row)
 					if (message) {
 						rowErrors.push({
-							column: field,
+							providedColumn: providedColumnName,
+							targetColumn: field,
 							message
 						})
 					}
@@ -241,7 +245,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					if (def.required && !record[field]) {
 						rowHasMissingRequired = true
 						rowFailedRequireds.push({
-							column: field,
+							providedColumn: providedColumnName,
+							targetColumn: field,
 							message: `Required field ${field.toString()} is empty`
 						})
 					}
@@ -258,7 +263,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = 0
@@ -275,7 +281,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = 0
@@ -291,7 +298,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = false
@@ -312,7 +320,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = DateOnly('now')
@@ -329,7 +338,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = TimeOnly('now')
@@ -346,7 +356,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = NowISOString()
@@ -360,7 +371,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										column: field,
+										providedColumn: providedColumnName,
+										targetColumn: field,
 										message: `Required field ${field.toString()} is empty`
 									})
 									record[field] = ''
