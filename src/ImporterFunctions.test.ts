@@ -4,7 +4,8 @@ import {
 	Importer,
 	TImportDataToArrayOptions,
 	TImporter,
-	TImporterColumnDefinitions
+	TImporterColumnDefinitions,
+	TImporterResult
 } from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
@@ -109,7 +110,9 @@ it('ImporterFunctions', () => {
 		expect(DeepEqual(result, item)).toBeTruthy()
 	}
 
-	expect(importer.validRows).toEqual([
+	const vRows: TImporterResult<typeof definition>[] = importer.validRows
+
+	expect(vRows).toEqual([
 		{
 			id: 1,
 			name: 'First',

@@ -50,6 +50,12 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
 
 export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = Importer<T>
 
+export type TImporterResult<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
+	[K in keyof T]: T[K]['required'] extends true
+		? TImporterTypescriptType[T[K]['columnType']]
+		: TImporterTypescriptType[T[K]['columnType']] | null
+}
+
 /**
  * Class representing a generic data importer capable of parsing CSV input and transforming it into structured data
  * based on predefined column definitions.
@@ -65,13 +71,7 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
 		rowRaw: string[]
-		rowResult:
-			| {
-					[K in keyof T]: T[K]['required'] extends true
-						? TImporterTypescriptType[T[K]['columnType']]
-						: TImporterTypescriptType[T[K]['columnType']] | null
-			  }
-			| null
+		rowResult: TImporterResult<T> | null
 		isValid: boolean | null
 		missingRequiredCells: TImportDataMessage<T>[]
 		warnings: TImportDataMessage<T>[]
