@@ -44,7 +44,6 @@ export type TImportDataToArrayOptions = {
 }
 
 export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
-	row: number
 	column: keyof T
 	message: string
 }
@@ -178,9 +177,7 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 
 		const rows = data.slice(headerRowIndex + 1)
 
-		rows.forEach((row, idx) => {
-			const reportRow = idx + 1
-
+		rows.forEach((row) => {
 			// Skip completely blank rows
 			if (row.every((cell) => !cell || cell.trim() === '')) {
 				return
@@ -208,7 +205,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 					const message = def.warningMessage(rawValue, row)
 					if (message) {
 						rowWarnings.push({
-							row: reportRow,
 							column: field,
 							message
 						})
@@ -219,7 +215,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 					const message = def.errorMessage(rawValue, row)
 					if (message) {
 						rowErrors.push({
-							row: reportRow,
 							column: field,
 							message
 						})
@@ -232,7 +227,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 					if (def.required && !record[field]) {
 						rowHasMissingRequired = true
 						rowFailedRequireds.push({
-							row: reportRow,
 							column: field,
 							message: `Required field ${field.toString()} is empty`
 						})
@@ -250,7 +244,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -268,7 +261,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -285,7 +277,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -307,7 +298,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -325,7 +315,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -343,7 +332,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -358,7 +346,6 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 								} else if (def.required) {
 									rowHasMissingRequired = true
 									rowFailedRequireds.push({
-										row: reportRow,
 										column: field,
 										message: `Required field ${field.toString()} is empty`
 									})
@@ -407,6 +394,24 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 		return this.columnMapping
 			.filter((mapping) => mapping.required && mapping.targetColumn && !mapping.providedColumn)
 			.map((mapping) => mapping.targetColumn as keyof T)
+	}
+
+	get allWarnings() {
+		return this.analysisRows.flatMap((row, index) =>
+			row.warnings.map((warning) => ({
+				...warning,
+				rowIndex: index
+			}))
+		)
+	}
+
+	get allErrors() {
+		return this.analysisRows.flatMap((row, index) =>
+			row.errors.map((error) => ({
+				...error,
+				rowIndex: index
+			}))
+		)
 	}
 }
 

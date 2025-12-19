@@ -144,9 +144,9 @@ it('ImporterFunctions', () => {
 
 	expect(importer.missingRequiredHeaders).toEqual([])
 
-	// expect(warnings.length).toBe(1)
+	expect(importer.allWarnings.length).toBe(1)
 
-	// expect(errors.length).toBe(2)
+	expect(importer.allErrors.length).toBe(4)
 })
 
 it('Exporter Functions', () => {
@@ -212,8 +212,6 @@ it('ImporterFunctions Failing', () => {
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
-	// expect(importer.invalidRawDataIndexes).toEqual([1, 2, 3])
-
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
 	expect(importer.columnMapping).toEqual([
@@ -230,7 +228,7 @@ it('ImporterFunctions Failing', () => {
 
 	expect(importer.missingRequiredHeaders).toEqual(['other_need'])
 
-	// expect(importer.warnings.length).toBe(0)
+	expect(importer.allWarnings.length).toBe(1)
 
-	// expect(importer.errors.length).toBe(0)
+	expect(importer.allErrors.length).toBe(4)
 })
