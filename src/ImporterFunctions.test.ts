@@ -83,6 +83,89 @@ it('ImporterFunctions', () => {
 		}
 	})
 
+	importer.populateFromArray([
+		['Header', 'Today'],
+		[],
+		[''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '333', '12/1/2025', 'f', 'T2'],
+		['', '', '', '', '', ''],
+		[]
+	])
+
+	const result = importer.analysisRows[1]?.finalResult
+	if (result) {
+		const item: {
+			id: number
+			name: string | null
+			cost: number | null
+			action_date: string | null
+			is_active: boolean
+			TEMP: string | null
+		} = {...result}
+
+		expect(DeepEqual(result, item)).toBeTruthy()
+	}
+
+	expect(importer.validRows).toEqual([
+		{
+			id: 1,
+			name: 'First',
+			cost: 1111.11,
+			action_date: '2025-12-05',
+			other_date: null,
+			is_active: true,
+			TEMP: 'T1'
+		},
+		{
+			id: 2,
+			name: 'Second',
+			cost: 333,
+			action_date: '2025-12-01',
+			other_date: null,
+			is_active: false,
+			TEMP: 'T2'
+		}
+	])
+
+	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['2', 'NEXT', 'SecondZ', '333', '12/1/2025' + '', 'f', 'T2']
+	])
+
+	expect(importer.analysisRows.filter((line) => line.isValid === false).length).toBe(0)
+
+	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
+
+	expect(importer.columnMapping).toEqual([
+		{providedColumn: 'id', targetColumn: 'id', required: true},
+		{providedColumn: 'alt', targetColumn: null, required: null},
+		{providedColumn: 'title', targetColumn: 'name', required: false},
+		{providedColumn: 'Rate', targetColumn: 'cost', required: false},
+		{providedColumn: 'action_date', targetColumn: 'action_date', required: false},
+		{providedColumn: 'activeZ', targetColumn: 'is_active', required: true},
+		{providedColumn: 'Temp', targetColumn: 'TEMP', required: false},
+		{providedColumn: null, targetColumn: 'other_date', required: false}
+	])
+
+	expect(importer.missingRequiredHeaders).toEqual([])
+
+	expect(importer.allWarnings.length).toBe(1)
+
+	console.log(importer.allErrors)
+	expect(importer.allErrors.length).toBe(0)
+})
+
+it('ImporterFunctions', () => {
+	const importer: TImporter<typeof definition> = new ImporterTest({
+		alternateNames: {
+			status: ['activeZ']
+		}
+	})
+
 	importer.populateFromArray(datum)
 
 	const result = importer.analysisRows[1]?.finalResult
