@@ -58,6 +58,7 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 			: TImporterTypescriptType[T[K]['columnType']] | null
 	}[]
 	rawData: string[][]
+	invalidRawDataIndexes: number[]
 	rawDataValidColumnIndexes: number[]
 	missingRequiredColumns: (keyof T)[]
 	columnMapping: {
@@ -78,6 +79,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		return {
 			results: [],
 			rawData: [],
+			invalidRawDataIndexes: [],
 			rawDataValidColumnIndexes: [],
 			columnMapping: [],
 			warnings: [],
@@ -140,6 +142,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		return {
 			results: [],
 			rawData: [],
+			invalidRawDataIndexes: [],
 			rawDataValidColumnIndexes: [],
 			columnMapping: [],
 			warnings: [],
@@ -179,6 +182,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 
 	const results: any[] = []
 	const rawData: string[][] = [headerRow]
+	const invalidRawDataIndexes: number[] = []
 
 	rows.forEach((row, idx) => {
 		const reportRow = idx + 1
@@ -199,6 +203,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 
 		// We add to rawData as soon as we know it's a "real" data row (not blank, not a header repeat)
 		rawData.push(row)
+		const currentRawDataIndex = rawData.length - 1
 
 		const record = {} as any
 		let rowHasMissingRequired = false
@@ -381,6 +386,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		}
 
 		if (rowHasMissingRequired && !options?.includeRowsMissingRequireds) {
+			invalidRawDataIndexes.push(currentRawDataIndex)
 			return
 		}
 
@@ -393,6 +399,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	return {
 		results,
 		rawData,
+		invalidRawDataIndexes,
 		rawDataValidColumnIndexes,
 		columnMapping,
 		warnings,

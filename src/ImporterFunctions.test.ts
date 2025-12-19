@@ -69,6 +69,7 @@ it('ImporterFunctions', () => {
 		results,
 		rawData,
 		rawDataValidColumnIndexes,
+		invalidRawDataIndexes,
 		columnMapping,
 		missingRequiredColumns,
 		warnings,
@@ -120,6 +121,8 @@ it('ImporterFunctions', () => {
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
+
+	expect(invalidRawDataIndexes).toEqual([3])
 
 	expect(missingRequiredColumns).toEqual([])
 
@@ -183,6 +186,7 @@ it('ImporterFunctions Failing', () => {
 		results,
 		rawData,
 		rawDataValidColumnIndexes,
+		invalidRawDataIndexes,
 		missingRequiredColumns,
 		columnMapping,
 		warnings,
@@ -226,6 +230,8 @@ it('ImporterFunctions Failing', () => {
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
+
+	expect(invalidRawDataIndexes).toEqual([1, 2, 3])
 
 	expect(missingRequiredColumns).toEqual(['other_need'])
 
