@@ -14,6 +14,7 @@ export type TImporterTypescriptType = {
 
 export type TImporterColumnDefinition<T extends keyof TImporterTypescriptType = keyof TImporterTypescriptType> = {
 	columnType: T
+	default?: string | null | ((row: string[]) => string | null)
 	description?: string
 	length?: number
 	decimals?: number
@@ -187,80 +188,117 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 				switch (def.columnType) {
 					case 'number':
 						record[field] = CleanNumberNull(rawValue, def.decimals ?? 2)
-						if (record[field] === null && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = 0
+						if (record[field] === null) {
+							if (def.default !== undefined) {
+								record[field] = CleanNumberNull(
+									typeof def.default === 'function' ? def.default(row) : def.default,
+									def.decimals ?? 2
+								)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = 0
+							}
 						}
 						break
 					case 'integer':
 						record[field] = CleanNumberNull(rawValue)
-						if (record[field] === null && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = 0
+						if (record[field] === null) {
+							if (def.default !== undefined) {
+								record[field] = CleanNumberNull(
+									typeof def.default === 'function' ? def.default(row) : def.default
+								)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = 0
+							}
 						}
 						break
 					case 'boolean':
-						if (!rawValue && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = false
+						if (!rawValue) {
+							if (def.default !== null) {
+								record[field] = IsOn(typeof def.default === 'function' ? def.default(row) : def.default)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = false
+							}
 						} else {
 							record[field] = IsOn(rawValue)
 						}
 						break
 					case 'date':
 						record[field] = DateOnlyNull(rawValue)
-						if (record[field] === null && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = DateOnly('now')
+						if (record[field] === null) {
+							if (def.default !== undefined) {
+								record[field] = DateOnlyNull(
+									typeof def.default === 'function' ? def.default(row) : def.default
+								)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = DateOnly('now')
+							}
 						}
 						break
 					case 'time':
 						record[field] = TimeOnly(rawValue)
-						if (record[field] === null && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = TimeOnly('now')
+						if (record[field] === null) {
+							if (def.default !== undefined) {
+								record[field] = TimeOnly(
+									typeof def.default === 'function' ? def.default(row) : def.default
+								)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = TimeOnly('now')
+							}
 						}
 						break
 					case 'datetime':
 						record[field] = DateISO(rawValue)
-						if (record[field] === null && def.required) {
-							rowHasMissingRequired = true
-							rowFailedRequireds.push({
-								row: reportRow,
-								column: field,
-								message: `Required field ${field.toString()} is empty`
-							})
-							record[field] = NowISOString()
+						if (record[field] === null) {
+							if (def.default !== undefined) {
+								record[field] = DateISO(
+									typeof def.default === 'function' ? def.default(row) : def.default
+								)
+							} else if (def.required) {
+								rowHasMissingRequired = true
+								rowFailedRequireds.push({
+									row: reportRow,
+									column: field,
+									message: `Required field ${field.toString()} is empty`
+								})
+								record[field] = NowISOString()
+							}
 						}
 						break
 					default:
 						if (!rawValue) {
-							if (def.required) {
+							if (def.default !== undefined) {
+								record[field] = typeof def.default === 'function' ? def.default(row) : def.default
+							} else if (def.required) {
 								rowHasMissingRequired = true
 								rowFailedRequireds.push({
 									row: reportRow,

@@ -14,7 +14,8 @@ const definition = {
 		description: 'Temp Action',
 		columnType: 'string',
 		alternateNames: ['temporary'],
-		sampleData: 'TempZ'
+		sampleData: 'TempZ',
+		default: (row) => (row[0] === '1' ? 'Fir' : '')
 	},
 	name: {
 		description: 'Name of the entity',
@@ -29,7 +30,8 @@ const definition = {
 		columnType: 'number',
 		decimals: 2,
 		alternateNames: ['amount', 'price', 'rate'],
-		errorMessage: (value) => (!value ? `Cost required` : null)
+		errorMessage: (value) => (!value ? `Cost required` : null),
+		default: '0'
 	},
 	action_date: {
 		description: 'Date of the item',
@@ -95,7 +97,7 @@ it('ImporterFunctions', () => {
 		{
 			id: 2,
 			name: 'Second',
-			cost: null,
+			cost: 0,
 			action_date: null,
 			other_date: null,
 			is_active: false,
