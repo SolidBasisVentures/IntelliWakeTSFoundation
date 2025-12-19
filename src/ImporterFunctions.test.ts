@@ -65,12 +65,20 @@ it('ImporterFunctions', () => {
 		[]
 	]
 
-	const {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds} =
-		ImporterDataToArray(definition, datum, {
-			alternateNames: {
-				status: ['activeZ']
-			}
-		})
+	const {
+		results,
+		rawData,
+		rawDataValidColumnIndexes,
+		columnMapping,
+		missingRequiredColumns,
+		warnings,
+		errors,
+		missingRequiredCells
+	} = ImporterDataToArray(definition, datum, {
+		alternateNames: {
+			status: ['activeZ']
+		}
+	})
 
 	const result = results[0]
 	if (result) {
@@ -113,6 +121,8 @@ it('ImporterFunctions', () => {
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
+	expect(missingRequiredColumns).toEqual([])
+
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
 	expect(columnMapping).toEqual([
@@ -126,7 +136,7 @@ it('ImporterFunctions', () => {
 		{providedColumn: null, targetColumn: 'other_date'}
 	])
 
-	expect(failedRequireds.length).toBe(0)
+	expect(missingRequiredCells.length).toBe(0)
 
 	expect(warnings.length).toBe(1)
 
@@ -169,23 +179,31 @@ it('ImporterFunctions Failing', () => {
 		[]
 	]
 
-	const {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds} =
-		ImporterDataToArray(
-			{
-				...definition,
-				other_need: {
-					description: 'Another needed column',
-					columnType: 'integer',
-					required: true
-				}
-			},
-			datum,
-			{
-				alternateNames: {
-					status: ['activeZ']
-				}
+	const {
+		results,
+		rawData,
+		rawDataValidColumnIndexes,
+		missingRequiredColumns,
+		columnMapping,
+		warnings,
+		errors,
+		missingRequiredCells
+	} = ImporterDataToArray(
+		{
+			...definition,
+			other_need: {
+				description: 'Another needed column',
+				columnType: 'integer',
+				required: true
 			}
-		)
+		},
+		datum,
+		{
+			alternateNames: {
+				status: ['activeZ']
+			}
+		}
+	)
 
 	const result = results[0]
 	if (result) {
@@ -209,6 +227,8 @@ it('ImporterFunctions Failing', () => {
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
+	expect(missingRequiredColumns).toEqual(['other_need'])
+
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
 	expect(columnMapping).toEqual([
@@ -223,7 +243,7 @@ it('ImporterFunctions Failing', () => {
 		{providedColumn: null, targetColumn: 'other_need'}
 	])
 
-	expect(failedRequireds.length).toBe(0)
+	expect(missingRequiredCells.length).toBe(0)
 
 	expect(warnings.length).toBe(0)
 

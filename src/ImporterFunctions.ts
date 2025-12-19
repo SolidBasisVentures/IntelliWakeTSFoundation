@@ -59,13 +59,14 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 	}[]
 	rawData: string[][]
 	rawDataValidColumnIndexes: number[]
+	missingRequiredColumns: (keyof T)[]
 	columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
 	}[]
 	warnings: TImportDataMessage<T>[]
 	errors: TImportDataMessage<T>[]
-	failedRequireds: TImportDataMessage<T>[]
+	missingRequiredCells: TImportDataMessage<T>[]
 }
 
 export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
@@ -81,12 +82,14 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			columnMapping: [],
 			warnings: [],
 			errors: [],
-			failedRequireds: []
+			missingRequiredCells: [],
+			missingRequiredColumns: []
 		}
 
 	const warnings: TImportDataMessage<T>[] = []
 	const errors: TImportDataMessage<T>[] = []
-	const failedRequireds: TImportDataMessage<T>[] = []
+	const missingRequiredCells: TImportDataMessage<T>[] = []
+	const missingRequiredColumns: (keyof T)[] = []
 
 	// Map column index to FIELD key
 	let colMap: {index: number; field: keyof T}[] = []
@@ -141,7 +144,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			columnMapping: [],
 			warnings: [],
 			errors: [],
-			failedRequireds: []
+			missingRequiredCells: [],
+			missingRequiredColumns: []
 		}
 
 	const rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
@@ -164,6 +168,10 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 				providedColumn: null,
 				targetColumn: field
 			} as any)
+
+			if (definitions[field].required) {
+				missingRequiredColumns.push(field)
+			}
 		}
 	}
 
@@ -378,11 +386,20 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 
 		warnings.push(...rowWarnings)
 		errors.push(...rowErrors)
-		failedRequireds.push(...rowFailedRequireds)
+		missingRequiredCells.push(...rowFailedRequireds)
 		results.push(record)
 	})
 
-	return {results, rawData, rawDataValidColumnIndexes, columnMapping, warnings, errors, failedRequireds}
+	return {
+		results,
+		rawData,
+		rawDataValidColumnIndexes,
+		columnMapping,
+		warnings,
+		errors,
+		missingRequiredCells,
+		missingRequiredColumns
+	}
 }
 
 export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
