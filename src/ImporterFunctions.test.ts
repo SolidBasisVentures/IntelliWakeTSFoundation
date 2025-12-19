@@ -2,10 +2,10 @@ import {expect, it} from 'vitest'
 import {
 	ArrayToImporterData,
 	DataImportProcessor,
-	TImportDataToArrayOptions,
-	TImporter,
-	TImporterColumnDefinitions,
-	TImporterResult
+	TDataImportProcessorDataToArrayOptions,
+	TDataImportProcessor,
+	TDataImportProcessorColumnDefinitions,
+	TDataImportProcessorResult
 } from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
@@ -56,10 +56,10 @@ const definition = {
 		required: true,
 		sampleData: 'true'
 	}
-} satisfies TImporterColumnDefinitions<any>
+} satisfies TDataImportProcessorColumnDefinitions<any>
 
 class ImporterTest extends DataImportProcessor<typeof definition> {
-	constructor(options?: TImportDataToArrayOptions) {
+	constructor(options?: TDataImportProcessorDataToArrayOptions) {
 		super(definition, options)
 	}
 }
@@ -78,7 +78,7 @@ const datum: string[][] = [
 ]
 
 it('ImporterFunctions', () => {
-	const importer: TImporter<typeof definition> = new ImporterTest({
+	const importer: TDataImportProcessor<typeof definition> = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
 		}
@@ -110,7 +110,7 @@ it('ImporterFunctions', () => {
 		expect(DeepEqual(result, item)).toBeTruthy()
 	}
 
-	const vRows: TImporterResult<typeof definition>[] = importer.validRows
+	const vRows: TDataImportProcessorResult<typeof definition>[] = importer.validRows
 
 	expect(vRows).toEqual([
 		{
@@ -163,7 +163,7 @@ it('ImporterFunctions', () => {
 })
 
 it('ImporterFunctions', () => {
-	const importer: TImporter<typeof definition> = new ImporterTest({
+	const importer: TDataImportProcessor<typeof definition> = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
 		}

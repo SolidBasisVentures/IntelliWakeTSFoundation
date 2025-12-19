@@ -2,7 +2,7 @@ import {CleanNumberNull, IsOn} from './Functions'
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
 import {ParseCSV} from './DataConstructs'
 
-export type TImporterTypescriptType = {
+export type TDataImportProcessorTypescriptType = {
 	string: string
 	number: number
 	integer: number
@@ -13,7 +13,9 @@ export type TImporterTypescriptType = {
 	custom: string
 }
 
-export type TImporterColumnDefinition<T extends keyof TImporterTypescriptType = keyof TImporterTypescriptType> = {
+export type TDataImportProcessorColumnDefinition<
+	T extends keyof TDataImportProcessorTypescriptType = keyof TDataImportProcessorTypescriptType
+> = {
 	columnType: T
 	default?: string | null | ((row: string[]) => string | null)
 	description?: string
@@ -34,35 +36,37 @@ export type TImporterColumnDefinition<T extends keyof TImporterTypescriptType = 
  *   key: {columnType: 'string'}
  * } satisfies TImporterColumnDefinitions<any>
  */
-export type TImporterColumnDefinitions<FIELD extends string> = {
-	[K in FIELD]: TImporterColumnDefinition<keyof TImporterTypescriptType>
+export type TDataImportProcessorColumnDefinitions<FIELD extends string> = {
+	[K in FIELD]: TDataImportProcessorColumnDefinition<keyof TDataImportProcessorTypescriptType>
 }
 
-export type TImportDataToArrayOptions = {
+export type TDataImportProcessorDataToArrayOptions = {
 	alternateNames?: Record<string, string[]>
 	includeRowsMissingRequireds?: boolean
 }
 
-export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
-	column: keyof T
-	message: string
-}
+export type TDataImportProcessorDataMessage<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> =
+	{
+		column: keyof T
+		message: string
+	}
 
-export type TImporter<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = DataImportProcessor<T>
+export type TDataImportProcessor<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> =
+	DataImportProcessor<T>
 
-export type TImporterResult<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> = {
+export type TDataImportProcessorResult<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> = {
 	[K in keyof T]: T[K]['required'] extends true
-		? TImporterTypescriptType[T[K]['columnType']]
-		: TImporterTypescriptType[T[K]['columnType']] | null
+		? TDataImportProcessorTypescriptType[T[K]['columnType']]
+		: TDataImportProcessorTypescriptType[T[K]['columnType']] | null
 }
 
 /**
  * Class representing a generic data importer capable of parsing CSV input and transforming it into structured data
  * based on predefined column definitions.
  */
-export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
+export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> {
 	public definition: T
-	public options: TImportDataToArrayOptions
+	public options: TDataImportProcessorDataToArrayOptions
 	public columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
@@ -71,14 +75,14 @@ export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<ke
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
 		rowRaw: string[]
-		rowResult: TImporterResult<T> | null
+		rowResult: TDataImportProcessorResult<T> | null
 		isValid: boolean | null
-		missingRequiredCells: TImportDataMessage<T>[]
-		warnings: TImportDataMessage<T>[]
-		errors: TImportDataMessage<T>[]
+		missingRequiredCells: TDataImportProcessorDataMessage<T>[]
+		warnings: TDataImportProcessorDataMessage<T>[]
+		errors: TDataImportProcessorDataMessage<T>[]
 	}[] = []
 
-	constructor(definition: T, options?: TImportDataToArrayOptions) {
+	constructor(definition: T, options?: TDataImportProcessorDataToArrayOptions) {
 		this.definition = definition
 		this.options = options ?? {}
 	}
@@ -108,7 +112,10 @@ export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<ke
 			const potentialHeaders = data[i]
 			const currentMap: {index: number; field: keyof T}[] = []
 
-			for (const [field, def] of Object.entries(this.definition) as [keyof T, TImporterColumnDefinition][]) {
+			for (const [field, def] of Object.entries(this.definition) as [
+				keyof T,
+				TDataImportProcessorColumnDefinition
+			][]) {
 				const index = potentialHeaders.findIndex((h) => {
 					const header = h.trim().toLowerCase()
 
@@ -197,11 +204,14 @@ export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<ke
 
 			const record = {} as any
 			let rowHasMissingRequired = false
-			const rowFailedRequireds: TImportDataMessage<T>[] = []
-			const rowWarnings: TImportDataMessage<T>[] = []
-			const rowErrors: TImportDataMessage<T>[] = []
+			const rowFailedRequireds: TDataImportProcessorDataMessage<T>[] = []
+			const rowWarnings: TDataImportProcessorDataMessage<T>[] = []
+			const rowErrors: TDataImportProcessorDataMessage<T>[] = []
 
-			for (const [field, def] of Object.entries(this.definition) as [keyof T, TImporterColumnDefinition][]) {
+			for (const [field, def] of Object.entries(this.definition) as [
+				keyof T,
+				TDataImportProcessorColumnDefinition
+			][]) {
 				const colMatch = colMap.find((c) => c.field === field)
 				const rawValue = colMatch !== undefined ? row[colMatch.index] ?? '' : ''
 
@@ -434,7 +444,7 @@ export class DataImportProcessor<T extends TImporterColumnDefinitions<Extract<ke
  *                      - Rows constructed from the provided data.
  *                      - A default structure with descriptions and sample data when no records are provided.
  */
-export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
+export function ArrayToImporterData<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>>(
 	definitions: T,
 	data?: Record<string, any>[]
 ): string[][] {
