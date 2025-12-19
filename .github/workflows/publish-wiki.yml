@@ -6,10 +6,10 @@ on:
       - main
     paths:
       - 'docs/**'
-  workflow_dispatch: # Added this so you can manually test it from the Actions tab
+  workflow_dispatch:
 
 permissions:
-  contents: write # This gives the action permission to push to the wiki
+  contents: write
 
 jobs:
   publish-wiki:
@@ -20,6 +20,11 @@ jobs:
 
       - name: Push to Wiki
         uses: Andrew-Chen-Wang/github-wiki-action@v4
+        with:
+          # Explicitly pointing to the wiki repo helps resolve 128 errors
+          wiki_github_not_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}.wiki
+          path: docs/
         env:
-          WIKI_DIR: docs/
+          # Keep this as a backup
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
