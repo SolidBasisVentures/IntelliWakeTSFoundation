@@ -71,7 +71,6 @@ it('ImporterFunctions', () => {
 		rawDataValidColumnIndexes,
 		invalidRawDataIndexes,
 		columnMapping,
-		missingRequiredColumns,
 		warnings,
 		errors,
 		missingRequiredCells
@@ -124,19 +123,17 @@ it('ImporterFunctions', () => {
 
 	expect(invalidRawDataIndexes).toEqual([3])
 
-	expect(missingRequiredColumns).toEqual([])
-
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
 	expect(columnMapping).toEqual([
-		{providedColumn: 'id', targetColumn: 'id'},
-		{providedColumn: 'alt', targetColumn: null},
-		{providedColumn: 'title', targetColumn: 'name'},
-		{providedColumn: 'Rate', targetColumn: 'cost'},
-		{providedColumn: 'action_date', targetColumn: 'action_date'},
-		{providedColumn: 'activeZ', targetColumn: 'is_active'},
-		{providedColumn: 'Temp', targetColumn: 'TEMP'},
-		{providedColumn: null, targetColumn: 'other_date'}
+		{providedColumn: 'id', targetColumn: 'id', required: true},
+		{providedColumn: 'alt', targetColumn: null, required: null},
+		{providedColumn: 'title', targetColumn: 'name', required: false},
+		{providedColumn: 'Rate', targetColumn: 'cost', required: false},
+		{providedColumn: 'action_date', targetColumn: 'action_date', required: false},
+		{providedColumn: 'activeZ', targetColumn: 'is_active', required: true},
+		{providedColumn: 'Temp', targetColumn: 'TEMP', required: false},
+		{providedColumn: null, targetColumn: 'other_date', required: false}
 	])
 
 	expect(missingRequiredCells.length).toBe(0)
@@ -187,7 +184,6 @@ it('ImporterFunctions Failing', () => {
 		rawData,
 		rawDataValidColumnIndexes,
 		invalidRawDataIndexes,
-		missingRequiredColumns,
 		columnMapping,
 		warnings,
 		errors,
@@ -233,20 +229,18 @@ it('ImporterFunctions Failing', () => {
 
 	expect(invalidRawDataIndexes).toEqual([1, 2, 3])
 
-	expect(missingRequiredColumns).toEqual(['other_need'])
-
 	expect(rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
 	expect(columnMapping).toEqual([
-		{providedColumn: 'id', targetColumn: 'id'},
-		{providedColumn: 'alt', targetColumn: null},
-		{providedColumn: 'title', targetColumn: 'name'},
-		{providedColumn: 'Rate', targetColumn: 'cost'},
-		{providedColumn: 'action_date', targetColumn: 'action_date'},
-		{providedColumn: 'activeZ', targetColumn: 'is_active'},
-		{providedColumn: 'Temp', targetColumn: 'TEMP'},
-		{providedColumn: null, targetColumn: 'other_date'},
-		{providedColumn: null, targetColumn: 'other_need'}
+		{providedColumn: 'id', targetColumn: 'id', required: true},
+		{providedColumn: 'alt', targetColumn: null, required: null},
+		{providedColumn: 'title', targetColumn: 'name', required: false},
+		{providedColumn: 'Rate', targetColumn: 'cost', required: false},
+		{providedColumn: 'action_date', targetColumn: 'action_date', required: false},
+		{providedColumn: 'activeZ', targetColumn: 'is_active', required: true},
+		{providedColumn: 'Temp', targetColumn: 'TEMP', required: false},
+		{providedColumn: null, targetColumn: 'other_date', required: false},
+		{providedColumn: null, targetColumn: 'other_need', required: true}
 	])
 
 	expect(missingRequiredCells.length).toBe(0)

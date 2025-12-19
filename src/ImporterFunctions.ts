@@ -57,17 +57,17 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 			? TImporterTypescriptType[T[K]['columnType']]
 			: TImporterTypescriptType[T[K]['columnType']] | null
 	}[]
-	rawData: string[][]
-	invalidRawDataIndexes: number[]
-	rawDataValidColumnIndexes: number[]
-	missingRequiredColumns: (keyof T)[]
 	columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
+		required: boolean | null
 	}[]
+	rawDataValidColumnIndexes: number[]
+	rawData: string[][]
+	missingRequiredCells: TImportDataMessage<T>[]
+	invalidRawDataIndexes: number[]
 	warnings: TImportDataMessage<T>[]
 	errors: TImportDataMessage<T>[]
-	missingRequiredCells: TImportDataMessage<T>[]
 }
 
 /**
@@ -92,8 +92,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			columnMapping: [],
 			warnings: [],
 			errors: [],
-			missingRequiredCells: [],
-			missingRequiredColumns: []
+			missingRequiredCells: []
 		}
 
 	const warnings: TImportDataMessage<T>[] = []
@@ -155,30 +154,34 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 			columnMapping: [],
 			warnings: [],
 			errors: [],
-			missingRequiredCells: [],
-			missingRequiredColumns: []
+			missingRequiredCells: []
 		}
 
 	const rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
 
 	const headerRow = data[headerRowIndex]
-	const columnMapping: {providedColumn: string | null; targetColumn: keyof T | null}[] = headerRow.map(
-		(providedColumn, index) => {
-			const match = colMap.find((m) => m.index === index)
-			return {
-				providedColumn,
-				targetColumn: match ? match.field : null
-			}
+	const columnMapping: {
+		providedColumn: string | null
+		targetColumn: keyof T | null
+		required: boolean | null
+	}[] = headerRow.map((providedColumn, index) => {
+		const match = colMap.find((m) => m.index === index)
+		const targetColumn = match ? match.field : null
+		return {
+			providedColumn,
+			targetColumn,
+			required: targetColumn ? definitions[targetColumn].required ?? false : null
 		}
-	)
+	})
 
 	// Add definitions that were not matched to any provided column
 	for (const field of Object.keys(definitions) as (keyof T)[]) {
 		if (!colMap.some((m) => m.field === field)) {
 			columnMapping.push({
 				providedColumn: null,
-				targetColumn: field
-			} as any)
+				targetColumn: field,
+				required: definitions[field].required ?? false
+			})
 
 			if (definitions[field].required) {
 				missingRequiredColumns.push(field)
@@ -412,8 +415,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		columnMapping,
 		warnings,
 		errors,
-		missingRequiredCells,
-		missingRequiredColumns
+		missingRequiredCells
 	}
 }
 
