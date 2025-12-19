@@ -56,20 +56,24 @@ it('ImporterFunctions', () => {
 		['Header', 'Today'],
 		[],
 		[''],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
-		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
-		['', '', '', '', '', ''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1', ''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2', ''],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3', ''],
+		['', '', '', '', '', '', ''],
 		[]
 	]
 
-	const {results, rawData, warnings, errors, failedRequireds} = ImporterDataToArray(definition, datum, {
-		alternateNames: {
-			status: ['activeZ']
+	const {results, rawData, columnMapping, warnings, errors, failedRequireds} = ImporterDataToArray(
+		definition,
+		datum,
+		{
+			alternateNames: {
+				status: ['activeZ']
+			}
 		}
-	})
+	)
 
 	const result = results[0]
 	if (result) {
@@ -106,9 +110,20 @@ it('ImporterFunctions', () => {
 	])
 
 	expect(rawData).toEqual([
-		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2']
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp', 'other_column'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1', ''],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2', '']
+	])
+
+	expect(columnMapping).toEqual([
+		{providedColumn: 'id', targetColumn: 'id'},
+		{providedColumn: 'alt', targetColumn: null},
+		{providedColumn: 'title', targetColumn: 'name'},
+		{providedColumn: 'Rate', targetColumn: 'cost'},
+		{providedColumn: 'action_date', targetColumn: 'action_date'},
+		{providedColumn: 'activeZ', targetColumn: 'is_active'},
+		{providedColumn: 'Temp', targetColumn: 'TEMP'},
+		{providedColumn: 'other_column', targetColumn: null}
 	])
 
 	expect(failedRequireds.length).toBe(0)

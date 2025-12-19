@@ -58,6 +58,7 @@ export type TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof 
 			: TImporterTypescriptType[T[K]['columnType']] | null
 	}[]
 	rawData: string[][]
+	columnMapping: {providedColumn: string; targetColumn: keyof T | null}[]
 	warnings: TImportDataMessage<T>[]
 	errors: TImportDataMessage<T>[]
 	failedRequireds: TImportDataMessage<T>[]
@@ -68,7 +69,8 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 	data: string[][],
 	options?: TImportDataToArrayOptions
 ): TImporterResults<T> {
-	if (data.length < 2) return {results: [], rawData: [], warnings: [], errors: [], failedRequireds: []}
+	if (data.length < 2)
+		return {results: [], rawData: [], columnMapping: [], warnings: [], errors: [], failedRequireds: []}
 
 	const warnings: TImportDataMessage<T>[] = []
 	const errors: TImportDataMessage<T>[] = []
@@ -119,12 +121,22 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		}
 	}
 
-	if (headerRowIndex === -1) return {results: [], rawData: [], warnings: [], errors: [], failedRequireds: []}
+	if (headerRowIndex === -1)
+		return {results: [], rawData: [], columnMapping: [], warnings: [], errors: [], failedRequireds: []}
+
+	const headerRow = data[headerRowIndex]
+	const columnMapping = headerRow.map((providedColumn, index) => {
+		const match = colMap.find((m) => m.index === index)
+		return {
+			providedColumn,
+			targetColumn: match ? match.field : null
+		}
+	})
 
 	const rows = data.slice(headerRowIndex + 1)
 
 	const results: any[] = []
-	const rawData: string[][] = [data[headerRowIndex]]
+	const rawData: string[][] = [headerRow]
 
 	rows.forEach((row, idx) => {
 		const reportRow = idx + 1
@@ -334,7 +346,7 @@ export function ImporterDataToArray<T extends TImporterColumnDefinitions<Extract
 		rawData.push(row)
 	})
 
-	return {results, rawData, warnings, errors, failedRequireds}
+	return {results, rawData, columnMapping, warnings, errors, failedRequireds}
 }
 
 export function ArrayToImporterData<T extends TImporterColumnDefinitions<Extract<keyof T, string>>>(
