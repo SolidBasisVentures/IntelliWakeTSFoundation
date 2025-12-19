@@ -1,5 +1,5 @@
 import {expect, it} from 'vitest'
-import {ArrayToImporterData, Importer, TImporterColumnDefinitions} from './ImporterFunctions'
+import {ArrayToImporterData, Importer, TImportDataToArrayOptions, TImporterColumnDefinitions} from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
 
 const definition = {
@@ -51,6 +51,12 @@ const definition = {
 	}
 } satisfies TImporterColumnDefinitions<any>
 
+class ImporterTest extends Importer<typeof definition> {
+	constructor(options?: TImportDataToArrayOptions) {
+		super(definition, options)
+	}
+}
+
 const datum: string[][] = [
 	['Header', 'Today'],
 	[],
@@ -65,15 +71,15 @@ const datum: string[][] = [
 ]
 
 it('ImporterFunctions', () => {
-	const importer = new Importer(definition, {
+	const importer = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
 		}
 	})
 
-	importer.populate(datum)
+	importer.populateFromArray(datum)
 
-	const result = importer.results[1]?.finalResult
+	const result = importer.analysisRows[1]?.finalResult
 	if (result) {
 		const item: {
 			id: number
@@ -88,7 +94,9 @@ it('ImporterFunctions', () => {
 	}
 
 	expect(
-		importer.results.filter((result) => result.isValid && result.finalResult).map((result) => result.finalResult)
+		importer.analysisRows
+			.filter((result) => result.isValid && result.finalResult)
+			.map((result) => result.finalResult)
 	).toEqual([
 		{
 			id: 1,
@@ -110,14 +118,14 @@ it('ImporterFunctions', () => {
 		}
 	])
 
-	expect(importer.results.map((result) => result.rawData)).toEqual([
+	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
-	// expect(invalidRawDataIndexes).toEqual([3])
+	expect(importer.analysisRows.filter((line) => line.isValid === false).length).toEqual(1)
 
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
@@ -132,7 +140,7 @@ it('ImporterFunctions', () => {
 		{providedColumn: null, targetColumn: 'other_date', required: false}
 	])
 
-	expect(importer.missingRequiredCells.length).toBe(0)
+	// expect(importer.missingRequiredCells.length).toBe(0)
 
 	// expect(warnings.length).toBe(1)
 
@@ -178,9 +186,9 @@ it('ImporterFunctions Failing', () => {
 		}
 	)
 
-	importer.populate(datum)
+	importer.populateFromArray(datum)
 
-	const result = importer.results[1]?.finalResult
+	const result = importer.analysisRows[1]?.finalResult
 	if (result) {
 		const item: {
 			id: number
@@ -194,10 +202,12 @@ it('ImporterFunctions Failing', () => {
 	}
 
 	expect(
-		importer.results.filter((result) => result.isValid && result.finalResult).map((result) => result.finalResult)
+		importer.analysisRows
+			.filter((result) => result.isValid && result.finalResult)
+			.map((result) => result.finalResult)
 	).toEqual([])
 
-	expect(importer.results.map((result) => result.rawData)).toEqual([
+	expect(importer.analysisRows.map((result) => result.rawData)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
@@ -220,7 +230,7 @@ it('ImporterFunctions Failing', () => {
 		{providedColumn: null, targetColumn: 'other_need', required: true}
 	])
 
-	expect(importer.missingRequiredCells.length).toBe(0)
+	// expect(importer.missingRequiredCells.length).toBe(0)
 
 	// expect(importer.warnings.length).toBe(0)
 

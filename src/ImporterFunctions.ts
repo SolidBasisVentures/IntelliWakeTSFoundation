@@ -1,5 +1,6 @@
 import {CleanNumberNull, IsOn} from './Functions'
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
+import {ParseCSV} from './DataConstructs'
 
 export type TImporterTypescriptType = {
 	string: string
@@ -53,14 +54,14 @@ export type TImportDataMessage<T extends TImporterColumnDefinitions<Extract<keyo
  * Usage: let importState: TImporterResults<typeof myDefinition>
  */
 export interface TImporterResults<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> {
+	definition: T
 	columnMapping: {
 		providedColumn: string | null
 		targetColumn: keyof T | null
 		required: boolean | null
 	}[]
-	missingRequiredCells: TImportDataMessage<T>[]
 	rawDataValidColumnIndexes: number[]
-	results: {
+	analysisRows: {
 		rawData: string[]
 		finalResult:
 			| {
@@ -69,30 +70,39 @@ export interface TImporterResults<T extends TImporterColumnDefinitions<Extract<k
 						: TImporterTypescriptType[T[K]['columnType']] | null
 			  }
 			| null
-		isValid: boolean
+		isValid: boolean | null
+		missingRequiredCells: TImportDataMessage<T>[]
 		warnings: TImportDataMessage<T>[]
 		errors: TImportDataMessage<T>[]
 	}[]
 }
 
 export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, string>>> implements TImporterResults<T> {
-	public definitions: T
+	public definition: T
 	public options: TImportDataToArrayOptions
 	public columnMapping: TImporterResults<T>['columnMapping'] = []
-	public missingRequiredCells: TImporterResults<T>['missingRequiredCells'] = []
 	public rawDataValidColumnIndexes: number[] = []
-	public results: TImporterResults<T>['results'] = []
+	public analysisRows: TImporterResults<T>['analysisRows'] = []
 
-	constructor(definitions: T, options?: TImportDataToArrayOptions) {
-		this.definitions = definitions
+	constructor(definition: T, options?: TImportDataToArrayOptions) {
+		this.definition = definition
 		this.options = options ?? {}
+	}
+
+	/**
+	 * Populates the current object from a CSV string by parsing it into an array and populating the object accordingly.
+	 *
+	 * @param {string} csv - The CSV-formatted string containing the data to populate the object.
+	 */
+	public populateFromCSV(csv: string) {
+		this.populateFromArray(ParseCSV(csv))
 	}
 
 	/**
 	 * Populates the class with processed data from a two-dimensional array.
 	 * @param data The raw data as a two-dimensional array.
 	 */
-	public populate(data: string[][]): void {
+	public populateFromArray(data: string[][]): void {
 		if (data.length < 1) return
 
 		// Map column index to FIELD key
@@ -104,7 +114,7 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			const potentialHeaders = data[i]
 			const currentMap: {index: number; field: keyof T}[] = []
 
-			for (const [field, def] of Object.entries(this.definitions) as [keyof T, TImporterColumnDefinition][]) {
+			for (const [field, def] of Object.entries(this.definition) as [keyof T, TImporterColumnDefinition][]) {
 				const index = potentialHeaders.findIndex((h) => {
 					const header = h.trim().toLowerCase()
 
@@ -145,12 +155,13 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 		this.rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
 		const headerRow = data[headerRowIndex]
 
-		this.results.push({
+		this.analysisRows.push({
 			rawData: headerRow,
 			finalResult: null,
-			isValid: true,
+			isValid: null,
 			warnings: [],
-			errors: []
+			errors: [],
+			missingRequiredCells: []
 		})
 
 		this.columnMapping = headerRow.map((providedColumn, index) => {
@@ -159,17 +170,17 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			return {
 				providedColumn,
 				targetColumn,
-				required: targetColumn ? this.definitions[targetColumn].required ?? false : null
+				required: targetColumn ? this.definition[targetColumn].required ?? false : null
 			}
 		})
 
 		// Add definitions that were not matched to any provided column
-		for (const field of Object.keys(this.definitions) as (keyof T)[]) {
+		for (const field of Object.keys(this.definition) as (keyof T)[]) {
 			if (!colMap.some((m) => m.field === field)) {
 				this.columnMapping.push({
 					providedColumn: null,
 					targetColumn: field,
-					required: this.definitions[field].required ?? false
+					required: this.definition[field].required ?? false
 				})
 			}
 		}
@@ -198,7 +209,7 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 			const rowWarnings: TImportDataMessage<T>[] = []
 			const rowErrors: TImportDataMessage<T>[] = []
 
-			for (const [field, def] of Object.entries(this.definitions) as [keyof T, TImporterColumnDefinition][]) {
+			for (const [field, def] of Object.entries(this.definition) as [keyof T, TImporterColumnDefinition][]) {
 				const colMatch = colMap.find((c) => c.field === field)
 				const rawValue = colMatch !== undefined ? row[colMatch.index] ?? '' : ''
 
@@ -378,16 +389,13 @@ export class Importer<T extends TImporterColumnDefinitions<Extract<keyof T, stri
 
 			const isValid = !rowHasMissingRequired || (this.options?.includeRowsMissingRequireds ?? false)
 
-			if (isValid) {
-				this.missingRequiredCells.push(...rowFailedRequireds)
-			}
-
-			this.results.push({
+			this.analysisRows.push({
 				rawData: row,
 				finalResult: record,
 				isValid,
 				warnings: rowWarnings,
-				errors: rowErrors
+				errors: rowErrors,
+				missingRequiredCells: rowFailedRequireds
 			})
 		})
 	}
