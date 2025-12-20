@@ -79,10 +79,11 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}[] = []
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
-		isValid: boolean | null
+		isValid: boolean
 		rowRaw: string[]
 		columns: {
 			rawData: string | null
+			rawHeader: string | null
 			columnDefinition: TDataImportProcessorColumnDefinition | null
 			justify: 'left' | 'right' | 'center'
 			resultData: any // This will hold the typed value
@@ -163,25 +164,6 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		this.rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
 		const headerRow = data[headerRowIndex]
 
-		this.analysisRows.push({
-			rowRaw: headerRow,
-			columns: headerRow.map((cell, index) => {
-				const match = colMap.find((m) => m.index === index)
-				const def = match ? this.definition[match.field] : null
-				return {
-					rawData: cell,
-					columnDefinition: def ?? null,
-					justify: def?.justify ?? 'left',
-					resultData: cell,
-					isMissing: false,
-					errorMessage: null,
-					warningMessage: null
-				}
-			}),
-			rowResult: null,
-			isValid: null
-		})
-
 		this.columnMapping = headerRow.map((providedColumn, index) => {
 			const match = colMap.find((m) => m.index === index)
 			const targetColumn = match ? match.field : null
@@ -224,6 +206,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			let rowHasErrors = false
 
 			// Pre-calculate mapped columns for this row
+			// Pre-calculate mapped columns for this row
 			const analysisColumns: (typeof this.analysisRows)[0]['columns'] = row.map((cell, index) => {
 				const match = colMap.find((m) => m.index === index)
 				const def = match ? this.definition[match.field] : null
@@ -255,6 +238,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 				return {
 					rawData: cell,
+					rawHeader: headerRow[index] ?? null,
 					columnDefinition: def ? {...def, display} : null,
 					justify,
 					resultData: null,
@@ -441,7 +425,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}
 
 	get rawRows() {
-		return this.analysisRows.map((row) => row.rowRaw)
+		if (!this.analysisRows.length) return []
+		return [this.analysisRows[0].columns.map((col) => col.rawHeader), ...this.analysisRows.map((row) => row.rowRaw)]
 	}
 
 	get missingRequiredHeaders() {
@@ -483,7 +468,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}
 
 	get isValid() {
-		return !this.allErrors.length && this.validRows.length === this.rawRows.length - 1
+		return !this.allErrors.length && !this.missingRequiredHeaders.length
 	}
 }
 
