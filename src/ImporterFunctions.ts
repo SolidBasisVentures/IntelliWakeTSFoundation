@@ -391,7 +391,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				}
 			}
 
-			const isValid = !rowHasMissingRequired || (this.options?.includeRowsMissingRequireds ?? false)
+			const isValid =
+				(!rowHasMissingRequired && !rowErrors.length) || (this.options?.includeRowsMissingRequireds ?? false)
 
 			this.analysisRows.push({
 				rowRaw: row,
@@ -442,6 +443,10 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				rowIndex: index
 			}))
 		)
+	}
+
+	get isReadyForProcessing() {
+		return !this.allErrors.length && this.validRows.length === this.rawRows.length - 1
 	}
 }
 

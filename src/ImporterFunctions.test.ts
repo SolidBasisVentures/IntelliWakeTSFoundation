@@ -133,6 +133,8 @@ it('ImporterFunctions', () => {
 		}
 	])
 
+	expect(importer.isReadyForProcessing).toBeTruthy()
+
 	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
 		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
@@ -194,17 +196,19 @@ it('ImporterFunctions', () => {
 			other_date: null,
 			is_active: true,
 			TEMP: 'T1'
-		},
-		{
-			id: 2,
-			name: 'Second',
-			cost: 0,
-			action_date: null,
-			other_date: null,
-			is_active: false,
-			TEMP: 'T2'
 		}
+		// {
+		// 	id: 2,
+		// 	name: 'Second',
+		// 	cost: 0,
+		// 	action_date: null,
+		// 	other_date: null,
+		// 	is_active: false,
+		// 	TEMP: 'T2'
+		// }
 	])
+
+	expect(importer.isReadyForProcessing).toBeFalsy()
 
 	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
@@ -213,7 +217,7 @@ it('ImporterFunctions', () => {
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
-	expect(importer.analysisRows.filter((line) => line.isValid === false).length).toEqual(1)
+	expect(importer.analysisRows.filter((line) => line.isValid === false).length).toEqual(2)
 
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
@@ -297,6 +301,8 @@ it('ImporterFunctions Failing', () => {
 		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
+
+	expect(importer.isReadyForProcessing).toBeFalsy()
 
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
