@@ -84,6 +84,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			columnDefinition: TDataImportProcessorColumnDefinition | null
 			justify: 'left' | 'right' | 'center'
 			resultData: any // This will hold the typed value
+			display?: ((value: string | null, row: (string | null)[]) => string | null) | null
 			isMissing: boolean
 			errorMessage: string | null
 			warningMessage: string | null
@@ -242,15 +243,16 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				const display =
 					def?.display ??
 					(def?.columnType === 'currency'
-						? (value: any) => ToNumberString(value, {currency: true, zeroBlank: true})
+						? (value: string | null) => ToNumberString(value, {currency: true, zeroBlank: true})
 						: def?.columnType === 'boolean'
-						? (value: any) => (!value ? '' : IsOn(value) ? 'True' : 'False')
+						? (value: string | null) => (!value ? '' : IsOn(value) ? 'True' : 'False')
 						: null)
 
 				return {
 					rawData: cell,
 					rawHeader: headerRow[index] ?? null,
-					columnDefinition: def ? {...def, display} : null,
+					columnDefinition: def,
+					display,
 					justify,
 					resultData: null,
 					isMissing: false,
