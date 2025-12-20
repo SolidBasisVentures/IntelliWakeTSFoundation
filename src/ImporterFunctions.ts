@@ -243,6 +243,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					def?.display ??
 					(def?.columnType === 'currency'
 						? (value: any) => ToNumberString(value, {currency: true, zeroBlank: true})
+						: def?.columnType === 'boolean'
+						? (value: any) => (!value ? '' : IsOn(value) ? 'True' : 'False')
 						: null)
 
 				return {
