@@ -2,9 +2,9 @@ import {expect, it} from 'vitest'
 import {
 	ArrayToImporterData,
 	DataImportProcessor,
-	TDataImportProcessorDataToArrayOptions,
 	TDataImportProcessor,
 	TDataImportProcessorColumnDefinitions,
+	TDataImportProcessorDataToArrayOptions,
 	TDataImportProcessorResult
 } from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'

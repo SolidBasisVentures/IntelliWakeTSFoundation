@@ -72,6 +72,8 @@ export type TDataImportProcessorResult<T extends TDataImportProcessorColumnDefin
 export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> {
 	public definition: T
 	public options: TDataImportProcessorDataToArrayOptions
+	private _colMap: {index: number; field: keyof T}[] = []
+	private _headerRow: string[] = []
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
 		isValid: boolean
@@ -95,36 +97,25 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}
 
 	public get columnMapping() {
-		if (this.analysisRows.length === 0) return []
-
-		const firstRow = this.analysisRows[0]
-		const fieldKeys = Object.keys(this.definition) as (keyof T)[]
+		if (this._headerRow.length === 0) return []
 
 		const mapping: {
 			providedColumn: string | null
 			targetColumn: keyof T | null
 			required: boolean | null
-		}[] = firstRow.columns.map((col) => {
-			// Find which field in the result this specific column index mapped to
-			const targetColumn = fieldKeys.find((key) => {
-				const def = this.definition[key]
-				return (
-					col.columnDefinition &&
-					col.columnDefinition.columnType === def.columnType &&
-					col.columnDefinition.description === def.description
-				)
-			})
-
+		}[] = this._headerRow.map((providedColumn, index) => {
+			const match = this._colMap.find((m) => m.index === index)
+			const targetColumn = match ? match.field : null
 			return {
-				providedColumn: col.rawHeader,
-				targetColumn: targetColumn ?? null,
+				providedColumn,
+				targetColumn,
 				required: targetColumn ? this.definition[targetColumn].required ?? false : null
 			}
 		})
 
 		// Add definitions that were not matched to any provided column
-		for (const field of fieldKeys) {
-			if (!mapping.some((m) => m.targetColumn === field)) {
+		for (const field of Object.keys(this.definition) as (keyof T)[]) {
+			if (!this._colMap.some((m) => m.field === field)) {
 				mapping.push({
 					providedColumn: null,
 					targetColumn: field,
@@ -198,8 +189,10 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 		if (headerRowIndex === -1) return
 
+		this._colMap = colMap
+		this._headerRow = data[headerRowIndex]
 		this.rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
-		const headerRow = data[headerRowIndex]
+		const headerRow = this._headerRow
 
 		const rows = data.slice(headerRowIndex + 1)
 
