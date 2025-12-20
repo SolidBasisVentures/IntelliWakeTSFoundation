@@ -133,7 +133,7 @@ it('ImporterFunctions', () => {
 		}
 	])
 
-	expect(importer.isReadyForProcessing).toBeTruthy()
+	expect(importer.isValid).toBeTruthy()
 
 	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
@@ -147,7 +147,7 @@ it('ImporterFunctions', () => {
 
 	expect(
 		importer.analysisRows.every((ar) =>
-			ar.rowRawFormat.every((rrf) => rrf?.columnType !== 'date' || rrf?.justify === 'right')
+			ar.columns.every((col) => col?.columnDefinition?.columnType !== 'date' || col?.justify === 'right')
 		)
 	)
 
@@ -214,7 +214,7 @@ it('ImporterFunctions', () => {
 		// }
 	])
 
-	expect(importer.isReadyForProcessing).toBeFalsy()
+	expect(importer.isValid).toBeFalsy()
 
 	expect(importer.analysisRows.map((result) => result.rowRaw)).toEqual([
 		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
@@ -308,7 +308,7 @@ it('ImporterFunctions Failing', () => {
 		['', 'NEXT', 'Third', '', '', 'f', 'T3']
 	])
 
-	expect(importer.isReadyForProcessing).toBeFalsy()
+	expect(importer.isValid).toBeFalsy()
 
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 

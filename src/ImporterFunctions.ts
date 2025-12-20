@@ -79,18 +79,18 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}[] = []
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
-		rowRaw: string[]
-		rowRawFormat: (
-			| (Omit<TDataImportProcessorColumnDefinition, 'justify'> & {
-					justify: 'left' | 'right' | 'center'
-			  })
-			| null
-		)[]
-		rowResult: TDataImportProcessorResult<T> | null
 		isValid: boolean | null
-		missingRequiredCells: TDataImportProcessorDataMessage<T>[]
-		warnings: TDataImportProcessorDataMessage<T>[]
-		errors: TDataImportProcessorDataMessage<T>[]
+		rowRaw: string[]
+		columns: {
+			rawData: string | null
+			columnDefinition: TDataImportProcessorColumnDefinition | null
+			justify: 'left' | 'right' | 'center'
+			resultData: any // This will hold the typed value
+			isMissing: boolean
+			errorMessage: string | null
+			warningMessage: string | null
+		}[]
+		rowResult: TDataImportProcessorResult<T> | null
 	}[] = []
 
 	constructor(definition: T, options?: TDataImportProcessorDataToArrayOptions) {
@@ -107,11 +107,6 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		this.populateFromArray(ParseCSV(csv))
 	}
 
-	// ... existing code ...
-	/**
-	 * Populates the class with processed data from a two-dimensional array.
-	 * @param data The raw data as a two-dimensional array.
-	 */
 	public populateFromArray(data: string[][]): void {
 		if (data.length < 1) return
 
@@ -170,19 +165,21 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 		this.analysisRows.push({
 			rowRaw: headerRow,
-			rowRawFormat: headerRow.map((_, index) => {
+			columns: headerRow.map((cell, index) => {
 				const match = colMap.find((m) => m.index === index)
-				if (!match) return null
+				const def = match ? this.definition[match.field] : null
 				return {
-					...this.definition[match.field],
-					justify: this.definition[match.field].justify ?? 'left'
+					rawData: cell,
+					columnDefinition: def ?? null,
+					justify: def?.justify ?? 'left',
+					resultData: cell,
+					isMissing: false,
+					errorMessage: null,
+					warningMessage: null
 				}
 			}),
 			rowResult: null,
-			isValid: null,
-			warnings: [],
-			errors: [],
-			missingRequiredCells: []
+			isValid: null
 		})
 
 		this.columnMapping = headerRow.map((providedColumn, index) => {
@@ -224,23 +221,15 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 			const record = {} as any
 			let rowHasMissingRequired = false
-			const rowFailedRequireds: TDataImportProcessorDataMessage<T>[] = []
-			const rowWarnings: TDataImportProcessorDataMessage<T>[] = []
-			const rowErrors: TDataImportProcessorDataMessage<T>[] = []
+			let rowHasErrors = false
 
-			const rowRawFormat: (
-				| (TDataImportProcessorColumnDefinition & {
-						justify: 'left' | 'right' | 'center'
-				  })
-				| null
-			)[] = row.map((_, index) => {
+			// Pre-calculate mapped columns for this row
+			const analysisColumns: (typeof this.analysisRows)[0]['columns'] = row.map((cell, index) => {
 				const match = colMap.find((m) => m.index === index)
-				if (!match) return null
+				const def = match ? this.definition[match.field] : null
+				let justify: 'left' | 'right' | 'center' = def?.justify ?? 'left'
 
-				const def = this.definition[match.field]
-				let justify: 'left' | 'right' | 'center' = this.definition[match.field]?.justify ?? 'left'
-
-				if (!this.definition[match.field]?.justify) {
+				if (def && !def.justify) {
 					switch (def.columnType) {
 						case 'boolean':
 							justify = 'center'
@@ -259,15 +248,19 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				}
 
 				const display =
-					def.display ??
-					(def.columnType === 'currency'
-						? (value) => ToNumberString(value, {currency: true, zeroBlank: true})
+					def?.display ??
+					(def?.columnType === 'currency'
+						? (value: any) => ToNumberString(value, {currency: true, zeroBlank: true})
 						: null)
 
 				return {
-					...def,
+					rawData: cell,
+					columnDefinition: def ? {...def, display} : null,
 					justify,
-					display
+					resultData: null,
+					isMissing: false,
+					errorMessage: null,
+					warningMessage: null
 				}
 			})
 
@@ -275,200 +268,165 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				keyof T,
 				TDataImportProcessorColumnDefinition
 			][]) {
-				const colMatch = colMap.find((c) => c.field === field)
-				const rawValue = colMatch !== undefined ? row[colMatch.index] ?? '' : ''
-				const providedColumnName = colMatch !== undefined ? headerRow[colMatch.index] : null
+				const colMatchIndex = colMap.find((c) => c.field === field)?.index
+				const rawValue = colMatchIndex !== undefined ? row[colMatchIndex] ?? '' : ''
+				const colAnalysis = colMatchIndex !== undefined ? analysisColumns[colMatchIndex] : null
 
 				if (def.warningMessage) {
 					const message = def.warningMessage(rawValue, row)
-					if (message) {
-						rowWarnings.push({
-							providedColumn: providedColumnName,
-							targetColumn: field,
-							message
-						})
+					if (message && colAnalysis) {
+						colAnalysis.warningMessage = message
 					}
 				}
 
 				if (def.errorMessage) {
 					const message = def.errorMessage(rawValue, row)
 					if (message) {
-						rowErrors.push({
-							providedColumn: providedColumnName,
-							targetColumn: field,
-							message
-						})
+						rowHasErrors = true
+						if (colAnalysis) colAnalysis.errorMessage = message
 					}
 				}
 
-				if (def.customConvertor) {
-					record[field] = def.customConvertor(rawValue, row)
+				let resultValue: any = null
+				let isMissing = false
 
-					if (def.required && !record[field]) {
+				if (def.customConvertor) {
+					resultValue = def.customConvertor(rawValue, row)
+					if (def.required && !resultValue) {
+						isMissing = true
 						rowHasMissingRequired = true
-						rowFailedRequireds.push({
-							providedColumn: providedColumnName,
-							targetColumn: field,
-							message: `Required field ${field.toString()} is empty`
-						})
 					}
 				} else {
 					switch (def.columnType) {
 						case 'number':
 						case 'currency':
-							record[field] = CleanNumberNull(rawValue, def.decimals ?? 2)
-							if (record[field] === null) {
+							resultValue = CleanNumberNull(rawValue, def.decimals ?? 2)
+							if (resultValue === null) {
 								if (def.default !== undefined) {
-									record[field] = CleanNumberNull(
+									resultValue = CleanNumberNull(
 										typeof def.default === 'function' ? def.default(row) : def.default,
 										def.decimals ?? 2
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = 0
+									resultValue = 0
 								}
 							}
 							break
 						case 'integer':
-							record[field] = CleanNumberNull(rawValue)
-							if (record[field] === null) {
+							resultValue = CleanNumberNull(rawValue)
+							if (resultValue === null) {
 								if (def.default !== undefined) {
-									record[field] = CleanNumberNull(
+									resultValue = CleanNumberNull(
 										typeof def.default === 'function' ? def.default(row) : def.default
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = 0
+									resultValue = 0
 								}
 							}
 							break
 						case 'boolean':
 							if (!rawValue) {
 								if (def.default !== null && def.default !== undefined) {
-									record[field] = IsOn(
+									resultValue = IsOn(
 										typeof def.default === 'function' ? def.default(row) : def.default
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = false
+									resultValue = false
 								} else {
-									record[field] = null
+									resultValue = null
 								}
 							} else {
-								record[field] = IsOn(rawValue)
+								resultValue = IsOn(rawValue)
 							}
 							break
 						case 'date':
-							record[field] = DateOnlyNull(rawValue)
-							if (record[field] === null) {
+							resultValue = DateOnlyNull(rawValue)
+							if (resultValue === null) {
 								if (def.default !== undefined) {
-									record[field] = DateOnlyNull(
+									resultValue = DateOnlyNull(
 										typeof def.default === 'function' ? def.default(row) : def.default
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = DateOnly('now')
+									resultValue = DateOnly('now')
 								}
 							}
 							break
 						case 'time':
-							record[field] = TimeOnly(rawValue)
-							if (record[field] === null) {
+							resultValue = TimeOnly(rawValue)
+							if (resultValue === null) {
 								if (def.default !== undefined) {
-									record[field] = TimeOnly(
+									resultValue = TimeOnly(
 										typeof def.default === 'function' ? def.default(row) : def.default
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = TimeOnly('now')
+									resultValue = TimeOnly('now')
 								}
 							}
 							break
 						case 'datetime':
-							record[field] = DateISO(rawValue)
-							if (record[field] === null) {
+							resultValue = DateISO(rawValue)
+							if (resultValue === null) {
 								if (def.default !== undefined) {
-									record[field] = DateISO(
+									resultValue = DateISO(
 										typeof def.default === 'function' ? def.default(row) : def.default
 									)
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = NowISOString()
+									resultValue = NowISOString()
 								}
 							}
 							break
 						default:
 							if (!rawValue) {
 								if (def.default !== undefined) {
-									record[field] = typeof def.default === 'function' ? def.default(row) : def.default
+									resultValue = typeof def.default === 'function' ? def.default(row) : def.default
 								} else if (def.required) {
+									isMissing = true
 									rowHasMissingRequired = true
-									rowFailedRequireds.push({
-										providedColumn: providedColumnName,
-										targetColumn: field,
-										message: `Required field ${field.toString()} is empty`
-									})
-									record[field] = ''
+									resultValue = ''
 								} else {
-									record[field] = null
+									resultValue = null
 								}
 							} else {
 								if (def.length) {
-									record[field] = rawValue.toString().substring(0, def.length)
+									resultValue = rawValue.toString().substring(0, def.length)
 								} else {
-									record[field] = rawValue
+									resultValue = rawValue
 								}
 							}
 							break
 					}
 				}
+
+				record[field] = resultValue
+				if (colAnalysis) {
+					colAnalysis.resultData = resultValue
+					colAnalysis.isMissing = isMissing
+				}
 			}
 
 			const isValid =
-				(!rowHasMissingRequired && !rowErrors.length) || (this.options?.includeRowsMissingRequireds ?? false)
+				(!rowHasMissingRequired && !rowHasErrors) || (this.options?.includeRowsMissingRequireds ?? false)
 
 			this.analysisRows.push({
 				rowRaw: row,
-				rowRawFormat,
+				columns: analysisColumns,
 				rowResult: record,
-				isValid,
-				warnings: rowWarnings,
-				errors: rowErrors,
-				missingRequiredCells: rowFailedRequireds
+				isValid
 			})
 		})
 	}
-	// ... existing code ...
 
 	get validRows() {
 		return this.analysisRows
@@ -493,24 +451,38 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	}
 
 	get allWarnings() {
-		return this.analysisRows.flatMap((row, index) =>
-			row.warnings.map((warning) => ({
-				...warning,
-				rowIndex: index
-			}))
+		return this.analysisRows.flatMap((row, rowIndex) =>
+			row.columns
+				.filter((col) => col.warningMessage)
+				.map((col) => ({
+					providedColumn: col.rawData, // Using rawData as the providedColumn name for message parity
+					targetColumn:
+						(Object.keys(this.definition) as (keyof T)[]).find(
+							(key) => this.definition[key] === col.columnDefinition
+						) ?? null,
+					message: col.warningMessage!,
+					rowIndex
+				}))
 		)
 	}
 
 	get allErrors() {
-		return this.analysisRows.flatMap((row, index) =>
-			row.errors.map((error) => ({
-				...error,
-				rowIndex: index
-			}))
+		return this.analysisRows.flatMap((row, rowIndex) =>
+			row.columns
+				.filter((col) => col.errorMessage)
+				.map((col) => ({
+					providedColumn: col.rawData, // Using rawData as the providedColumn name for message parity
+					targetColumn:
+						(Object.keys(this.definition) as (keyof T)[]).find(
+							(key) => this.definition[key] === col.columnDefinition
+						) ?? null,
+					message: col.errorMessage!,
+					rowIndex
+				}))
 		)
 	}
 
-	get isReadyForProcessing() {
+	get isValid() {
 		return !this.allErrors.length && this.validRows.length === this.rawRows.length - 1
 	}
 }
