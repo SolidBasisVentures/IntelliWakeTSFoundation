@@ -145,6 +145,12 @@ it('ImporterFunctions', () => {
 
 	expect(importer.rawDataValidColumnIndexes).toEqual([0, 2, 3, 4, 5, 6])
 
+	expect(
+		importer.analysisRows.every((ar) =>
+			ar.rowRawFormat.every((rrf) => rrf?.columnType !== 'date' || rrf?.justify === 'right')
+		)
+	)
+
 	expect(importer.columnMapping).toEqual([
 		{providedColumn: 'id', targetColumn: 'id', required: true},
 		{providedColumn: 'alt', targetColumn: null, required: null},

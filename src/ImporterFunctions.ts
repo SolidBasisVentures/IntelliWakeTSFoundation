@@ -1,10 +1,12 @@
 import {CleanNumberNull, IsOn} from './Functions'
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
 import {ParseCSV} from './DataConstructs'
+import {ToNumberString} from './StringManipulation'
 
 export type TDataImportProcessorTypescriptType = {
 	string: string
 	number: number
+	currency: number
 	integer: number
 	date: string
 	time: string
@@ -27,6 +29,8 @@ export type TDataImportProcessorColumnDefinition<
 	sampleData?: string | string[]
 	errorMessage?: (value: string, row: string[]) => string | null
 	warningMessage?: (value: string, row: string[]) => string | null
+	display?: (value: string | null, row: (string | null)[]) => string | null
+	justify?: 'left' | 'right' | 'center' | null
 }
 
 /**
@@ -76,6 +80,12 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
 		rowRaw: string[]
+		rowRawFormat: (
+			| (Omit<TDataImportProcessorColumnDefinition, 'justify'> & {
+					justify: 'left' | 'right' | 'center'
+			  })
+			| null
+		)[]
 		rowResult: TDataImportProcessorResult<T> | null
 		isValid: boolean | null
 		missingRequiredCells: TDataImportProcessorDataMessage<T>[]
@@ -97,6 +107,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		this.populateFromArray(ParseCSV(csv))
 	}
 
+	// ... existing code ...
 	/**
 	 * Populates the class with processed data from a two-dimensional array.
 	 * @param data The raw data as a two-dimensional array.
@@ -159,6 +170,14 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 		this.analysisRows.push({
 			rowRaw: headerRow,
+			rowRawFormat: headerRow.map((_, index) => {
+				const match = colMap.find((m) => m.index === index)
+				if (!match) return null
+				return {
+					...this.definition[match.field],
+					justify: this.definition[match.field].justify ?? 'left'
+				}
+			}),
 			rowResult: null,
 			isValid: null,
 			warnings: [],
@@ -209,6 +228,49 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			const rowWarnings: TDataImportProcessorDataMessage<T>[] = []
 			const rowErrors: TDataImportProcessorDataMessage<T>[] = []
 
+			const rowRawFormat: (
+				| (TDataImportProcessorColumnDefinition & {
+						justify: 'left' | 'right' | 'center'
+				  })
+				| null
+			)[] = row.map((_, index) => {
+				const match = colMap.find((m) => m.index === index)
+				if (!match) return null
+
+				const def = this.definition[match.field]
+				let justify: 'left' | 'right' | 'center' = this.definition[match.field]?.justify ?? 'left'
+
+				if (!this.definition[match.field]?.justify) {
+					switch (def.columnType) {
+						case 'boolean':
+							justify = 'center'
+							break
+						case 'number':
+						case 'currency':
+						case 'integer':
+						case 'date':
+						case 'time':
+						case 'datetime':
+							justify = 'right'
+							break
+						default:
+							justify = 'left'
+					}
+				}
+
+				const display =
+					def.display ??
+					(def.columnType === 'currency'
+						? (value) => ToNumberString(value, {currency: true, zeroBlank: true})
+						: null)
+
+				return {
+					...def,
+					justify,
+					display
+				}
+			})
+
 			for (const [field, def] of Object.entries(this.definition) as [
 				keyof T,
 				TDataImportProcessorColumnDefinition
@@ -253,6 +315,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				} else {
 					switch (def.columnType) {
 						case 'number':
+						case 'currency':
 							record[field] = CleanNumberNull(rawValue, def.decimals ?? 2)
 							if (record[field] === null) {
 								if (def.default !== undefined) {
@@ -396,6 +459,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 			this.analysisRows.push({
 				rowRaw: row,
+				rowRawFormat,
 				rowResult: record,
 				isValid,
 				warnings: rowWarnings,
@@ -404,6 +468,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			})
 		})
 	}
+	// ... existing code ...
 
 	get validRows() {
 		return this.analysisRows
