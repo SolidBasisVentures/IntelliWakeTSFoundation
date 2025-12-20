@@ -166,7 +166,6 @@ it('ImporterFunctions', () => {
 
 	expect(importer.allWarnings.length).toBe(1)
 
-	console.log(importer.allErrors)
 	expect(importer.allErrors.length).toBe(0)
 })
 

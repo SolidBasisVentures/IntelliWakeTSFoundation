@@ -72,11 +72,6 @@ export type TDataImportProcessorResult<T extends TDataImportProcessorColumnDefin
 export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> {
 	public definition: T
 	public options: TDataImportProcessorDataToArrayOptions
-	public columnMapping: {
-		providedColumn: string | null
-		targetColumn: keyof T | null
-		required: boolean | null
-	}[] = []
 	public rawDataValidColumnIndexes: number[] = []
 	public analysisRows: {
 		isValid: boolean
@@ -97,6 +92,48 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	constructor(definition: T, options?: TDataImportProcessorDataToArrayOptions) {
 		this.definition = definition
 		this.options = options ?? {}
+	}
+
+	public get columnMapping() {
+		if (this.analysisRows.length === 0) return []
+
+		const firstRow = this.analysisRows[0]
+		const fieldKeys = Object.keys(this.definition) as (keyof T)[]
+
+		const mapping: {
+			providedColumn: string | null
+			targetColumn: keyof T | null
+			required: boolean | null
+		}[] = firstRow.columns.map((col) => {
+			// Find which field in the result this specific column index mapped to
+			const targetColumn = fieldKeys.find((key) => {
+				const def = this.definition[key]
+				return (
+					col.columnDefinition &&
+					col.columnDefinition.columnType === def.columnType &&
+					col.columnDefinition.description === def.description
+				)
+			})
+
+			return {
+				providedColumn: col.rawHeader,
+				targetColumn: targetColumn ?? null,
+				required: targetColumn ? this.definition[targetColumn].required ?? false : null
+			}
+		})
+
+		// Add definitions that were not matched to any provided column
+		for (const field of fieldKeys) {
+			if (!mapping.some((m) => m.targetColumn === field)) {
+				mapping.push({
+					providedColumn: null,
+					targetColumn: field,
+					required: this.definition[field].required ?? false
+				})
+			}
+		}
+
+		return mapping
 	}
 
 	/**
@@ -163,27 +200,6 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 
 		this.rawDataValidColumnIndexes = Array.from(new Set(colMap.map((m) => m.index))).sort((a, b) => a - b)
 		const headerRow = data[headerRowIndex]
-
-		this.columnMapping = headerRow.map((providedColumn, index) => {
-			const match = colMap.find((m) => m.index === index)
-			const targetColumn = match ? match.field : null
-			return {
-				providedColumn,
-				targetColumn,
-				required: targetColumn ? this.definition[targetColumn].required ?? false : null
-			}
-		})
-
-		// Add definitions that were not matched to any provided column
-		for (const field of Object.keys(this.definition) as (keyof T)[]) {
-			if (!colMap.some((m) => m.field === field)) {
-				this.columnMapping.push({
-					providedColumn: null,
-					targetColumn: field,
-					required: this.definition[field].required ?? false
-				})
-			}
-		}
 
 		const rows = data.slice(headerRowIndex + 1)
 
