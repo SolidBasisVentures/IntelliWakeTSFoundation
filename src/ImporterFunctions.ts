@@ -83,6 +83,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			rawData: string | null
 			rawHeader: string | null
 			displayValue: string | null
+			columnKey: keyof T | null
 			columnDefinition: TDataImportProcessorColumnDefinition | null
 			justify: 'left' | 'right' | 'center'
 			resultData: any // This will hold the typed value
@@ -270,6 +271,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				return {
 					rawData: cell,
 					rawHeader: headerRow[index] ?? null,
+					columnKey: match?.field ?? null,
 					columnDefinition: def,
 					display,
 					displayValue: !display ? cell : display(cell, row),

@@ -26,12 +26,14 @@ it('ImporterFunctions - Dups', () => {
 	const importer = new DataImportProcessor(definition)
 
 	importer.populateFromArray([
-		['id', 'active'],
+		['identifier', 'active'],
 		['1', 'true'],
 		['2', 'true'],
 		['2', 'true'],
 		['2', 'false']
 	])
+
+	expect(importer.analysisRows[0]?.columns[0]?.columnKey).toBe('id')
 
 	expect(importer.allErrors.length).toBe(3)
 })
