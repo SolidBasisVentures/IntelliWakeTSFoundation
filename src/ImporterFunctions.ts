@@ -184,8 +184,23 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					)
 				})
 
-				if (index !== -1) {
-					currentMap.push({index, field})
+				// If multiple headers could match, prioritize the order in alternateNames
+				let bestIndex = index
+				if (this.options?.alternateNames?.[field as string]) {
+					const alternates = this.options.alternateNames[field as string]
+					for (const alt of alternates) {
+						const foundIndex = potentialHeaders.findIndex(
+							(h) => h.trim().toLowerCase() === alt.trim().toLowerCase()
+						)
+						if (foundIndex !== -1) {
+							bestIndex = foundIndex
+							break
+						}
+					}
+				}
+
+				if (bestIndex !== -1) {
+					currentMap.push({index: bestIndex, field})
 				}
 			}
 

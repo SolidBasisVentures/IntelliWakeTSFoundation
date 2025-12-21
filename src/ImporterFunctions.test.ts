@@ -39,6 +39,38 @@ it('ImporterFunctions - Dups', () => {
 	expect(importer.allErrors.length).toBe(3)
 })
 
+it('ImporterFunctions - AlternateNameOrder', () => {
+	const definition = {
+		targetCol: {
+			columnType: 'integer'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	let importer = new DataImportProcessor(definition, {
+		alternateNames: {
+			targetCol: ['colB', 'colA']
+		}
+	})
+
+	importer.populateFromArray([
+		['colA', 'colB'],
+		['1', '2']
+	])
+
+	expect(importer.columnMapping.find((cm) => cm.providedColumn === 'colB')?.targetColumn).toBe('targetCol')
+
+	importer.options.alternateNames = {
+		targetCol: ['colA', 'colB']
+	}
+
+	importer.populateFromArray([
+		['colA', 'colB'],
+		['1', '2']
+	])
+
+	expect(importer.columnMapping.find((cm) => cm.providedColumn === 'colA')?.targetColumn).toBe('targetCol')
+})
+
 it('ImporterFunctions - Checking booleans', () => {
 	const definition = {
 		id: {
