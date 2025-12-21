@@ -26,6 +26,7 @@ export type TDataImportProcessorColumnDefinition<
 	customConvertor?: (value: string, row: string[]) => any
 	alternateNames?: string[]
 	required?: boolean
+	isUnique?: boolean
 	sampleData?: string | string[]
 	errorMessage?: (value: string, row: string[]) => string | null
 	warningMessage?: (value: string, row: string[]) => string | null
@@ -201,6 +202,17 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		const headerRow = this._headerRow
 
 		const rows = data.slice(headerRowIndex + 1)
+
+		// Track values for uniqueness checks
+		const uniqueTrackers: Record<string, Set<string>> = {}
+		for (const [field, def] of Object.entries(this.definition) as [
+			keyof T,
+			TDataImportProcessorColumnDefinition
+		][]) {
+			if (def.isUnique) {
+				uniqueTrackers[field as string] = new Set<string>()
+			}
+		}
 
 		rows.forEach((row) => {
 			// Skip completely blank rows
@@ -415,6 +427,21 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				if (colAnalysis) {
 					colAnalysis.resultData = resultValue
 					colAnalysis.isMissing = isMissing
+					colAnalysis.errorMessage = colAnalysis.errorMessage ?? isMissing ? 'Required field' : null
+				}
+
+				if (def.isUnique && resultValue !== null && resultValue !== undefined && resultValue !== '') {
+					const stringValue = resultValue.toString().trim().toLowerCase()
+					if (uniqueTrackers[field as string].has(stringValue)) {
+						rowHasErrors = true
+						if (colAnalysis) {
+							colAnalysis.errorMessage = colAnalysis.errorMessage
+								? `${colAnalysis.errorMessage}; Duplicate value detected`
+								: 'Duplicate value detected'
+						}
+					} else {
+						uniqueTrackers[field as string].add(stringValue)
+					}
 				}
 			}
 
