@@ -45,6 +45,11 @@ export type TDataImportProcessorColumnDefinitions<FIELD extends string> = {
 	[K in FIELD]: TDataImportProcessorColumnDefinition<keyof TDataImportProcessorTypescriptType>
 }
 
+export type TDataImportProcessorDefinition<FIELD extends string> = {
+	descriptionHTML: string
+	columns: TDataImportProcessorColumnDefinitions<FIELD>
+}
+
 export type TDataImportProcessorDataToArrayOptions = {
 	alternateNames?: Record<string, string[]>
 	includeRowsMissingRequireds?: boolean
@@ -70,7 +75,7 @@ export type TDataImportProcessorResult<T extends TDataImportProcessorColumnDefin
  * Class representing a generic data importer capable of parsing CSV input and transforming it into structured data
  * based on predefined column definitions.
  */
-export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions<Extract<keyof T, string>>> {
+export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extract<keyof T, string>>['columns']> {
 	public definition: T
 	public options: TDataImportProcessorDataToArrayOptions
 	private _colMap: {index: number; field: keyof T}[] = []

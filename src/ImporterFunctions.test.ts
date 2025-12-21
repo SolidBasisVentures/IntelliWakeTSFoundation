@@ -6,6 +6,7 @@ import {
 	TDataImportProcessor,
 	TDataImportProcessorColumnDefinitions,
 	TDataImportProcessorDataToArrayOptions,
+	TDataImportProcessorDefinition,
 	TDataImportProcessorResult
 } from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
@@ -14,17 +15,20 @@ import {DateOnlyNull} from './DateManager'
 
 it('ImporterFunctions - Dups', () => {
 	const definition = {
-		id: {
-			description: 'Unique identifier',
-			columnType: 'integer',
-			alternateNames: ['identifier'],
-			required: true,
-			sampleData: '1',
-			isUnique: true
+		descriptionHTML: '',
+		columns: {
+			id: {
+				description: 'Unique identifier',
+				columnType: 'integer',
+				alternateNames: ['identifier'],
+				required: true,
+				sampleData: '1',
+				isUnique: true
+			}
 		}
-	} satisfies TDataImportProcessorColumnDefinitions<any>
+	} satisfies TDataImportProcessorDefinition<any>
 
-	const importer = new DataImportProcessor(definition)
+	const importer = new DataImportProcessor(definition.columns)
 
 	importer.populateFromArray([
 		['identifier', 'active'],
