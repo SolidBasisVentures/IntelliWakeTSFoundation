@@ -82,6 +82,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		columns: {
 			rawData: string | null
 			rawHeader: string | null
+			displayValue: string | null
 			columnDefinition: TDataImportProcessorColumnDefinition | null
 			justify: 'left' | 'right' | 'center'
 			resultData: any // This will hold the typed value
@@ -262,7 +263,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					(def?.columnType === 'currency'
 						? (value: string | null) => ToNumberString(value, {currency: true, zeroBlank: true})
 						: def?.columnType === 'boolean'
-						? (value: string | null) => (!value ? '' : IsOn(value) ? 'True' : 'False')
+						? (value: string | null) =>
+								value === null || value === '' ? '' : IsOn(value) ? 'True' : 'False'
 						: null)
 
 				return {
@@ -270,6 +272,7 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					rawHeader: headerRow[index] ?? null,
 					columnDefinition: def,
 					display,
+					displayValue: !display ? cell : display(cell, row),
 					justify,
 					resultData: null,
 					isMissing: false,

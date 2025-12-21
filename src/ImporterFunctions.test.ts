@@ -90,6 +90,8 @@ id,alt,title,Rate,action_date,status
 `)
 
 	expect(importer.allErrors.length).toBe(3)
+	expect(importer.analysisRows[0].columns[5]?.displayValue).toBe('True')
+	expect(importer.analysisRows[1].columns[5]?.displayValue).toBe('False')
 })
 
 it('ImporterFunctions', () => {
