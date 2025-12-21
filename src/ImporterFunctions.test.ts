@@ -596,7 +596,7 @@ it('Set Alternate Names', () => {
 		id: ['identifier']
 	}
 	expect(SetAlternateNames(baseAlternateName, 'ids', 'id')).toEqual({
-		id: ['identifier', 'ids']
+		id: ['ids', 'identifier']
 	})
 	expect(SetAlternateNames(baseAlternateName, 'ids', 'name')).toEqual({
 		id: ['identifier'],

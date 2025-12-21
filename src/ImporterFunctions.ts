@@ -630,8 +630,7 @@ export function SetAlternateNames(
 	}
 
 	if (targetColumn) {
-		newAlternateNames[targetColumn] = newAlternateNames[targetColumn] ?? []
-		newAlternateNames[targetColumn].push(providedColumn)
+		newAlternateNames[targetColumn] = [providedColumn, ...(newAlternateNames[targetColumn] ?? [])]
 	}
 
 	return newAlternateNames
