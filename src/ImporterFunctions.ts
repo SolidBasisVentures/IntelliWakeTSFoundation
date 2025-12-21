@@ -1,4 +1,4 @@
-import {CleanNumberNull, IsOn} from './Functions'
+import {CleanNumberNull, IsOn, ObjectKeys} from './Functions'
 import {DateISO, DateOnly, DateOnlyNull, NowISOString, TimeOnly} from './DateManager'
 import {ParseCSV} from './DataConstructs'
 import {ToNumberString} from './StringManipulation'
@@ -171,8 +171,13 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 					}
 
 					return (
-						header === (field as string).toLowerCase() ||
-						def.alternateNames?.some((alt) => alt.trim().toLowerCase() === header)
+						(header === (field as string).toLowerCase() ||
+							def.alternateNames?.some((alt) => alt.trim().toLowerCase() === header)) &&
+						!ObjectKeys(this.options.alternateNames ?? {}).some(
+							(key) =>
+								field !== key &&
+								this.options.alternateNames?.[key]?.some((an) => an.trim().toLowerCase() === header)
+						)
 					)
 				})
 
