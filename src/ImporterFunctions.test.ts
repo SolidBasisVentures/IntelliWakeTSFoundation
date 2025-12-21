@@ -77,46 +77,48 @@ it('ImporterFunctions - AlternateNameOrder', () => {
 
 it('ImporterFunctions - Checking booleans', () => {
 	const definition = {
-		id: {
-			description: 'Unique identifier',
-			columnType: 'integer',
-			alternateNames: ['identifier'],
-			required: true,
-			sampleData: '1'
-		},
-		name: {
-			description: 'Name of the entity',
-			columnType: 'string',
-			alternateNames: ['title', 'label', 'description'],
-			length: 6,
-			warningMessage: (value) => (value.startsWith('Sec') ? `Value '${value}' is not recommended` : null),
-			sampleData: 'Name'
-		},
-		cost: {
-			description: 'Cost of item',
-			columnType: 'currency',
-			alternateNames: ['amount', 'price', 'rate'],
-			errorMessage: (value) => (!CleanNumber(value) ? `Cost must exist` : null)
-		},
-		action_date: {
-			description: 'Date of the item',
-			columnType: 'date',
-			errorMessage: (value) => (value.length < 8 || !DateOnlyNull(value) ? `Action Date must exist` : null)
-		},
-		other_date: {
-			description: 'Date of the item',
-			columnType: 'date'
-		},
-		is_active: {
-			description: 'Indicates if the entity is active',
-			columnType: 'boolean',
-			alternateNames: ['active', 'status'],
-			// required: true,
-			sampleData: 'true'
+		columns: {
+			id: {
+				description: 'Unique identifier',
+				columnType: 'integer',
+				alternateNames: ['identifier'],
+				required: true,
+				sampleData: '1'
+			},
+			name: {
+				description: 'Name of the entity',
+				columnType: 'string',
+				alternateNames: ['title', 'label', 'description'],
+				length: 6,
+				warningMessage: (value) => (value.startsWith('Sec') ? `Value '${value}' is not recommended` : null),
+				sampleData: 'Name'
+			},
+			cost: {
+				description: 'Cost of item',
+				columnType: 'currency',
+				alternateNames: ['amount', 'price', 'rate'],
+				errorMessage: (value) => (!CleanNumber(value) ? `Cost must exist` : null)
+			},
+			action_date: {
+				description: 'Date of the item',
+				columnType: 'date',
+				errorMessage: (value) => (value.length < 8 || !DateOnlyNull(value) ? `Action Date must exist` : null)
+			},
+			other_date: {
+				description: 'Date of the item',
+				columnType: 'date'
+			},
+			is_active: {
+				description: 'Indicates if the entity is active',
+				columnType: 'boolean',
+				alternateNames: ['active', 'status'],
+				// required: true,
+				sampleData: 'true'
+			}
 		}
-	} satisfies TDataImportProcessorColumnDefinitions<any>
+	} satisfies TDataImportProcessorDefinition<any>
 
-	const importer = new DataImportProcessor(definition)
+	const importer = new DataImportProcessor(definition.columns)
 
 	importer.populateFromCSV(`header,
 
