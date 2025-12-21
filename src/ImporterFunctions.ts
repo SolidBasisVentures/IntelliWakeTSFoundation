@@ -616,3 +616,23 @@ export function ArrayToImporterData<T extends TDataImportProcessorColumnDefiniti
 
 	return result
 }
+
+export function SetAlternateNames(
+	currentAlternateNames: Record<string, string[]> | null,
+	providedColumn: string,
+	targetColumn: string | null
+) {
+	const newAlternateNames = {...(currentAlternateNames ?? {})}
+
+	for (const key in newAlternateNames) {
+		newAlternateNames[key] = newAlternateNames[key].filter((k) => k.toLowerCase() !== providedColumn.toLowerCase())
+		if (!newAlternateNames[key].length) delete newAlternateNames[key]
+	}
+
+	if (targetColumn) {
+		newAlternateNames[targetColumn] = newAlternateNames[targetColumn] ?? []
+		newAlternateNames[targetColumn].push(providedColumn)
+	}
+
+	return newAlternateNames
+}

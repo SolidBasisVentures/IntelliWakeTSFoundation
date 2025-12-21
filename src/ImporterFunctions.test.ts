@@ -2,6 +2,7 @@ import {expect, it} from 'vitest'
 import {
 	ArrayToImporterData,
 	DataImportProcessor,
+	SetAlternateNames,
 	TDataImportProcessor,
 	TDataImportProcessorColumnDefinitions,
 	TDataImportProcessorDataToArrayOptions,
@@ -585,4 +586,24 @@ it('ImporterFunctions Failing', () => {
 	expect(importer.allWarnings.length).toBe(1)
 
 	expect(importer.allErrors.length).toBe(5)
+})
+
+it('Set Alternate Names', () => {
+	expect(SetAlternateNames(null, 'ids', 'id')).toEqual({
+		id: ['ids']
+	})
+	const baseAlternateName = {
+		id: ['identifier']
+	}
+	expect(SetAlternateNames(baseAlternateName, 'ids', 'id')).toEqual({
+		id: ['identifier', 'ids']
+	})
+	expect(SetAlternateNames(baseAlternateName, 'ids', 'name')).toEqual({
+		id: ['identifier'],
+		name: ['ids']
+	})
+	expect(SetAlternateNames(baseAlternateName, 'identifier', 'name')).toEqual({
+		name: ['identifier']
+	})
+	expect(SetAlternateNames(baseAlternateName, 'identifier', null)).toEqual({})
 })
