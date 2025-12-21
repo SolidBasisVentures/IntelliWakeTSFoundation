@@ -427,7 +427,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				if (colAnalysis) {
 					colAnalysis.resultData = resultValue
 					colAnalysis.isMissing = isMissing
-					colAnalysis.errorMessage = colAnalysis.errorMessage ?? isMissing ? 'Required field' : null
+					colAnalysis.errorMessage =
+						colAnalysis.errorMessage ?? (rowHasMissingRequired ? 'Required field' : null)
 				}
 
 				if (def.isUnique && resultValue !== null && resultValue !== undefined && resultValue !== '') {
@@ -499,14 +500,14 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 	get allErrors() {
 		return this.analysisRows.flatMap((row, rowIndex) =>
 			row.columns
-				.filter((col) => col.errorMessage || col.isMissing)
+				.filter((col) => col.errorMessage)
 				.map((col) => ({
 					providedColumn: col.rawData, // Using rawData as the providedColumn name for message parity
 					targetColumn:
 						(Object.keys(this.definition) as (keyof T)[]).find(
 							(key) => this.definition[key] === col.columnDefinition
 						) ?? null,
-					message: col.errorMessage ?? 'Required field',
+					message: col.errorMessage!,
 					rowIndex
 				}))
 		)

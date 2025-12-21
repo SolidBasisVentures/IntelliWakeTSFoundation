@@ -241,7 +241,7 @@ it('ImporterFunctions', () => {
 
 	expect(importer.allWarnings.length).toBe(1)
 
-	expect(importer.allErrors.length).toBe(4)
+	expect(importer.allErrors.length).toBe(8)
 })
 
 it('Exporter Functions', () => {
@@ -327,5 +327,5 @@ it('ImporterFunctions Failing', () => {
 
 	expect(importer.allWarnings.length).toBe(1)
 
-	expect(importer.allErrors.length).toBe(4)
+	expect(importer.allErrors.length).toBe(8)
 })
