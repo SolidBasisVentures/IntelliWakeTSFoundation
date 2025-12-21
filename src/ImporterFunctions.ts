@@ -46,7 +46,7 @@ export type TDataImportProcessorColumnDefinitions<FIELD extends string> = {
 }
 
 export type TDataImportProcessorDefinition<FIELD extends string> = {
-	descriptionHTML: string
+	descriptionHTML?: string | null
 	columns: TDataImportProcessorColumnDefinitions<FIELD>
 }
 
