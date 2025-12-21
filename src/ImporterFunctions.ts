@@ -204,13 +204,13 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 		const rows = data.slice(headerRowIndex + 1)
 
 		// Track values for uniqueness checks
-		const uniqueTrackers: Record<string, Set<string>> = {}
+		const uniqueTrackers: Record<string, Map<string, number[]>> = {}
 		for (const [field, def] of Object.entries(this.definition) as [
 			keyof T,
 			TDataImportProcessorColumnDefinition
 		][]) {
 			if (def.isUnique) {
-				uniqueTrackers[field as string] = new Set<string>()
+				uniqueTrackers[field as string] = new Map<string, number[]>()
 			}
 		}
 
@@ -427,22 +427,16 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				if (colAnalysis) {
 					colAnalysis.resultData = resultValue
 					colAnalysis.isMissing = isMissing
-					colAnalysis.errorMessage =
-						colAnalysis.errorMessage ?? (rowHasMissingRequired ? 'Required field' : null)
+					colAnalysis.errorMessage = colAnalysis.errorMessage ?? (isMissing ? 'Required field' : null)
 				}
 
 				if (def.isUnique && resultValue !== null && resultValue !== undefined && resultValue !== '') {
 					const stringValue = resultValue.toString().trim().toLowerCase()
-					if (uniqueTrackers[field as string].has(stringValue)) {
-						rowHasErrors = true
-						if (colAnalysis) {
-							colAnalysis.errorMessage = colAnalysis.errorMessage
-								? `${colAnalysis.errorMessage}; Duplicate value detected`
-								: 'Duplicate value detected'
-						}
-					} else {
-						uniqueTrackers[field as string].add(stringValue)
+					const tracker = uniqueTrackers[field as string]
+					if (!tracker.has(stringValue)) {
+						tracker.set(stringValue, [])
 					}
+					tracker.get(stringValue)!.push(this.analysisRows.length)
 				}
 			}
 
@@ -456,6 +450,27 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 				isValid
 			})
 		})
+
+		// Post-process uniqueness to mark ALL duplicates as errors
+		for (const [field, tracker] of Object.entries(uniqueTrackers)) {
+			tracker.forEach((indices) => {
+				if (indices.length > 1) {
+					indices.forEach((index) => {
+						const analysisRow = this.analysisRows[index]
+						const colMatchIndex = colMap.find((c) => (c.field as string) === field)?.index
+						if (colMatchIndex !== undefined) {
+							const colAnalysis = analysisRow.columns[colMatchIndex]
+							if (colAnalysis) {
+								colAnalysis.errorMessage = colAnalysis.errorMessage
+									? `${colAnalysis.errorMessage}; Duplicate value detected`
+									: 'Duplicate value detected'
+								analysisRow.isValid = false
+							}
+						}
+					})
+				}
+			})
+		}
 	}
 
 	get validRows() {

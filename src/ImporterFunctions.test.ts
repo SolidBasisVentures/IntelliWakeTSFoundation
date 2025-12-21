@@ -8,76 +8,147 @@ import {
 	TDataImportProcessorResult
 } from './ImporterFunctions'
 import {DeepEqual} from './DeepEqual'
+import {CleanNumber} from './Functions'
+import {DateOnlyNull} from './DateManager'
 
-const definition = {
-	id: {
-		description: 'Unique identifier',
-		columnType: 'integer',
-		alternateNames: ['identifier'],
-		required: true,
-		sampleData: '1'
-	},
-	TEMP: {
-		description: 'Temp Action',
-		columnType: 'string',
-		alternateNames: ['temporary'],
-		sampleData: 'TempZ',
-		default: (row) => (row[0] === '1' ? 'Fir' : '')
-	},
-	name: {
-		description: 'Name of the entity',
-		columnType: 'string',
-		alternateNames: ['title', 'label', 'description'],
-		length: 6,
-		warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
-		sampleData: 'Name'
-	},
-	cost: {
-		description: 'Cost of item',
-		columnType: 'number',
-		decimals: 2,
-		alternateNames: ['amount', 'price', 'rate'],
-		errorMessage: (value) => (!value ? `Cost required` : null),
-		default: '0'
-	},
-	action_date: {
-		description: 'Date of the item',
-		columnType: 'date',
-		errorMessage: (value) => (!value ? `Action Date required` : null)
-	},
-	other_date: {
-		description: 'Date of the item',
-		columnType: 'date'
-	},
-	is_active: {
-		description: 'Indicates if the entity is active',
-		columnType: 'boolean',
-		alternateNames: ['active', 'status'],
-		required: true,
-		sampleData: 'true'
-	}
-} satisfies TDataImportProcessorColumnDefinitions<any>
+it('ImporterFunctions - Dups', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1',
+			isUnique: true
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
 
-class ImporterTest extends DataImportProcessor<typeof definition> {
-	constructor(options?: TDataImportProcessorDataToArrayOptions) {
-		super(definition, options)
-	}
-}
+	const importer = new DataImportProcessor(definition)
 
-const datum: string[][] = [
-	['Header', 'Today'],
-	[],
-	[''],
-	['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-	['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
-	['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
-	['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
-	['', 'NEXT', 'Third', '', '', 'f', 'T3'],
-	['', '', '', '', '', ''],
-	[]
-]
+	importer.populateFromArray([
+		['id', 'active'],
+		['1', 'true'],
+		['2', 'true'],
+		['2', 'true'],
+		['2', 'false']
+	])
+
+	expect(importer.allErrors.length).toBe(3)
+})
+
+it('ImporterFunctions - Checking booleans', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1'
+		},
+		name: {
+			description: 'Name of the entity',
+			columnType: 'string',
+			alternateNames: ['title', 'label', 'description'],
+			length: 6,
+			warningMessage: (value) => (value.startsWith('Sec') ? `Value '${value}' is not recommended` : null),
+			sampleData: 'Name'
+		},
+		cost: {
+			description: 'Cost of item',
+			columnType: 'currency',
+			alternateNames: ['amount', 'price', 'rate'],
+			errorMessage: (value) => (!CleanNumber(value) ? `Cost must exist` : null)
+		},
+		action_date: {
+			description: 'Date of the item',
+			columnType: 'date',
+			errorMessage: (value) => (value.length < 8 || !DateOnlyNull(value) ? `Action Date must exist` : null)
+		},
+		other_date: {
+			description: 'Date of the item',
+			columnType: 'date'
+		},
+		is_active: {
+			description: 'Indicates if the entity is active',
+			columnType: 'boolean',
+			alternateNames: ['active', 'status'],
+			// required: true,
+			sampleData: 'true'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	const importer = new DataImportProcessor(definition)
+
+	importer.populateFromCSV(`header,
+
+id,alt,title,Rate,action_date,status
+1,ALTERNATE,First,'$1,111.111',12/5/2025,Y
+id,alt,title,Rate,action_date,status
+2,NEXT,SecondZ,2,2025-12-25,f
+,NEXT,third,,,f
+,,,,,
+`)
+
+	expect(importer.allErrors.length).toBe(3)
+})
 
 it('ImporterFunctions', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1',
+			isUnique: true
+		},
+		TEMP: {
+			description: 'Temp Action',
+			columnType: 'string',
+			alternateNames: ['temporary'],
+			sampleData: 'TempZ',
+			default: (row) => (row[0] === '1' ? 'Fir' : '')
+		},
+		name: {
+			description: 'Name of the entity',
+			columnType: 'string',
+			alternateNames: ['title', 'label', 'description'],
+			length: 6,
+			warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
+			sampleData: 'Name'
+		},
+		cost: {
+			description: 'Cost of item',
+			columnType: 'number',
+			decimals: 2,
+			alternateNames: ['amount', 'price', 'rate'],
+			errorMessage: (value) => (!value ? `Cost required` : null),
+			default: '0'
+		},
+		action_date: {
+			description: 'Date of the item',
+			columnType: 'date',
+			errorMessage: (value) => (!value ? `Action Date required` : null)
+		},
+		other_date: {
+			description: 'Date of the item',
+			columnType: 'date'
+		},
+		is_active: {
+			description: 'Indicates if the entity is active',
+			columnType: 'boolean',
+			alternateNames: ['active', 'status'],
+			required: true,
+			sampleData: 'true'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	class ImporterTest extends DataImportProcessor<typeof definition> {
+		constructor(options?: TDataImportProcessorDataToArrayOptions) {
+			super(definition, options)
+		}
+	}
+
 	const importer: TDataImportProcessor<typeof definition> = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
@@ -170,6 +241,75 @@ it('ImporterFunctions', () => {
 })
 
 it('ImporterFunctions', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1',
+			isUnique: true
+		},
+		TEMP: {
+			description: 'Temp Action',
+			columnType: 'string',
+			alternateNames: ['temporary'],
+			sampleData: 'TempZ',
+			default: (row) => (row[0] === '1' ? 'Fir' : '')
+		},
+		name: {
+			description: 'Name of the entity',
+			columnType: 'string',
+			alternateNames: ['title', 'label', 'description'],
+			length: 6,
+			warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
+			sampleData: 'Name'
+		},
+		cost: {
+			description: 'Cost of item',
+			columnType: 'number',
+			decimals: 2,
+			alternateNames: ['amount', 'price', 'rate'],
+			errorMessage: (value) => (!value ? `Cost required` : null),
+			default: '0'
+		},
+		action_date: {
+			description: 'Date of the item',
+			columnType: 'date',
+			errorMessage: (value) => (!value ? `Action Date required` : null)
+		},
+		other_date: {
+			description: 'Date of the item',
+			columnType: 'date'
+		},
+		is_active: {
+			description: 'Indicates if the entity is active',
+			columnType: 'boolean',
+			alternateNames: ['active', 'status'],
+			required: true,
+			sampleData: 'true'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	class ImporterTest extends DataImportProcessor<typeof definition> {
+		constructor(options?: TDataImportProcessorDataToArrayOptions) {
+			super(definition, options)
+		}
+	}
+
+	const datum: string[][] = [
+		['Header', 'Today'],
+		[],
+		[''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
+		['', '', '', '', '', ''],
+		[]
+	]
+
 	const importer: TDataImportProcessor<typeof definition> = new ImporterTest({
 		alternateNames: {
 			status: ['activeZ']
@@ -241,10 +381,60 @@ it('ImporterFunctions', () => {
 
 	expect(importer.allWarnings.length).toBe(1)
 
-	expect(importer.allErrors.length).toBe(8)
+	expect(importer.allErrors.length).toBe(5)
 })
 
 it('Exporter Functions', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1',
+			isUnique: true
+		},
+		TEMP: {
+			description: 'Temp Action',
+			columnType: 'string',
+			alternateNames: ['temporary'],
+			sampleData: 'TempZ',
+			default: (row) => (row[0] === '1' ? 'Fir' : '')
+		},
+		name: {
+			description: 'Name of the entity',
+			columnType: 'string',
+			alternateNames: ['title', 'label', 'description'],
+			length: 6,
+			warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
+			sampleData: 'Name'
+		},
+		cost: {
+			description: 'Cost of item',
+			columnType: 'number',
+			decimals: 2,
+			alternateNames: ['amount', 'price', 'rate'],
+			errorMessage: (value) => (!value ? `Cost required` : null),
+			default: '0'
+		},
+		action_date: {
+			description: 'Date of the item',
+			columnType: 'date',
+			errorMessage: (value) => (!value ? `Action Date required` : null)
+		},
+		other_date: {
+			description: 'Date of the item',
+			columnType: 'date'
+		},
+		is_active: {
+			description: 'Indicates if the entity is active',
+			columnType: 'boolean',
+			alternateNames: ['active', 'status'],
+			required: true,
+			sampleData: 'true'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
 	expect(ArrayToImporterData(definition)).toEqual([
 		['id', 'TEMP', 'name', 'cost', 'action_date', 'other_date', 'is_active'],
 		[
@@ -267,6 +457,69 @@ it('Exporter Functions', () => {
 })
 
 it('ImporterFunctions Failing', () => {
+	const definition = {
+		id: {
+			description: 'Unique identifier',
+			columnType: 'integer',
+			alternateNames: ['identifier'],
+			required: true,
+			sampleData: '1',
+			isUnique: true
+		},
+		TEMP: {
+			description: 'Temp Action',
+			columnType: 'string',
+			alternateNames: ['temporary'],
+			sampleData: 'TempZ',
+			default: (row) => (row[0] === '1' ? 'Fir' : '')
+		},
+		name: {
+			description: 'Name of the entity',
+			columnType: 'string',
+			alternateNames: ['title', 'label', 'description'],
+			length: 6,
+			warningMessage: (value) => (value === 'SecondZ' ? `Value '${value}' not allowed` : null),
+			sampleData: 'Name'
+		},
+		cost: {
+			description: 'Cost of item',
+			columnType: 'number',
+			decimals: 2,
+			alternateNames: ['amount', 'price', 'rate'],
+			errorMessage: (value) => (!value ? `Cost required` : null),
+			default: '0'
+		},
+		action_date: {
+			description: 'Date of the item',
+			columnType: 'date',
+			errorMessage: (value) => (!value ? `Action Date required` : null)
+		},
+		other_date: {
+			description: 'Date of the item',
+			columnType: 'date'
+		},
+		is_active: {
+			description: 'Indicates if the entity is active',
+			columnType: 'boolean',
+			alternateNames: ['active', 'status'],
+			required: true,
+			sampleData: 'true'
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	const datum: string[][] = [
+		['Header', 'Today'],
+		[],
+		[''],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['1', 'ALTERNATE', 'First', '$1,111.111', '12/5/2025', 'Y', 'T1'],
+		['id', 'alt', 'title', 'Rate', 'action_date', 'activeZ', 'Temp'],
+		['2', 'NEXT', 'SecondZ', '', '', 'f', 'T2'],
+		['', 'NEXT', 'Third', '', '', 'f', 'T3'],
+		['', '', '', '', '', ''],
+		[]
+	]
+
 	const importer = new DataImportProcessor(
 		{
 			...definition,
@@ -327,5 +580,5 @@ it('ImporterFunctions Failing', () => {
 
 	expect(importer.allWarnings.length).toBe(1)
 
-	expect(importer.allErrors.length).toBe(8)
+	expect(importer.allErrors.length).toBe(5)
 })
