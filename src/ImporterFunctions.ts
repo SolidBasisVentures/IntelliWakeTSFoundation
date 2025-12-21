@@ -446,7 +446,8 @@ export class DataImportProcessor<T extends TDataImportProcessorColumnDefinitions
 			}
 
 			const isValid =
-				(!rowHasMissingRequired && !rowHasErrors) || (this.options?.includeRowsMissingRequireds ?? false)
+				!this.missingRequiredHeaders.length &&
+				((!rowHasMissingRequired && !rowHasErrors) || (this.options?.includeRowsMissingRequireds ?? false))
 
 			this.analysisRows.push({
 				rowRaw: row,
