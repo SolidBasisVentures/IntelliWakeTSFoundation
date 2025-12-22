@@ -691,8 +691,10 @@ export type NonNullableProperties<T> = {
  * Parses a CSV string into a 2D array of strings.
  * Handles quoted fields and escaped double quotes.
  */
-export function ParseCSV(csv: string): string[][] {
+export function ParseCSV(csv: string | null | undefined): string[][] {
 	// 1. Remove UTF-8 Byte Order Mark if present
+	if (!csv) return []
+
 	if (csv.startsWith('\ufeff')) {
 		csv = csv.slice(1)
 	}
