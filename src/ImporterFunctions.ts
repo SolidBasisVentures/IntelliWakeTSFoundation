@@ -16,21 +16,22 @@ export type TDataImportProcessorTypescriptType = {
 }
 
 export type TDataImportProcessorColumnDefinition<
-	T extends keyof TDataImportProcessorTypescriptType = keyof TDataImportProcessorTypescriptType
+	T extends keyof TDataImportProcessorTypescriptType = keyof TDataImportProcessorTypescriptType,
+	R extends TDataImportProcessorColumnDefinitions<any> = any
 > = {
 	columnType: T
-	default?: string | null | ((row: string[]) => string | null)
+	default?: string | null | ((row: TDataImportProcessorResult<R>) => string | null)
 	description?: string
 	length?: number
 	decimals?: number
-	customConvertor?: (value: string, row: string[]) => any
+	customConvertor?: (value: string, row: TDataImportProcessorResult<R>) => any
 	alternateNames?: string[]
 	required?: boolean
 	isUnique?: boolean
 	sampleData?: string | string[]
-	errorMessage?: (value: string | null | undefined, row: string[]) => string | null
-	warningMessage?: (value: string | null | undefined, row: string[]) => string | null
-	display?: (value: string | null | undefined, row: (string | null)[]) => string | null
+	errorMessage?: (value: string | null | undefined, row: TDataImportProcessorResult<R>) => string | null
+	warningMessage?: (value: string | null | undefined, row: TDataImportProcessorResult<R>) => string | null
+	display?: (value: string | null | undefined, row: TDataImportProcessorResult<R>) => string | null
 	justify?: 'left' | 'right' | 'center' | null
 }
 
@@ -42,7 +43,7 @@ export type TDataImportProcessorColumnDefinition<
  * } satisfies TImporterColumnDefinitions<any>
  */
 export type TDataImportProcessorColumnDefinitions<FIELD extends string> = {
-	[K in FIELD]: TDataImportProcessorColumnDefinition<keyof TDataImportProcessorTypescriptType>
+	[K in FIELD]: TDataImportProcessorColumnDefinition<keyof TDataImportProcessorTypescriptType, any>
 }
 
 export type TDataImportProcessorDefinition<FIELD extends string> = {
@@ -298,7 +299,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 					columnKey: match?.field ?? null,
 					columnDefinition: def,
 					display,
-					displayValue: !display ? cell : display(cell, row),
+					displayValue: '', // Will be calculated after record is populated
 					justify,
 					resultData: null,
 					isMissing: false,
@@ -315,26 +316,11 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 				const rawValue = colMatchIndex !== undefined ? row[colMatchIndex] ?? '' : ''
 				const colAnalysis = colMatchIndex !== undefined ? analysisColumns[colMatchIndex] : null
 
-				if (def.warningMessage) {
-					const message = def.warningMessage(rawValue, row)
-					if (message && colAnalysis) {
-						colAnalysis.warningMessage = message
-					}
-				}
-
-				if (def.errorMessage) {
-					const message = def.errorMessage(rawValue, row)
-					if (message) {
-						rowHasErrors = true
-						if (colAnalysis) colAnalysis.errorMessage = message
-					}
-				}
-
 				let resultValue: any = null
 				let isMissing = false
 
 				if (def.customConvertor) {
-					resultValue = def.customConvertor(rawValue, row)
+					resultValue = def.customConvertor(rawValue, record)
 					if (def.required && !resultValue) {
 						isMissing = true
 						rowHasMissingRequired = true
@@ -347,7 +333,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (resultValue === null) {
 								if (def.default !== undefined) {
 									resultValue = CleanNumberNull(
-										typeof def.default === 'function' ? def.default(row) : def.default,
+										typeof def.default === 'function' ? def.default(record) : def.default,
 										def.decimals ?? 2
 									)
 								} else if (def.required) {
@@ -362,7 +348,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (resultValue === null) {
 								if (def.default !== undefined) {
 									resultValue = CleanNumberNull(
-										typeof def.default === 'function' ? def.default(row) : def.default
+										typeof def.default === 'function' ? def.default(record) : def.default
 									)
 								} else if (def.required) {
 									isMissing = true
@@ -375,7 +361,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (!rawValue) {
 								if (def.default !== null && def.default !== undefined) {
 									resultValue = IsOn(
-										typeof def.default === 'function' ? def.default(row) : def.default
+										typeof def.default === 'function' ? def.default(record) : def.default
 									)
 								} else if (def.required) {
 									isMissing = true
@@ -393,7 +379,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (resultValue === null) {
 								if (def.default !== undefined) {
 									resultValue = DateOnlyNull(
-										typeof def.default === 'function' ? def.default(row) : def.default
+										typeof def.default === 'function' ? def.default(record) : def.default
 									)
 								} else if (def.required) {
 									isMissing = true
@@ -407,7 +393,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (resultValue === null) {
 								if (def.default !== undefined) {
 									resultValue = TimeOnly(
-										typeof def.default === 'function' ? def.default(row) : def.default
+										typeof def.default === 'function' ? def.default(record) : def.default
 									)
 								} else if (def.required) {
 									isMissing = true
@@ -421,7 +407,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 							if (resultValue === null) {
 								if (def.default !== undefined) {
 									resultValue = DateISO(
-										typeof def.default === 'function' ? def.default(row) : def.default
+										typeof def.default === 'function' ? def.default(record) : def.default
 									)
 								} else if (def.required) {
 									isMissing = true
@@ -433,7 +419,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 						default:
 							if (!rawValue) {
 								if (def.default !== undefined) {
-									resultValue = typeof def.default === 'function' ? def.default(row) : def.default
+									resultValue = typeof def.default === 'function' ? def.default(record) : def.default
 								} else if (def.required) {
 									isMissing = true
 									rowHasMissingRequired = true
@@ -453,6 +439,22 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 				}
 
 				record[field] = resultValue
+
+				if (def.warningMessage) {
+					const message = def.warningMessage(rawValue, record)
+					if (message && colAnalysis) {
+						colAnalysis.warningMessage = message
+					}
+				}
+
+				if (def.errorMessage) {
+					const message = def.errorMessage(rawValue, record)
+					if (message) {
+						rowHasErrors = true
+						if (colAnalysis) colAnalysis.errorMessage = message
+					}
+				}
+
 				if (colAnalysis) {
 					colAnalysis.resultData = resultValue
 					colAnalysis.isMissing = isMissing
@@ -468,6 +470,14 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 					tracker.get(stringValue)!.push(this.analysisRows.length)
 				}
 			}
+
+			// Finalize display values now that the record is fully populated
+			analysisColumns.forEach((col) => {
+				if (col.columnDefinition) {
+					const display = col.display
+					col.displayValue = !display ? col.rawData : display(col.rawData, record)
+				}
+			})
 
 			const isValid =
 				!this.missingRequiredHeaders.length &&

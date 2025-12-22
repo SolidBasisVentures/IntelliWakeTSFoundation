@@ -75,6 +75,31 @@ it('ImporterFunctions - AlternateNameOrder', () => {
 	expect(importer.columnMapping.find((cm) => cm.providedColumn === 'colA')?.targetColumn).toBe('targetCol')
 })
 
+it('ImporterFunctions - Complex Warning', () => {
+	const definition = {
+		colA: {
+			columnType: 'string'
+		},
+		colB: {
+			columnType: 'string',
+			warningMessage: (value, row) => {
+				return !value && row.colA === 'One' ? 'You have been warned' : null
+			}
+		}
+	} satisfies TDataImportProcessorColumnDefinitions<any>
+
+	let importer = new DataImportProcessor(definition)
+
+	importer.populateFromArray([
+		['colA', 'colB'],
+		['1', '2'],
+		['One', '']
+	])
+
+	expect(importer.allWarnings.length).toBe(1)
+	expect(importer.analysisRows[1]?.columns[1]?.warningMessage).toBe('You have been warned')
+})
+
 it('ImporterFunctions - Checking booleans', () => {
 	const definition = {
 		columns: {
