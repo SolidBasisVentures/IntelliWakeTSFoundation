@@ -695,8 +695,10 @@ export function ParseCSV(csv: string | null | undefined): string[][] {
 	// 1. Remove UTF-8 Byte Order Mark if present
 	if (!csv) return []
 
-	if (csv.startsWith('\ufeff')) {
-		csv = csv.slice(1)
+	let useCSV = csv.toString()
+
+	if (useCSV.startsWith('\ufeff')) {
+		useCSV = useCSV.slice(1)
 	}
 
 	const result: string[][] = []
@@ -704,9 +706,9 @@ export function ParseCSV(csv: string | null | undefined): string[][] {
 	let currentField = ''
 	let inQuotes: string | null = null
 
-	for (let i = 0; i < csv.length; i++) {
-		const char = csv[i]
-		const nextChar = csv[i + 1]
+	for (let i = 0; i < useCSV.length; i++) {
+		const char = useCSV[i]
+		const nextChar = useCSV[i + 1]
 
 		if (inQuotes) {
 			if (char === inQuotes) {
