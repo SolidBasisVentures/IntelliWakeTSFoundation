@@ -90,7 +90,7 @@ it('ImporterFunctions - Checking booleans', () => {
 				columnType: 'string',
 				alternateNames: ['title', 'label', 'description'],
 				length: 6,
-				warningMessage: (value) => (value.startsWith('Sec') ? `Value '${value}' is not recommended` : null),
+				warningMessage: (value) => (value?.startsWith('Sec') ? `Value '${value}' is not recommended` : null),
 				sampleData: 'Name'
 			},
 			cost: {
@@ -102,7 +102,8 @@ it('ImporterFunctions - Checking booleans', () => {
 			action_date: {
 				description: 'Date of the item',
 				columnType: 'date',
-				errorMessage: (value) => (value.length < 8 || !DateOnlyNull(value) ? `Action Date must exist` : null)
+				errorMessage: (value) =>
+					(value ?? '').length < 8 || !DateOnlyNull(value) ? `Action Date must exist` : null
 			},
 			other_date: {
 				description: 'Date of the item',

@@ -28,9 +28,9 @@ export type TDataImportProcessorColumnDefinition<
 	required?: boolean
 	isUnique?: boolean
 	sampleData?: string | string[]
-	errorMessage?: (value: string, row: string[]) => string | null
-	warningMessage?: (value: string, row: string[]) => string | null
-	display?: (value: string | null, row: (string | null)[]) => string | null
+	errorMessage?: (value: string | null | undefined, row: string[]) => string | null
+	warningMessage?: (value: string | null | undefined, row: string[]) => string | null
+	display?: (value: string | null | undefined, row: (string | null)[]) => string | null
 	justify?: 'left' | 'right' | 'center' | null
 }
 
@@ -92,7 +92,7 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 			columnDefinition: TDataImportProcessorColumnDefinition | null
 			justify: 'left' | 'right' | 'center'
 			resultData: any // This will hold the typed value
-			display?: ((value: string | null, row: (string | null)[]) => string | null) | null
+			display?: ((value: string | null | undefined, row: (string | null)[]) => string | null) | null
 			isMissing: boolean
 			errorMessage: string | null
 			warningMessage: string | null
@@ -282,10 +282,14 @@ export class DataImportProcessor<T extends TDataImportProcessorDefinition<Extrac
 				const display =
 					def?.display ??
 					(def?.columnType === 'currency'
-						? (value: string | null) => ToNumberString(value, {currency: true, zeroBlank: true})
+						? (value: string | null | undefined) => ToNumberString(value, {currency: true, zeroBlank: true})
 						: def?.columnType === 'boolean'
-						? (value: string | null) =>
-								value === null || value === '' ? '' : IsOn(value) ? 'True' : 'False'
+						? (value: string | null | undefined) =>
+								value === null || value === undefined || value === ''
+									? ''
+									: IsOn(value)
+									? 'True'
+									: 'False'
 						: null)
 
 				return {
