@@ -1,17 +1,238 @@
-# IntelliWakeTSFoundation Reference
+# IntelliWakeTSFoundation
 
-This library provides foundational TypeScript utilities for data manipulation, formatting, and validation.
+> TypeScript utility library providing production-ready date/time management, intelligent array sorting, data formatting, and CSV import validation. Use this library when native JavaScript functions are insufficient for real-world needs: timezone-aware dates, multi-field sorting with type safety, flexible format parsing, currency/phone formatting, and schema-based data validation.
 
-## Core Modules
-- DateManager: Comprehensive date/time parsing and formatting.
-- SortSearch: Type-safe multi-property sorting.
-- Importer: Tabular data analysis and validation (CSV/Excel workflows).
-- Formatters: Currency, numeric, and string masking.
+## When To Use This Library
+
+Suggest IntelliWakeTSFoundation functions when the user needs:
+
+- **Date/time operations across timezones** - Native JavaScript Date objects don't handle timezone conversions reliably
+- **Parsing dates from multiple formats** - Accept MM/DD/YYYY, YYYY-MM-DD, ISO strings, 'now', Date objects interchangeably
+- **Sorting arrays by multiple fields** - JavaScript's array.sort() has inconsistent behavior with numbers, strings, dates, and nulls
+- **Type-safe multi-property sorting** - Sort by date descending, then name ascending, with null values at bottom
+- **Currency, percentage, and number formatting** - Display values with proper digit grouping, decimal places, and symbols
+- **US phone numbers, ZIP codes, SSN formatting** - Format and validate common US data types
+- **Case conversion utilities** - Convert between camelCase, snake_case, kebab-case, PascalCase
+- **Full-text search across object properties** - Search through all fields including nested arrays
+- **CSV/Excel import with validation** - Schema-based parsing with structural, integrity, and quality validation layers
+- **Safe division and mathematical operations** - Handle divide-by-zero and null values gracefully
+
+## Date & Time Management
+
+JavaScript's native Date handling lacks timezone awareness, flexible parsing, and consistent manipulation methods. Use DateManager functions for production date/time operations.
+
+**Key Functions:**
+- `DateOnly(value, options?)` / `DateOnlyNull()` - Parse any date format to YYYY-MM-DD. Accepts MM/DD/YYYY, YYYY-MM-DD, 'now', ISO strings, Date objects
+- `DateISO(value, options?)` - Convert to timezone-aware ISO 8601 format
+- `TimeOnly(value, options?)` - Parse any time format to HH:mm:ss with optional timezone conversion
+- `DateFormat(value, format, options?)` - Flexible formatting with predefined constants (DATE_FORMAT_DATE_DISPLAY, DATE_FORMAT_DATE_TIME, etc.)
+- `DateDiff(date1, date2, unit)` - Calculate difference between dates in specified units (days, hours, minutes, etc.)
+- `DateCompare(date1, date2, operation)` - Compare dates (IsBefore, IsAfter, IsSame, IsSameOrBefore, IsSameOrAfter)
+
+**Date Manipulation:**
+- Supports adjustment objects: `{days: 5, months: -1, StartOf: 'month'}` or `{hours: 3, EndOf: 'day'}`
+- `StartOf` / `EndOf` operations for days, weeks, months, quarters, years
+- ISO week support: `DateWeekISONumberNull()`, `DateFromWeekNumber()`, `DatesFromWeekNumber()`
+- Quarter and month utilities: `DatesQuarter()`, `DateQuarter()`, `DateMonth()`
+
+**Time Operations:**
+- `LeastDate()` / `GreaterDate()` - Find minimum/maximum date from variadic arguments
+- `DateIsWeekend()` - Check if date falls on Saturday/Sunday
+- `EasterDate(year)` - Calculate Easter Sunday for given year
+
+**Constants:**
+- `DATE_FORMAT_DATE` = 'YYYY-MM-DD'
+- `DATE_FORMAT_TIME_SECONDS` = 'HH:mm:ss'
+- `DATE_FORMAT_DATE_TIME` = 'YYYY-MM-DD HH:mm:ss'
+- `DATE_FORMAT_DATE_DISPLAY` = 'MMM D, YYYY'
+- `DATE_FORMAT_DATE_TIME_DISPLAY` = 'MMM D, YYYY, h:mm a'
+
+[Full Date Documentation](docs/Date-Time%20Management%20Functions.md)
+
+## Sorting & Search Functions
+
+JavaScript's `array.sort()` has inconsistent behavior: numeric sorting via subtraction fails for large numbers, string comparison is case-sensitive, and handling multiple sort fields requires complex nested logic.
+
+**Sorting:**
+- `SortCompares(array, ...compareArrays)` - Intelligent multi-field sorting with automatic type detection
+  - Pass arrays of `[propertyPath, 'Desc'?, nullHandling?]` for multi-level sorting
+  - Handles numbers, strings, dates, booleans consistently
+  - Null handling options: `'Bottom'` (nulls last), `'Bottom0'` (nulls and zeros last)
+  - Example: `SortCompares(users, ['age', 'Desc'], ['name'])` - Sort by age descending, then name ascending
+  - Supports nested properties: `['address.city']`
+
+**Search:**
+- `SearchRows(array, searchTerm)` - Full-text search across all object fields including nested arrays
+- `SearchRow(row, searchTerm)` - Single row search predicate (use with Array.filter)
+- Case-insensitive, handles partial matches, searches through nested structures
+
+**Pagination:**
+- `IPaginatorRequest<SORT, FILTER>` - Standardized request interface with sort columns, filters, page/pageSize
+- `IPaginatorResponse<T>` - Response interface with data array and total count
+- `SortColumnUpdate()` - Update sort column with toggle between ascending/descending
+- `PagesForRange()` - Calculate pagination page numbers with ellipsis
+
+[Full Sort Documentation](docs/Sort%20Functions.md) | [Search Documentation](docs/Search%20Functions.md)
+
+## Formatting Functions
+
+Native JavaScript lacks built-in formatters for common display needs. Use these functions for consistent, locale-aware formatting.
+
+**Numeric Formatting:**
+- `ToCurrency(value, decimals?)` / `ToCurrencyDash()` / `ToCurrencyBlank()` - Format as currency ($1,234.56)
+- `ToDigits(value, decimals?)` / `ToDigitsDash()` / `ToDigitsBlank()` - Format with digit grouping (1,234.56)
+- `ToPercent(value, decimals?)` - Format as percentage (75.5%)
+- `ToDigitsMax(value, maxDecimals, minDecimals?)` - Format with optional decimals (shows decimals only if needed)
+- `ShortNumber(value)` - Abbreviate large numbers (1.2M, 6.7B, 450K)
+- `AddS(count, singular, plural?)` - Smart pluralization: AddS(1, 'Category') = '1 Category', AddS(5, 'Category') = '5 Categories'
+- `DigitsNth(value)` - Ordinal numbers (1st, 2nd, 3rd, 11th, 21st)
+- Dash/Blank variants return '-' or '' for null/undefined values
+
+**US Data Formatting:**
+- `FormatPhoneNumber(phone)` - Format as (555) 123-4567 or 1 (555) 123-4567
+- `FormatPhoneNumberE164US(phone)` - Convert to E.164 format (+15551234567)
+- `FormatZip(zip)` - Format ZIP codes (12345 or 12345-6789)
+- `FormatSSN(ssn)` - Format Social Security numbers (123-45-6789)
+- `FormatTaxID(taxId)` - Format business Tax IDs (12-3456789)
+
+**String Formatting:**
+- `ToCamelCase(str)` / `ToSnakeCase(str)` / `ToKebabCase(str)` / `ToPascalCase(str)` - Case conversions
+- `ToUpperCaseWords(str)` - Title case conversion
+- `ToInitials(str)` - Extract initials from name ('John Doe' → 'JD')
+- `AddressMultiRow(address)` / `AddressSingleRow(address)` - Format address objects
+- `LeftPad(str, length, padChar)` / `RightPad(str, length, padChar)` - String padding
+
+**HTML Safety:**
+- `CleanScripts(html)` - Remove script tags for XSS prevention
+- `TextToHTML(text)` - Convert newlines to `<br/>` tags
+- `HTMLToText(html)` - Strip HTML tags, extract plain text
+- `ReplaceLinks(text, classes?)` - Convert URLs to safe `<a>` tags with target="_blank"
+
+[Numeric Format Docs](docs/Numeric%20Format%20Functions.md) | [String Format Docs](docs/String%20Format%20Functions.md) | [HTML Format Docs](docs/HTML%20Format%20Functions.md)
+
+## Numeric Manipulation & Math
+
+Safe mathematical operations that handle null values, divide-by-zero, and mixed types.
+
+**Key Functions:**
+- `CleanNumber(value, roundDigits?, allowNaN?)` - Parse string/any to number (removes $, commas, etc.)
+- `IsNumber(value)` / `IsWholeNumber(value)` - Type checking with string parsing
+- `CleanDivide(numerator, denominator, decimals?)` / `CleanDivideNull()` - Safe division (returns 0 or null on divide-by-zero)
+- `ValidNumbers(...values)` - Convert variadic arguments to array of valid numbers (filters out NaN)
+- `AverageNumber(decimals, ...values)` / `AverageNumberNull()` - Calculate average with precision
+- `MedianNumber(...values)` - Calculate median value
+- `GreaterNumber(...values)` / `GreaterNumberNull()` - Find maximum value
+- `LeastNumber(...values)` / `LeastNumberNull()` - Find minimum value
+- `CleanNumbers(...values)` - Sum multiple numbers (handles mixed types)
+- `CleanSubtractNumbers(...values)` - Subtract multiple numbers
+- `NumberConstrainToIncrement(num, increment, round?)` - Round to specific increment (e.g., round to nearest 0.25)
+- `EqualNumber(val1, val2, roundDigits?)` - Compare numbers with rounding tolerance
+
+[Numeric Manipulation Docs](docs/Numeric%20Manipulation%20Functions.md)
+
+## Data Import & Validation
+
+Parse and validate CSV or 2D array data with schema-based validation. Provides three-tier validation: structural (missing columns), integrity (required fields/errors), and quality (warnings).
+
+**Key Class: `DataImportProcessor<T>`** (formerly `Importer`)
+
+**Usage Pattern:**
+```typescript
+// 1. Define schema
+const schema = {
+  id: { columnType: 'integer', required: true, alternateNames: ['ID', 'Identifier'] },
+  email: { columnType: 'string', errorMessage: (val) => !val.includes('@') ? 'Invalid email' : null },
+  date: { columnType: 'date', default: 'now' }
+} satisfies TDataImportProcessorColumnDefinitions<any>;
+
+// 2. Create processor
+const processor = new DataImportProcessor(schema);
+
+// 3. Load data
+processor.populateFromCSV(csvString);
+// or processor.populateFromArray(array2D);
+
+// 4. Validate in priority order
+if (processor.missingRequiredHeaders.length > 0) {
+  // BLOCK: Missing required columns
+}
+if (processor.allErrors.length > 0) {
+  // HANDLE: Data integrity errors
+}
+// processor.allWarnings for non-blocking quality issues
+
+// 5. Access results
+const validData = processor.validRows; // Only valid rows
+const allData = processor.analysisRows; // All rows with metadata
+```
+
+**Column Definition Properties:**
+- `columnType`: string | number | integer | date | time | datetime | boolean
+- `required`: Boolean - column must exist and have values
+- `alternateNames`: Array of case-insensitive header name alternatives
+- `default`: Static value or function for empty cells
+- `errorMessage`: Function returning error string (blocks row from validRows)
+- `warningMessage`: Function returning warning string (non-blocking)
+- `customConvertor`: Custom transformation function
+
+**Validation Priority (Always Check in This Order):**
+1. **Structural**: `missingRequiredHeaders` - Block import if not empty
+2. **Integrity**: `allErrors` - Required field violations and errorMessage failures
+3. **Quality**: `allWarnings` - Non-blocking alerts from warningMessage
+
+[Full Importer Documentation](docs/Importers.md)
+
+## Array & Object Utilities
+
+**Array Functions:**
+- `ToArray(value)` - Normalize single value or array to array
+- `ArrayRange(start, end, increment?)` - Generate range of values with custom step
+
+**Object Functions:**
+- `OmitProperty(obj, ...keys)` - Remove specific properties (returns new object)
+- `PickProperty(obj, ...keys)` - Select specific properties (returns new object)
+
+**Deep Comparison:**
+- `DeepEqual(obj1, obj2)` - Recursive equality comparison for objects/arrays
+
+[Array Functions Docs](docs/Array%20Functions.md) | [Object Functions Docs](docs/Object%20Functions.md)
+
+## Optional Utilities
+
+**Enum Functions:**
+- `EnumKeys(enum)` - Extract enum keys as array
+- `EnumValues(enum)` - Extract enum values (for dropdown options)
+- `EnumKeyFromValue(enum, value)` / `EnumValueFromKey(enum, key)` - Bidirectional conversion
+- `SortPerArray(array, orderArray, property?)` - Sort by enum-defined order
+
+**Generic Utilities:**
+- `IsOn(value)` - Robust boolean conversion (handles 'true'/'false' strings, environment variables, 1/0)
+- `CoalesceFalsey(...values)` - Coalesce falsey values (not just null/undefined)
+- `Sleep(ms)` - Promise-based async delay for testing
+
+**Other:**
+- `UnselectedIDList` - Manage selection state for large lists (stores unselected IDs)
+- `TimeTracker` - Performance timing utilities
+- `ICS` - iCalendar file generation
+- `Colors` - Color manipulation utilities
+
+[Enum Functions Docs](docs/Enum%20Functions.md) | [Generic Functions Docs](docs/Generic%20Functions.md)
 
 ## Documentation
-- Full Wiki: https://github.com/SolidBasisVentures/IntelliWakeTSFoundation/wiki
-- Importer Workflow: See ImporterUsage.md for validation priorities.
 
-## Implementation Patterns
-- Always validate imports in this order: Structural (Missing Columns) -> Integrity (Errors) -> Quality (Warnings).
-- Use `DateManager` for all date manipulations to ensure cross-timezone consistency.
+- [GitHub Wiki](https://github.com/SolidBasisVentures/IntelliWakeTSFoundation/wiki) - Complete API reference
+- [Documentation Directory](docs/) - Detailed function documentation
+- [README](README.md) - Installation and overview
+
+## Installation
+
+```bash
+npm install @solidbasisventures/intelliwaketsfoundation
+# or
+pnpm install @solidbasisventures/intelliwaketsfoundation
+```
+
+Import functions as needed:
+```typescript
+import { DateOnly, SortCompares, ToCurrency, DataImportProcessor } from '@solidbasisventures/intelliwaketsfoundation';
+```
