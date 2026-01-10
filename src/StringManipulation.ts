@@ -477,9 +477,9 @@ export type TNumberStringOptions = {
 	/** Formats as a percent (multiplies times 100) */
 	percent?: boolean
 	/** Shows number in a very short format. If array provided, uses the lowest value to determine the format for consistency */
-	short?: boolean | (number | null)[]
+	short?: boolean | (number | null | undefined)[]
 	/** Shows number in a somewhat shortened format. If array provided, uses the lowest value to determine the format for consistency */
-	shorten?: boolean | (number | null)[]
+	shorten?: boolean | (number | null | undefined)[]
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
