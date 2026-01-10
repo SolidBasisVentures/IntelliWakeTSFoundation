@@ -523,8 +523,12 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	}
 
 	// Determine if short/shorten should be applied and find the reference value
-	const shortMode = Array.isArray(options?.short) ? [...options?.short, numberNull] : !!options?.short
-	const shortenMode = Array.isArray(options?.shorten) ? [...options?.shorten, numberNull] : !!options?.shorten
+	const shortMode = Array.isArray(options?.short)
+		? [...(options?.short ?? null), numberNull].filter((v) => v)
+		: !!options?.short
+	const shortenMode = Array.isArray(options?.shorten)
+		? [...(options?.shorten ?? null), numberNull].filter((v) => v)
+		: !!options?.shorten
 
 	// Find the lowest absolute value from the array to determine consistent formatting
 	let referenceValue = (numberNull ?? 0) * (options?.percent ? 100 : 1)
