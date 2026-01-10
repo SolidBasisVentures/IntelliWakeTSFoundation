@@ -1,3 +1,5 @@
+// noinspection NonAsciiCharacters
+
 /**
  * Converts a string to snake_case.
  *
@@ -475,9 +477,9 @@ export type TNumberStringOptions = {
 	/** Formats as a percent (multiplies times 100) */
 	percent?: boolean
 	/** Shows number in a very short format. If array provided, uses the lowest value to determine the format for consistency */
-	short?: boolean | number[]
+	short?: boolean | (number | null)[]
 	/** Shows number in a somewhat shortened format. If array provided, uses the lowest value to determine the format for consistency */
-	shorten?: boolean | number[]
+	shorten?: boolean | (number | null)[]
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
@@ -972,9 +974,9 @@ export function ParseInternationalNumber(input: string): IPhoneComponents {
 	raw = raw.replace(/^0+/, '')
 
 	// Parsing logic depending on country
-	let areaCode = ''
-	let exchangeNumber = ''
-	let subscriberNumber = ''
+	let areaCode: string
+	let exchangeNumber: string
+	let subscriberNumber: string
 
 	if (countryCode === '1') {
 		// NANP (US/Canada): NPA NXX XXXX (3-3-4)

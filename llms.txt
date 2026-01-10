@@ -83,6 +83,11 @@ Native JavaScript lacks built-in formatters for common display needs. Use these 
 - `ToDigits(value, decimals?)` / `ToDigitsDash()` / `ToDigitsBlank()` - Format with digit grouping (1,234.56)
 - `ToPercent(value, decimals?)` - Format as percentage (75.5%)
 - `ToDigitsMax(value, maxDecimals, minDecimals?)` - Format with optional decimals (shows decimals only if needed)
+- `ToNumberString(value, options?)` - Unified formatting with extensive options:
+  - `short` / `shorten` options: Pass `true` for single value, or array of numbers for consistent formatting across multiple values
+  - Array mode uses lowest value to determine format (e.g., `short: [1234, 5678900]` formats both consistently)
+  - Short mode omits decimal places for whole numbers when not abbreviating
+  - Supports currency, percent, decimals, nullBlank/nullDash, zeroBlank/zeroDash, prefix/suffix
 - `ShortNumber(value)` - Abbreviate large numbers (1.2M, 6.7B, 450K)
 - `AddS(count, singular, plural?)` - Smart pluralization: AddS(1, 'Category') = '1 Category', AddS(5, 'Category') = '5 Categories'
 - `DigitsNth(value)` - Ordinal numbers (1st, 2nd, 3rd, 11th, 21st)

@@ -732,7 +732,7 @@ describe('StringCompares', () => {
 		expect(ToNumberString(1234.5, {shorten: true, currency: true})).toBe('$1,235')
 
 		// Test short with array - consistent formatting based on lowest value
-		const shortArray = [1000, 5000, 10000, 50000, 0]
+		const shortArray = [1000, 5000, 10000, 50000, 0, null]
 		expect(ToNumberString(1000, {short: shortArray})).toBe('1.0k')
 		expect(ToNumberString(5000, {short: shortArray})).toBe('5.0k')
 		expect(ToNumberString(10000, {short: shortArray})).toBe('10.0k')
