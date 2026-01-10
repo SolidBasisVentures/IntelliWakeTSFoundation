@@ -749,6 +749,7 @@ describe('StringCompares', () => {
 		expect(ToNumberString(5000, {short: shortArray2b})).toBe('5.0k')
 		expect(ToNumberString(15000, {short: shortArray2b})).toBe('15.0k')
 		expect(ToNumberString(50000, {short: shortArray2b})).toBe('50.0k')
+		expect(ToNumberString(500, {short: shortArray2b})).toBe('500.0')
 
 		// Test short with array - all values format consistently even if some would normally be 'M'
 		const shortArray3 = [1000, 5000000]

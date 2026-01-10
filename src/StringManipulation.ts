@@ -521,16 +521,20 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	}
 
 	// Determine if short/shorten should be applied and find the reference value
-	const shortMode = Array.isArray(options?.short) ? options.short : options?.short === true ? true : false
-	const shortenMode = Array.isArray(options?.shorten) ? options.shorten : options?.shorten === true ? true : false
+	const shortMode = Array.isArray(options?.short) ? [...options.short, numberNull] : !!options?.short
+	const shortenMode = Array.isArray(options?.shorten) ? [...options.shorten, numberNull] : !!options?.shorten
 
 	// Find the lowest absolute value from the array to determine consistent formatting
 	let referenceValue = (numberNull ?? 0) * (options?.percent ? 100 : 1)
 	if (Array.isArray(shortMode) && shortMode.length > 0) {
-		const absValues = shortMode.map(v => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+		const absValues = shortMode
+			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+			.filter((v) => !isNaN(v) && v)
 		referenceValue = Math.min(...absValues)
 	} else if (Array.isArray(shortenMode) && shortenMode.length > 0) {
-		const absValues = shortenMode.map(v => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+		const absValues = shortenMode
+			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+			.filter((v) => !isNaN(v) && v)
 		referenceValue = Math.min(...absValues)
 	}
 
