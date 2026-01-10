@@ -698,7 +698,7 @@ describe('StringCompares', () => {
 
 		expect(ToNumberString(1.234, {short: true})).toBe('1.2')
 		expect(ToNumberString(1.25, {short: true})).toBe('1.3')
-		expect(ToNumberString(123, {short: true})).toBe('123.0')
+		expect(ToNumberString(123, {short: true})).toBe('123')
 		expect(ToNumberString(1234, {short: true})).toBe('1.2k')
 		expect(ToNumberString(123456, {short: true})).toBe('0.1M')
 		expect(ToNumberString(1234567, {short: true})).toBe('1.2M')
@@ -711,7 +711,7 @@ describe('StringCompares', () => {
 		expect(ToNumberString(1234567, {short: true, currency: true, fixedDecimals: 2})).toBe('$1.23M')
 		expect(ToNumberString(123.45, {short: true, currency: true})).toBe('$123.5')
 		expect(ToNumberString(1234.5, {short: true, currency: true})).toBe('$1.2k')
-		expect(ToNumberString(1, {short: true, percent: true})).toBe('100.0%')
+		expect(ToNumberString(1, {short: true, percent: true})).toBe('100%')
 		expect(ToNumberString(10, {short: true, percent: true})).toBe('1.0k%')
 
 		expect(ToNumberString(1.234, {shorten: true})).toBe('1')
@@ -732,24 +732,25 @@ describe('StringCompares', () => {
 		expect(ToNumberString(1234.5, {shorten: true, currency: true})).toBe('$1,235')
 
 		// Test short with array - consistent formatting based on lowest value
-		const shortArray = [1000, 5000, 10000, 50000]
+		const shortArray = [1000, 5000, 10000, 50000, 0]
 		expect(ToNumberString(1000, {short: shortArray})).toBe('1.0k')
 		expect(ToNumberString(5000, {short: shortArray})).toBe('5.0k')
 		expect(ToNumberString(10000, {short: shortArray})).toBe('10.0k')
 		expect(ToNumberString(50000, {short: shortArray})).toBe('50.0k')
+		expect(ToNumberString(0, {short: shortArray})).toBe('0.0k')
 
 		// Test short with array - lowest value determines format (500 < 999, so no shortening)
 		const shortArray2 = [500, 5500, 50000]
-		expect(ToNumberString(500, {short: shortArray2})).toBe('500.0')
-		expect(ToNumberString(5500, {short: shortArray2})).toBe('5,500.0')
-		expect(ToNumberString(50000, {short: shortArray2})).toBe('50,000.0')
+		expect(ToNumberString(500, {short: shortArray2})).toBe('500')
+		expect(ToNumberString(5500, {short: shortArray2})).toBe('5,500')
+		expect(ToNumberString(50000, {short: shortArray2})).toBe('50,000')
 
 		// Test short with array where lowest qualifies for 'k' - all values format as 'k'
 		const shortArray2b = [5000, 15000, 50000]
 		expect(ToNumberString(5000, {short: shortArray2b})).toBe('5.0k')
 		expect(ToNumberString(15000, {short: shortArray2b})).toBe('15.0k')
 		expect(ToNumberString(50000, {short: shortArray2b})).toBe('50.0k')
-		expect(ToNumberString(500, {short: shortArray2b})).toBe('500.0')
+		expect(ToNumberString(500, {short: shortArray2b})).toBe('500')
 
 		// Test short with array - all values format consistently even if some would normally be 'M'
 		const shortArray3 = [1000, 5000000]
@@ -793,9 +794,9 @@ describe('StringCompares', () => {
 
 		// Test with percent option and array
 		const percentShortArray = [0.01, 0.5, 1.0]
-		expect(ToNumberString(0.01, {short: percentShortArray, percent: true})).toBe('1.0%')
-		expect(ToNumberString(0.5, {short: percentShortArray, percent: true})).toBe('50.0%')
-		expect(ToNumberString(1.0, {short: percentShortArray, percent: true})).toBe('100.0%')
+		expect(ToNumberString(0.01, {short: percentShortArray, percent: true})).toBe('1%')
+		expect(ToNumberString(0.5, {short: percentShortArray, percent: true})).toBe('50%')
+		expect(ToNumberString(1.0, {short: percentShortArray, percent: true})).toBe('100%')
 
 		// Test edge case - empty array (should behave like true)
 		expect(ToNumberString(5000, {short: []})).toBe('5.0k')

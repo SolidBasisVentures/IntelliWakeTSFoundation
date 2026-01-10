@@ -538,24 +538,51 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		referenceValue = Math.min(...absValues)
 	}
 
-	let maximumFractionDigits =
-		options?.fixedDecimals ??
-		options?.maxDecimals ??
-		(shortMode ? 1 : shortenMode ? 0 : options?.currency ? 2 : options?.percent ? 0 : 9)
-	const minimumFractionDigits =
-		options?.fixedDecimals ??
-		options?.minDecimals ??
-		(shortMode ? 1 : shortenMode ? 0 : options?.currency ? 2 : options?.percent ? 0 : undefined)
-
-	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
-		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
-	}
-
 	const shortComponents = shortMode
 		? ShortNumberComponents(referenceValue)
 		: shortenMode
 		? ShortenNumberComponents(referenceValue)
 		: null
+
+	// Determine if shortening is actually being applied (divisor > 1)
+	const isShortening = !!shortComponents?.divisor && shortComponents.divisor > 1
+
+	// Check if the value is a whole number
+	const calcNumber = (numberNull ?? 0) * (options?.percent ? 100 : 1)
+	const isWholeNumber = calcNumber === Math.floor(calcNumber)
+
+	let maximumFractionDigits =
+		options?.fixedDecimals ??
+		options?.maxDecimals ??
+		(shortMode && isShortening
+			? 1
+			: shortMode && !isWholeNumber
+			? 1
+			: shortenMode
+			? 0
+			: options?.currency
+			? 2
+			: options?.percent
+			? 0
+			: 9)
+	const minimumFractionDigits =
+		options?.fixedDecimals ??
+		options?.minDecimals ??
+		(shortMode && isShortening
+			? 1
+			: shortMode && !isWholeNumber
+			? 1
+			: shortenMode
+			? 0
+			: options?.currency
+			? 2
+			: options?.percent
+			? 0
+			: undefined)
+
+	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
+		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
+	}
 
 	const validNumber =
 		((numberNull ?? 0) * (options?.percent ? 100 : 1)) / (!shortComponents?.divisor ? 1 : shortComponents.divisor)
