@@ -730,6 +730,75 @@ describe('StringCompares', () => {
 		expect(ToNumberString(12345678, {shorten: true, currency: true})).toBe('$12M')
 		expect(ToNumberString(123.45, {shorten: true, currency: true})).toBe('$123')
 		expect(ToNumberString(1234.5, {shorten: true, currency: true})).toBe('$1,235')
+
+		// Test short with array - consistent formatting based on lowest value
+		const shortArray = [1000, 5000, 10000, 50000]
+		expect(ToNumberString(1000, {short: shortArray})).toBe('1.0k')
+		expect(ToNumberString(5000, {short: shortArray})).toBe('5.0k')
+		expect(ToNumberString(10000, {short: shortArray})).toBe('10.0k')
+		expect(ToNumberString(50000, {short: shortArray})).toBe('50.0k')
+
+		// Test short with array - lowest value determines format (500 < 999, so no shortening)
+		const shortArray2 = [500, 5500, 50000]
+		expect(ToNumberString(500, {short: shortArray2})).toBe('500.0')
+		expect(ToNumberString(5500, {short: shortArray2})).toBe('5,500.0')
+		expect(ToNumberString(50000, {short: shortArray2})).toBe('50,000.0')
+
+		// Test short with array where lowest qualifies for 'k' - all values format as 'k'
+		const shortArray2b = [5000, 15000, 50000]
+		expect(ToNumberString(5000, {short: shortArray2b})).toBe('5.0k')
+		expect(ToNumberString(15000, {short: shortArray2b})).toBe('15.0k')
+		expect(ToNumberString(50000, {short: shortArray2b})).toBe('50.0k')
+
+		// Test short with array - all values format consistently even if some would normally be 'M'
+		const shortArray3 = [1000, 5000000]
+		expect(ToNumberString(1000, {short: shortArray3})).toBe('1.0k')
+		expect(ToNumberString(5000000, {short: shortArray3})).toBe('5,000.0k')
+
+		// Test short with array and currency
+		const shortArrayCurrency = [1200, 5600, 12000]
+		expect(ToNumberString(1200, {short: shortArrayCurrency, currency: true})).toBe('$1.2k')
+		expect(ToNumberString(5600, {short: shortArrayCurrency, currency: true})).toBe('$5.6k')
+		expect(ToNumberString(12000, {short: shortArrayCurrency, currency: true})).toBe('$12.0k')
+
+		// Test shorten with array - consistent formatting based on lowest value
+		const shortenArray = [100000, 500000, 1000000]
+		expect(ToNumberString(100000, {shorten: shortenArray})).toBe('100k')
+		expect(ToNumberString(500000, {shorten: shortenArray})).toBe('500k')
+		expect(ToNumberString(1000000, {shorten: shortenArray})).toBe('1,000k')
+
+		// Test shorten with array - all values under threshold format normally
+		const shortenArray2 = [10000, 50000, 80000]
+		expect(ToNumberString(10000, {shorten: shortenArray2})).toBe('10,000')
+		expect(ToNumberString(50000, {shorten: shortenArray2})).toBe('50,000')
+		expect(ToNumberString(80000, {shorten: shortenArray2})).toBe('80,000')
+
+		// Test shorten with array - consistent 'k' formatting even when one value would be 'M'
+		const shortenArray3 = [100000, 5000000]
+		expect(ToNumberString(100000, {shorten: shortenArray3})).toBe('100k')
+		expect(ToNumberString(5000000, {shorten: shortenArray3})).toBe('5,000k')
+
+		// Test shorten with array and currency
+		const shortenArrayCurrency = [120000, 560000, 1200000]
+		expect(ToNumberString(120000, {shorten: shortenArrayCurrency, currency: true})).toBe('$120k')
+		expect(ToNumberString(560000, {shorten: shortenArrayCurrency, currency: true})).toBe('$560k')
+		expect(ToNumberString(1200000, {shorten: shortenArrayCurrency, currency: true})).toBe('$1,200k')
+
+		// Test with negative values in array
+		const negativeShortArray = [-1000, 5000, 10000]
+		expect(ToNumberString(-1000, {short: negativeShortArray})).toBe('-1.0k')
+		expect(ToNumberString(5000, {short: negativeShortArray})).toBe('5.0k')
+		expect(ToNumberString(10000, {short: negativeShortArray})).toBe('10.0k')
+
+		// Test with percent option and array
+		const percentShortArray = [0.01, 0.5, 1.0]
+		expect(ToNumberString(0.01, {short: percentShortArray, percent: true})).toBe('1.0%')
+		expect(ToNumberString(0.5, {short: percentShortArray, percent: true})).toBe('50.0%')
+		expect(ToNumberString(1.0, {short: percentShortArray, percent: true})).toBe('100.0%')
+
+		// Test edge case - empty array (should behave like true)
+		expect(ToNumberString(5000, {short: []})).toBe('5.0k')
+		expect(ToNumberString(5000, {shorten: []})).toBe('5,000')
 	})
 
 	test('Unicode Testing', () => {

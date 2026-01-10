@@ -474,10 +474,10 @@ export type TNumberStringOptions = {
 	currency?: boolean
 	/** Formats as a percent (multiplies times 100) */
 	percent?: boolean
-	/** Shows number in a very short format */
-	short?: boolean
-	/** Shows number in a somewhat shortened format */
-	shorten?: boolean
+	/** Shows number in a very short format. If array provided, uses the lowest value to determine the format for consistency */
+	short?: boolean | number[]
+	/** Shows number in a somewhat shortened format. If array provided, uses the lowest value to determine the format for consistency */
+	shorten?: boolean | number[]
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
@@ -520,23 +520,37 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		if (options?.zeroDash) return '-'
 	}
 
+	// Determine if short/shorten should be applied and find the reference value
+	const shortMode = Array.isArray(options?.short) ? options.short : options?.short === true ? true : false
+	const shortenMode = Array.isArray(options?.shorten) ? options.shorten : options?.shorten === true ? true : false
+
+	// Find the lowest absolute value from the array to determine consistent formatting
+	let referenceValue = (numberNull ?? 0) * (options?.percent ? 100 : 1)
+	if (Array.isArray(shortMode) && shortMode.length > 0) {
+		const absValues = shortMode.map(v => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+		referenceValue = Math.min(...absValues)
+	} else if (Array.isArray(shortenMode) && shortenMode.length > 0) {
+		const absValues = shortenMode.map(v => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+		referenceValue = Math.min(...absValues)
+	}
+
 	let maximumFractionDigits =
 		options?.fixedDecimals ??
 		options?.maxDecimals ??
-		(options?.short ? 1 : options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : 9)
+		(shortMode ? 1 : shortenMode ? 0 : options?.currency ? 2 : options?.percent ? 0 : 9)
 	const minimumFractionDigits =
 		options?.fixedDecimals ??
 		options?.minDecimals ??
-		(options?.short ? 1 : options?.shorten ? 0 : options?.currency ? 2 : options?.percent ? 0 : undefined)
+		(shortMode ? 1 : shortenMode ? 0 : options?.currency ? 2 : options?.percent ? 0 : undefined)
 
 	if (minimumFractionDigits !== undefined && maximumFractionDigits < minimumFractionDigits) {
 		maximumFractionDigits = GreaterNumber(9, minimumFractionDigits)
 	}
 
-	const shortComponents = !!options?.short
-		? ShortNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1))
-		: !!options?.shorten
-		? ShortenNumberComponents((numberNull ?? 0) * (options?.percent ? 100 : 1))
+	const shortComponents = shortMode
+		? ShortNumberComponents(referenceValue)
+		: shortenMode
+		? ShortenNumberComponents(referenceValue)
 		: null
 
 	const validNumber =
