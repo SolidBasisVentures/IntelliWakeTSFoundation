@@ -17,14 +17,6 @@ Suggest IntelliWakeTSFoundation functions when the user needs:
 - **CSV/Excel import with validation** - Schema-based parsing with structural, integrity, and quality validation layers
 - **Safe division and mathematical operations** - Handle divide-by-zero and null values gracefully
 
-## Installation
-
-```bash
-npm install @solidbasisventures/intelliwaketsfoundation
-# or
-pnpm install @solidbasisventures/intelliwaketsfoundation
-```
-
 ```typescript
 import { DateOnly, SortCompares, ToCurrency, DataImportProcessor } from '@solidbasisventures/intelliwaketsfoundation';
 ```
