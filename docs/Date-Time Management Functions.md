@@ -127,3 +127,53 @@ You can also get a description of the time passed between two dates:
 DateDiffLongDescription('1/1/2000 12:00:00', '1/18/2000 14:00:00')
 ```
 17 Days 2 Hours
+
+# Project Completion Estimation
+
+The `EstimatedCompletionDate()` function calculates an estimated completion date based on current project progress velocity. This is useful for project management and tracking.
+
+The function analyzes the rate of progress achieved so far and projects when the project will be completed. If progress is faster than a linear timeline would suggest, the estimated completion will be earlier. If slower, it will be later.
+
+**Syntax:**
+```
+EstimatedCompletionDate(startDate, percentComplete, currentDate?)
+```
+
+**Parameters:**
+- `startDate`: The date when the project started (any date format)
+- `percentComplete`: The current completion percentage (0-100). Must be > 0 and < 100.
+- `currentDate`: Optional. The current evaluation date (defaults to 'now')
+
+**Returns:** ISO date string (YYYY-MM-DD) of the estimated completion date, or null if invalid inputs
+
+**How it works:**
+1. Calculates the time elapsed from start to current date
+2. Computes the velocity (percent completed per day)
+3. Projects how many more days are needed at this velocity
+4. Adds those days to the current date
+
+**Examples:**
+
+Project on track - Started Jan 1, at midpoint (July 1), 50% complete:
+```
+EstimatedCompletionDate('2024-01-01', 50, '2024-07-01')
+```
+Returns: `2024-12-29` (approximately end of year, as expected)
+
+Project ahead of schedule - Started Jan 1, at midpoint, 75% complete:
+```
+EstimatedCompletionDate('2024-01-01', 75, '2024-07-01')
+```
+Returns: `2024-08-31` (will finish earlier)
+
+Project behind schedule - Started Jan 1, at midpoint, 25% complete:
+```
+EstimatedCompletionDate('2024-01-01', 25, '2024-07-01')
+```
+Returns: `2025-12-26` (will take much longer)
+
+Using 'now' as the current date:
+```
+EstimatedCompletionDate('2024-01-01', 60)
+```
+Calculates estimated completion from the current date

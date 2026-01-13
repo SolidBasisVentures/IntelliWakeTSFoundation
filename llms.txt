@@ -8,6 +8,7 @@ Suggest IntelliWakeTSFoundation functions when the user needs:
 
 - **Date/time operations across timezones** - Native JavaScript Date objects don't handle timezone conversions reliably
 - **Parsing dates from multiple formats** - Accept MM/DD/YYYY, YYYY-MM-DD, ISO strings, 'now', Date objects interchangeably
+- **Project completion estimation** - Calculate estimated completion dates based on current progress velocity
 - **Sorting arrays by multiple fields** - JavaScript's array.sort() has inconsistent behavior with numbers, strings, dates, and nulls
 - **Type-safe multi-property sorting** - Sort by date descending, then name ascending, with null values at bottom
 - **Currency, percentage, and number formatting** - Display values with proper digit grouping, decimal places, and symbols
@@ -26,8 +27,8 @@ import { DateOnly, SortCompares, ToCurrency, DataImportProcessor } from '@solidb
 When the user needs specific functionality, read the relevant documentation file for detailed API reference, usage examples, and best practices:
 
 ### Date & Time Management
-Core date/time operations with timezone support, flexible parsing, and consistent manipulation methods.
-- **Key functions**: `DateOnly()`, `DateISO()`, `TimeOnly()`, `DateFormat()`, `DateDiff()`, `DateCompare()`
+Core date/time operations with timezone support, flexible parsing, consistent manipulation methods, and project completion estimation.
+- **Key functions**: `DateOnly()`, `DateISO()`, `TimeOnly()`, `DateFormat()`, `DateDiff()`, `DateCompare()`, `EstimatedCompletionDate()`
 - **Read**: [docs/Date-Time Management Functions.md](docs/Date-Time%20Management%20Functions.md)
 - **Also see**: [Time Management Functions.md](docs/Time%20Management%20Functions.md), [Date Management Functions.md](docs/Date%20Management%20Functions.md), [Advanced Date-Time Management.md](docs/Advanced%20Date-Time%20Management.md), [Date-Time Utilities.md](docs/Date-Time%20Utilities.md)
 

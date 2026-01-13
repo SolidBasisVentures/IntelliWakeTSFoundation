@@ -22,6 +22,7 @@ import {
 	DatesQuarter,
 	DateWeekISONumber,
 	DayDiffNoWeekend,
+	EstimatedCompletionDate,
 	IANADescription,
 	IANAOffsetDifference,
 	IANAZoneAbbr,
@@ -731,3 +732,82 @@ test('TZs', () => {
 // 	expect(PesachDate(2039)).toEqual('2039-04-08')
 // 	expect(PesachDate(2040)).toEqual('2040-03-28')
 // })
+
+test('EstimatedCompletionDate', () => {
+	// Project on track: Started Jan 1, on July 1 (181 days later), 50% complete
+	// Velocity: 50% / 181 days = 0.2762% per day
+	// Remaining: 50% / 0.2762% = 181 days more
+	// Expected: July 1 + 181 days = approximately end of year
+	expect(EstimatedCompletionDate('2024-01-01', 50, '2024-07-01')).toEqual('2024-12-29')
+
+	// Project ahead of schedule: Started Jan 1, on July 1, 75% complete
+	// Velocity: 75% / 181 days = 0.4144% per day
+	// Remaining: 25% / 0.4144% = 61 days more
+	// Expected: July 1 + 61 days = late August
+	expect(EstimatedCompletionDate('2024-01-01', 75, '2024-07-01')).toEqual('2024-08-31')
+
+	// Project behind schedule: Started Jan 1, on July 1, 25% complete
+	// Velocity: 25% / 181 days = 0.1381% per day
+	// Remaining: 75% / 0.1381% = 543 days more
+	// Expected: July 1 + 543 days = late 2025
+	expect(EstimatedCompletionDate('2024-01-01', 25, '2024-07-01')).toEqual('2025-12-26')
+
+	// Short timeframe, high velocity: 10 days in, 80% done
+	expect(EstimatedCompletionDate('2024-01-01', 80, '2024-01-11')).toEqual('2024-01-14')
+
+	// Very early in project: 5 days in, 1% complete
+	// Remaining: 99% / (1%/5) = 495 days
+	expect(EstimatedCompletionDate('2024-01-01', 1, '2024-01-06')).toEqual('2025-05-15')
+
+	// Near completion: 90% done
+	expect(EstimatedCompletionDate('2024-01-01', 90, '2024-07-01')).toEqual('2024-07-22')
+
+	// Near completion: 99% done
+	expect(EstimatedCompletionDate('2024-01-01', 99, '2024-07-01')).toEqual('2024-07-03')
+
+	// Edge case: 0% complete should return null
+	expect(EstimatedCompletionDate('2024-01-01', 0, '2024-07-01')).toEqual(null)
+
+	// Edge case: 100% complete should return null
+	expect(EstimatedCompletionDate('2024-01-01', 100, '2024-07-01')).toEqual(null)
+
+	// Edge case: negative percent should return null
+	expect(EstimatedCompletionDate('2024-01-01', -10, '2024-07-01')).toEqual(null)
+
+	// Edge case: over 100% should return null
+	expect(EstimatedCompletionDate('2024-01-01', 110, '2024-07-01')).toEqual(null)
+
+	// Invalid date strings should return null
+	expect(EstimatedCompletionDate('invalid-date', 50, '2024-07-01')).toEqual(null)
+	expect(EstimatedCompletionDate('2024-01-01', 50, 'invalid-date')).toEqual(null)
+
+	// Current date before start date should return null
+	expect(EstimatedCompletionDate('2024-07-01', 50, '2024-01-01')).toEqual(null)
+
+	// Current date equals start date should return null (no time elapsed)
+	expect(EstimatedCompletionDate('2024-01-01', 50, '2024-01-01')).toEqual(null)
+
+	// Test with different date formats
+	expect(EstimatedCompletionDate('01/01/2024', 50, '07/01/2024')).toEqual('2024-12-29')
+
+	// Test with Date objects
+	const startDate = new Date('2024-01-01')
+	const currentDate = new Date('2024-07-01')
+	expect(EstimatedCompletionDate(startDate, 50, currentDate)).toEqual('2024-12-29')
+
+	// Test with fractional percentages
+	expect(EstimatedCompletionDate('2024-01-01', 33.333, '2024-05-01')).toEqual('2024-12-28')
+	expect(EstimatedCompletionDate('2024-01-01', 66.667, '2024-05-01')).toEqual('2024-06-30')
+
+	// Test very slow progress (0.1% in 10 days = 9990 days total, ~27 years)
+	expect(EstimatedCompletionDate('2024-01-01', 0.1, '2024-01-11')).toEqual('2051-05-19')
+
+	// Real-world scenario: 1 month in, 40% done (ahead of linear pace)
+	expect(EstimatedCompletionDate('2024-01-01', 40, '2024-02-01')).toEqual('2024-03-19')
+
+	// Real-world scenario: 1 month in, 20% done (behind linear pace)
+	expect(EstimatedCompletionDate('2024-01-01', 20, '2024-02-01')).toEqual('2024-06-04')
+
+	// Year boundary crossing: 30 days in, 40% done
+	expect(EstimatedCompletionDate('2024-11-01', 40, '2024-12-01')).toEqual('2025-01-15')
+})

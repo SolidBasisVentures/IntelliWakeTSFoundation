@@ -1974,6 +1974,71 @@ export const DurationLongDescription = (seconds: number, tripToSecondsOrTwo = fa
 	return text.trim()
 }
 
+/**
+ * Calculates an estimated project completion date based on current progress velocity.
+ *
+ * This function projects the completion date by analyzing the rate of progress achieved
+ * so far. If the project is progressing faster than the linear timeline would suggest,
+ * the estimated completion will be earlier. If slower, it will be later.
+ *
+ * The calculation works by:
+ * 1. Measuring the time elapsed from start to current date
+ * 2. Calculating the velocity (percent completed per day)
+ * 3. Projecting how many more days are needed at this velocity
+ * 4. Adding those days to the current date
+ *
+ * @param {TDateAny} startDate - The date when the project started
+ * @param {number} percentComplete - The current completion percentage (0-100). Must be > 0 and < 100.
+ * @param {TDateAny} [currentDate='now'] - The current evaluation date (defaults to 'now')
+ * @returns {string | null} - ISO date string (YYYY-MM-DD) of the estimated completion date, or null if invalid inputs
+ *
+ * @example
+ * // Project started Jan 1, it's now July 1 (mid-year), 75% complete
+ * // Progress velocity is ahead of linear schedule
+ * EstimatedCompletionDate('2024-01-01', 75, '2024-07-01')
+ * // Returns approximately '2024-09-08' (earlier than if at 50% on July 1)
+ *
+ * @example
+ * // Project started Jan 1, it's now July 1, only 25% complete
+ * // Progress velocity is behind linear schedule
+ * EstimatedCompletionDate('2024-01-01', 25, '2024-07-01')
+ * // Returns approximately '2025-07-01' (extends beyond original year)
+ *
+ * @example
+ * // Using 'now' as current date (default)
+ * EstimatedCompletionDate('2024-01-01', 60)
+ * // Calculates from current date
+ */
+export const EstimatedCompletionDate = (
+	startDate: TDateAny,
+	percentComplete: number,
+	currentDate: TDateAny = 'now'
+): string | null => {
+	// Validate percentage bounds
+	if (percentComplete <= 0 || percentComplete >= 100) return null
+
+	// Parse dates
+	const startTS = DateParseTS(startDate)
+	const currentTS = DateParseTS(currentDate)
+
+	if (!startTS || !currentTS) return null
+	if (currentTS <= startTS) return null
+
+	// Calculate days elapsed since start
+	const daysElapsed = DateDiff(startDate, currentDate, 'day')
+	if (!daysElapsed || daysElapsed <= 0) return null
+
+	// Calculate velocity (percentage points per day)
+	const velocity = percentComplete / daysElapsed
+
+	// Calculate remaining work and time needed
+	const remainingPercent = 100 - percentComplete
+	const remainingDays = Math.ceil(remainingPercent / velocity)
+
+	// Calculate estimated completion date
+	return DateOnly(currentDate, {days: remainingDays})
+}
+
 const checkType = (
 	evalCheck: 'IsSame' | 'IsBefore' | 'IsAfter' | 'IsSameOrBefore' | 'IsSameOrAfter',
 	diff: number
