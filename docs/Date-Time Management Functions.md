@@ -1,18 +1,20 @@
 # Date-Time Parsing functions
 There are multiple functions that parse dates.  Each of these functions could interpret the output of any of the other functions, so the inputs could be a string, a number (Epoch format, which is the unix number of milliseconds since Jan 1, 1970), or a javascript Date object.  They all ultimately call the DateParseTS() function, but calling the individual function returns that data type.
 
+Note: Any time you need today's date, use 'today'.  Any time you need today's date & time, use 'now'.
+
 ```
 DateParseTS('1/1/2000 14:00:00')
 ```
 Returns an integer which is the timestamp (thus the TS) in Epoch format (which is the unix number of milliseconds since Jan 1, 1970), or null if the date passed in cannot be parsed.
 
 ```
-DateISO('1/1/2000 14:00:00') 
+DateISO('1/1/2000 14:00:00')
 ```
 Returns the date and time, but in ISO format, like: `2000-01-01T05:00:00.000Z` that is, if you were in the Eastern Time Zone.
 
 ```
-DateObject('1/1/2000 14:00:00') 
+DateObject('1/1/2000 14:00:00')
 ```
 Returns the date and time, but in a javascript Date object.
 
@@ -39,7 +41,7 @@ DateFromWeekNumber({week: 52, year: 1999})
 Each of these functions can accept a second argument with various options.  In the following examples we'll focus on `DateISO()`, but the options work with any of them.
 
 One set of the options are manipulation properties.  The following are valid manipulation properties that can be passed in:
-- year(s)  
+- year(s)
 - quarter(s)
 - month(s)
 - week(s)
@@ -106,7 +108,7 @@ DateFormat('LocalDoWTime', '2000-01-01T21:00:00.000Z')
 ```
 'Sa, 1/1/2000 4:00 pm' (If you're in the Eastern Time Zone)
 
-DoW stands for 'Day of Week'.  
+DoW stands for 'Day of Week'.
 
 The `DateFormatAny()` function accepts the formats above, but can also handle any of the following in any combination:
 - Date components: YYYY, YY, Q, Qo (1st), MMMM, MMM, MM, Mo (1st), M, DD, Do (1st), D
