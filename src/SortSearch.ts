@@ -275,24 +275,26 @@ export const SortColumnUpdate = <T = Record<string, any>>(
  * SortColumns(data, sortColumn)
  */
 export const SortColumns = <T = Record<string, any>>(arrayTable: T[], sortColumn: ISortColumn<T>): T[] => {
-	return [...arrayTable.sort((a: any, b: any) =>
-		!sortColumn.primarySort
-			? 0
-			: SortColumnResult(
-					a[sortColumn.primarySort] ?? null,
-					b[sortColumn.primarySort] ?? null,
-					sortColumn.primaryAscending,
-					sortColumn.primaryEmptyToBottom
-			  ) ??
-			  (!sortColumn.secondarySort
-					? 0
-					: SortColumnResult(
-							a[sortColumn.secondarySort as any] ?? null,
-							b[sortColumn.secondarySort as any] ?? null,
-							sortColumn.secondaryAscending,
-							sortColumn.secondaryEmptyToBottom
-					  ))
-	)]
+	return [
+		...arrayTable.sort((a: any, b: any) =>
+			!sortColumn.primarySort
+				? 0
+				: SortColumnResult(
+						a[sortColumn.primarySort] ?? null,
+						b[sortColumn.primarySort] ?? null,
+						sortColumn.primaryAscending,
+						sortColumn.primaryEmptyToBottom
+				  ) ??
+				  (!sortColumn.secondarySort
+						? 0
+						: SortColumnResult(
+								a[sortColumn.secondarySort as any] ?? null,
+								b[sortColumn.secondarySort as any] ?? null,
+								sortColumn.secondaryAscending,
+								sortColumn.secondaryEmptyToBottom
+						  ))
+		)
+	]
 }
 
 /**
@@ -688,8 +690,12 @@ export const SortPerArrayNull = <T>(
  		{id: 1, name: 'One'}
 ]
  */
-export const SortPerArray = <T>(beforeValue: T, afterValue: T, order: T[], emptyTo: 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = 'Top'): number =>
-	SortPerArrayNull(beforeValue, afterValue, order, emptyTo) ?? 0
+export const SortPerArray = <T>(
+	beforeValue: T,
+	afterValue: T,
+	order: T[],
+	emptyTo: 'Top' | 'Bottom' | 'Top0' | 'Bottom0' = 'Top'
+): number => SortPerArrayNull(beforeValue, afterValue, order, emptyTo) ?? 0
 
 const SortColumnResult = (valueA: any, valueB: any, isAscending: boolean, emptyToBottom: TSortColumnToBottom): number =>
 	SortCompare(
@@ -801,12 +807,13 @@ export const StringContainsSearch = (value: string | null | undefined, search: s
 /**
  *
  */
-export interface ISearchOptions {
+export interface ISearchOptions<T extends object> {
 	matchSomeTerm?: boolean
 	matchFromTerm?: number
 	matchUntilTerm?: number
 	limit?: number
 	page?: number
+	searchKeys?: (keyof T)[]
 }
 
 /**
@@ -819,10 +826,10 @@ export interface ISearchOptions {
  * // returns true
  * ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['john'])
  */
-export const ObjectContainsSearchTerms = (
-	checkObject: object | null | undefined | object[],
+export const ObjectContainsSearchTerms = <T extends object>(
+	checkObject: T | null | undefined | T[],
 	searchTerms: string[],
-	options?: ISearchOptions
+	options?: ISearchOptions<T>
 ): boolean => {
 	if (searchTerms.length === 0) return true
 
@@ -884,10 +891,10 @@ export const ObjectContainsSearchTerms = (
  * // returns true
  * ObjectContainsSearch({user: 'john doe', age: 24}, 'john')
  */
-export const ObjectContainsSearch = (
-	object: any | null | undefined,
+export const ObjectContainsSearch = <T extends object>(
+	object: T | null | undefined,
 	search: string | null | undefined,
-	options?: ISearchOptions
+	options?: ISearchOptions<T>
 ): boolean => {
 	if (!search) return true
 
@@ -910,7 +917,7 @@ export const ObjectContainsSearch = (
  * // returns [{id: 2, user: 'john smith'}]
  * SearchRows(data, 'smith')
  */
-export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearchOptions): T[] => {
+export const SearchRows = <T extends object>(arrayTable: T[], search: string, options?: ISearchOptions<T>): T[] => {
 	const searchTerms = SearchTerms(search)
 
 	let limit = CleanNumber(options?.limit)
@@ -940,7 +947,7 @@ export const SearchRows = <T>(arrayTable: T[], search: string, options?: ISearch
  * // returns true
  * SearchRow({user: 'john doe', age: '24'}, 'john 24')
  */
-export const SearchRow = (searchItem: object, search: string, options?: ISearchOptions): boolean => {
+export const SearchRow = <T extends object>(searchItem: T, search: string, options?: ISearchOptions<T>): boolean => {
 	const searchTerms = SearchTerms(search)
 
 	if (searchTerms.length === 0) {
@@ -968,11 +975,11 @@ export const SearchRow = (searchItem: object, search: string, options?: ISearchO
  * // returns [{id: 1, name: 'john smith', age: 24}]
  * SearchSort(data, 'john 24', sortColumn)
  */
-export const SearchSort = <T>(
+export const SearchSort = <T extends object>(
 	arrayTable: T[],
 	search: string,
 	sortColumn: ISortColumn<T>,
-	options?: ISearchOptions
+	options?: ISearchOptions<T>
 ): T[] => {
 	return !!options?.limit
 		? SearchRows(SortColumns(arrayTable, sortColumn), search, options)
