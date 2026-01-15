@@ -1,4 +1,4 @@
-import {CleanNumber, GreaterNumber} from './Functions'
+import {CleanNumber, GreaterNumber, ObjectKeys, OmitProperty} from './Functions'
 
 /**
  * Returns an array of numbers to be used for pagination links.
@@ -814,6 +814,7 @@ export interface ISearchOptions<T extends object> {
 	limit?: number
 	page?: number
 	searchKeys?: (keyof T)[]
+	excludeSearchKeys?: (keyof T)[]
 }
 
 /**
@@ -838,26 +839,43 @@ export const ObjectContainsSearchTerms = <T extends object>(
 	if (typeof checkObject === 'object' && (checkObject as any).type?.toString().includes('react.')) return false
 
 	const match = (term: string) => {
-		return Object.keys(checkObject).some((column) => {
-			const columnValue = (checkObject as any)[column]
-			const typeofColumn = typeof columnValue
+		return ObjectKeys(checkObject)
+			.filter(
+				(key) =>
+					!options?.excludeSearchKeys?.some((esk) => esk === key) &&
+					(!options?.searchKeys || options?.searchKeys?.some((sk) => sk === key))
+			)
+			.some((column) => {
+				const columnValue = (checkObject as any)[column]
+				const typeofColumn = typeof columnValue
 
-			if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
-				return columnValue.toString().toLowerCase().includes(term.toLowerCase())
-			}
-
-			if (Array.isArray(columnValue)) {
-				for (const obj of columnValue) {
-					if (ObjectContainsSearchTerms(obj, [term], options)) return true
+				if (!Array.isArray(columnValue) && ['number', 'bigint', 'string'].includes(typeofColumn)) {
+					return columnValue.toString().toLowerCase().includes(term.toLowerCase())
 				}
-			}
 
-			if (typeofColumn === 'object') {
-				return ObjectContainsSearchTerms(columnValue, [term], options)
-			}
+				if (Array.isArray(columnValue)) {
+					for (const obj of columnValue) {
+						if (
+							ObjectContainsSearchTerms(
+								obj,
+								[term],
+								!options ? options : OmitProperty(options, 'searchKeys', 'excludeSearchKeys')
+							)
+						)
+							return true
+					}
+				}
 
-			return false
-		})
+				if (typeofColumn === 'object') {
+					return ObjectContainsSearchTerms(
+						columnValue,
+						[term],
+						!options ? options : OmitProperty(options, 'searchKeys', 'excludeSearchKeys')
+					)
+				}
+
+				return false
+			})
 	}
 
 	let useSearchTerms = searchTerms

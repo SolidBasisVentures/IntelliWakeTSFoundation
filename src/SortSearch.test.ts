@@ -251,12 +251,10 @@ test('Sort Index String', () => {
 })
 
 test('SearchTerms', () => {
-	expect(SearchTerms('John Doe',)).toEqual(['john', 'doe'])
-	expect(SearchTerms('John.Doe',)).toEqual(['john.doe'])
-	expect(SearchTerms('1000.50',)).toEqual(['1000.50'])
-
+	expect(SearchTerms('John Doe')).toEqual(['john', 'doe'])
+	expect(SearchTerms('John.Doe')).toEqual(['john.doe'])
+	expect(SearchTerms('1000.50')).toEqual(['1000.50'])
 })
-
 
 test('Search', () => {
 	expect(ObjectContainsSearchTerms({user: 'john doe', age: 24}, ['24'])).toEqual(true)
@@ -313,8 +311,7 @@ test('Search', () => {
 				{user: 'john doe', age: 5}
 			],
 			'john',
-			{limit: 2,
-				page: 1}
+			{limit: 2, page: 1}
 		)
 	).toEqual([
 		{user: 'john doe', age: 1},
@@ -330,8 +327,7 @@ test('Search', () => {
 				{user: 'john doe', age: 5}
 			],
 			'john',
-			{limit: 2,
-				page: 2}
+			{limit: 2, page: 2}
 		)
 	).toEqual([
 		{user: 'john doe', age: 3},
@@ -347,12 +343,9 @@ test('Search', () => {
 				{user: 'john doe', age: 5}
 			],
 			'john',
-			{limit: 2,
-				page: 3}
+			{limit: 2, page: 3}
 		)
-	).toEqual([
-		{user: 'john doe', age: 5}
-	])
+	).toEqual([{user: 'john doe', age: 5}])
 	expect(
 		SearchRows(
 			[
@@ -363,8 +356,7 @@ test('Search', () => {
 				{user: 'john doe', age: 5}
 			],
 			'john',
-			{limit: 2,
-				page: 4}
+			{limit: 2, page: 4}
 		)
 	).toEqual([])
 	expect(
@@ -378,7 +370,39 @@ test('Search', () => {
 			],
 			'2.2'
 		)
-	).toEqual([{user: 'john doe', age: 2.2}, {user: 'john doe', age: 2.21}, {user: 'john doe 2.2', age: 5}])
+	).toEqual([
+		{user: 'john doe', age: 2.2},
+		{user: 'john doe', age: 2.21},
+		{user: 'john doe 2.2', age: 5}
+	])
+
+	{
+		const rows = [
+			{v1: 'One', v2: 'Single'},
+			{v1: 'Two', v2: 'Double'},
+			{v1: 'One', v2: 'First'}
+		]
+
+		expect(SearchRows(rows, 'One')).toEqual([
+			{v1: 'One', v2: 'Single'},
+			{v1: 'One', v2: 'First'}
+		])
+
+		expect(SearchRows(rows, 'One', {excludeSearchKeys: ['v2']})).toEqual([
+			{v1: 'One', v2: 'Single'},
+			{v1: 'One', v2: 'First'}
+		])
+
+		expect(SearchRows(rows, 'One', {excludeSearchKeys: ['v1']})).toEqual([])
+
+		expect(SearchRows(rows, 'One', {searchKeys: ['v1']})).toEqual([
+			{v1: 'One', v2: 'Single'},
+			{v1: 'One', v2: 'First'}
+		])
+
+		expect(SearchRows(rows, 'One', {searchKeys: ['v2']})).toEqual([])
+	}
+
 	const activeList = [
 		{id: 1, is_active: true},
 		{id: 2, is_active: false}

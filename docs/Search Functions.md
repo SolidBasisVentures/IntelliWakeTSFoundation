@@ -1,42 +1,78 @@
-Users often want to be able to search a table of data that you are presenting them.  But doing it in a way that their search text provides the expected results is sometimes a little daunting.  For instance, if we had the following data:
+# Search Functions
 
+Type-safe search functions for filtering arrays of objects with intelligent multi-field matching: case-insensitive, partial matches, multi-word queries, and nested array/object searches.
+
+## Quick Reference
+
+```typescript
+const people = [
+   {id: 1, first_name: 'John', last_name: 'Jones', age: 27, roles: ['Director', 'VP']},
+   {id: 2, first_name: 'Sally', last_name: 'Ride', age: 33, roles: ['VP']},
+   {id: 3, first_name: 'George', last_name: 'Jetson', age: 105, roles: ['Button Pusher']},
+   {id: 4, first_name: 'Jack', last_name: 'Johnson', age: 42, roles: ['Manager', 'Button Pusher']}
+]
+
+SearchRows(people, 'John')           // [1, 4] - matches first/last name
+SearchRows(people, 'JOHN JACK')      // [4] - case-insensitive, all terms match
+SearchRows(people, 'vp')             // [1, 2] - searches nested arrays
+SearchRows(people, 'john 2')         // [1, 4] - "john" AND "2" both match
+SearchRows(people, '2')              // [1, 2, 4] - numbers searched as strings
 ```
-[  
-   {id: 1, first_name: 'John', last_name: 'Jones', age: 27, roles: ['Director', 'VP']},  
-   {id: 2, first_name: 'Sally', last_name: 'Ride', age: 33, roles: ['VP']},  
-   {id: 3, first_name: 'George', last_name: 'Jetson', age: 105, roles: ['Button Pusher']},  
-   {id: 4, first_name: 'Jack', last_name: 'Johnson', age: 42, roles: ['Manager', 'Button Pusher']}  
-]  
+
+## API
+
+### `SearchRows<T>(arrayTable, search, options?): T[]`
+
+Returns array of objects matching all search terms (whitespace-delimited).
+
+```typescript
+// Limit to specific fields
+SearchRows(people, 'John', { searchKeys: ['first_name', 'last_name'] })
+
+// Exclude fields (e.g., prevent ID searches in UI)
+SearchRows(people, '1', { excludeSearchKeys: ['id'] })
+
+// Pagination
+SearchRows(data, 'term', { limit: 10, page: 2 })
+
+// OR logic (match ANY term instead of ALL)
+SearchRows(people, 'john sally', { matchSomeTerm: true })
 ```
 
-The user when searching these items would expect the following results from the following search strings:
-| Search Criteria| Resulting ID's | Reason |
-| --- | --- | --- |
-| John | 1, 4 | First or last name |
-| Johnson | 4 | Last name only |
-| JOHN JACK | 4 | First and last name |
-| vp | 1, 2 | People with the VP role |
-| button | 3, 4 | People with Button in the role |
-| john 2 | 1, 4 | First or last name, and has a 2 in age |
-| 2 | 1, 2 & 4 | ID or age has a 2 |
+### `SearchRow<T>(searchItem, search, options?): boolean`
 
-In order to accomplish this, you would need to handle the following cases:
-- Search every field value
-- Search array's within a fields value
-- Search partial strings
-- deal with strings in a case in-sensitive manner
-- Search numbers just like strings
-- Make sure each line that is valid met all the conditions of each word the user provided
+Tests if a single object matches. Use in `.reduce()`, `.map()`, or custom logic.
 
-## SearchRows(array, search string) function
-The `SearchRows()` function performs all of this analysis very quickly, and returns an array of rows that meet all the criteria of the search string:
+```typescript
+SearchRow(people[0], 'john')  // true
 
+people.reduce((acc, person) => {
+  if (SearchRow(person, 'director', { searchKeys: ['roles'] })) {
+    acc.push(person)
+  }
+  return acc
+}, [])
 ```
-SearchRows(people, 'John')
-```
-[  
-   {id: 1, first_name: 'John', last_name: 'Jones', age: 27, roles: ['Director', 'VP']},  
-   {id: 4, first_name: 'Jack', last_name: 'Johnson', age: 42, roles: ['Manager', 'Button Pusher']}  
-]  
 
-Additionally, you may need to search just one Row as part of another computation, like maybe in a `.reduce()` function so that you don't have to filter the array twice.  In that case you can use the `SearchRow(object, search string)` function which simply returns a boolean letting you know if the object meets the criteria of the search string
+## Options
+
+```typescript
+interface ISearchOptions<T extends object> {
+  searchKeys?: (keyof T)[]        // Only search these keys (TypeScript-enforced)
+  excludeSearchKeys?: (keyof T)[] // Exclude these keys (applied after searchKeys)
+  matchSomeTerm?: boolean         // Match ANY term (OR) instead of ALL (AND)
+  matchFromTerm?: number          // Start matching from term index
+  matchUntilTerm?: number         // Stop matching at term index
+  limit?: number                  // Max results
+  page?: number                   // Page number (requires limit)
+}
+```
+
+## Search Features
+
+- **Case-insensitive**: "john" matches "John", "JOHN"
+- **Partial matching**: "john" matches "Johnson"
+- **Multi-word**: "john 2" → both "john" AND "2" must match (unless `matchSomeTerm: true`)
+- **Numbers as strings**: 42 matches "42"
+- **Recursive**: Searches nested arrays and objects
+- **Type-safe**: TypeScript enforces valid `searchKeys`/`excludeSearchKeys`
