@@ -480,8 +480,6 @@ export type TNumberStringOptions = {
 	short?: boolean | (number | null | undefined)[]
 	/** Shows number in a somewhat shortened format. If array provided, uses the lowest value to determine the format for consistency */
 	shorten?: boolean | (number | null | undefined)[]
-	/** Shows number in a somewhat shortened format, uses the highest value to determine the format for consistency */
-	shortenToMax?: (number | null | undefined)[]
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
@@ -524,20 +522,16 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		if (options?.zeroDash) return '-'
 	}
 
-	// Determine if short/shorten/shortenToMax should be applied and find the reference value
+	// Determine if short/shorten should be applied and find the reference value
 	const shortMode = Array.isArray(options?.short)
 		? [...(options?.short ?? []), numberNull].filter((v) => v)
 		: !!options?.short
 	const shortenMode = Array.isArray(options?.shorten)
 		? [...(options?.shorten ?? []), numberNull].filter((v) => v)
 		: !!options?.shorten
-	const shortenToMaxMode = Array.isArray(options?.shortenToMax)
-		? [...(options?.shortenToMax ?? []), numberNull].filter((v) => v)
-		: false
 
 	// Find the reference value from the array to determine consistent formatting
 	// For short/shorten: use lowest value (Math.min)
-	// For shortenToMax: use highest value (Math.max)
 	let referenceValue = (numberNull ?? 0) * (options?.percent ? 100 : 1)
 	if (Array.isArray(shortMode) && shortMode.length > 0) {
 		const absValues = shortMode
@@ -549,16 +543,11 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
 			.filter((v) => !isNaN(v) && v)
 		referenceValue = Math.min(...absValues)
-	} else if (Array.isArray(shortenToMaxMode) && shortenToMaxMode.length > 0) {
-		const absValues = shortenToMaxMode
-			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
-			.filter((v) => !isNaN(v) && v)
-		referenceValue = Math.max(...absValues)
 	}
 
 	const shortComponents = shortMode
 		? ShortNumberComponents(referenceValue)
-		: shortenMode || shortenToMaxMode
+		: shortenMode
 		? ShortenNumberComponents(referenceValue)
 		: null
 
@@ -576,7 +565,7 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 			? 1
 			: shortMode && !isWholeNumber
 			? 1
-			: shortenMode || shortenToMaxMode
+			: shortenMode
 			? 0
 			: options?.currency
 			? 2
@@ -590,7 +579,7 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 			? 1
 			: shortMode && !isWholeNumber
 			? 1
-			: shortenMode || shortenToMaxMode
+			: shortenMode
 			? 0
 			: options?.currency
 			? 2
