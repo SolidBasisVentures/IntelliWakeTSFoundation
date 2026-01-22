@@ -25,7 +25,6 @@ import {
 	RandomString,
 	ReplaceLinks,
 	ShortenNumberComponents,
-	ShortConsistentComponents,
 	ShortNumber,
 	ShortNumberComponents,
 	SplitNonWhiteSpace,
