@@ -480,6 +480,8 @@ export type TNumberStringOptions = {
 	short?: boolean | (number | null | undefined)[]
 	/** Shows number in a somewhat shortened format. If array provided, uses the lowest value to determine the format for consistency */
 	shorten?: boolean | (number | null | undefined)[]
+	/** Shows number with max 4 digits, consistent shortening across all values. If array provided, analyzes all values to determine consistent format for column alignment */
+	shortConsistent?: boolean | (number | null | undefined)[]
 	/** Blank if null or 0 */
 	zeroBlank?: boolean
 	/** Dash if null or 0 */
@@ -522,34 +524,47 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 		if (options?.zeroDash) return '-'
 	}
 
-	// Determine if short/shorten should be applied and find the reference value
+	// Determine if short/shorten/shortConsistent should be applied and find the reference value
 	const shortMode = Array.isArray(options?.short)
 		? [...(options?.short ?? []), numberNull].filter((v) => v)
 		: !!options?.short
 	const shortenMode = Array.isArray(options?.shorten)
 		? [...(options?.shorten ?? []), numberNull].filter((v) => v)
 		: !!options?.shorten
+	const shortConsistentMode = Array.isArray(options?.shortConsistent)
+		? [...(options?.shortConsistent ?? []), numberNull].filter((v) => v)
+		: !!options?.shortConsistent
 
 	// Find the reference value from the array to determine consistent formatting
 	// For short/shorten: use lowest value (Math.min)
+	// For shortConsistent: use all values to determine components
 	let referenceValue = (numberNull ?? 0) * (options?.percent ? 100 : 1)
-	if (Array.isArray(shortMode) && shortMode.length > 0) {
-		const absValues = shortMode
-			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
-			.filter((v) => !isNaN(v) && v)
-		referenceValue = Math.min(...absValues)
-	} else if (Array.isArray(shortenMode) && shortenMode.length > 0) {
-		const absValues = shortenMode
-			.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
-			.filter((v) => !isNaN(v) && v)
-		referenceValue = Math.min(...absValues)
-	}
+	let shortComponents: {divisor?: number; extension?: string; decimals?: number} | null = null
 
-	const shortComponents = shortMode
-		? ShortNumberComponents(referenceValue)
-		: shortenMode
-		? ShortenNumberComponents(referenceValue)
-		: null
+	if (shortConsistentMode) {
+		if (Array.isArray(shortConsistentMode) && shortConsistentMode.length > 0) {
+			shortComponents = ShortConsistentComponents(shortConsistentMode, options?.percent ? 100 : 1)
+		} else {
+			// If true but not array, use just the current value
+			shortComponents = ShortConsistentComponents([numberNull], options?.percent ? 100 : 1)
+		}
+	} else if (shortMode) {
+		if (Array.isArray(shortMode) && shortMode.length > 0) {
+			const absValues = shortMode
+				.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+				.filter((v) => !isNaN(v) && v)
+			referenceValue = Math.min(...absValues)
+		}
+		shortComponents = ShortNumberComponents(referenceValue)
+	} else if (shortenMode) {
+		if (Array.isArray(shortenMode) && shortenMode.length > 0) {
+			const absValues = shortenMode
+				.map((v) => Math.abs(CleanNumber(v) * (options?.percent ? 100 : 1)))
+				.filter((v) => !isNaN(v) && v)
+			referenceValue = Math.min(...absValues)
+		}
+		shortComponents = ShortenNumberComponents(referenceValue)
+	}
 
 	// Determine if shortening is actually being applied (divisor > 1)
 	const isShortening = !!shortComponents?.divisor && shortComponents.divisor > 1
@@ -561,7 +576,9 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	let maximumFractionDigits =
 		options?.fixedDecimals ??
 		options?.maxDecimals ??
-		(shortMode && isShortening
+		(shortConsistentMode && shortComponents?.decimals !== undefined
+			? shortComponents.decimals
+			: shortMode && isShortening
 			? 1
 			: shortMode && !isWholeNumber
 			? 1
@@ -575,7 +592,9 @@ export function ToNumberString(value: any, options?: TNumberStringOptions): stri
 	const minimumFractionDigits =
 		options?.fixedDecimals ??
 		options?.minDecimals ??
-		(shortMode && isShortening
+		(shortConsistentMode && shortComponents?.decimals !== undefined
+			? shortComponents.decimals
+			: shortMode && isShortening
 			? 1
 			: shortMode && !isWholeNumber
 			? 1
@@ -1639,6 +1658,112 @@ export function ShortenNumberComponents(value: any): {divisor: number; extension
 	} while (calcValue > 99)
 
 	return {divisor, extension}
+}
+
+/**
+ * Analyzes an array of values and returns consistent shortening components for column alignment.
+ * Ensures the maximum value displays with no more than 4 digits before the decimal point.
+ * Minimizes decimals while maintaining meaningful precision for the smallest values.
+ *
+ * @param {(number | null | undefined)[]} values - Array of values to analyze for consistent formatting
+ * @param {number} percentMultiplier - Multiplier to apply (e.g., 100 for percent mode)
+ * @return {{divisor: number, extension: string, decimals: number}} - Formatting components for consistent display
+ *
+ * @example
+ * // Large values, no decimals needed
+ * ShortConsistentComponents([1234000, 123000, 12000, 0], 1)
+ * // Returns: {divisor: 1000, extension: 'k', decimals: 0}
+ *
+ * @example
+ * // Medium values, 1 decimal needed
+ * ShortConsistentComponents([123400, 12300, 1234, 0], 1)
+ * // Returns: {divisor: 1000, extension: 'k', decimals: 1}
+ *
+ * @example
+ * // Small range, 2 decimals needed
+ * ShortConsistentComponents([12345, 123, 12, 1], 1)
+ * // Returns: {divisor: 1000, extension: 'k', decimals: 2}
+ */
+export function ShortConsistentComponents(
+	values: (number | null | undefined)[],
+	percentMultiplier: number = 1
+): {divisor: number; extension: string; decimals: number} {
+	const cleanValues = values
+		.map((v) => CleanNumberNull(v))
+		.filter((v) => v !== null)
+		.map((v) => Math.abs(v! * percentMultiplier))
+
+	// If all values are 0 or array is empty
+	if (cleanValues.length === 0 || cleanValues.every((v) => v === 0)) {
+		return {divisor: 1, extension: '', decimals: 0}
+	}
+
+	const maxValue = Math.max(...cleanValues)
+
+	// Determine divisor so max value has ≤ 4 digits before decimal (< 10,000)
+	let divisor = 1
+	let extension = ''
+
+	if (maxValue < 10000) {
+		divisor = 1
+		extension = ''
+	} else if (maxValue < 10000000) {
+		divisor = 1000
+		extension = 'k'
+	} else if (maxValue < 10000000000) {
+		divisor = 1000000
+		extension = 'M'
+	} else if (maxValue < 10000000000000) {
+		divisor = 1000000000
+		extension = 'B'
+	} else if (maxValue < 10000000000000000) {
+		divisor = 1000000000000
+		extension = 'T'
+	} else {
+		// Continue with additional levels
+		let calcValue = maxValue / 1000000000000000
+		divisor = 1000000000000000
+		extension = 'T'
+		while (calcValue >= 10000) {
+			extension += '.'
+			calcValue /= 1000
+			divisor *= 1000
+		}
+	}
+
+	// Determine decimal precision needed
+	const dividedValues = cleanValues.map((v) => v / divisor)
+
+	// Check if all values are whole numbers after division
+	const allWholeNumbers = dividedValues.every((v) => v === Math.floor(v))
+
+	if (allWholeNumbers) {
+		return {divisor, extension, decimals: 0}
+	}
+
+	// Find minimum non-zero divided value to determine precision needs
+	const nonZeroValues = dividedValues.filter((v) => v > 0)
+	if (nonZeroValues.length === 0) {
+		return {divisor, extension, decimals: 0}
+	}
+
+	const minNonZero = Math.min(...nonZeroValues)
+
+	// Determine decimals needed for minNonZero to show meaningfully
+	let decimals = 0
+	if (minNonZero < 1) {
+		// For values < 1, need 2 decimals to show meaningful precision (e.g., 0.12, 0.01)
+		decimals = 2
+	} else if (minNonZero < 10) {
+		// For values 1-9.99, need 1 decimal (e.g., 1.2, 9.8)
+		decimals = 1
+	} else {
+		// For values >= 10, check if any fractional part exists
+		const hasFractional = dividedValues.some((v) => v !== Math.floor(v))
+		decimals = hasFractional ? 1 : 0
+	}
+
+	return {divisor, extension, decimals}
 }
 
 /**

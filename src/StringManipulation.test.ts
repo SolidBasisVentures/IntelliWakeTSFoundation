@@ -25,6 +25,7 @@ import {
 	RandomString,
 	ReplaceLinks,
 	ShortenNumberComponents,
+	ShortConsistentComponents,
 	ShortNumber,
 	ShortNumberComponents,
 	SplitNonWhiteSpace,
@@ -808,8 +809,149 @@ describe('StringCompares', () => {
 		expect(UnicodeToAscii('Pinzón')).toBe('Pinzon')
 		expect(UnicodeToAscii('José Niño')).toBe('Jose Nino')
 		expect(UnicodeToAscii('München – Großstraße')).toBe('Munchen - GroSSstraSSe')
-		expect(UnicodeToAscii('Ægir & Œuvres d’art')).toBe("AEgir & OEuvres d'art")
+		expect(UnicodeToAscii("Ægir & Œuvres d'art")).toBe("AEgir & OEuvres d'art")
 		expect(UnicodeToAscii('Straße Nº 5')).toBe('StraSSe No 5')
 		expect(UnicodeToAscii('Test_-!@#$%&()[]/?,.<>;:"^')).toBe('Test_-!@#$%&()[]/?,.<>;:"^')
+	})
+})
+
+describe('shortConsistent formatting', () => {
+	test('Large values with no decimals needed', () => {
+		const array1 = [1234000, 123000, 12000, 0]
+		expect(ToNumberString(1234000, {shortConsistent: array1})).toBe('1,234k')
+		expect(ToNumberString(123000, {shortConsistent: array1})).toBe('123k')
+		expect(ToNumberString(12000, {shortConsistent: array1})).toBe('12k')
+		expect(ToNumberString(0, {shortConsistent: array1})).toBe('0k')
+	})
+
+	test('Medium values with 1 decimal needed', () => {
+		const array2 = [123400, 12300, 1234, 0]
+		expect(ToNumberString(123400, {shortConsistent: array2})).toBe('123.4k')
+		expect(ToNumberString(12300, {shortConsistent: array2})).toBe('12.3k')
+		expect(ToNumberString(1234, {shortConsistent: array2})).toBe('1.2k')
+		expect(ToNumberString(0, {shortConsistent: array2})).toBe('0.0k')
+	})
+
+	test('Small values with no shortening needed', () => {
+		const array3 = [123, 12, 1, 0]
+		expect(ToNumberString(123, {shortConsistent: array3})).toBe('123')
+		expect(ToNumberString(12, {shortConsistent: array3})).toBe('12')
+		expect(ToNumberString(1, {shortConsistent: array3})).toBe('1')
+		expect(ToNumberString(0, {shortConsistent: array3})).toBe('0')
+	})
+
+	test('Wide range requiring 2 decimals', () => {
+		const array4 = [12345, 123, 12, 1]
+		expect(ToNumberString(12345, {shortConsistent: array4})).toBe('12.35k')
+		expect(ToNumberString(123, {shortConsistent: array4})).toBe('0.12k')
+		expect(ToNumberString(12, {shortConsistent: array4})).toBe('0.01k')
+		expect(ToNumberString(1, {shortConsistent: array4})).toBe('0.00k')
+	})
+
+	test('All zeros return plain "0"', () => {
+		const arrayZeros = [0, 0, 0]
+		expect(ToNumberString(0, {shortConsistent: arrayZeros})).toBe('0')
+	})
+
+	test('Works with currency option', () => {
+		const arrayCurrency1 = [1234000, 123000, 12000]
+		expect(ToNumberString(1234000, {shortConsistent: arrayCurrency1, currency: true})).toBe('$1,234k')
+		expect(ToNumberString(123000, {shortConsistent: arrayCurrency1, currency: true})).toBe('$123k')
+		expect(ToNumberString(12000, {shortConsistent: arrayCurrency1, currency: true})).toBe('$12k')
+
+		const arrayCurrency2 = [123400, 12300, 1234]
+		expect(ToNumberString(123400, {shortConsistent: arrayCurrency2, currency: true})).toBe('$123.4k')
+		expect(ToNumberString(12300, {shortConsistent: arrayCurrency2, currency: true})).toBe('$12.3k')
+		expect(ToNumberString(1234, {shortConsistent: arrayCurrency2, currency: true})).toBe('$1.2k')
+	})
+
+	test('Works with percent option', () => {
+		const arrayPercent1 = [12.34, 1.23, 0.12]
+		expect(ToNumberString(12.34, {shortConsistent: arrayPercent1, percent: true})).toBe('1,234%')
+		expect(ToNumberString(1.23, {shortConsistent: arrayPercent1, percent: true})).toBe('123%')
+		expect(ToNumberString(0.12, {shortConsistent: arrayPercent1, percent: true})).toBe('12%')
+
+		const arrayPercent2 = [123.4, 12.3, 1.23]
+		expect(ToNumberString(123.4, {shortConsistent: arrayPercent2, percent: true})).toBe('12.34k%')
+		expect(ToNumberString(12.3, {shortConsistent: arrayPercent2, percent: true})).toBe('1.23k%')
+		expect(ToNumberString(1.23, {shortConsistent: arrayPercent2, percent: true})).toBe('0.12k%')
+	})
+
+	test('Handles negative values', () => {
+		const arrayNegative = [-1234000, -123000, 12000, 0]
+		expect(ToNumberString(-1234000, {shortConsistent: arrayNegative})).toBe('-1,234k')
+		expect(ToNumberString(-123000, {shortConsistent: arrayNegative})).toBe('-123k')
+		expect(ToNumberString(12000, {shortConsistent: arrayNegative})).toBe('12k')
+		expect(ToNumberString(0, {shortConsistent: arrayNegative})).toBe('0k')
+	})
+
+	test('Handles million-level values', () => {
+		const arrayMillion = [12345678, 1234567, 123456, 0]
+		expect(ToNumberString(12345678, {shortConsistent: arrayMillion})).toBe('12.35M')
+		expect(ToNumberString(1234567, {shortConsistent: arrayMillion})).toBe('1.23M')
+		expect(ToNumberString(123456, {shortConsistent: arrayMillion})).toBe('0.12M')
+		expect(ToNumberString(0, {shortConsistent: arrayMillion})).toBe('0.00M')
+	})
+
+	test('Handles billion-level values', () => {
+		const arrayBillion = [1234567890, 123456789, 12345678]
+		// Max 1,234,567,890 / 1M = 1234.56 (4 digits), stays within max 4 digit threshold
+		expect(ToNumberString(1234567890, {shortConsistent: arrayBillion})).toBe('1,234.6M')
+		expect(ToNumberString(123456789, {shortConsistent: arrayBillion})).toBe('123.5M')
+		expect(ToNumberString(12345678, {shortConsistent: arrayBillion})).toBe('12.3M')
+	})
+
+	test('Handles values at threshold boundaries', () => {
+		// Just under 10k threshold
+		const array9999 = [9999, 999, 99]
+		expect(ToNumberString(9999, {shortConsistent: array9999})).toBe('9,999')
+		expect(ToNumberString(999, {shortConsistent: array9999})).toBe('999')
+		expect(ToNumberString(99, {shortConsistent: array9999})).toBe('99')
+
+		// Just at 10k threshold - min value is 100, which is 0.1 after division, needs 2 decimals
+		const array10k = [10000, 1000, 100]
+		expect(ToNumberString(10000, {shortConsistent: array10k})).toBe('10.00k')
+		expect(ToNumberString(1000, {shortConsistent: array10k})).toBe('1.00k')
+		expect(ToNumberString(100, {shortConsistent: array10k})).toBe('0.10k')
+	})
+
+	test('Single value in array', () => {
+		expect(ToNumberString(1234, {shortConsistent: [1234]})).toBe('1,234')
+		expect(ToNumberString(12345, {shortConsistent: [12345]})).toBe('12.3k') // >= 10k threshold
+		expect(ToNumberString(123456, {shortConsistent: [123456]})).toBe('123.5k')
+	})
+
+	test('Boolean true mode (single value analysis)', () => {
+		expect(ToNumberString(1234, {shortConsistent: true})).toBe('1,234')
+		expect(ToNumberString(12345, {shortConsistent: true})).toBe('12.3k') // >= 10k threshold
+		expect(ToNumberString(123456, {shortConsistent: true})).toBe('123.5k')
+	})
+
+	test('Works with null and undefined in array', () => {
+		const arrayWithNulls = [1234000, null, 123000, undefined, 12000, 0]
+		expect(ToNumberString(1234000, {shortConsistent: arrayWithNulls})).toBe('1,234k')
+		expect(ToNumberString(123000, {shortConsistent: arrayWithNulls})).toBe('123k')
+		expect(ToNumberString(12000, {shortConsistent: arrayWithNulls})).toBe('12k')
+	})
+
+	test('Column alignment - same decimal precision', () => {
+		// Max 5432 < 10k, so no shortening applied
+		const array1 = [5432, 543, 54, 5]
+		const results1 = array1.map((v) => ToNumberString(v, {shortConsistent: array1}))
+		expect(results1).toEqual(['5,432', '543', '54', '5'])
+
+		// Max >= 10k, so shortening applied for column alignment
+		const array2 = [54321, 5432, 543, 54, 5]
+		const results2 = array2.map((v) => ToNumberString(v, {shortConsistent: array2}))
+		expect(results2).toEqual(['54.32k', '5.43k', '0.54k', '0.05k', '0.01k'])
+	})
+
+	test('Works with currency and zeroDash option', () => {
+		const array = [123000, 12000, 0]
+		expect(ToNumberString(123000, {shortConsistent: array, currency: true})).toBe('$123k')
+		expect(ToNumberString(12000, {shortConsistent: array, currency: true})).toBe('$12k')
+		expect(ToNumberString(0, {shortConsistent: array, currency: true})).toBe('$0k')
+		// zeroDash overrides formatting and returns dash for zero values
+		expect(ToNumberString(0, {shortConsistent: array, currency: true, zeroDash: true})).toBe('-')
 	})
 })

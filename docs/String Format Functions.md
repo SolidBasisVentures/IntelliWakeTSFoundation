@@ -80,30 +80,48 @@ ToNumberString(500000, { shorten: values })   // "500k"
 ToNumberString(1000000, { shorten: values })  // "1,000k"
 ```
 
-#### `shortenToMax` - Graph-friendly formatting (uses highest value as reference)
-Perfect for chart axes where you want all values to use the same scale. The key difference from `shorten` is that `shortenToMax` uses the **highest** value to determine the scale, ensuring all numbers use the same format:
+#### `shortConsistent` - Max 4-digit formatting with consistent scaling
+Perfect for column alignment in tables and charts. Analyzes all values to ensure the maximum displays with no more than 4 digits before the decimal point, while maintaining consistent formatting across all values:
 ```typescript
-// Example 1: All values stay in 'k' scale
-const values = [500000, 1000000, 1500000]
-ToNumberString(500000, { shortenToMax: values, currency: true })   // "$500k"
-ToNumberString(1000000, { shortenToMax: values, currency: true })  // "$1,000k"
-ToNumberString(1500000, { shortenToMax: values, currency: true })  // "$1,500k"
+// Example 1: Large values with no decimals needed
+const values1 = [1234000, 123000, 12000, 0]
+ToNumberString(1234000, { shortConsistent: values1 })  // "1,234k"
+ToNumberString(123000, { shortConsistent: values1 })   // "123k"
+ToNumberString(12000, { shortConsistent: values1 })    // "12k"
+ToNumberString(0, { shortConsistent: values1 })        // "0k"
 
-// Example 2: Difference between shorten (min) vs shortenToMax (max)
-const values2 = [50000, 200000]
-// With 'shorten' (uses lowest 50k): no shortening applied
-ToNumberString(50000, { shorten: values2 })   // "50,000"
-ToNumberString(200000, { shorten: values2 })  // "200,000"
-// With 'shortenToMax' (uses highest 200k): 'k' scale applied to all
-ToNumberString(50000, { shortenToMax: values2 })   // "50k"
-ToNumberString(200000, { shortenToMax: values2 })  // "200k"
+// Example 2: Medium values with 1 decimal for alignment
+const values2 = [123400, 12300, 1234, 0]
+ToNumberString(123400, { shortConsistent: values2 })   // "123.4k"
+ToNumberString(12300, { shortConsistent: values2 })    // "12.3k"
+ToNumberString(1234, { shortConsistent: values2 })     // "1.2k"
+ToNumberString(0, { shortConsistent: values2 })        // "0.0k"
 
-// Example 3: When highest value is very large (100M+), all use 'M' scale
-const values3 = [500000, 1000000, 150000000]
-ToNumberString(500000, { shortenToMax: values3, currency: true })   // "$1M"
-ToNumberString(1000000, { shortenToMax: values3, currency: true })  // "$1M"
-ToNumberString(150000000, { shortenToMax: values3, currency: true }) // "$150M"
+// Example 3: Small values with no shortening needed
+const values3 = [123, 12, 1, 0]
+ToNumberString(123, { shortConsistent: values3 })      // "123"
+ToNumberString(12, { shortConsistent: values3 })       // "12"
+ToNumberString(1, { shortConsistent: values3 })        // "1"
+ToNumberString(0, { shortConsistent: values3 })        // "0"
+
+// Example 4: Wide range requiring 2 decimals for smallest values
+const values4 = [12345, 123, 12, 1]
+ToNumberString(12345, { shortConsistent: values4 })    // "12.35k"
+ToNumberString(123, { shortConsistent: values4 })      // "0.12k"
+ToNumberString(12, { shortConsistent: values4 })       // "0.01k"
+ToNumberString(1, { shortConsistent: values4 })        // "0.00k"
+
+// Works with currency and percent options
+const values5 = [123400, 12300, 1234]
+ToNumberString(123400, { shortConsistent: values5, currency: true })  // "$123.4k"
+ToNumberString(12300, { shortConsistent: values5, currency: true })   // "$12.3k"
+ToNumberString(1234, { shortConsistent: values5, currency: true })    // "$1.2k"
 ```
+
+The algorithm automatically determines:
+- **Divisor**: Based on the maximum value (ensures max displays with ≤ 4 digits)
+- **Decimal precision**: Based on the minimum value (minimizes decimals while maintaining meaningful display)
+- **Threshold**: Values < 10,000 display without shortening
 
 ### Additional Options
 - `zeroBlank` / `zeroDash` - Display blank or dash for zero values
