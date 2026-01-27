@@ -595,24 +595,32 @@ describe('DistributeEvenly function', () => {
 	})
 
 	// test('PromiseAll Offend', async () => {
+	// 	async function doSleep(duration: number, val: number) {
+	// 		console.log(val)
+	// 		await Sleep(duration)
+	// 		console.log(val)
+	//
+	// 		return val
+	// 	}
+	//
 	// 	expect(
 	// 		await PromiseAll(
 	// 			{
-	// 				item1: Sleep(100).then(() => {
-	// 					return 1
-	// 				}),
-	// 				item2: Sleep(200).then(() => {
-	// 					return 2
-	// 				})
+	// 				item1: doSleep(100, 1),
+	// 				item2: doSleep(200, 2),
+	// 				item3: doSleep(100, 3),
+	// 				item4: doSleep(300, 4)
 	// 			},
 	// 			{
-	// 				baseName: 'Whole PromiseAll',
+	// 				promiseAllName: 'Whole PromiseAll',
 	// 				offendingMS: 150
 	// 			}
 	// 		)
 	// 	).toEqual({
 	// 		item1: 1,
-	// 		item2: 2
+	// 		item2: 2,
+	// 		item3: 3,
+	// 		item4: 4
 	// 	})
 	// })
 })
