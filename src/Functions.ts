@@ -1,6 +1,7 @@
 import {DateDiffLongDescription} from './DateManager'
 import {FormatZip} from './StringManipulation'
 import {isNullUndefined} from './SortSearch'
+import {TimeTrackResolved} from './TimeTracker'
 
 /**
  * Replace all occurrences of a string.
@@ -1580,19 +1581,39 @@ export function ObjectKeys<T extends object>(obj: T): Array<keyof T> {
 	return Object.keys(obj) as Array<keyof T>
 }
 
+export type TPromiseAllOptions = {
+	baseName?: string
+	offendingMS?: number
+}
+
 /**
- * Resolves multiple promises represented as an object, where each property is a promise or a value,
- * and returns a new object mapping the same keys to the resolved values of those promises.
+ * Resolves all promises in an object while preserving the object structure and keys.
+ * Optionally tracks execution time for each promise and the overall operation when offendingMS is specified.
  *
- * @param {Record<string, any>} items - An object whose values are either promises or non-promise values.
- *                                      The keys in this object will be retained in the output.
- * @return {Promise<{ [K in keyof T]: Awaited<T[K]> }>} A promise that resolves to an object where each key corresponds to the original object,
- *                                                       and each value is the resolved value of the promise or the original non-promise value.
+ * @template T - A record type where values can be promises or any other values
+ * @param {T} items - An object containing values (promises or regular values) to be resolved
+ * @param {TPromiseAllOptions} [options] - Optional configuration object for time tracking
+ * @param {number} [options.offendingMS] - Threshold in milliseconds for tracking slow promise resolutions
+ * @param {string} [options.baseName] - Base name for time tracking logs
+ * @return {Promise<{[K in keyof T]: Awaited<T[K]>}>} A promise that resolves to an object with the same keys as the input, where all promise values are awaited and resolved
  */
-export async function PromiseAll<T extends Record<string, any>>(items: T): Promise<{[K in keyof T]: Awaited<T[K]>}> {
+export async function PromiseAll<T extends Record<string, any>>(
+	items: T,
+	options?: TPromiseAllOptions
+): Promise<{[K in keyof T]: Awaited<T[K]>}> {
 	const entries = Object.entries(items) as [keyof T, T[keyof T]][]
 
-	const results = await Promise.all(entries.map(([, value]) => Promise.resolve(value)))
+	const results = !!options?.offendingMS
+		? await TimeTrackResolved(
+				options?.baseName ?? '',
+				!options?.baseName ? 0 : options?.offendingMS,
+				Promise.all(
+					entries.map(([key, value]) =>
+						TimeTrackResolved(key.toString(), options.offendingMS, Promise.resolve(value))
+					)
+				)
+		  )
+		: await Promise.all(entries.map(([, value]) => Promise.resolve(value)))
 
 	const output = {} as {[K in keyof T]: Awaited<T[K]>}
 

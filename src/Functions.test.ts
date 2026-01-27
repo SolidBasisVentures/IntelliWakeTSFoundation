@@ -593,4 +593,26 @@ describe('DistributeEvenly function', () => {
 			item2: 2
 		})
 	})
+
+	// test('PromiseAll Offend', async () => {
+	// 	expect(
+	// 		await PromiseAll(
+	// 			{
+	// 				item1: Sleep(100).then(() => {
+	// 					return 1
+	// 				}),
+	// 				item2: Sleep(200).then(() => {
+	// 					return 2
+	// 				})
+	// 			},
+	// 			{
+	// 				baseName: 'Whole PromiseAll',
+	// 				offendingMS: 150
+	// 			}
+	// 		)
+	// 	).toEqual({
+	// 		item1: 1,
+	// 		item2: 2
+	// 	})
+	// })
 })
