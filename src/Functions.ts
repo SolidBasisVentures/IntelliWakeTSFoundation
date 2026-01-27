@@ -1582,7 +1582,7 @@ export function ObjectKeys<T extends object>(obj: T): Array<keyof T> {
 }
 
 export type TPromiseAllOptions = {
-	baseName?: string
+	promiseAllName?: string
 	offendingMS?: number
 }
 
@@ -1605,8 +1605,8 @@ export async function PromiseAll<T extends Record<string, any>>(
 
 	const results = !!options?.offendingMS
 		? await TimeTrackResolved(
-				options?.baseName ?? '',
-				!options?.baseName ? 0 : options?.offendingMS,
+				options?.promiseAllName ?? '',
+				!options?.promiseAllName ? 0 : options?.offendingMS,
 				Promise.all(
 					entries.map(([key, value]) =>
 						TimeTrackResolved(key.toString(), options.offendingMS, Promise.resolve(value))
