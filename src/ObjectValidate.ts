@@ -36,13 +36,6 @@ export const Validator = <T extends Record<string, any | null>>(
 	objectValidator: TObjectValidator<T>
 ): TObjectValidatorErrors<T> => {
 	let errors: TObjectValidatorErrors<T> = {}
-
-	/*if ('id' in errors) {
-		errors[field].push('Second error')
-	} else {
-		errors[field] = ['This is an error']
-	}*/
-
 	const fields = Object.keys(objectValidator) as (keyof typeof objectValidator)[]
 	for (const field of fields) {
 		if (field in objectValidator) {
